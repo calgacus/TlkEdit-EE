@@ -1,0 +1,14 @@
+2DA V2.0
+
+   FeatLabel                      FeatIndex List GrantedOnLevel OnMenu 
+0  UncannyDodge1                  !195      3    2              0      
+1  DamageReduction3               !333      3    6              0      
+2  DamageReduction4               !334      3    9              0      
+3  TrapSense1                     !251      3    4              0      
+4  TrapSense2                     !252      3    8              0      
+5  DefensiveStance1               0         3    1              1      
+6  DefensiveStance2               1         3    3              1      
+7  DefensiveStance3               2         3    5              1      
+8  DefensiveStance4               3         3    7              1      
+9  DefensiveStance5               4         3    9              1      
+10 BreakStance                    5         3    1              1      

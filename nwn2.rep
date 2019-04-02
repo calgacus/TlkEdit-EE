@@ -1,0 +1,39 @@
+bifbasedir=
+bifkeys=patch.key chitin.key
+
+# use dir as override, param : override directory ( optional )
+override=
+
+basedir=/media/sdb6/spiele/Neverwinter Nights 2/Data/
+
+filecount=29
+file0=#placeholder
+file1=2DA.zip
+file2=Actors_v106.zip
+file3=Actors.zip
+file4=AnimTags.zip
+file5=convo.zip
+file6=Ini.zip
+file7=lod-merged_v101.zip
+file8=lod-merged.zip
+file9=Music.zip
+file10=NWN2_Materials_v106.zip
+file11=NWN2_Materials_v104.zip
+file12=NWN2_Materials.zip
+file13=NWN2_Models_v106.zip
+file14=NWN2_Models_v105.zip
+file14=NWN2_Models_v104.zip
+file15=NWN2_Models.zip
+file16=NWN2_VFX.zip
+file17=Prefabs.zip
+file18=Scripts.zip
+file19=SoundSets.zip
+file20=Sounds_v106.zip
+file21=sounds_v103.zip
+file22=Sounds.zip
+file23=SpeedTree.zip
+file24=Templates.zip
+file25=VO_106.zip
+file26=VO_v101.zip
+file27=VO.zip
+file28=walkmesh.zip

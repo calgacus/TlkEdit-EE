@@ -1,0 +1,935 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+</head>
+<body>
+<span style="font-weight: bold; color: rgb(204, 0, 0);">&lt;Ewald's
+note&gt;</span>This file is taken from the <a
+ href="http://ccg.dladventures.com/">NWN Custom Content Guide</a> wiki
+(ccg.dladventures.com). I removed some stuff that the java JTextPane
+class couldn't handle and added anchor tags to the different
+column names ( e.g. &lt;a name="MetaMagic"&gt; ) to make it work
+as help file in my 2da editor.<span
+ style="font-weight: bold; color: rgb(204, 0, 0);">&lt;/Ewald's note&gt;</span><br>
+<h1><a
+ href="http://ccg.dladventures.com/index.php/spells.2da?action=BackLinks&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ class="backlinks" title="BackLinks for spells.2da"
+ onmouseover='window.status="BackLinks for spells.2da"; return true;'
+ onmouseout="window.status='';return true;">spells.2 da</a></h1>
+<!-- End top --><!-- Begin browse --><!-- $Id: browse.tmpl,v 1.22 2002/02/19 23:00:26 carstenklapp Exp $ -->
+<div class="wikitext">
+<p>Note: This page would be a hell to edit
+without formating it first, or the use of a wiki new-style table editor
+if that can be found.</p>
+<p>NB: in what follows when we mention a "spell" it isn't necessarily a
+<b>true spell</b>,
+if it is the case it will be made explicit. It can be anything this 2da
+can implement: cast-spell item property, useable feat, racial
+capacity...</p>
+<p>For specifics about spells, and monster abilities see <a
+ href="http://ccg.dladventures.com/index.php/Spells?PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ class="wiki">Spells</a>.<br>
+Useable feats, class-specific Abilities (Special Ability menu of the
+palyer) or racial Abilities see <a
+ href="http://ccg.dladventures.com/index.php/Feats?PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ class="wiki">Feats</a>.<br>
+For item properties see <span class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/ItemProperties?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: ItemProperties"
+ onmouseover='window.status="Edit: ItemProperties"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>ItemProperties</u></span>,
+if what you want are spell-like properties (useable from the item) <a
+ href="http://ccg.dladventures.com/index.php/iprp_spells.2da?PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ class="wiki">iprp_spells.2da</a> should contain all the info you need
+besides this page.</p>
+<p>We will use the mention <i>True Spell Only</i> for a column whose
+value only applies to Wizard, cleric etc spells or innate Monster
+spell-like abilities (those found in the toolset in the "cast spell"
+list). This generally means that for other features (feats and
+cast-spell properties in particular) this value is overruled in an
+other 2da, but not that you can leave the entry blank.</p>
+<p>The spell resource file - spells.2da defines each of the spells, how
+it is cast, who can cast it, and a variety of other details. There are
+eight main parts to a spells.2da record.</p>
+<ol>
+  <li>General information (spell name, school, range, etc.)</li>
+  <li>What classes can use the spell and what level it is</li>
+  <li>The Conjuration group which stores the sounds and animations that
+are played when the spell is being cast.</li>
+  <li>The Cast group which stores the sounds and animations that are
+executed when the caster is done chanting and the spell takes effect.
+This is not the effect on the recipient -- that is handled in the <span
+ class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/ImpactScript?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: ImpactScript"
+ onmouseover='window.status="Edit: ImpactScript"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>ImpactScript</u></span>
+-- but is, for example, the animation for the cone of frost between the
+caster and target in a cone of cold spell. Cast effects take place
+after Conjuration effects. Refer to the spell effects reference near
+the end of this tutorial for details on effects you can use.</li>
+  <li>The Projectile group. This one designates any type of model that
+moves between the caster and the target. An example would be the ball
+of the fireball spell that travels from the caster&#8217;s hand to the target
+and then explodes.</li>
+  <li>A list of immunities.</li>
+  <li>Linked spells. This is where you can designate a spell to have
+more
+than one type of end effect, similar to a Polymorph spell where you can
+pick from several options. Linked effects are used for radial menus.</li>
+  <li>Miscellaneous information.</li>
+</ol>
+<table valign="top" class="wiki-dl-table" border="1">
+  <tbody>
+    <tr>
+      <td>Column</td>
+      <td>Description</td>
+      <td>
+      <blockquote>
+        <p>Values</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td>SpellID</td>
+      <td>The first, unnamed column. It serves as the Spell ID. <br>
+It will be used to cross-reference this spell ressource in other 2das. <br>
+It is returned by the GetSpellID() function in the associated spell
+script.</td>
+      <td>
+      <blockquote>
+        <p>As in all other 2das, the value you indicate is of no
+importance.<br>
+Its actual value is the line number, starting with 0 for the first line.</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Label">Label</a></td>
+      <td>No other function than giving it a name for human use</td>
+      <td>
+      <blockquote>
+        <p>Whatever</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Name">Name<br>
+      <i>True Spell Only</i></a></td>
+      <td>StrRef for the name of the spell: reference to dialog.tlk or
+the custom tlk file for the module<br>
+This will give a name to a <b>true spell or monster ability</b> only ;
+for an item-cast-spell-property or a feat for exemple, it will be
+overwriten by a column in the appropriate 2da</td>
+      <td>
+      <blockquote>
+        <p>See <span class="named-wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/TalkTable?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: TalkTable"
+ onmouseover='window.status="Edit: TalkTable"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>the talk table
+description</u></span> to learn how to reference the custom tlk instead
+of dialog.tlk (HotU feature, 1.33? )</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="IconResRef">IconResRef<br>
+      <i>True Spell Only</i></a></td>
+      <td>Name of the .tga file that will represent the spell icon.</td>
+      <td>
+      <blockquote>
+        <p>You can create your own icons and put them in the hakpak.
+This is
+the recommended method because people want to be able to tell spells
+apart visually.<br>
+Alternately, you can use generic icons for the different spell school
+classes:<br>
+Abjuration = is_abjure<br>
+Conjuration = is_conjure<br>
+Divination = is_divine<br>
+Enchantment = is_enchant<br>
+Evocation = is_evoke<br>
+Illusion = is_illusion<br>
+Necromancy = is_necromancy<br>
+Transmutation = is_transmut</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="School">School</a></td>
+      <td>School of magic</td>
+      <td>
+      <blockquote>
+        <p>A = Abjuration<br>
+C = Conjuration<br>
+D = Divination<br>
+E = Enchantment<br>
+I = Illusion<br>
+N = Necromancy<br>
+T = Transmutation<br>
+V = Evocation</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Range">Range</a></td>
+      <td>Range of the spell</td>
+      <td>
+      <blockquote>
+        <p>P = Personal (affects only the caster)<br>
+T = Touch (affects the person<br>
+touched)<br>
+S = Short (25 ft + 5 ft/2 levels,<br>
+according to standard 3e rules)<br>
+M = Medium (100 ft + 10 ft/level)<br>
+L = Long (400 ft + 40 ft/level)</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="VS">VS</a></td>
+      <td>Verbal and somatic components of the spell.</td>
+      <td>
+      <blockquote>
+        <p>V = Verbal only (cannot cast this spell if silenced)<br>
+S = Somatic (Spell suffers arcane spell failure from armor)<br>
+VS = both<br>
+- = neither</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="MetaMagic">MetaMagic<br>
+      <i>True Spell Only</i></a></td>
+      <td>Defines which metamagic feats can be used on the spell. The
+number is a bit flag setting and must be in hexadecimal format.<br>
+The numbers need to be added together to get the final set of flags for
+the spell.<br>
+Example:<br>
+I
+want a spell that can be Quickened, Silent, Still, and Maximized. I
+would have 8(Quicken) + 16(Silent) + 32(Still) + 4(Maximize) = 60 total.<br>
+Once you get the number you need to convert it into hex format. The
+easiest way if you use Windows is to use the calculator.<br>
+Open
+up the Calculator program in Windows and under the View menu, switch to
+scientific mode. Make sure the round radio button is checked for Dec.
+Enter in your number and then change it from Dec to Hex; this is your
+hexadecimal number. Enter this number along with a 0x (just
+programmer&#8217;s notation that a number is in hexadecimal format) to the
+column. That is a 'zero' and not the letter Oh. So our example would be
+0x3c.</td>
+      <td>
+      <blockquote>
+        <p>0x01 = 1 = Empower<br>
+0x02 = 2 = Extend<br>
+0x04 = 4 = Maximize<br>
+0x08 = 8 = Quicken<br>
+0x10 = 16 = Silent<br>
+0x20 = 32 = Still</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="TargetType"></a>TargetType</td>
+      <td>This is the type of target the spell requires. Like the
+MetaMagic
+value,this is actually a binary flag system. You must enter the hex
+code after adding up the values for all the targets you want to be able
+to affect.<br>
+This doesn't work too well for feat implementation prior
+to 1.33: this value tells when the script will actually fire, and the
+one in feat.2da (limited to target self and other), when the cursor is
+active. HotU promises to fix it</td>
+      <td>
+      <blockquote>
+        <p>0x01 = 1 = Self<br>
+0x02 = 2 = Creature<br>
+0x04 = 4 = Area/Ground<br>
+0x08 = 8 = Items<br>
+0x10 = 16 = Doors<br>
+0x20 = 32 = Placeables<br>
+0x40
+= 64 = Trap triggers (only when detected) and area transition triggers
+(this does not work very well - the cursor is active on the area
+transition, but when clicking the PC is left hanging before casting the
+spell and the script doesn't fire). This value is not currently used by
+Bioware, and hasn't been tested by the original writer of the last
+sentence for a very long time. <br>
+        <br>
+HotU specific changes:<br>
+        </p>
+        <ul>
+          <li>All player castable spells need to have bit 0x08 set to
+allow them to work with the crafting system</li>
+          <li>Feats connected to a spell using FeatID now will work
+correctly
+with this field, with the exception of bit 0x01, which is always
+included (but you can code around that in your spellscript).</li>
+        </ul>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/ImpactScript?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: ImpactScript"
+ onmouseover='window.status="Edit: ImpactScript"; return true;'
+ onmouseout="window.status='';return true;">?</a><u><a
+ name="ImpactScript"></a>ImpactScript</u></span></td>
+      <td>The script that runs against the target of the spell</td>
+      <td>
+      <blockquote>
+        <p>its name without the .ncs extension...</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Bard"></a><a name="Cleric"></a> <a name="Druid"></a>
+      <a name="Paladin"></a> <a name="Ranger"></a> <a name="Wiz_Sorc"></a>
+      <a name="Innate"></a>Bard<br>
+Cleric<br>
+Druid<br>
+Paladin<br>
+Ranger<br>
+Wiz_Sorc<br>
+Innate<br>
+      <i>True Spell Only</i></td>
+      <td>The level of the spell for each class, if it can't be used by
+that class then it is commented out with ****.<br>
+Innate is for creatures that have it as a spell like ability. A lot of
+creature abilities are implemented as "innate spells".</td>
+      <td>
+      <blockquote>
+        <p>1 to 9, unknown for epic spells</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ConjTime"></a>ConjTime<br>
+      <i>True Spell Only</i></td>
+      <td>Conjuration is the process of invoking the spell. The
+conjuration time in milliseconds.<br>
+Note: the Conjuration effects are executed before the Cast effects.</td>
+      <td>
+      <blockquote>
+        <p>For spells it is 1500 with only 1 exception - Phantasmal
+Killer - which is at 900</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ConjAnim"></a>ConjAnim<br>
+      <i>True Spell Only</i></td>
+      <td>This is for the character or creature invoking the spell and
+calls
+the appropriate animation so that the caster goes through the right
+motions.</td>
+      <td>
+      <blockquote>
+        <p>The three possible values are:<br>
+hand = Casters hands are in front of<br>
+him.<br>
+head = Casters hands reach up to<br>
+above face level.<br>
+**** = No hand movement</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ConjHeadVisual"></a>ConjHeadVisual</td>
+      <td>This is to add a visual effect over the head of the caster
+when invoking the spell.</td>
+      <td>
+      <blockquote>
+        <p>Some sample head visuals and the spells they are used on are:<br>
+Ice_Storm vco_mehancold03<br>
+Resurrection vco_mehanelec01<br>
+Premonition vco_mehanelec03<br>
+Meteor_Swarm vco_mehanevil03<br>
+There are a lot more. <span class="named-wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/RefVFX?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: RefVFX"
+ onmouseover='window.status="Edit: RefVFX"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>visual effects
+reference</u></span></p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ConjHandVisual"></a>ConjHandVisual</td>
+      <td>This adds an effect to - or between - the caster's hands when
+invoking the spell.</td>
+      <td>
+      <blockquote>
+        <p><span class="named-wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/RefVFX?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: RefVFX"
+ onmouseover='window.status="Edit: RefVFX"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>visual effects
+reference</u></span></p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ConjGrndVisual"></a>ConjGrndVisual</td>
+      <td>This adds an effect to the ground around the caster when
+invoking the spell.</td>
+      <td>
+      <blockquote>
+        <p><span class="named-wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/RefVFX?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: RefVFX"
+ onmouseover='window.status="Edit: RefVFX"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>visual effects
+reference</u></span></p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ConjSoundVFX"></a>ConjSoundVFX</td>
+      <td>This is the sound effect that plays when invoking the spell.
+It is
+not the caster's voice but the energy crackles, moaning, etc. that
+plays in the background</td>
+      <td>
+      <blockquote>
+        <p><span class="named-wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/RefVFX?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: RefVFX"
+ onmouseover='window.status="Edit: RefVFX"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>visual effects
+reference</u></span></p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ConjSoundMale"></a>ConjSoundMale<br>
+      <a name="ConjSoundFemale"></a>ConjSoundFemale</td>
+      <td>These are the sound effects for the chanting that the caster
+does while invoking the spell</td>
+      <td>
+      <blockquote>
+        <p><span class="named-wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/RefVFX?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: RefVFX"
+ onmouseover='window.status="Edit: RefVFX"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>visual effects
+reference</u></span></p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="CastAnim"></a>CastAnim</td>
+      <td>The caster's pose after finishing the spell conjuration.<br>
+Note: the Cast animations and effects occur after the Conjuration ones.</td>
+      <td>
+      <blockquote>
+        <p>Possibilities are<br>
+Area<br>
+out<br>
+self<br>
+touch<br>
+up<br>
+attack - perform attack animation<br>
+****</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="CastTime"></a>CastTime</td>
+      <td>This seems to be how long in milliseconds the caster stays in
+the CastAnim pose</td>
+      <td>
+      <blockquote>
+        <p>There seem to be 2 settings<br>
+1000 = most spells<br>
+1700 = spells with ray or cone shaped effects</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="CastHeadVisual"></a>CastHeadVisual</td>
+      <td>Not currently used for any spells</td>
+      <td>
+      <blockquote>
+        <p>'****'</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="CastHandVisual"></a>CastHandVisual</td>
+      <td>These effects happen to the caster after the conjuration
+effects
+take place. An example would be the force rings that radiate from the
+casters hand after a magic missile spell or the cone of frost from a
+cone of cold spell</td>
+      <td>
+      <blockquote>
+        <p>placeholder_2</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="CastGrndVisual"></a>CastGrndVisual</td>
+      <td>Not currently used for any spells</td>
+      <td>
+      <blockquote>
+        <p>'****'</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="CastSound"></a>CastSound</td>
+      <td>The sound played after the Conjuration</td>
+      <td>
+      <blockquote>
+        <p>placeholder_3</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Proj"></a>Proj</td>
+      <td>Is there a projectile model that moves between the caster and
+the target in the spell</td>
+      <td>
+      <blockquote>
+        <p>1 for yes<br>
+0 for no</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ProjModel"></a>ProjModel</td>
+      <td>The model that moves between the caster and the target</td>
+      <td>
+      <blockquote>
+        <p>The currently used ones are:<br>
+vpr_aroacid<br>
+vpr_ectoacid01<br>
+vpr_ectocold01<br>
+vpr_ectoevil01<br>
+vpr_ectofire01<br>
+vpr_ectomind01<br>
+vpr_ectonatr01<br>
+vpr_ectoodd01<br>
+vpr_ectosonc01<br>
+vpr_fireball<br>
+vpr_ringsmal<br>
+vpr_wraith</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ProjType"></a>ProjType</td>
+      <td>The physics of the projectile</td>
+      <td>
+      <blockquote>
+        <p>accelerating<br>
+homing<br>
+linked<br>
+spiral - like the arcane archer's seeker arrow<br>
+ballistic<br>
+bounce - like grenade like weapons<br>
+****</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ProjSpwnPoint"></a>ProjSpwnPoint</td>
+      <td>Where the projectile starts at from the caster</td>
+      <td>
+      <blockquote>
+        <p>hand - spawn from caster's hand<br>
+head - spawn from caster's head<br>
+**** - no projectile spawned<br>
+        <br>
+HotU:<br>
+monster0 to monster9 - Monster nodes (HotU specific, i.e. the
+beholder's eye nodes).</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ProjSound"></a>ProjSound</td>
+      <td>The sound of the projectile</td>
+      <td>
+      <blockquote>
+        <p>placeholder_4</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ProjOrientation"></a>ProjOrientation</td>
+      <td>Which direction to orient the projectile in</td>
+      <td>
+      <blockquote>
+        <p>Set to path if there is a projectile</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ImmunityType"></a>ImmunityType</td>
+      <td>Type of immunity needed to ignore the effects of this spell.<br>
+* This column is not used by the game *</td>
+      <td>
+      <blockquote>
+        <p>Note there are three Mind Affecting immunities and two
+Positive immunities, I'm not sure if this a typo or not - looks like one<br>
+Acid<br>
+Cold<br>
+Death<br>
+Disease<br>
+Divine<br>
+Electricity<br>
+Fear<br>
+Fire<br>
+Mind_Affecting<br>
+Mind_Effecting (Typo?)<br>
+Mind-Affecting (Typo?)<br>
+Negative<br>
+Poison<br>
+Positive<br>
+Postive (Typo?)<br>
+Sonic</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="ItemImmunity"></a>ItemImmunity</td>
+      <td>Are items immune to being affected by this spell?</td>
+      <td>
+      <blockquote>
+        <p>1 for yes<br>
+0 for no</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="SubRadSpell1"></a><a name="SubRadSpell2"></a> <a
+ name="SubRadSpell3"></a><a name="SubRadSpell4"></a> <a
+ name="SubRadSpell5"></a>SubRadSpell1-5</td>
+      <td>These are for spells that have multiple ways of casting them.
+The
+values in these columns are the index value of "sub" spells that will
+come up in another radial menu. Spells like Polymorph Self or
+Shapechange where you can pick a type of creature to turn into, or
+Shadow Conjuration where you can pick the spell to emulate.<br>
+The
+maximum number of choices you have for a spell will be 5. The people
+who are planning on implementing radical new Polymorph spells where you
+can turn into all sorts of animals may want to look at this.</td>
+      <td>
+      <blockquote>
+        <p>Index of each of the subspells in this very 2da<br>
+It has been
+reported that radials only work if the new spells use ID numbers
+directly consecutive to those already in use... But only because one
+has to remember the true SpellID is the line number <b>NOT</b> the
+index one has written without repecting line count I believe).<br>
+        <br>
+(1.32):Information in these fields is not computed correctly for custom
+content prior to HotU. With HotU these fields should work fine, BUT it
+will require some special tricks to make them useable with feats (i.e.
+a feat that opens into a subradial spell selection, like the druid's
+wildshape). Prior to HotU using subradial spells with feats is not
+possible at all.</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Category"></a>Category</td>
+      <td>Possible values are equal to the various TALENT_CATEGORY_*
+constants in nwscript.nss, and are also listed in category.2da that
+this entry appears to reference (however category.2da has only one
+column besides the index, so its function is unclear).<br>
+It is used in various AI scripts to select appropriate abilities for
+creatures or NPCs to use.</td>
+      <td>
+      <blockquote>
+        <p>from category.2da:<br>
+(AoE = Area of Effect)<br>
+1 Harmful_AOE_Discriminant (only affects ennemies)<br>
+2 Harmful_Ranged<br>
+3 Harmful_Touch<br>
+4 Beneficial_Healing_AOE<br>
+5 Beneficial_Healing_Touch<br>
+6 Beneficial_Conditional_AOE<br>
+7 Beneficial_Conditional_Single<br>
+8 Beneficial_Enhancement_Area Effect<br>
+9 Beneficial_Enhancement_Single<br>
+10 Beneficial_Enhancement_Self<br>
+11 Harmful_AOE_Indiscriminant<br>
+12 TALENT_CATEGORY_BENEFICIAL_PROTECTION_SELF<br>
+13 TALENT_CATEGORY_BENEFICIAL_PROTECTION_SINGLE<br>
+14 TALENT_CATEGORY_BENEFICIAL_PROTECTION_AOE<br>
+15 TALENT_CATEGORY_BENEFICIAL_SUMMON<br>
+16 TALENT_CATEGORY_PERSISTENT_AREA_OF_EFFECT<br>
+17 TALENT_CATEGORY_BENEFICIAL_HEALING_POTION<br>
+18 TALENT_CATEGORY_BENEFICIAL_CONDITIONAL_POTION<br>
+19 TALENT_CATEGORY_DRAGONS_BREATH<br>
+20 TALENT_CATEGORY_BENEFICIAL_PROTECTION_POTION<br>
+21 TALENT_CATEGORY_BENEFICIAL_ENHANCEMENT_POTION<br>
+22 TALENT_CATEGORY_HARMFUL_MELEE <br>
+23 TALENT_DISPEL</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Master"></a>Master</td>
+      <td>Used in conjunction with the SubRadSpell columns. For a
+subspell this is the parent spell that called it.<br>
+The
+actual effect is that the uses-per-day of the master spell is reduced
+by one when this spell is cast, along with that of all the other
+subspells. Generally all sub-spells will want this and no others will.
+Subspells without this seem to work, at least last time I checked, and
+it might have an interest, but it comes without waranty, since Bioware
+never uses it this way.</td>
+      <td>
+      <blockquote>
+        <p>Index of the master spell in this very 2da</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="2"><a name="UserType"></a>UserType</td>
+      <td>Type of capacity this line actually implements<br>
+I can't remember any engine use for this entry other than a cosmetic
+one in the toolset, but put the appropriate value anyway.</td>
+      <td>
+      <blockquote>
+        <p>1 = Spells<br>
+2 = Creature Power<br>
+3 = Feat<br>
+4 = Item Power<br>
+If it is only a Creature Power put 2<br>
+Only an Item Power, 4<br>
+Only a feat put 3.<br>
+If it is simply a spell or a spell and (a Creature Power or an Item
+Power) put 1. <br>
+        </p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+      <blockquote>
+        <p>Notes:<br>
+        </p>
+        <blockquote>
+          <ul>
+            <li><span class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/UserType?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: UserType"
+ onmouseover='window.status="Edit: UserType"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>UserType</u></span>
+4 (Item) spells will never show up in the special abilities panel
+(toolset) on creatures <br>
+            </li>
+            <li><span class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/UserType?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: UserType"
+ onmouseover='window.status="Edit: UserType"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>UserType</u></span>
+3 (Feat) will not show up as seperate special abilities/spells
+(toolset).<br>
+            </li>
+            <li>The talent system in the AI makes use of these values,
+i.e. putting a 3 (feat) will prevent creatures from using a spell via <span
+ class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/TalentSpell?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: TalentSpell"
+ onmouseover='window.status="Edit: TalentSpell"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>TalentSpell</u></span>,
+              <span class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/TalentFeat?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: TalentFeat"
+ onmouseover='window.status="Edit: TalentFeat"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>TalentFeat</u></span>
+must be used instead.</li>
+            <li>In addition certain game mechanisms make use of this
+data field, it
+may affect if a spell can be counterspelled, is affected by dispel
+magic, etc. It also affects if the spell can be interrupted. (i.e.
+feats can not be interrupted).</li>
+            <li>It's important that you put the correct use into this
+field.</li>
+          </ul>
+        </blockquote>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="SpellDesc"></a>SpellDesc<br>
+      <i>True Spell Only</i></td>
+      <td>StrRef for the description of the spell: reference to
+dialog.tlk or the custom tlk file for the module</td>
+      <td>
+      <blockquote>
+        <p>See <span class="named-wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/TalkTable?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: TalkTable"
+ onmouseover='window.status="Edit: TalkTable"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>the talk table
+description</u></span> to learn how to reference the custom tlk instead
+of dialog.tlk (HotU feature, 1.33? )</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="UseConcentration"></a>UseConcentration</td>
+      <td>Determines if a Concentration check is needed to successfully
+cast the spell if interrupted (e.g., if hit during combat)</td>
+      <td>
+      <blockquote>
+        <p>0 for no<br>
+1 for yes<br>
+For spells always 1. The only records which have a 0 are
+uninterruptible ones like constant creature powers.</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="SpontaneouslyCast"></a>SpontaneouslyCast</td>
+      <td>This is for the Clerics spontaneously casting. Only
+Cure/Cause wounds should have this.</td>
+      <td>
+      <blockquote>
+        <p>1 for yes<br>
+0 for no</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="AltMessage"></a>AltMessage</td>
+      <td>This is the strref for the message in dialog.tlk that is
+displayed
+to people other than the caster, for example "SoAndSo smites evil".</td>
+      <td>
+      <blockquote>
+        <p>See <span class="named-wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/TalkTable?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: TalkTable"
+ onmouseover='window.status="Edit: TalkTable"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>the talk table
+description</u></span> to learn how to reference the custom tlk instead
+of dialog.tlk (HotU feature, 1.33? )<br>
+You can use the token &lt;CUSTOM0&gt; in the string that is referenced
+by this line to make the name of the creature using the spell appear:<br>
+"&lt;Custom0&gt; smites evil" would translate into "Big Troll smites
+evil".</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="HostileSetting"></a>HostileSetting</td>
+      <td>Should a NPC consider this an attack if they are affected by
+the spell?</td>
+      <td>
+      <blockquote>
+        <p>1 for yes<br>
+0 for no<br>
+This actually is used in the SignalEvent
+call. If it is 1, then it will be a hostile act when the target gets
+the event signaled to them.</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="FeatID"></a>FeatID</td>
+      <td>The ID of the feat this "spell" implements. There are a few
+feats
+that are activated like spells, and you can make your owns. Actually
+I'm pretty sure this reference is of no use to the engine, its the
+other way around that matters most (the reference from <span
+ class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/feat.2da?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: feat.2da"
+ onmouseover='window.status="Edit: feat.2da"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>feat.2da</u></span>
+to this 2da). However do put the correct one. It will makes things
+easier for you, and it could be usefull to get this data from the <span
+ class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/ImpactScript?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: ImpactScript"
+ onmouseover='window.status="Edit: ImpactScript"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>ImpactScript</u></span>
+(there is no function doing it for now, except for Get2daString, but it
+might change one day).</td>
+      <td>
+      <blockquote>
+        <p>Index of the feat in <span class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/feat.2da?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: feat.2da"
+ onmouseover='window.status="Edit: feat.2da"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>feat.2da</u></span>.
+You know what? It is actually the line number in the 2da that matters
+not the index written in the first column which might (but should not)
+be bogus. How extrordinary!</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Counter1"></a>Counter1</td>
+      <td>Reference to the first counterspell</td>
+      <td>
+      <blockquote>
+        <p>Index of the counterspell in this 2da... line number... bogus</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="Counter2"></a>Counter2</td>
+      <td>Reference to the second counterspell</td>
+      <td>
+      <blockquote>
+        <p>Index of the counterspell in this 2da... line number... bogus</p>
+      </blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="HasProjectile"></a>HasProjectile</td>
+      <td>HotU specific field, introduced to optimize performance.<br>
+Controls if a projectile information needs to be sent to each client
+that can see the spell being cast.</td>
+      <td>
+      <blockquote>
+        <p>You need to set this field to 1 if any of the following
+conditions is met:<br>
+        <br>
+        </p>
+        <blockquote>
+          <p><span class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/CastHandVisual?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: CastHandVisual"
+ onmouseover='window.status="Edit: CastHandVisual"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>CastHandVisual</u></span>
+is not empty OR<br>
+Proj is not empty OR<br>
+          <span class="wikiunknown"><a
+ href="http://ccg.dladventures.com/index.php/ProjModel?action=edit&amp;PHPSESSID=5366455ad657b9e7fa38ac6ab8cd5205"
+ title="Edit: ProjModel"
+ onmouseover='window.status="Edit: ProjModel"; return true;'
+ onmouseout="window.status='';return true;">?</a><u>ProjModel</u></span>
+is not empty<br>
+          <br>
+          </p>
+        </blockquote>
+        <p>In all other conditions this fields should be set to 0 to
+prevent the game from sending unneccessary packets to the clients.</p>
+      </blockquote>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div id="actionbar" class="toolbar">
+<hr class="printer" noshade="noshade">
+<p class="editdate">Last edited on November 25, 2003 1:45 pm.<!-- End actionbar -->
+<!-- RELATEDPAGES were here. --></p>
+</div>
+</body>
+</html>

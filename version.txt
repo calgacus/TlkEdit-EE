@@ -1,0 +1,188 @@
+Release 13c (2007-07-15)-----------------------
+    -updated to a recent swingx build
+    -now requires Java 6
+    -replaced janel launcher with launch4j
+tlk
+    -added filter function using regular expressions
+
+Release 13b (2007-01-14)-----------------------
+tlk/2da
+    -copy&paste StrRefs of selected tlk entries into a 2da table
+2da
+    -loading of special cell editors & renderers is now based on NWN version
+
+Release 13a (2006-12-13)-----------------------
+    -File version ( NWN1 or NWN2 ) can be selected in the open/save dialogs
+erf
+    -open & extract NWN2 mod & erf files, creating erf files is untested
+gff
+    -all .ifo and .bic files should work now
+     (error caused by CExoLocSubstrings with language id -1,
+      added as language 'GffToken' )
+    -open .ros files
+tlk
+    -display strrefs as hexadecimal values
+
+Release 13 (?)---------------------------
+    -(quick&dirty) fixes for NWN2 compatibility
+    -support for 2DA V2.b files (KOTOR 1&2)
+    -support for Vector type in gff files (KOTOR 1&2)
+
+Release 12c (2006-10-22)-----------------------
+    -fixed some memory issues
+gff
+    -empty lists were broken ( bad code found by EPOlson )
+
+Release 12b -----------------------------------
+2da
+    -fixed 'paste' action ( broken in R12 )
+
+Release 12 ------------------------------------
+common
+    -TlkEdit now requires Java 1.5 ( a.k.a Java 5 )
+    -uses 'swingx' swing extensions ( http://swingx.dev.java.net )
+    -Undo / Redo in TLK, GFF and 2DA editors
+    -Spell checking for TLK and GFF files
+    -added menu items for most functions
+    -editor toolbar is displayed in main window instead of editor panel
+    -key bindings can be altered by editing
+     the file "settings/keybindings.properties"
+    -included TlkEdit.exe launcher for windows
+    -Drag&Drop : open files by dragging them onto the editor toolbar
+    -file browser tree has been removed
+    -Tlk lookup is now an extra dialog window
+gff
+    -fixed a bug : data type CHAR was treated as unsigned value,
+    -fixed another bug : VOID fields read & written incorrectly
+    -editor control is now a tree table which should make editing simpler
+    -fixed another bug : .gui files can now be opened
+erf
+    -columns can be sorted by clicking on the column header
+     ( sort by resource name, type or size )
+    -description editor is only displayed for MOD an HAK files ( not for ERFs )
+    -type "sav" has been removed from the type selector ( .sav and .nwm files 
+     have the erf type MOD )
+tlk
+    -fix (Ornedan): position field accepts values in the user entry range
+
+Release 11 ------------------------------------
+common
+    - removed mnemonics for toolbar buttons with icons
+    - menu shortcuts should work on Mac OS
+    - improved readme.html ( marginally improved - wouldn't call it 'good' ;) )
+tlk & 2da editor
+    - added search and replace dialog
+tlk ( NwnLanguage )
+    - added support for Chinese, Japanese and Korean tlk files
+2da
+    - DEFAULT: field is now retained ( but there is no way to edit it the editor )
+gff ( NwnLanguage )
+    - support for CExoLocStrings in Chinese, Japanese or Korean
+
+Release 10a ------------------------------------
+common
+    - replaced icons with icons from the CrystalSVG icon set for KDE
+    - TlkEdit is now released under the GNU GPL
+tlk editor
+    - added command line option for overriding character encoding
+
+character encoding used by tlkedit can be set with -Dtlkedit.encoding=<encoding name> command line option ( hint: edit tlkedit.bat )
+e.g. "java  -Dtlkedit.encoding=cp1251 tlkedit.jar"
+for a complete list of encodings supported by java 1.4.2 see
+http://java.sun.com/j2se/1.4.2/docs/guide/intl/encoding.doc.html
+
+Release 10 -------------------------------------
+common
+    - changed modifier key for most hotkeys to ctrl ( so ctrl+s instead of alt+s will save the file etc. ), the alt+? key bindings still remain though
+tlk editor
+    - cells will be resized to display only one line after editing
+    - cell editors now respond properly to ESC ( abort edit ) and F2 ( start edit ) (table lost focus when pressing ESC)
+2da editor
+    - behaviour of cell editors changed ( see tlk editor )
+    - combobox editors are now editable ( i.e. can you can enter arbitrary values )
+erf editor
+    - new !
+patcher
+    - command line options are obsolete
+    - added 'user tlk' checkbox which will add 16777216 when computing new tlk references
+    - key files ( chitin.key etc. ) are detected automatically
+    - added readme : ReadmePatcherGui.html
+    - info about updated 2da files is written to out/patchinfo.txt
+    - updated for version 1.61
+
+TlkEdit now comes packaged as an executable jar file which will install the application.
+On Windows you should be able to run the jar file by double-clicking it or if double-clicking starts a zip utility, right-click the jar file and select "open with->javaw"
+in case that doesn't work either you need to launch it from the command line with :
+java -jar TlkEditInstallerR10.jar
+
+R9 --------------------------------------
+2da editor
+    - added button for toggling the 'user' flag on strrefs ( +-16777216 )
+    - WIP: cell editors for 2da tables configurable via xml file
+        - bitflag editor ( for TargetType & MetaMagic )
+        - combo box editors ( for selecting fixed values )
+        - mapped editors for displaying/selecting labels instead of true values ( e.g. {yes, no, -} instead of {1, 0, ****} )
+        - display of tooltips and description ( in html ) for selected column
+        ( only editor mode is for spells.2da, see meta/spells.meta.xml (incomplete) )
+tlk editor
+    - added button for switching between normal and user tlk line numbering
+    - 'diff' menu is now displayed on the main menubar
+    - can now choose a file to use for looking up user strrefs in 2da files
+        ( per default 1st tlk file is used for normal lookup, 2nd one is used for user strrefs )
+gff :
+    - fixed bug : GffContent barfed when reading CExoLocStrings with 2 or more substrings
+gff editor :
+    - senseless use of shiny icons
+    
+TlkEdit now comes packaged as an executable jar file which will install the application.
+On Windows you should be able to run the jar file by double-clicking it, if that doesn't work you need to launch it from the command line which is :
+java -jar TlkEditInstallerRx.jar
+
+R8 --------------------------------------
+gff editor
+    - it's new !
+tlk editor
+    - added internationalization support for TlkEdit panel ( only localization is en_GB )
+    - can now choose which tlk file is used for tlk lookup
+    - fixed some oddities with the cell editor, can now edit a cell without first double clicking it
+2da editor
+    - added 'pad' button for adding padding lines quickly
+patcher
+    - fixed bug ( linux only ) : patcher didn't compile scripts on linux
+    - patcher GUI rewritten
+    - GUI now displays the standard output and error streams in a gui window
+other
+    - replaced most button texts with icons
+    - added 'uninstall' utility for removing stored preferences
+
+R7 --------------------------------------
+tlk editor
+    - diff feature fixed
+    - removed the "diff->save patch" menu item and the "next/prev. modified lines" buttons
+    - tlk file memory leak fixed
+    - tlk editor now uses proper charset ( windows-1252 )
+    - "flags" field is set automatically ( can still be edited manually )
+editor
+    - warns about unsaved files on exit
+patcher
+    - now displays compiler errors
+    - fixed compiling scripts on windows ( using clcompile )
+other
+    - added patch : Dwarven Defender prestige class
+    - added bifextract.sh shell script for extracting files from bifs
+
+R6 --------------------------------------
+tlk editor
+    - allows editing of "sound length" and "flags" fields. ( see tlk specification at       http://nwn.bioware.com/developers/ )
+    - saving of files much faster now
+    - 'find' and 'find again' will now apropriately highlight text
+    - new "diff" feature for saving only the changes you made to the tlk file ( see readme.txt )
+      ( comparable to DialogTLK, allows import of .dtu files created by that program )
+    - BUG : new memory leak ( yay! ) sorry about that, but tlk content doesn't get garbage collected (my fault).
+      if you open more than 3 full size ( ca. 8MB ) tlk files the java vm will run out of memory.
+      ( if this troubles you, you can start java with  "java -XmxYYYM ..." to allow the vm to use up to YYY MB of memory,  default is 64MB )
+
+patcher
+    - added support for tlk diff files created with "save diff..." in the tlk editor ( files must be called diff.tlu )
+
+R5 ---------------------------------------

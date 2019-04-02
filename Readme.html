@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//w3c//dtd html 4.01 strict//en" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>TlkEdit readme</title>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=ISO-8859-15">
+  <meta name="GENERATOR" content="Quanta Plus">
+</head>
+<body style="font-family:sans-serif;line-height:120%;">
+    <h2>TlkEdit</h2>
+    <h4>by Jan Lapp</h4>
+<ul>
+  <li><a href="#credits">Credits</a></li>
+  <li><a href="#versionwoes">NWN1 vs. NWN2</a><br>
+  <li><a href="#running">Running TlkEdit</a><br>
+  </li>
+  <li><a href="#spellchecking">Spell Checking</a><br>
+  </li>
+  <li>Editing
+    <ul>
+      <li><a href="#keys">Key Bindings</a></li>
+      <li><a href="#2da">2DA Editing</a></li>
+      <li><a href="#tlk">TLK Editing</a></li>
+      <li><a href="#diff">TLK Diff Feature</a></li>
+      <li><a href="#lookup">TLK Lookup</a></li>
+      <li><a href="#gff">GFF Editing</a></li>
+      <li><a href="#erf">ERF Editing</a></li>
+    </ul>
+  </li>
+  <li><a href="#i18n">Internationalization</a></li>
+  <ul>
+    <li><a href="#enc">How to modify default char sets / encodings</a></li>
+  </ul>
+</ul>
+<a name="credits"></a>
+<h3>Credits</h3>
+TlkEdit wouldn't be the same without<br>
+<ul>
+  <li>The SwingX library, which can be found at <a
+ href="http://swingx.dev.java.net/">swingx.dev.java.net</a></li>
+  <li>JMySpell <a href="http://jmyspell.javahispano.net/">http://jmyspell.javahispano.net/</a><br>
+  </li>
+</ul>
+Other peoples' work included in this release :
+<br>
+<ul>
+  <li>TlkEdit.exe is a launch4j native java launcher, see <a
+ href="http://launch4j.sourceforge.net/">launch4j.sourceforge.net</a><br>
+  </li>
+  <li>The icons are part of the 'Nuvola' icon set, created by
+David Vignoni for KDE. See <a href="http://www.icon-king.com/">www.icon-king.com.</a></li>
+  <li>Patch version of dlpcpakv01 by Garad Moonbeam ( dragonlance races
+).</li>
+</ul>
+
+<h3><a name="versionwoes"></a>NWN1 vs NWN2</h3>
+The tlk and gff format for NWN1 and NWN2 is the same except for the
+string encoding used. That means that TlkEdit cannot distinguish between
+files for NWN1 or NWN2, but opening a NWN2 tlk file as NWN tlk file will
+display lots of garbled text. When launched with TlkEdit2.exe TlkEdit will
+use NWN2 mode by default. To open or save a file in NWN1 format you need to
+select the "All Files - NWN 1 mode" filter in the Open File / Save As dialog.
+The mode in which a file will be written is also displayed in the title bar.
+The default mode can be set with the <code>tlkedit.defaultNwnVersion</code>
+system property, i.e. add -Dtlkedit.defaultNwnVersion=NWN1 or
+-Dtlkedit.defaultNwnVersion=NWN2 to the tlkedit startup file ( either
+TlkEdit.l4j.ini/TlkEdit2.l4j.ini or tlkedit.sh )
+<h3><a name="running"></a>Running TlkEdit</h3>
+<h4>Windows</h4>
+TlkEdit.exe and TlkEdit2.exe are provided as .EXE launchers for TlkEdit, startup
+properties can be found in TlkEdit.l4j.ini/TlkEdit2.l4j.ini (plain text file)<br>
+<h4>Linux / OS-X<br>
+</h4>
+See tlkedit.sh<br>
+<h4>Server Mode<br>
+</h4>
+By default, TlkEdit will try to connect an already running instance so
+that there can only be one open TlkEdit instance containing all opened files.
+This uses TCP/IP so your firewall software might complain.
+<h4>Memory Usage<br>
+</h4>
+The maximum amount of memory java is allowed to use by default is 64MB.
+This can be overridden using the -Xmx switch. Both TlkEdit.lap and
+tlkedit.sh use this to set the maximum amount to 128MB. Memory usage (
+heap space ) is displayed in the TlkEdit status bar, so you can tell
+when you are running out of space ( some spell checking dictionaries
+are rather greedy&nbsp; - de_DE_comb needs about 45 MB )<br>
+<h3><a name="spellchecking"></a>Spell Checking</h3>
+Spell checking is provided by JMySpell, a Java implementation of the
+OpenOffice spell checker MySpell. Dictionaries can be downloaded from
+the <a href="http://wiki.services.openoffice.org/wiki/Dictionaries">OpenOffice
+web site</a> [http://wiki.services.openoffice.org/wiki/Dictionaries]. 
+The site offers dictionaries in both myspell and (newer) hunspell format.
+JMySpell will only work with myspell dictionaries.
+The dictionary zip file should be placed in the <code>dict</code>
+subdirectory of the TlkEdit dir. Afterwards you need to edit the file <a
+ href="dict/dictionaries.properties"><code>dict/dictionaries.properties</code></a><span
+ style="text-decoration: underline;"> </span>and set the correct
+dictionary file for your language code. If you want to use en_US.zip <a
+ href="http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries/en_US.zip">(download)</a>
+or de_DE_comb.zip <a
+ href="http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries/de_DE_comb.zip">(download)</a>,
+the properties are already set correctly.<span
+ style="font-weight: bold;"></span><br>
+<h3><a name="keys"></a>Key bindings</h3>
+Key bindings (hot keys) can be altered by editing the file
+<a href="settings/keybindings.properties"><code>keybinding.properties</code></a>
+in the <code>settings</code>
+directory. TlkEdit
+needs to be restarted for the changes to take effect. On OS-X TlkEdit
+should map 'control' to the 'command' key, but I couldn't test it.<br>
+<a name="tlk"></a>
+<h3>Editing tlk files</h3>
+Cell editing is stopped by clicking somewhere outside the cell with the
+mouse or preferably by pressing ALT+ENTER ( you can input line breaks
+by pressing enter ). <br>
+Unless you are editing a cell, cut/copy/paste work in entire table
+rows. This uses an internal clipboard, so that you can copy tlk entries
+to other tlk files opened in the editor, but not to other applications
+<h4>Search &amp; Replace</h4>
+Pressing Enter or clicking the "find" button will hide the search
+dialog, unless the "keep dialog" checkbox is selected. When "keep
+dialog" is checked you can step through the occurences of the search
+term with "find".<br>
+<h4>The "flags" field</h4>
+This field defines which of the 3 values ( String, Sound ResRef and
+Sound Length ) are actually used by NWN. If you enter a string but set
+the flags to 0, the string will NOT be used in game. The flags field is
+set automatically when you enter something in the "String", "Sound
+ResRef" or "Sound Length" field, so you can safely ignore it. <a
+ name="diff"></a>
+<h4>diff Menu</h4>
+The tlk editor keeps track of changes to the tlk table. Modified lines
+are marked with * . This mark can be set/removed manually with the "+*"
+/ "-*" buttons ( hotkeys Alt-m / Alt-u ).
+<ul>
+menu items <li>"save diff" : save all modified entries as diff file</li>
+  <li>"merge diff" : load a diff file. Entries in the diff file will
+replace existing entries and will be marked as modified</li>
+  <li>"merge dtu" : load a file created by DialogTLK</li>
+  <li>"discard diff info" : set all lines to unmodified ( this will NOT
+restore the original tlk entries )</li>
+  <li>"diff overview" : display a list with the numbers of all modified
+entries. Selecting a number in the list will display the entry in the
+editor</li>
+</ul>
+( note : there is no default extension for these diff files, i use .tlu
+) <a name="lookup"></a>
+<h4>tlk lookup</h4>
+Whenever you edit 2da or Gff files and select a cell with an integer
+value or a CExoLocString node TlkEdit will try to resolve that value as
+a StrRef and display the TLK String in the text area in the TLK lookup
+dialog. Of course you need to have at least one tlk file opened for
+this. If you have more than one tlk file opened in the editor you can
+select which one is used for tlk lookup by activating the tab and
+selecting the apropriate item from the <b>'tlk lookup'</b> menu. By
+default the first tlk file that's loaded will be used as default tlk
+table and the second will be used as user tlk table ( i.e. for StrRefs
+&gt;16777216 ). <a name="2da"></a>
+<h3>Editing 2da files</h3>
+Nothing much to say here ;) If you input strings that contain spaces
+the editor will try to add quotation marks as needed. The
+cut/copy/paste functions use the system clipboard, which means you can
+copy 2da lines into another application ( like excel ) and vice versa.
+Paste works only if the number of columns matches. <br>
+When entering StrRefs for custom content you might want to try the
+"Edit->Toggle User Flag on StrRef" menu item.
+<br/>
+The <b>'alter table'</b> menu item pops up a dialog that will allow
+you
+to add, remove (drop) or rename a table column <br/>
+<a name="gff"></a>
+<h3>Editing gff files</h3>
+cut/copy/paste works on entire subtrees, this uses an editor internal
+clipboard, so you can copy nodes to another gff file. <br>
+<b></b>The <span style="font-weight: bold;">'find'</span> function
+will not find text inside <code>void</code> fields and <span
+ style="font-weight: bold;">'replace'</span> can only be used on <code>CResRef,
+CExoStrings</code> and <code>CExoLocString</code> substrings.<br>
+By default, pressing the <code>TAB</code> key will expand / collapse a
+selected struct or list.<a name="erf"></a>
+<h3>Editing erf files</h3>
+Should be straightforward enough :) Careful when editing ResRefs though
+: if you rename a resource and another resource with the same name
+already exists it will be replaced ! <br>
+Selecting <b>edit resources</b> from the <b>erf</b> menu will open
+selected 2da or gff files for editing. The files will be extracted as
+temporary files and a new editor panel is added for each. Everytime you
+save one of that editor panels the whole erf file will be rewritten. <a
+ name="i18n"></a>
+<h3>Internationalization</h3>
+(todo) <a name="enc"></a>
+<h3>Encodings ( char sets )</h3>
+NWN identifies a TLK file's language by looking at the value of byte
+number 0x08 in the tlk file ( the byte following the file type +
+version string "TLK V3.0" ). This byte also determines the encoding of
+the file, i.e. the way all those bytes are converted into readable
+text. The language to encoding mappings used by TlkEdit are as follows
+:
+<table width="400">
+  <tbody>
+    <tr>
+      <td>code</td>
+      <td>language</td>
+      <td>encoding NWN 1</td>
+      <td>encoding NWN 2</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>English</td>
+      <td>CP1252</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>French</td>
+      <td>CP1252</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>German</td>
+      <td>CP1252</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Italian</td>
+      <td>CP1252</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Spanish</td>
+      <td>CP1252</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Polish</td>
+      <td>CP1250</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Unknown</td>
+      <td>Unused (CP1250)</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>128</td>
+      <td>Korean</td>
+      <td>MS949</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>129</td>
+      <td>Traditional Chinese</td>
+      <td>MS950</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>130</td>
+      <td>Simplified Chinese</td>
+      <td>MS936</td>
+      <td>UTF-8</td>
+    </tr>
+    <tr>
+      <td>131</td>
+      <td>Japanese</td>
+      <td>MS932</td>
+      <td>UTF-8</td>
+    </tr>
+  </tbody>
+</table>
+These values are used for tlk files and CExoLocStrings in gff files.
+The mapping used for languages 0-4 is correct as far as I can tell.
+However the encoding used can be modified with the <b>-Dtlkedit.charsetOverride</b>
+command line switch. Values are of the form
+<div>&lt;NWNVersion&gt;:&lt;code&gt;:&lt;encoding&gt;[;&lt;code&gt;:&lt;encoding&gt;]+
+</div>
+
+Launching TlkEdit with <br>
+<i>java -Dtlkedit.charsetOverride="NWN1:2:ISO-8859-1" -jar tlkedit.jar</i><br>
+would change the encoding used for German (2) NWN1 tlk files to ISO-8859-1.
+For NWN2 use "NWN2" as version string.
+The override parameters can also be added to the tlkedit.lap or tlkedit2.lap
+files which contain the startup configuration for TlkEdit.exe and TlkEdit2.exe.
+<br>
+The list of encodings supported by Java2 can be found in the
+documentation under "Guide to Features"-&gt;"Basic Features,
+Internationalization"-&gt;<a
+ href="http://java.sun.com/j2se/1.4.2/docs/guide/intl/encoding.doc.html">"Supported
+Encodings"</a>
+</body>
+</html>

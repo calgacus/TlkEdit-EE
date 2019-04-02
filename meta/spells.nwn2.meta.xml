@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<tablemetadata tablename="spells" version="1.30" complete="false">
+    <!--
+    <column label="School" position="4">
+    <tooltip>spell school</tooltip>
+    <editor use="true" class="org.jl.nwn.twoDa.cellEditors.MappedCellEditor" editable="true">
+    <renderer class="org.jl.nwn.twoDa.cellEditors.MappedTableCellRenderer">
+    <entry value="G" label="General" />
+    <entry value="A" label="Abjuration" />
+    <entry value="C" label="Conjuration" />
+    <entry value="D" label="Divination" />
+    <entry value="E" label="Enchantment" />
+    <entry value="V" label="Evocation" />
+    <entry value="I" label="Illusion" />
+    <entry value="N" label="Necromancy" />
+    <entry value="T" label="Transmutation" />
+    <entry value="****" label="****" />
+    </renderer>
+    </editor>
+    </column>
+    
+    <column label="Range" position="5">
+    <tooltip>spell range</tooltip>
+    <editor class="org.jl.nwn.twoDa.cellEditors.MappedCellEditor" editable="true">
+    <renderer class="org.jl.nwn.twoDa.cellEditors.MappedTableCellRenderer"  >
+    <entry value="P" label="Personal" />
+    <entry value="T" label="Touch" />
+    <entry value="S" label="Short" />
+    <entry value="M" label="Medium" />
+    <entry value="L" label="Long" />
+    <entry value="****" label="****" />
+    </renderer>
+    </editor>
+    </column>
+    
+    <column label="VS" position="6">
+    <tooltip>spell components</tooltip>
+    <editor class="org.jl.nwn.twoDa.cellEditors.ComboBoxCellEditor"  editable="true">
+    <entry value="s" />
+    <entry value="v" />
+    <entry value="vs" />
+    <entry value="-" />
+    <entry value="****" />
+    </editor>
+    </column>
+    -->
+    <column label="MetaMagic" position="7">
+        <tooltip>meta magic allowed for this spell</tooltip>
+        <editor use="true" class="org.jl.nwn.twoDa.cellEditors.BitFlagEditor">
+            <flag hexvalue="1" label="Empower" />
+            <flag hexvalue="2" label="Extend" />
+            <flag hexvalue="4" label="Maximize" />
+            <flag hexvalue="8" label="Quicken" />
+            <flag hexvalue="10" label="Silent" />
+            <flag hexvalue="20" label="Still" />
+            <!--            
+            int METAMAGIC_PERSISTENT              = 64;
+            int    METAMAGIC_PERMANENT               = 128;
+            int    METAMAGIC_INVOC_DRAINING_BLAST    = 256; //100
+            int    METAMAGIC_INVOC_ELDRITCH_SPEAR    = 512; //200
+            int    METAMAGIC_INVOC_FRIGHTFUL_BLAST   = 1024; //400
+            int    METAMAGIC_INVOC_HIDEOUS_BLOW      = 2048; //800
+            int    METAMAGIC_INVOC_BESHADOWED_BLAST  = 4096; //1000
+            int    METAMAGIC_INVOC_BRIMSTONE_BLAST   = 8192;
+            int    METAMAGIC_INVOC_ELDRITCH_CHAIN    = 16384;
+            int    METAMAGIC_INVOC_HELLRIME_BLAST    = 32768;
+            int    METAMAGIC_INVOC_BEWITCHING_BLAST  = 65536; //10000
+            int    METAMAGIC_INVOC_ELDRITCH_CONE     = 131072;
+            int    METAMAGIC_INVOC_NOXIOUS_BLAST     = 262144;
+            int    METAMAGIC_INVOC_VITRIOLIC_BLAST   = 524288;
+            int    METAMAGIC_INVOC_ELDRITCH_DOOM     = 1048576; //100000
+            int    METAMAGIC_INVOC_UTTERDARK_BLAST   = 2097152;
+            -->
+            <flag hexvalue="40" label="Persistent" />
+            <flag hexvalue="80" label="Permanent" />
+            
+            <flag hexvalue="100" label="(I) Draining Blast" />
+            <flag hexvalue="200" label="(I) Eldritch Spear" />
+            <flag hexvalue="400" label="(I) Frightful Blast" />
+            <flag hexvalue="800" label="(I) Hideous Blow" />
+            <flag hexvalue="1000" label="(I) Beshadowed Blast" />
+            <flag hexvalue="2000" label="(I) Brimstone Blast" />
+            <flag hexvalue="4000" label="(I) Eldritch Chain" />
+            <flag hexvalue="8000" label="(I) Hellrime Blast" />
+            <flag hexvalue="10000" label="(I) Bewitching Blast" />
+            <flag hexvalue="20000" label="(I) Eldritch Cone" />
+            <flag hexvalue="40000" label="(I) Noxious Blast" />
+            <flag hexvalue="80000" label="(I) Vitriolic Blast" />
+            <flag hexvalue="100000" label="(I) Eldritch Doom" />
+            <flag hexvalue="200000" label="(I) Utterdark Blast" />
+        </editor>
+    </column>
+    
+    <column label="TargetType" position="8">
+        <tooltip>target types allowed for this spell</tooltip>
+        <editor class="org.jl.nwn.twoDa.cellEditors.BitFlagEditor">
+            <flag hexvalue="1" label="Self" />
+            <flag hexvalue="2" label="Creature" />
+            <flag hexvalue="4" label="Area/Ground" />
+            <flag hexvalue="8" label="Items" />
+            <flag hexvalue="10" label="Doors" />
+            <flag hexvalue="20" label="Placeables" />
+            <flag hexvalue="40" label="Trap triggers" />
+        </editor>
+    </column>
+    
+</tablemetadata>

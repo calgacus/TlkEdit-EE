@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<tablemetadata tablename="baseitems" version="1.30" complete="false">
+
+	<column label="EquipableSlots" position="8">
+		<tooltip>inventory slots this item can be equiped in</tooltip>
+		<description><html><body>for weapons check '(Creature) Weapon' and then
+		'Right Hand' for a two-handed weapon or
+		'Right Hand' and 'Left Hand' for a single handed weapon</body></html>
+		</description>
+		<editor class="org.jl.nwn.twoDa.cellEditors.BitFlagEditor">
+			<flag hexvalue="00001" label="Helmet" />
+			<flag hexvalue="00002" label="Armor" />
+			<flag hexvalue="00004" label="Boots" />
+			<flag hexvalue="00008" label="Arms" />
+			<flag hexvalue="00010" label="Right Hand" />
+			<flag hexvalue="00020" label="Left Hand" />
+			<flag hexvalue="00040" label="Cloak" />
+			<flag hexvalue="00080" label="Left Ring" />
+			<flag hexvalue="00100" label="Right Ring" />
+			<flag hexvalue="00200" label="Neck" />
+			<flag hexvalue="00400" label="Belt" />
+			<flag hexvalue="00800" label="Arrow" />
+			<flag hexvalue="01000" label="Bullet" />
+			<flag hexvalue="02000" label="Bolt" />
+			<flag hexvalue="1C000" label="(Creature) Weapon" />
+			<flag hexvalue="20000" label="Creature Armor" />
+		</editor>
+	</column>
+
+</tablemetadata>

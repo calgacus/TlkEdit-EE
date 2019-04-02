@@ -1,0 +1,46 @@
+# icons are part of the Nuvola icon set for KDE
+# by David Vignoni, see http://www.icon-king.com/
+# Nuvola is released under the GPL license
+# editor
+./22x22/actions/fileopen.png
+./22x22/actions/fileclose.png
+./22x22/actions/filesave.png
+./22x22/actions/filesaveas.png
+./22x22/actions/redo.png
+./22x22/actions/undo.png
+
+./22x22/actions/find.png
+./22x22/actions/next.png
+./22x22/actions/editcopy.png
+./22x22/actions/editcut.png
+./22x22/actions/editpaste.png
+
+# gffedit
+./16x16/filesystems/folder_green.png
+./16x16/filesystems/folder_yellow.png
+./16x16/filesystems/folder_blue.png
+./16x16/mimetypes/applix.png
+./16x16/mimetypes/binary.png
+./16x16/mimetypes/info.png
+./22x22/actions/window_new.png
+./22x22/actions/folder_new.png
+
+# file view
+./22x22/actions/gohome.png
+./22x22/actions/up.png
+./22x22/actions/view_icon.png
+./22x22/actions/folder_new.png
+./22x22/actions/view_detailed.png
+./16x16/filesystems/folder_blue.png
+./16x16/mimetypes/font_truetype.png
+./16x16/mimetypes/source_moc.png
+./16x16/mimetypes/spreadsheet.png
+./16x16/mimetypes/tar.png
+./16x16/mimetypes/mime.png
+./16x16/filesystems/file_broken.png
+./16x16/devices/3floppy_unmount.png
+
+#erf editor
+./22x22/actions/edit_add.png
+./22x22/actions/edit_remove.png
+./22x22/apps/ark.png

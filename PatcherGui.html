@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <style type="text/css">
+<!--
+dt{
+color : red;
+font-size : larger;
+}
+//-->
+  </style>
+  <title>NWN 2da Patcher GUI settings</title>
+</head>
+<body>
+<h2><img src="patcher.png" title="" alt="patcher gui screenshot"
+ style="width: 583px; height: 538px;"><br>
+</h2>
+The configuration shown above will add the Dwarven Defender prestige
+class to the prestige classes from the Stratovarius PRC package ( you
+can find it on nwvault ). This might not be useful since HotU already
+has the Dwarven Defender, but it works - so what ;)<br>
+<br>
+<h2>build panel</h2>
+use this panel to build a patch. you need to enter the settings only
+once - they will be stored in your user preferences ( registry ).<br>
+if all goes well the build process will create the following files in
+the patch directory :<br>
+<ul>
+  <li>&lt;patch dir&gt;</li>
+  <ul>
+    <li>out - directory containing the generated 2da files plus
+compiled scripts and script sources</li>
+    <ul>
+      <li>tlk - directory containg the new tlk file</li>
+      <li>hak - directory containing generated hak pak(s)</li>
+    </ul>
+  </ul>
+</ul>
+note that the settings in the 'Misc. settings' may change the output
+location of tlk and hak files<br>
+<br>
+<h3>Repository Settings</h3>
+<div style="margin-left: 40px;">
+<div style="text-align: justify;">These settings control how the
+patcher will retrieve source 2da files. For every 2da file contained in
+a patch the patcher will search for a file with the same name and
+create a new 2da file from the source and patch 2da lines. The search
+order is hak files first, then the NWN override dir followed by the bif
+files ( that's the same search order as nwn uses itself ). While most
+settings are optional you won't get useful results without using bif
+data.<br>
+</div>
+<dl>
+  <dt>NWN dir [ required ]</dt>
+  <dd>select Neverwinter Nights directory here</dd>
+  <dt>use haks [ optional ]</dt>
+  <dd>you can add one or more haks to this list</dd>
+  <dt>use NWN override dir [ optional ]</dt>
+  <dd>caution : if you use the
+override dir for testing patches this settings will cause problems</dd>
+  <dt>use nwn bif data [ optional ]</dt>
+  <dd>*.key files are detected automatically. in case it doesn't work
+you can enter a list of filenames in the textfield, e.g. 'xp1.key
+patch.key chitin.key'</dd>
+</dl>
+</div>
+<h3>Build Settings</h3>
+<div style="margin-left: 40px; text-align: justify;">
+<dl>
+  <dt>source TLK file [ required ]<br>
+  </dt>
+  <dd>( since this option is required a base tlk file containing only
+entry 0:"Bad Strref" is provided for convenience (see
+patches/usertlkbase.tlk) )<br>
+if <span style="color: rgb(255, 0, 0);">user
+tlk</span> is selected the patcher will add 16777216 to all
+relative tlk references in the 2da patch (this is probably what you
+want for user talk tables)</dd>
+  <dd><br>
+  </dd>
+  <dt>use patcher override dir [ optional ]</dt>
+  <dd>2da files in this directory take
+precedence over those in the repository; can't remember why i added
+this - probably useless</dd>
+  <dt>build patch [ required ]</dt>
+  <dd>select a directory containing a patch
+here</dd>
+</dl>
+</div>
+<h3>Misc. settings</h3>
+<div style="margin-left: 40px;">convenience settings<br>
+</div>
+<div style="margin-left: 40px;">
+<dl>
+  <dt>move output tlk file [ optional ]</dt>
+  <dd>move new tlk file to this location</dd>
+  <dt>repackage first source hak [ optional ]</dt>
+  <dd>create a new hak pak containing the files from the 1st source hak
+plus all newly generated files. the hak pak has the same name as the
+1st source hak. </dd>
+  <dt>move hak to nwn hak dir [ optional ]</dt>
+  <dd>move generated hak file to the nwn hak directory, file name is
+optional (works with or without repackage option)<br>
+  </dd>
+</dl>
+</div>
+<h2>join panel</h2>
+use this panel to merge multiple patches. simply add patch dirs to the
+list. <span style="color: rgb(255, 0, 0);">output dir</span> must be a
+new, empty directory<br>
+<br>
+<div style="margin-left: 40px;"><br>
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<launch4jConfig>
+  <headerType>gui</headerType>
+  <jar>tlkedit.jar</jar>
+  <dontWrapJar>true</dontWrapJar>
+  <outfile>TlkEdit.exe</outfile>
+  <errTitle>TlkEdit</errTitle>
+  <chdir>.</chdir>
+  <customProcName>true</customProcName>
+  <icon>package_editors.ico</icon>
+  <jre>
+    <minVersion>1.5.0</minVersion>
+  </jre>
+</launch4jConfig>

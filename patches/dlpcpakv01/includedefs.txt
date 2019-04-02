@@ -1,0 +1,2 @@
+spells.2da       : customspellconst.nss, 1;
+racialtypes.2da  : racialtypesconst.nss, 20;

@@ -1,0 +1,9 @@
+2DA V2.0
+
+     LABEL                            ReqType ReqParam1          ReqParam2 
+0    Base_Attack                      BAB     7                  ****      
+1    ScriptVar                        VAR     ewld_allowDefender 0         
+2    Dodge                            FEAT    10                 ****      
+3    GreatFortitude_insteadOfEndurane FEAT    14                 ****      
+4    Toughness                        FEAT    40                 ****      
+5    Dwarf                            RACE    0                  ****      
