@@ -44,6 +44,8 @@ public class Dictionaries {
             System.out.println(url);
             try {
                 long time = System.currentTimeMillis();
+                System.out.println("loading dictionary for dictname : " + dictName);
+                System.out.println("loading dictionary for url : " + url.toString());
                 File zip = new File(url.toURI());
                 //File userDict = new File(zip.getParentFile(), lang.getName()+".userDict");
                 //userDict.createNewFile();
