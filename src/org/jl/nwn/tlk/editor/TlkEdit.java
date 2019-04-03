@@ -173,7 +173,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     private File tlkFile;
 
     protected JXTable tlkTable;
-    protected TableColumn col_StrRef = new TableColumn(0, 80);
+    protected TableColumn col_StrRef = new TableColumn(0, 120);
     protected TableColumn col_SoundResRef = new TableColumn(1, 150);
     protected TableColumn col_String = new TableColumn(2, 500);
     protected TableColumn col_SoundLength = new TableColumn(3, 100);
