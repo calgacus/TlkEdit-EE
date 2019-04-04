@@ -80,6 +80,7 @@
             <metainf dir="${src}/META-INF" includes="services/**"/>
             <fileset refid="resources" />
         </jar>
+
     </target>
     
     <target name="run" depends="compile">
