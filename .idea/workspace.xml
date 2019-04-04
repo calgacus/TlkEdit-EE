@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dd7dd653-a281-4a81-83e2-f38895c48471" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/ant.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dict/de_DE_neu.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dict/dictionaries.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/resource/dict/dictionaries.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dict/en_US.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dict/es_ES.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dict/fr_FR.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dict/it_IT.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dict/pl_PL.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/build.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java" afterDir="false" />
-    </list>
+    <list default="true" id="dd7dd653-a281-4a81-83e2-f38895c48471" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,7 +14,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/resource/dict/dictionaries.properties">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="285">
@@ -62,10 +50,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
+            <state relative-caret-position="476">
               <caret line="52" column="70" selection-start-line="52" selection-start-column="70" selection-end-line="52" selection-end-column="70" />
             </state>
           </provider>
@@ -117,24 +105,6 @@
             <path>
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
               <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="resource" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="resource" type="462c0819:PsiDirectoryNode" />
-              <item name="dict" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
@@ -228,7 +198,7 @@
     <frame x="15" y="30" width="1890" height="960" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27002165" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27002165" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -246,7 +216,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32874015" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.328341" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Messages" order="10" visible="true" weight="0.328341" />
+      <window_info anchor="bottom" id="Messages" order="10" visible="true" weight="0.328341" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" visible="true" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -400,17 +370,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="52" column="70" selection-start-line="52" selection-start-column="70" selection-end-line="52" selection-end-column="70" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/resource/dict/dictionaries.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="52" column="70" selection-start-line="52" selection-start-column="70" selection-end-line="52" selection-end-column="70" />
         </state>
       </provider>
     </entry>
