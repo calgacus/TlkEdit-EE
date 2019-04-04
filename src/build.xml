@@ -10,7 +10,7 @@
     <!--    <property name="base" location=".."/> -->
     <property name="lib" location="lib"/>
     <property name="build" location="build" description="output class files to this dir" />
-    <property name="version" value="R13d"/>
+    <property name="version" value="R14"/>
     
     <!--    <property name="izpack.home" value="/opt/izpackcvs/izpack-src" /> -->
     <!--    <property name="jarbundlerjar" value="/windows/d/java/jarbundler-1.4/bin/jarbundler-1.4.jar" /> -->

@@ -26,9 +26,19 @@ public class Dictionaries {
     static{
         try{
             InputStream is = Dictionaries.class.getClassLoader().getResourceAsStream(
-                    "dict/dictionaries.properties");
-            if ( is != null )
-                props.load(is);            
+                    "/dict/dictionaries.properties");
+            if ( is != null ) {
+                props.load(is);
+                System.out.println("found props 1 " );
+            }else {
+                InputStream is2 = Dictionaries.class.getClassLoader().getResourceAsStream(
+                        "resource/dict/dictionaries.properties");
+                if ( is2 != null ) {
+                    props.load(is2);
+                    System.out.println("found props 2 " );
+                }
+
+            }
         } catch (IOException ioex){
             ioex.printStackTrace();
         }
@@ -61,6 +71,11 @@ public class Dictionaries {
                 e.printStackTrace();
                 dicts.put( lang, null );
             }
+        }else{
+            System.out.println("dictname is null " );
+            System.out.println("lang is  " + lang.getLocale().getLanguage());
+            System.out.println("props " + props.toString() );
+
         }
         return null;
     }
