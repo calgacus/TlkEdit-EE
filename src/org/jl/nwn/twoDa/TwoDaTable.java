@@ -240,7 +240,7 @@ public class TwoDaTable {
             throw new IllegalArgumentException("no such column : " + col);
         v = mk2daString(v);
         ((String[]) rows.get(row))[col] = v;
-        // change column width if neccessary
+        // change column width if necessary
         columnWidth[col] =
                 (v.length() + 1 > columnWidth[col])
                 ? v.length() + 1
@@ -255,8 +255,9 @@ public class TwoDaTable {
     }
     
     // recompute width of all columns, only used in constructor
-    // setValueAt and insertRow update column width as neccessary
+    // setValueAt and insertRow update column width as necessary
     protected void updateColumnWidth() {
+        System.out.println("updateColumnWidth : " +  columnWidth.length);
         int[] maxWidth = new int[columnWidth.length];
         for (int i = 0; i < maxWidth.length; i++)
             maxWidth[i] = columnHeaders[i].length();

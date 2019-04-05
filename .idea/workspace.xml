@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dd7dd653-a281-4a81-83e2-f38895c48471" name="Default Changelist" comment="" />
+    <list default="true" id="dd7dd653-a281-4a81-83e2-f38895c48471" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/TlkEdit/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/TlkEdit/build.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tlkedit.jar" beforeDir="false" afterPath="$PROJECT_DIR$/tlkedit.jar" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,15 +22,6 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dict/dictionaries.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="24" selection-start-line="24" selection-end-line="24" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/jl/swing/table/StringPopupCellEditor.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="105">
@@ -35,7 +33,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/build.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="737">
+            <state relative-caret-position="1500">
               <caret line="100" column="76" selection-start-line="100" selection-start-column="76" selection-end-line="100" selection-end-column="76" />
             </state>
           </provider>
@@ -44,20 +42,75 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2010">
+            <state relative-caret-position="60">
               <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="603">
-              <caret line="61" column="32" lean-forward="true" selection-start-line="61" selection-start-column="32" selection-end-line="61" selection-end-column="32" />
+            <state relative-caret-position="363">
+              <caret line="45" column="67" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="67" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="412">
+              <caret line="365" column="39" selection-start-line="365" selection-start-column="39" selection-end-line="365" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1789">
+              <caret line="242" column="43" selection-start-line="242" selection-start-column="43" selection-end-line="242" selection-end-column="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="365">
+              <caret line="511" column="46" lean-forward="true" selection-start-line="511" selection-start-column="46" selection-end-line="511" selection-end-column="46" />
               <folding>
-                <element signature="e#485#515#0" expanded="true" />
+                <element signature="e#23337#23338#0" expanded="true" />
+                <element signature="e#23400#23401#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkModel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="27" column="4" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkModelMutator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/EditorTlkEntry.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="495">
+              <caret line="34" column="60" selection-start-line="34" selection-start-column="52" selection-end-line="34" selection-end-column="60" />
             </state>
           </provider>
         </entry>
@@ -69,6 +122,9 @@
       <find>NWN 1</find>
       <find>Row No</find>
       <find>Strref</find>
+      <find>wid</find>
+      <find>no r</find>
+      <find>unlock</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\corym\dev\TlkEdit</dir>
@@ -80,12 +136,14 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/Version.java" />
         <option value="$PROJECT_DIR$/dict/dictionaries.properties" />
         <option value="$PROJECT_DIR$/src/build.xml" />
         <option value="$PROJECT_DIR$/src/resource/dict/dictionaries.properties" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" />
       </list>
     </option>
   </component>
@@ -100,8 +158,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -154,6 +210,21 @@
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
               <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="jl" type="462c0819:PsiDirectoryNode" />
+              <item name="nwn" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="jl" type="462c0819:PsiDirectoryNode" />
+              <item name="nwn" type="462c0819:PsiDirectoryNode" />
+              <item name="twoDa" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="resource" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -164,6 +235,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -247,8 +320,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="15" y="86" width="1890" height="904" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27002165" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -257,18 +331,18 @@
       <window_info id="Learn" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32874015" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.3996063" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32881773" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32874015" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.13054188" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32874015" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.328341" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3275862" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.328341" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.3275862" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info active="true" anchor="right" id="Ant Build" order="1" visible="true" weight="0.25" />
+      <window_info anchor="right" id="Ant Build" order="1" visible="true" weight="0.103354976" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Maven" order="4" />
@@ -321,6 +395,20 @@
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
     <buildFile url="file://$PROJECT_DIR$/src/build.xml">
+      <targetFilters>
+        <filter targetName="init" isVisible="false" />
+        <filter targetName="compile" isVisible="true" />
+        <filter targetName="targaspi" isVisible="false" />
+        <filter targetName="jar" isVisible="true" />
+        <filter targetName="run" isVisible="false" />
+        <filter targetName="srcpackage" isVisible="true" />
+        <filter targetName="zip" isVisible="false" />
+        <filter targetName="launcher" isVisible="true" />
+        <filter targetName="consoleLauncher" isVisible="true" />
+        <filter targetName="tar" isVisible="false" />
+        <filter targetName="javadoc" isVisible="true" />
+        <filter targetName="clean" isVisible="true" />
+      </targetFilters>
       <expanded value="true" />
     </buildFile>
   </component>
@@ -339,13 +427,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="1047" column="67" selection-start-line="1047" selection-start-column="67" selection-end-line="1047" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/org/jl/swing/CheckBoxAction.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -356,13 +437,6 @@
     <entry file="file://$PROJECT_DIR$/settings/keybindings.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-197" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7772">
-          <caret line="1214" column="5" selection-start-line="1214" selection-start-column="5" selection-end-line="1214" selection-end-column="5" />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.tlkedit.log.1">
@@ -399,27 +473,6 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/outx/production/TlkEdit/build.xml" />
-    <entry file="file://$PROJECT_DIR$/src/org/jl/swing/table/StringPopupCellEditor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2010">
-          <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="737">
-          <caret line="100" column="76" selection-start-line="100" selection-start-column="76" selection-end-line="100" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dict/dictionaries.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -427,12 +480,79 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/swing/table/StringPopupCellEditor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1500">
+          <caret line="100" column="76" selection-start-line="100" selection-start-column="76" selection-end-line="100" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="27" column="4" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkModelMutator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/EditorTlkEntry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="34" column="60" selection-start-line="34" selection-start-column="52" selection-end-line="34" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="412">
+          <caret line="365" column="39" selection-start-line="365" selection-start-column="39" selection-end-line="365" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="603">
-          <caret line="61" column="32" lean-forward="true" selection-start-line="61" selection-start-column="32" selection-end-line="61" selection-end-column="32" />
+        <state relative-caret-position="363">
+          <caret line="45" column="67" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/uidefaults.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1789">
+          <caret line="242" column="43" selection-start-line="242" selection-start-column="43" selection-end-line="242" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="365">
+          <caret line="511" column="46" lean-forward="true" selection-start-line="511" selection-start-column="46" selection-end-line="511" selection-end-column="46" />
           <folding>
-            <element signature="e#485#515#0" expanded="true" />
+            <element signature="e#23337#23338#0" expanded="true" />
+            <element signature="e#23400#23401#0" expanded="true" />
           </folding>
         </state>
       </provider>

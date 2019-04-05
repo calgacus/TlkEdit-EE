@@ -347,7 +347,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         view.setModel(headerModel);
         // set width for header columns
         for (int i = 0; i < headerColumns.length; i++) {
-            view.getColumnModel().getColumn(i).setMinWidth(table.getColumnModel().getColumn(headerColumns[i]).getWidth());
+            view.getColumnModel().getColumn(i).setPreferredWidth(table.getColumnModel().getColumn(headerColumns[i]).getWidth());
         }
         view.setSelectionModel(table.getSelectionModel());
         view.setEnabled(false);
@@ -408,7 +408,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         if (table != null && model != null) {
             int charWidth = getFontMetrics(getFont()).charWidth('a');
             for (int i = 0, n = table.getColumnModel().getColumnCount(); i < n; i++) {
-                table.getColumnModel().getColumn(i).setMinWidth((model.getColumnWidth(i) + 5) * charWidth);
+                //table.getColumnModel().getColumn(i).setMinWidth((model.getColumnWidth(i) + 5) * charWidth);
                 table.getColumnModel().getColumn(i).setPreferredWidth((model.getColumnWidth(i) + 5) * charWidth);
             }
         }
@@ -446,6 +446,12 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 unlockColumns();
             }
         };
+        Action resize = new AbstractAction("resize columns") {
+
+            public void actionPerformed(ActionEvent e) {
+                resizeColumns();
+            }
+        };
         JRadioButton ru = new JRadioButton(unlock);
         ru.setHorizontalTextPosition(JRadioButton.LEADING);
         JRadioButton r0 = new JRadioButton(lock0);
@@ -469,18 +475,24 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         viewMenu.setText("View");
         viewMenu.setMnemonic(KeyEvent.VK_V);
         int acc = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
+
+
         JMenuItem noRowHeader = viewMenu.add(unlock);
         noRowHeader.setText("no row header");
         noRowHeader.setMnemonic(KeyEvent.VK_N);
         noRowHeader.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, acc));
+
         JMenuItem rowHeader0 = viewMenu.add(lock0);
         rowHeader0.setText("column 1 as row header");
         rowHeader0.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, acc));
         rowHeader0.setMnemonic(KeyEvent.VK_1);
+
         JMenuItem rowHeader1 = viewMenu.add(lock1);
         rowHeader1.setText("column 1 & 2 as row header");
         rowHeader1.setMnemonic(KeyEvent.VK_2);
         rowHeader1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, acc));
+
 
         Action lockLabel = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -494,6 +506,11 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         rowHeaderLabel.setText("number & label as row header");
         rowHeaderLabel.setMnemonic(KeyEvent.VK_L);
         rowHeaderLabel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, acc));
+
+        JMenuItem resizeHeaders = viewMenu.add(resize);
+        resizeHeaders.setText("resize columns");
+        resizeHeaders.setMnemonic(KeyEvent.VK_R);
+        resizeHeaders.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, acc));
 
         Actions.configureActionUI(actCut, uid, "2daedit.cut");
         Actions.configureActionUI(actCopyRows, uid, "2daedit.copy");
