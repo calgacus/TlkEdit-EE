@@ -350,7 +350,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         //tlkTable.putClientProperty("JTable.autoStartsEdit", new Boolean(false));
         tlkTable.setAutoCreateColumnsFromModel(false);
         tlkTable.setModel(model);
-        tlkTable.getTableHeader().setReorderingAllowed(true);
+        tlkTable.getTableHeader().setReorderingAllowed(false);
         tlkTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
         col_StrRef.setMaxWidth(120);
