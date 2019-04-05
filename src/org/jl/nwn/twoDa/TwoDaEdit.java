@@ -214,6 +214,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 ioex.printStackTrace();
             }
             System.out.println("twodaedit 216 "+((HTMLDocument) text.getDocument()).getBase());
+            System.out.println("twodaedit 217 "+  text.getDocument().toString());
             add(sPane, BorderLayout.CENTER);
 
             ListSelectionListener lsl = new ListSelectionListener() {
