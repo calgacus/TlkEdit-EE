@@ -213,7 +213,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 System.err.println("could not open help file");
                 ioex.printStackTrace();
             }
-            System.out.println(((HTMLDocument) text.getDocument()).getBase());
+            System.out.println("twodaedit 216 "+((HTMLDocument) text.getDocument()).getBase());
             add(sPane, BorderLayout.CENTER);
 
             ListSelectionListener lsl = new ListSelectionListener() {

@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dd7dd653-a281-4a81-83e2-f38895c48471" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -87,7 +86,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/bif/BifRepository.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="218">
@@ -96,11 +95,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/gff/GffContent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="542">
-              <caret line="676" column="37" selection-start-line="676" selection-start-column="37" selection-end-line="676" selection-end-column="37" />
+            <state relative-caret-position="85">
+              <caret line="57" column="34" lean-forward="true" selection-start-line="57" selection-start-column="34" selection-end-line="57" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -144,7 +143,6 @@
         <option value="$PROJECT_DIR$/src/org/jl/nwn/Version.java" />
         <option value="$PROJECT_DIR$/dict/dictionaries.properties" />
         <option value="$PROJECT_DIR$/src/resource/dict/dictionaries.properties" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" />
         <option value="$PROJECT_DIR$/src/build.xml" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" />
@@ -162,6 +160,7 @@
         <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly_1.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffReader.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" />
       </list>
     </option>
   </component>
@@ -613,6 +612,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="218">
           <caret line="192" column="6" selection-start-line="192" selection-start-column="6" selection-end-line="192" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/gff/GffContent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="57" column="34" lean-forward="true" selection-start-line="57" selection-start-column="34" selection-end-line="57" selection-end-column="34" />
         </state>
       </provider>
     </entry>
