@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dd7dd653-a281-4a81-83e2-f38895c48471" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/build.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tlkedit.jar" beforeDir="false" afterPath="$PROJECT_DIR$/tlkedit-ee.jar" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,11 +28,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/build.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1500">
-              <caret line="100" column="76" selection-start-line="100" selection-start-column="76" selection-end-line="100" selection-end-column="76" />
+            <state relative-caret-position="120">
+              <caret line="81" column="14" lean-forward="true" selection-start-line="81" selection-start-column="14" selection-end-line="81" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -70,11 +73,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="132">
-              <caret line="402" column="26" lean-forward="true" selection-start-line="402" selection-start-column="26" selection-end-line="402" selection-end-column="26" />
+              <caret line="402" column="26" selection-start-line="402" selection-start-column="26" selection-end-line="402" selection-end-column="26" />
               <folding>
                 <element signature="e#23337#23338#0" expanded="true" />
                 <element signature="e#23400#23401#0" expanded="true" />
@@ -120,9 +123,10 @@
       <find>wid</find>
       <find>no r</find>
       <find>unlock</find>
-      <find>noRowHeader</find>
       <find>true</find>
       <find>reordering</find>
+      <find>noRowHeader</find>
+      <find>tlkedit.j</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\corym\dev\TlkEdit</dir>
@@ -137,12 +141,12 @@
       <list>
         <option value="$PROJECT_DIR$/src/org/jl/nwn/Version.java" />
         <option value="$PROJECT_DIR$/dict/dictionaries.properties" />
-        <option value="$PROJECT_DIR$/src/build.xml" />
         <option value="$PROJECT_DIR$/src/resource/dict/dictionaries.properties" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java" />
+        <option value="$PROJECT_DIR$/src/build.xml" />
       </list>
     </option>
   </component>
@@ -179,46 +183,6 @@
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
               <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="l4j" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="META-INF" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="META-INF" type="462c0819:PsiDirectoryNode" />
-              <item name="services" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jl" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jl" type="462c0819:PsiDirectoryNode" />
-              <item name="nwn" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jl" type="462c0819:PsiDirectoryNode" />
-              <item name="nwn" type="462c0819:PsiDirectoryNode" />
-              <item name="twoDa" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
@@ -321,7 +285,7 @@
     <frame x="15" y="86" width="1890" height="904" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -330,7 +294,7 @@
       <window_info id="Learn" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32881773" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32881773" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32874015" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.13054188" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -339,9 +303,9 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32874015" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.3275862" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.3275862" />
+      <window_info active="true" anchor="bottom" id="Messages" order="10" visible="true" weight="0.3275862" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" visible="true" weight="0.103354976" />
+      <window_info anchor="right" id="Ant Build" order="1" visible="true" weight="0.16558442" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Maven" order="4" />
@@ -486,13 +450,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1500">
-          <caret line="100" column="76" selection-start-line="100" selection-start-column="76" selection-end-line="100" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -548,11 +505,18 @@
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="132">
-          <caret line="402" column="26" lean-forward="true" selection-start-line="402" selection-start-column="26" selection-end-line="402" selection-end-column="26" />
+          <caret line="402" column="26" selection-start-line="402" selection-start-column="26" selection-end-line="402" selection-end-column="26" />
           <folding>
             <element signature="e#23337#23338#0" expanded="true" />
             <element signature="e#23400#23401#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="81" column="14" lean-forward="true" selection-start-line="81" selection-start-column="14" selection-end-line="81" selection-end-column="14" />
         </state>
       </provider>
     </entry>
