@@ -20,9 +20,9 @@ class Messages {
 		Locale defaultLocale = Locale.getDefault();
 		System.out.println( "locale is : " + defaultLocale );
 		try{
-		RESOURCE_BUNDLE =
-			ResourceBundle.getBundle(BUNDLE_NAME);
+			RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 		} catch ( MissingResourceException mre ){
+			System.out.println( "Message.java MissingResourceException  : " + mre.getLocalizedMessage() );
 		}
 	}
 

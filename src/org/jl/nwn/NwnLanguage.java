@@ -198,7 +198,7 @@ public enum NwnLanguage{
         }
         
         for (NwnLanguage l : values() ){
-            System.out.printf("%s : %s[%s], %s, %s:%s\n", l.name(), l.version.name(), l.getCode(), l.getName(), l.getLocale(), l.getLocale().getDisplayLanguage());
+            System.out.printf("NwnLanguage %s : %s[%s], %s, %s:%s\n", l.name(), l.version.name(), l.getCode(), l.getName(), l.getLocale(), l.getLocale().getDisplayLanguage());
         }
         
     }

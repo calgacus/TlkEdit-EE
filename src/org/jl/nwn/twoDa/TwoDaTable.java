@@ -257,7 +257,7 @@ public class TwoDaTable {
     // recompute width of all columns, only used in constructor
     // setValueAt and insertRow update column width as necessary
     protected void updateColumnWidth() {
-        System.out.println("updateColumnWidth : " +  columnWidth.length);
+        //System.out.println("twodatable.java updateColumnWidth : " +  columnWidth.length);
         int[] maxWidth = new int[columnWidth.length];
         for (int i = 0; i < maxWidth.length; i++)
             maxWidth[i] = columnHeaders[i].length();

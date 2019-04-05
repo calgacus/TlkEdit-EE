@@ -655,8 +655,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         try {
             tlkContent = new DefaultTlkReader(nwnVersion).load(f, pm);
             this.nwnVersion = nwnVersion;
-            System.out.println("tlk file language is : " + tlkContent.getLanguage());
-            System.out.println("used encoding : " + tlkContent.getLanguage().getEncoding());
+            System.out.println("TlkEdit load: tlk file language is : " + tlkContent.getLanguage());
+            System.out.println("TlkEdit load: tlkcontent encoding : " + tlkContent.getLanguage().getEncoding());
             //selectLanguageButton(tlkContent.getLanguage());
             model.setTlkContent(tlkContent);
             undoManager.discardAllEdits();

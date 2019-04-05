@@ -63,17 +63,17 @@ public class TwoDaMetaData{
     public static TwoDaMetaData forTableName( String tablename, Version v ){
         String res = metaDataPrefix +
                 tablename + "." + v.toString() +".meta.xml";
-        res = res.toLowerCase();
+        res = res.toLowerCase().replaceAll("\\s","");
         Object o = metaDataMap.get( res );
         if ( o != null && o != NOMETADATA ){
             TwoDaMetaData meta = ( TwoDaMetaData ) ((WeakReference)o).get();
             if ( meta != null )
                 return meta;
         }
-        System.out.println( "trying to load : " + res );
-        URL url = TwoDaMetaData.class.getClassLoader()
-        .getResource(res);
+
+        URL url = TwoDaMetaData.class.getClassLoader().getResource(res);
         if ( url == null ){
+            System.out.println( "failed to load : " + res );
             return null;
         }
         TwoDaMetaData data = readMetaData( url );
