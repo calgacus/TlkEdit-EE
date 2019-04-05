@@ -98,8 +98,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="217" selection-start-line="217" selection-end-line="217" />
+            <state relative-caret-position="344">
+              <caret line="216" column="64" selection-start-line="216" selection-start-column="64" selection-end-line="216" selection-end-column="64" />
             </state>
           </provider>
         </entry>
@@ -316,7 +316,7 @@
     <frame x="15" y="86" width="1890" height="904" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -325,7 +325,7 @@
       <window_info id="Learn" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32881773" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32881773" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32874015" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.13054188" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -616,8 +616,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="217" selection-start-line="217" selection-end-line="217" />
+        <state relative-caret-position="344">
+          <caret line="216" column="64" selection-start-line="216" selection-start-column="64" selection-end-line="216" selection-end-column="64" />
         </state>
       </provider>
     </entry>
