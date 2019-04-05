@@ -17,6 +17,7 @@
 
 # Package Files #
 *.jar
+!tlkedit.jar
 *.war
 *.nar
 *.ear
