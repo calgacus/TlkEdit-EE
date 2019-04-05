@@ -169,8 +169,6 @@ public abstract class GffField<Data extends Object> implements Cloneable{
         if ( getType() == Gff.VECTOR ){
             float[] v1 = (float[]) getData();
             float[] v2 = (float[]) f.getData();
-            //System.out.printf("%d, %d, %d\n", Float.floatToRawIntBits(v1[0]),Float.floatToRawIntBits(v1[1]),Float.floatToRawIntBits(v1[2]));
-            //System.out.printf("%d, %d, %d\n", Float.floatToRawIntBits(v2[0]),Float.floatToRawIntBits(v2[1]),Float.floatToRawIntBits(v2[2]));
             if (!Arrays.equals(v1, v2)){
                 System.out.printf("different data : \n%s\n%s\n", this, f );
                 return false;

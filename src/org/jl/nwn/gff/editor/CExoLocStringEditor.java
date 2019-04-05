@@ -213,7 +213,7 @@ public class CExoLocStringEditor extends JPanel {
             } catch ( NumberFormatException nfe ){
                 strRefField.setText( Integer.toString( locString.getStrRef() ) );
             }
-            //System.out.println( strRefField.getText() );
+
             locString.setLabel( labelField.getText() );
             fireStateChanged();
         }

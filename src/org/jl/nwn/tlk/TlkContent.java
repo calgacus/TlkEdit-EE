@@ -120,7 +120,7 @@ public class TlkContent {
             int[] stringSizes = new int[ tlkEntries.size() ];
             fc.position( start );
             // write strings & store byte[] sizes
-            //System.out.println("writing strings ...");
+
             for (int i = 0; i < tlkEntries.size(); i++) {
                 entry = (TlkEntry) tlkEntries.get(i);
                 byte[] bytes = entry.getString().getBytes(
@@ -130,7 +130,7 @@ public class TlkContent {
             }
             
             // write index entries
-            //System.out.println("writing index ...");
+
             out.flush();
             fc.position( headerSize );
             for (int i = 0; i < tlkEntries.size(); i++) {
@@ -413,7 +413,7 @@ public class TlkContent {
         int pos = 0;
         for ( int i = 0; i < entries; i++ ){
             pos = dis.readInt();
-            //System.out.println( "." );
+
             TlkEntry e = new TlkEntry( dis );
             set( pos,  e );
             positions[i] = pos;

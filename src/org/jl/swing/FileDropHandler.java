@@ -29,7 +29,7 @@ public abstract class FileDropHandler extends TransferHandler{
     }
     
     @Override public boolean canImport(JComponent comp, DataFlavor[] transferFlavors){
-        //System.out.println("canImport");
+
         for ( DataFlavor d : transferFlavors ){
             //System.out.println(d);
             if ( d.equals(DataFlavor.javaFileListFlavor) || d.equals(uriListFlavor) )

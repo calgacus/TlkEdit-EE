@@ -146,7 +146,6 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent arg0) {
         if (arg0.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
-            //System.out.printf("%s (%s)\n", arg0.getNewValue(), arg0.getNewValue().getClass());
             final File f = (File) arg0.getNewValue();
             if (f != null) {
                 rview.getViewComponent().setEnabled(false);

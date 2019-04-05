@@ -87,7 +87,7 @@ public class TwoDaTable {
                  - no good for String constants using whitespace ( like "hello world" ),
                  */
             columnHeaders = line.split("\\s+");
-            //for ( int i = 0; i < columnHeaders.length; i++ ) System.out.println( "<" + columnHeaders[i] +">" );
+
             columnWidth = new int[this.columnHeaders.length];
             while ((line = in.readLine()) != null) {
                 if (line.trim().length() == 0)
@@ -257,7 +257,7 @@ public class TwoDaTable {
     // recompute width of all columns, only used in constructor
     // setValueAt and insertRow update column width as necessary
     protected void updateColumnWidth() {
-        //System.out.println("twodatable.java updateColumnWidth : " +  columnWidth.length);
+
         int[] maxWidth = new int[columnWidth.length];
         for (int i = 0; i < maxWidth.length; i++)
             maxWidth[i] = columnHeaders[i].length();
@@ -454,10 +454,7 @@ public class TwoDaTable {
     public void append(TwoDaTable t, boolean number) {
         int startSize = getRowCount();
         boolean canAppend = (getColumnCount() == t.getColumnCount());
-                /*
-                if (!canAppend)
-                        System.out.println("--- append by attribute name ---");
-                 */
+
         for (int i = 0; i < t.rows.size(); i++) {
             if (canAppend)
                 appendRow((String[]) ((String[]) t.rows.get(i)).clone());
@@ -474,17 +471,11 @@ public class TwoDaTable {
     }
     
     public static void main(String args[]) throws Exception {
-        //final File daFile = new File( args[0] );
+
         final File daFile = new File(args[0]);
         final TwoDaTable t = new TwoDaTable(daFile);
         t.write(System.out);
-                /*
-                System.out.print( daFile.getName().toLowerCase() + " : " );
-                String header[] = t.columnHeaders;
-                System.out.print( "\" \" " );
-                for ( int i = 1; i < header.length; i++ ) System.out.print( header[i] +" " );
-                System.out.println();
-                 */
+
     }
     
 }

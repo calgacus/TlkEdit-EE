@@ -67,12 +67,9 @@ public class GffContent{
         Iterator it = c.getTopLevelStruct().getDFIterator();
         while ( it.hasNext() ){
             GffField f = (GffField) it.next();
-            System.out.println( f.getLabel() + "(" + f.getTypeName() + ")" );
+            System.out.println("gffcontent.java "+ f.getLabel() + "(" + f.getTypeName() + ")" );
         }
-        //GffContent c2 = new GffContent( new File( args[1]) );
-        //c.compare(c2);
-        //System.out.println( c.getTopLevelStruct() );
-        //if ( args.length > 1 )	c.write( new File( args[1] ) );
+
     }
     
 }

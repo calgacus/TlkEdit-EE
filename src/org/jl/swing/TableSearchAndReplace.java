@@ -63,7 +63,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         for (int i = 0; i < table.getColumnModel().getColumnCount(); i++ ){
             TableColumn tc = table.getColumnModel().getColumn(i);
             if ( tc.getCellEditor() instanceof TextCellEditor ){
-                System.out.println("adding DocumentListener");
+
                 ((TextCellEditor)tc.getCellEditor()).getTextComponent().getDocument().addDocumentListener(docChangeListener);
             }
         }
@@ -77,14 +77,14 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
     }
     
     public void init(){
-        //System.out.println( "TableSearchAndReplace.init()" );
+
         if ( table.getSelectedRow() != -1 ) row = table.getSelectedRow();
         if ( table.getSelectedColumn() !=-1 )
             col = table.getSelectedColumn();
         startRow = row;
         startCol = col;
         super.init();
-        //System.out.println( row + ", " + col );
+
     }
     
         /* (non-Javadoc)

@@ -146,7 +146,7 @@ public class Gff {
                     BigInteger r = value.add( INT64_SIGNBIT1 );
                     r = r.setBit( 63 );
                     bytes = r.toByteArray();
-                    //System.out.println( "byte size : " + bytes.length + ", highest byte = " + bytes[0] );
+
                 } else {
                     bytes = value.toByteArray();
                 }

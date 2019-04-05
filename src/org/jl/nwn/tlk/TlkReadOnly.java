@@ -51,19 +51,19 @@ public class TlkReadOnly {
         header.position(8);
         lang = NwnLanguage.find( nwnVersion, header.getInt() );
         size = header.getInt();
-        //System.out.println("size : "+size);
+
         int stringDataStart = header.getInt();
-        //System.out.println("allocating index");
+
         //index = ByteBuffer.allocate( 40 * size );
         index = fc.map( FileChannel.MapMode.READ_ONLY, 20, 40*size );
         index.order( ByteOrder.LITTLE_ENDIAN );
         //fc.read(index, 20);
-        //System.out.println("mapping file");
+
         stringBytes = fc.map(
                 FileChannel.MapMode.READ_ONLY,
                 stringDataStart,
                 fc.size() - stringDataStart );
-        //System.out.println("creating cache");
+
         cache = new LinkedHashMap<Integer, String>(cacheSize, 0.75f, true){
             protected boolean removeEldestEntry(
                     java.util.Map.Entry<Integer, String> eldest) {
@@ -83,7 +83,7 @@ public class TlkReadOnly {
     }
     
     public String getString( int strRef ){
-        //System.out.println("getString : " + strRef);
+
         String s;
         synchronized( cache ){
             s = cache.get(strRef);
@@ -96,8 +96,7 @@ public class TlkReadOnly {
             offset = index.getInt();
             length = index.getInt();
         }
-        //System.out.println("offset : "+offset);
-        //System.out.println("length : "+length);
+
         byte[] bytes = new byte[length];
         synchronized( stringBytes ){
             stringBytes.position(offset);
@@ -127,9 +126,10 @@ public class TlkReadOnly {
         long start = System.currentTimeMillis();
         TlkReadOnly tlk = new TlkReadOnly( f, 1000, Version.getDefaultVersion() );
         
-        for ( int i = 1; i < args.length; i++ )
-            System.out.println("tlkreadonly 131 "+tlk.getString(Integer.parseInt(args[i])));
-        //System.out.printf("time : %dms", System.currentTimeMillis()-start);
+        for ( int i = 1; i < args.length; i++ ) {
+            System.out.println("tlkreadonly 131 " + tlk.getString(Integer.parseInt(args[i])));
+        }
+
     }
     
 }

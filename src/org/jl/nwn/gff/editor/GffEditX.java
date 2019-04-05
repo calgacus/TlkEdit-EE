@@ -195,7 +195,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         protected Transferable makeTransferable( final GffField field ){
             return new Transferable(){
                 public Object getTransferData( DataFlavor df ){
-                    //System.out.println( "getTransferData : " + df  );
+
                     if ( df.equals(flavorXml) ){
                         try{
                             final PipedInputStream pin = new PipedInputStream();
@@ -261,7 +261,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             if ( selectionPath == null )
                 return false;
             DataFlavor[] dfs = t.getTransferDataFlavors();
-            //System.out.println(Arrays.asList(dfs));
+
             if ( canImport(treeTable,dfs) ){
                 try{
                     GffField f = (GffField) t.getTransferData(flavorGffObject);
@@ -457,7 +457,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         MappedCellEditor.KeyFunction getType = new MappedCellEditor.KeyFunction(){
             @Override public Object computeKey(Object value, int row, int col){
                 Byte b = ((GffField)treeTable.getPathForRow(row).getLastPathComponent()).getType();
-                // System.out.println(b);
+
                 return b;
             }
         };
@@ -547,7 +547,6 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         treeTable.setSurrendersFocusOnKeystroke(true);
         //model.addTreeModelListener(tml);
         treeTable.setTreeTableModel(model);
-        //System.out.println("model index column 0 : " + c0.getModelIndex());
         final GffTreeCellRenderer treeRenderer = new GffTreeCellRenderer(model);
         
         treeTable.addHighlighter(HighlighterFactory.createAlternateStriping());
@@ -980,7 +979,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         }
         
         @Override public String modelObject2String(Object value, int row, int col) {
-            //System.out.println(value.getClass());
+
             String retValue;
             Object data;
             if (value instanceof GffField){

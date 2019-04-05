@@ -213,8 +213,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 System.err.println("could not open help file");
                 ioex.printStackTrace();
             }
-            System.out.println("twodaedit 216 "+((HTMLDocument) text.getDocument()).getBase());
-            System.out.println("twodaedit 217 "+  text.getText());
+
             add(sPane, BorderLayout.CENTER);
 
             ListSelectionListener lsl = new ListSelectionListener() {
@@ -222,7 +221,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 public void valueChanged(ListSelectionEvent e) {
                     int c = table.getSelectedColumn();
                     if (!e.getValueIsAdjusting() && c != -1) {
-                        //System.out.println( metaData.getHelpfile() );
+
                         if (metaData.getHelpfile() != null) {
                             try {
                                 text.setPage(new URL(metaData.getHelpfile(), "#" + table.getColumnName(table.getSelectedColumn())));
@@ -248,7 +247,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     
     public void load(File f, Version v) throws IOException {
         //putClientProperty(resources, new TreeMap());
-        //System.out.println("2daEdit " + v);
+
         TwoDaTable twoDa = new TwoDaTable(f);
         twoDa.updateColumnWidth();
         file = f;
@@ -696,7 +695,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         String label = model.getColumnName(columnNumber);
         TwoDaMetaData.ColumnMetaData cMeta = metaData.get(label);
         if (cMeta != null) {
-            //System.out.println( label );
+
             TableColumn column = table.getColumnModel().getColumn(columnNumber);
             // if ( cMeta.renderer != null ) column.setCellRenderer( cMeta.renderer );
             boolean useEditor = true;
@@ -811,8 +810,6 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                     try {
                         String ins = (String) trans.getTransferData(
                             DataFlavor.stringFlavor);
-                        //System.out.println("paste : " +ins);
-                        //String ins = ( String ) trans.getTransferData( new DataFlavor( String.class, "text/tab-separated-values" ) );
                         String[] lines = ins.split("\\r?\\n");
                         String[][] newRows = new String[lines.length][];
                         for (int i = 0; i < lines.length; i++) {
@@ -861,13 +858,10 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                         row[i] = value;
                         sb.append(value).append('\t');
                     }
-                    //sb.append( '\n' );
+
                     sb.append(lineSeparator);
                     rowBuffer.add(row);
                 }
-                //System.out.println("copy : " + sb);
-                //DataFlavor tsvFlavor = new DataFlavor("text/tab-separated-values;class=java.lang.String", "tab separated values");
-                //System.out.println("repr. class : " + tsvFlavor.getRepresentationClass().getName());
                 final String transfer = sb.toString();
                 Transferable trans = new Transferable() {
 

@@ -80,7 +80,7 @@ public class GffSpellChecker {
                         WordTokenizer.INSERT_CHARS) ;
             }
             model.setValueAt(sb.toString(), substring, 2);
-            //System.out.println("replace : " + currentWord + ", " + newWord );
+
         }
         
     }

@@ -51,7 +51,7 @@ public class TlkReadOnly_1 {
         header.getShort(); // ???
         lang = NwnLanguage.GERMAN;
         size = header.getInt();
-        //System.out.println("size : "+size);
+
         int stringDataOffset = header.getInt();
 
         index = fc.map( FileChannel.MapMode.READ_ONLY, 0x24, 0x1A*size );
@@ -69,7 +69,7 @@ public class TlkReadOnly_1 {
     }
     
     public String getString( int strRef ){
-        //System.out.println("getString : " + strRef);
+
         String s;
         s = cache.get(strRef);
         if ( s != null )
@@ -77,8 +77,7 @@ public class TlkReadOnly_1 {
         index.position( (strRef * 0x1A) );
         int offset = index.getInt();
         int length = index.getInt();
-        //System.out.println("offset : "+offset);
-        //System.out.println("length : "+length);
+
         stringBytes.position(offset);
         byte[] bytes = new byte[length];
         stringBytes.get(bytes);
@@ -103,9 +102,10 @@ public class TlkReadOnly_1 {
         long start = System.currentTimeMillis();
         TlkReadOnly_1 tlk = new TlkReadOnly_1( f, 1000 );
         
-        for ( int i = 1; i < args.length; i++ )
-            System.out.println("tlkreadonly 107 "+tlk.getString(Integer.parseInt(args[i])));
-        //System.out.printf("time : %dms\n", System.currentTimeMillis()-start);
+        for ( int i = 1; i < args.length; i++ ) {
+            System.out.println("tlkreadonly 107 " + tlk.getString(Integer.parseInt(args[i])));
+        }
+
     }
     
 }

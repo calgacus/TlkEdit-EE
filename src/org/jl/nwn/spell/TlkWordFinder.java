@@ -26,9 +26,9 @@ public class TlkWordFinder extends CharSequenceWordFinder{
         String s = String.valueOf(model.getValueAt(pos, 2));
         sb.replace(0, sb.length(), s);
         getTokenizer().setCharSequence(sb);        
-        //updateCharSequence(0, sb.length(), WordTokenizer.CHANGE_SEQUENCE);
+
         init();
-        //System.out.println(getTokenizer().getCharSequence());
+
     }
     
     @Override public void replace(String newWord, Word currentWord){

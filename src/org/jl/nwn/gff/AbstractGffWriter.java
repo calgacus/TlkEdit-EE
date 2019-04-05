@@ -348,8 +348,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             int type = fieldType(f);
             if ( Gff.isComplexType(type) &&
                     type != Gff.LIST && type != Gff.STRUCT ){
-                //System.out.println( "offset " + offset );
-                //System.out.println( "writing " + f );
+
                 switch (type){
                     case 6 : //DWORD64
                     case 7 : { data = intFieldData(f, type); break; } //INT64

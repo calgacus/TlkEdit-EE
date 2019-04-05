@@ -73,7 +73,7 @@ public class TwoDaMetaData{
 
         URL url = TwoDaMetaData.class.getClassLoader().getResource(res);
         if ( url == null ){
-            System.out.println( "failed to load : " + res );
+            System.out.println( "twodametadata.java failed to load : " + res );
             return null;
         }
         TwoDaMetaData data = readMetaData( url );
@@ -89,7 +89,6 @@ public class TwoDaMetaData{
         TwoDaMetaData data = new TwoDaMetaData();
         try{
             InputStream is = new BufferedInputStream( url.openStream() );
-            //System.out.println("reading metadata for table : " + tablename);
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse( is );
             NodeList helpfileElements = doc.getElementsByTagName( "helpfile" );
             if ( helpfileElements.getLength() > 0 ){
@@ -100,28 +99,27 @@ public class TwoDaMetaData{
             NodeList columnEntries = doc.getElementsByTagName( "column" );
             for ( int i = 0; i < columnEntries.getLength(); i++ ){
                 Element columnNode = (Element) columnEntries.item(i);
-                //System.out.println( columnNode );
                 ColumnMetaData cMeta = new ColumnMetaData();
                 String columnLabel = columnNode.getAttributes().getNamedItem( "label" ).getNodeValue();
                 
                 String pos = columnNode.getAttributes().getNamedItem( "position" ).getNodeValue();
                 if ( pos == null ){
-                    System.out.println( "missing 'position' attribute in column element " + columnLabel );
+                    System.out.println( "twodametadata.java missing 'position' attribute in column element " + columnLabel );
                     continue;
                 }
                 cMeta.position = Integer.parseInt( pos );
                 
-                //TableColumn tableColumn = table.getColumnModel().getColumn( c );
+
                 NodeList list = columnNode.getElementsByTagName( "tooltip" );
                 if ( list.getLength() > 0 ){
                     list.item(0).normalize();
                     cMeta.tooltip = list.item(0).getFirstChild().getTextContent();//getNodeValue();
-                    //System.out.println( cMeta.tooltip );
+
                 }
                 list =  columnNode.getElementsByTagName( "description" );
                 if ( list.getLength() > 0 ){
                     cMeta.description = list.item(0).getFirstChild().getTextContent();//getNodeValue();
-                    //System.out.println( cMeta.description );
+
                 }
                 list =  columnNode.getElementsByTagName( "editor" );
                 if ( list.getLength() > 0 ){

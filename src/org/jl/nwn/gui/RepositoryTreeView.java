@@ -192,7 +192,7 @@ public class RepositoryTreeView {
         }
         
         @Override protected List<ResourceID> createList(){
-            //System.out.println(getPresentationName() + " init");
+
             ResourceID from = new ResourceID("", type);
             ResourceID to = new ResourceID("", (short)(type+1));
             SortedSet<ResourceID> ss = ids.subSet(from, to);

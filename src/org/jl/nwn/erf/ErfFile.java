@@ -169,8 +169,7 @@ public class ErfFile extends AbstractRepository{
         buildYear = readIntLE( raf );
         buildDay = readIntLE( raf );
         descriptionStrRef = readIntLE( raf );
-        //System.out.println( "File : " + file + " ("+type+"), created : " + (buildYear+1900) + " day "+ buildDay );
-        
+
         // read localized strings
         description = new GffCExoLocString( "erf_desc" );
         description.setStrRef( descriptionStrRef );
@@ -189,7 +188,7 @@ public class ErfFile extends AbstractRepository{
             NwnLanguage lang = NwnLanguage.find( nwnVersion, languageCode );
             String s = new String(
                     buf,0,stringSize,lang.getEncoding() );
-            //System.out.println(lang + ":" + s);
+
             description.addSubstring(
                     new CExoLocSubString( s, lang, gender ) );
         }
@@ -199,8 +198,6 @@ public class ErfFile extends AbstractRepository{
         mbb.order( ByteOrder.LITTLE_ENDIAN );
         mbb.position( 0 );
         int rlOffset = offsetToResourceList - offsetToKeyList;
-        //System.out.println( offsetToKeyList + "+" + (entryCount*24) + "=" + (offsetToKeyList+entryCount*24) );
-        //System.out.println( offsetToResourceList );
         int resrefsize = ResRefUtil.resRefSize(nwnVersion);
         for ( int i = 0; i < entryCount; i++ ){
             mbb.position( i * (resrefsize+8) );
@@ -212,7 +209,6 @@ public class ErfFile extends AbstractRepository{
             int resourceOffset = mbb.getInt();
             int resourceSize = mbb.getInt();
             resources.put( new ResourceID( filename, type ), new ResourceListEntry( resourceOffset, resourceSize ) );
-            //System.out.println( filename + ", " + type + " : " + resourceOffset + "+" + resourceSize );
         }
     }
     
@@ -626,9 +622,9 @@ public class ErfFile extends AbstractRepository{
             b.putInt(datasize - 4);
             b.putInt(cels.getStrRef());
             b.putInt(cels.getSubstringCount());
-            //System.out.println( "writing " + getSubstringCount() + " substrings" );
+
             for (int i = 0; i < cels.getSubstringCount(); i++) {
-                //System.out.println( (getSubstring(i).language.getCode() * 2) + getSubstring(i).gender );
+
                 int languageId = 0;
                 switch (nwnVersion) {
                     case NWN1 : {
@@ -643,11 +639,11 @@ public class ErfFile extends AbstractRepository{
                     }
                 }
                 b.putInt( languageId );
-                //System.out.println( getSubstring(i).string.length() );
+
                 byte[] stringBytes = cels.getSubstring(i).string.getBytes(
                         cels.getSubstring(i).language.getEncoding());
                 b.putInt(stringBytes.length);
-                //System.out.println( getSubstring(i).string );
+
                 b.put( stringBytes );
             }
             return ret;
@@ -658,7 +654,7 @@ public class ErfFile extends AbstractRepository{
     
     public static void main( String[] args ) throws Exception{
         if ( args.length < 2 ){
-            System.out.println( "extract, create or list hak file\n(-c|-x|-l) <hak file> <dir>" );
+            System.out.println( "erffile.java extract, create or list hak file\n(-c|-x|-l) <hak file> <dir>" );
             return;
         }
         File f = new File( args[1] );

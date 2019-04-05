@@ -36,7 +36,6 @@ public class Handler extends URLStreamHandler{
         }
         
         public void connect() throws java.io.IOException {
-            //System.out.println("connect : " + getURL());
             String erf = getURL().getPath();
             File erfFile = new File( erf );
             if ( !erfFile.exists() )

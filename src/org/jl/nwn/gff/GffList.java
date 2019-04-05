@@ -29,7 +29,6 @@ public class GffList extends GffField implements Iterable<GffStruct>{
     }
     
     public void add( int pos, GffStruct s ){
-        //System.out.println( "adding to list " + label + ", pos " + pos + " : " + s.label );
         structs.add( pos, s );
         s.parent = this;
     }

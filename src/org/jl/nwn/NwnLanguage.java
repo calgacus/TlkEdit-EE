@@ -174,7 +174,7 @@ public enum NwnLanguage{
         for (NwnLanguage l : WITCHER_LANGUAGES )
             encodings.put( l, "UTF-8" );
         
-        //System.out.println(encodings);
+
         
         String enc = null;
         if ( ( enc = System.getProperty( "tlkedit.charsetOverride" )) != null ){
@@ -186,7 +186,7 @@ public enum NwnLanguage{
                     NwnLanguage l = find( v, Integer.parseInt(triple[1]) );
                     String encoding = triple[2];
                     encodings.put(l, encoding);
-                    System.out.printf("encoding for %s (%s) set to %s\n",
+                    System.out.printf("nwnlanguage.java encoding for %s (%s) set to %s\n",
                             l.getName(), v, encoding);
                 }
             } catch ( Throwable t ){

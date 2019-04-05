@@ -116,7 +116,7 @@ public class DefaultGffWriter extends AbstractGffWriter<GffField, GffStruct, Gff
         DefaultGffWriter writer = new DefaultGffWriter(Version.getDefaultVersion());
         List<File> errors = new LinkedList<File>();
         for ( String filename : args ){
-            //System.out.println(filename);
+
             File file = new File(filename);
             GffContent c = reader.load( file );
             File tmp = File.createTempFile(file.getName(), "gffstresstest");
@@ -128,11 +128,11 @@ public class DefaultGffWriter extends AbstractGffWriter<GffField, GffStruct, Gff
             boolean equal = c.getTopLevelStruct().equalsGff(c2.getTopLevelStruct());
             if ( !equal )
                 errors.add(file);
-            System.out.printf( "%s %b\n", file, equal );
+            System.out.printf( "DefaultGFFWriter.java %s %b\n", file, equal );
         }
         long endTime = System.currentTimeMillis();
-        System.out.printf("files processed : %d, total size : %d bytes, time : %d s\n", args.length, totalSize, (endTime-startTime)/1000);
-        System.out.printf( "%d errors : %s\n", errors.size(), errors );
+        System.out.printf("DefaultGFFWriter.java files processed : %d, total size : %d bytes, time : %d s\n", args.length, totalSize, (endTime-startTime)/1000);
+        System.out.printf("DefaultGFFWriter.java %d errors : %s\n", errors.size(), errors );
     }
     
 }

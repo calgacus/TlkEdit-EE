@@ -2,7 +2,34 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dd7dd653-a281-4a81-83e2-f38895c48471" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/bif/BifFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/bif/BifFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/erf/Handler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/erf/Handler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/AbstractGffReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/AbstractGffReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/AbstractGffWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/AbstractGffWriter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffWriter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/Gff.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/Gff.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/Gff2Xml.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/Gff2Xml.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffContent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffField.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffField.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffStruct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffStruct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/CExoLocStringEditor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/CExoLocStringEditor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffEditX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffEditX.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffSpellChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffSpellChecker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryFCAccessory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryFCAccessory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryTreeView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryTreeView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/spell/TlkWordFinder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/spell/TlkWordFinder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkContent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly_1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly_1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/BmuPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/BmuPlayer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaMetaData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaMetaData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/swing/FileDropHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/swing/FileDropHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/swing/TableSearchAndReplace.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/swing/TableSearchAndReplace.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,76 +44,6 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/meta/spells.2da.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-472" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/meta/spells.nwn1.meta.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="750">
-              <caret line="50" column="17" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="488">
-              <caret line="49" column="97" selection-start-line="49" selection-start-column="97" selection-end-line="49" selection-end-column="97" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaMetaData.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-148">
-              <caret line="128" column="41" selection-start-line="128" selection-start-column="41" selection-end-line="128" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="592">
-              <caret line="281" column="28" selection-start-line="281" selection-start-column="28" selection-end-line="281" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/Messages.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="24" column="30" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffEditX.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="257">
-              <caret line="227" column="56" selection-start-line="227" selection-start-column="56" selection-end-line="227" selection-end-column="56" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/bif/BifRepository.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="192" column="6" selection-start-line="192" selection-start-column="6" selection-end-line="192" selection-end-column="6" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/gff/GffContent.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="85">
@@ -95,11 +52,71 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="216" column="64" selection-start-line="216" selection-start-column="64" selection-end-line="216" selection-end-column="64" />
+            <state relative-caret-position="233">
+              <caret line="215" selection-start-line="215" selection-end-line="215" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/spell/TlkWordFinder.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="143">
+              <caret line="28" selection-start-line="28" selection-end-line="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/BmuPlayer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="216">
+              <caret line="98" column="13" selection-start-line="98" selection-start-column="13" selection-end-line="98" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffWriter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="383">
+              <caret line="134" column="26" selection-start-line="134" selection-start-column="26" selection-end-line="134" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/bif/BifFile.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="17" column="8" lean-forward="true" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PatcherGui.html">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/l4j/tlkedit.xml">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/meta/spells.2da.html">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/meta/spells.nwn1.meta.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="490">
+              <caret line="50" column="17" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -127,6 +144,7 @@
       <find>locale is</find>
       <find>System.out.println</find>
       <find>System.out.</find>
+      <find>System.out.p</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\corym\dev\TlkEdit</dir>
@@ -144,23 +162,40 @@
         <option value="$PROJECT_DIR$/dict/dictionaries.properties" />
         <option value="$PROJECT_DIR$/src/resource/dict/dictionaries.properties" />
         <option value="$PROJECT_DIR$/src/build.xml" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkEdit.java" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaMetaData.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/spell/Dictionaries.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/Messages.java" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffEditX.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/bif/BifRepository.java" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryFCAccessory.java" />
         <option value="$PROJECT_DIR$/src/org/jl/swing/UIDefaultsX.java" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/erf/Handler.java" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/GffField.java" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly.java" />
-        <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly_1.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffReader.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/spell/TlkWordFinder.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/BmuPlayer.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffWriter.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/bif/BifFile.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/erf/Handler.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/GffStruct.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaMetaData.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/Gff2Xml.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/Gff.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaTable.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffSpellChecker.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/AbstractGffReader.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/GffField.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/GffList.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/CExoLocStringEditor.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/GffContent.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryTreeView.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/AbstractGffWriter.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffEditX.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryFCAccessory.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/NwnLanguage.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly_1.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/swing/FileDropHandler.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkContent.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/swing/TableSearchAndReplace.java" />
       </list>
     </option>
   </component>
@@ -185,6 +220,16 @@
             <path>
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
               <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
+              <item name="meta" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
               <item name="settings" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -196,6 +241,12 @@
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
               <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="l4j" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="jl" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -204,14 +255,6 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="jl" type="462c0819:PsiDirectoryNode" />
               <item name="nwn" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jl" type="462c0819:PsiDirectoryNode" />
-              <item name="nwn" type="462c0819:PsiDirectoryNode" />
-              <item name="spell" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
@@ -220,6 +263,19 @@
               <item name="jl" type="462c0819:PsiDirectoryNode" />
               <item name="nwn" type="462c0819:PsiDirectoryNode" />
               <item name="twoDa" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="jl" type="462c0819:PsiDirectoryNode" />
+              <item name="text" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="TlkEdit-EE" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="resource" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="TlkEdit-EE" type="b2602c69:ProjectViewProjectNode" />
@@ -316,7 +372,7 @@
     <frame x="15" y="86" width="1890" height="904" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -325,7 +381,7 @@
       <window_info id="Learn" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32881773" />
+      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32881773" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32874015" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.13054188" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -407,24 +463,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/org/jl/swing/UIDefaultsX.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-465">
-          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/jl/swing/CheckBoxAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.tlkedit.log.1">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.tlkedit.log" />
     <entry file="file://$PROJECT_DIR$/bifextract.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-136" />
@@ -435,7 +473,6 @@
     <entry file="file://$PROJECT_DIR$/patcher.png" />
     <entry file="file://$PROJECT_DIR$/patcher_readme.txt" />
     <entry file="file://$PROJECT_DIR$/PatcherGUI.bat" />
-    <entry file="file://$PROJECT_DIR$/PatcherGui.html" />
     <entry file="file://$PROJECT_DIR$/patcherGui.sh" />
     <entry file="file://$PROJECT_DIR$/Readme.html" />
     <entry file="file://$PROJECT_DIR$/TlkEdit.l4j.ini" />
@@ -488,9 +525,6 @@
           <caret line="34" column="60" selection-start-line="34" selection-start-column="52" selection-end-line="34" selection-end-column="60" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/uidefaults.properties">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/TlkModel.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -553,18 +587,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/meta/spells.2da.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-472" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/meta/spells.nwn1.meta.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="50" column="17" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaMetaData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-148">
@@ -614,10 +636,59 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/uidefaults.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-260" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PatcherGui.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/l4j/tlkedit.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meta/spells.2da.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meta/spells.nwn1.meta.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="490">
+          <caret line="50" column="17" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/twoDa/TwoDaEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="216" column="64" selection-start-line="216" selection-start-column="64" selection-end-line="216" selection-end-column="64" />
+        <state relative-caret-position="233">
+          <caret line="215" selection-start-line="215" selection-end-line="215" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/spell/TlkWordFinder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="28" selection-start-line="28" selection-end-line="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/BmuPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="98" column="13" selection-start-line="98" selection-start-column="13" selection-end-line="98" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="383">
+          <caret line="134" column="26" selection-start-line="134" selection-start-column="26" selection-end-line="134" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/bif/BifFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="17" column="8" lean-forward="true" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
         </state>
       </provider>
     </entry>

@@ -28,18 +28,13 @@ public class BmuPlayer implements Runnable {
     Object playerObject;
     
     public BmuPlayer(String soundname, NwnRepository rep) throws IOException {
-        //System.out.println("BmuPlayer");
+
         if (rep == null){
             if (br== null)
                 br = PatcherGUI.getNwnRepository();
             rep = br;
         }
-                        /*
-                                new BifRepository(
-                                        new File(System.getProperty("nwn.home")),
-                                        System.getProperty("nwn.bifkeys").split("\\s+"));
-                         */
-        //System.out.println("start playback");
+
         InputStream is =
                 rep.getResource(new ResourceID( soundname, "wav" ));
         if (is == null)
@@ -48,7 +43,7 @@ public class BmuPlayer implements Runnable {
         try {
             AudioInputStream as = AudioSystem.getAudioInputStream(is);
             c = (Clip) AudioSystem.getLine(new Line.Info(Clip.class));
-            //System.out.println( c );
+
             c.open(as);
         } catch (UnsupportedAudioFileException uafe) {
             
@@ -60,14 +55,7 @@ public class BmuPlayer implements Runnable {
                 e.printStackTrace();
             }
             
-            //System.out.println("not a wav file, starting mp3 player");
-            /*
-            try {
-                p = new Player(is);
-            } catch (JavaLayerException jle) {
-                jle.printStackTrace();
-            }
-             */
+
         } catch (LineUnavailableException lue) {
             System.out.println("can't play sound, sound system busy ?" + lue);
             lue.printStackTrace();
@@ -107,17 +95,15 @@ public class BmuPlayer implements Runnable {
     }
     
     public static void main(String[] args) throws Exception {
-        br =
-                new BifRepository(
+        br = new BifRepository(
                 new File(System.getProperty("nwn.home")),
                 System.getProperty("nwn.bifkeys").split("\\s+"));
         
-        if ( br.getResource(new ResourceID( args[0], "wav" ))
-        == null) {
+        if ( br.getResource(new ResourceID( args[0], "wav" )) == null) {
             System.out.println("resource not found : " + args[0] + ".wav");
             System.exit(0);
         }
         new Thread(new BmuPlayer(args[0], br)).start();
-        //System.out.println( format );
+
     }
 }

@@ -101,12 +101,9 @@ abstract class BifFile {
             int offset = readIntLE(raf);
             int length = readIntLE(raf);
             int type = readIntLE(raf);
-            //System.out.println( bifFile );
-            //System.out.println( "offset : " + Integer.toHexString( offset ) );
-            //System.out.println( "length : " + Integer.toHexString( length ) );
-            //System.out.println( Integer.toHexString( idx ) );
+
             return new RafInputStream(raf, offset, offset + length);
-            //return new ByteBufferInputStream( channel.map( FileChannel.MapMode.READ_ONLY, offset, length ) );
+
         }
 
         public int getEntrySize(int idx) {

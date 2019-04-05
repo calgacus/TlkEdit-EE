@@ -79,7 +79,7 @@ public class Gff2Xml {
     }
     
     public static Element mkElement( Node el, GffField field ){
-        // System.out.println( field.getTypeName() + "...");
+
         if ( field.isIntegerType() )
             return mkIntegerElement( el, (GffInteger) field );
         if ( field.isDecimalType() )

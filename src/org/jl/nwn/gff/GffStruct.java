@@ -161,7 +161,6 @@ public class GffStruct extends GffField implements Iterable<GffField>{
                 Iterator it = iterators.peek();
                 GffField f = (GffField) it.next();
                 if ( f.type == Gff.STRUCT || f.type == Gff.LIST ){
-                    //System.out.println( "descent into " + f.label + ", " + f.getTypeName() );
                     Iterator subIt = (f.type == Gff.STRUCT)? ((GffStruct) f).iterator() : ((GffList) f).iterator();
                     iterators.push( subIt );
                 }
@@ -209,7 +208,7 @@ public class GffStruct extends GffField implements Iterable<GffField>{
         Iterator it = c.getTopLevelStruct().getDFIterator();
         while ( it.hasNext() ){
             GffField f = ( GffField ) it.next();
-            System.out.println( f.isDataField() ? f.toString() : f.label + "(" + f.getTypeName() + ")" );
+            System.out.println( "GFFStruct " + (f.isDataField() ? f.toString() : f.label + "(" + f.getTypeName() + ")" ));
         }
     }
     
