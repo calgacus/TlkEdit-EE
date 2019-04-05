@@ -29,7 +29,7 @@ public class Dictionaries {
                     "dict/dictionaries.properties");
             if ( is != null ) {
                 props.load(is);
-                System.out.println("found props  " );
+                System.out.println("Dictionaries.java   found props  " );
             }
         } catch (IOException ioex){
             ioex.printStackTrace();
@@ -43,21 +43,21 @@ public class Dictionaries {
             if ( dicts.containsKey(lang) ) {
                 return dicts.get(lang);
             }
-            System.out.println("loading dictionary for : " + lang);
+            System.out.println("Dictionaries.java forLanguage loading dictionary for : " + lang);
             URL url = Dictionaries.class.getClassLoader().getResource(dictName);
-            System.out.println(url);
+            System.out.println("Dictionaries.java forLanguage url is "+url);
             try {
-                System.out.println("loading dictionary for dictname : " + dictName);
-                System.out.println("loading dictionary for url : " + url.toString());
+                System.out.println("Dictionaries.java forLanguage loading dictionary for dictname : " + dictName);
+                System.out.println("Dictionaries.java forLanguage loading dictionary for url : " + url.toString());
                 File zip = new File(url.toURI());
                 dict = new OpenOfficeSpellDictionary( new ZipFile(zip) );
             } catch (Exception e){
                 e.printStackTrace();
             }
         }else{
-            System.out.println("dictname is null " );
-            System.out.println("lang is  " + lang.getLocale().getLanguage());
-            System.out.println("props " + props.toString() );
+            System.out.println("Dictionaries.java forLanguage dictname is null " );
+            System.out.println("Dictionaries.java forLanguage lang is  " + lang.getLocale().getLanguage());
+            System.out.println("Dictionaries.java forLanguage props " + props.toString() );
         }
         dicts.put( lang, dict );
         return dict;
