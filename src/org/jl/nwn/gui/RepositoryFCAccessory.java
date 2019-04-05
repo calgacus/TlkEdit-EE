@@ -81,7 +81,7 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
 
             public void changedUpdate(DocumentEvent arg0) {
                 String s = filterField.getText();
-                System.out.println(s);
+                System.out.println("Repo..FCA...java changedUpdate "+s);
                 //if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                 if (s.length() > 0) {
                     try {
@@ -205,7 +205,7 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                System.out.println(acc.getSelectedResources());
+                System.out.println("Repo..FCA...java actionPerformed "+acc.getSelectedResources());
             }
         });
         fc.setAccessory(acc.accPanel);

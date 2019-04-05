@@ -211,7 +211,7 @@ public class BifRepository extends AbstractRepository{
                 ResourceID id = (ResourceID) it.next();
                 String s = id.toString();
                 if (m.reset(s).matches()) {
-                    System.out.println(s);
+                    System.out.println("BifRepository "+s);
                     //+ " (" + br.getResourceLocation( id ) + ")" );
                     if (extract) {
                         br.transferResourceToFile(id, new File(outputDir, id.toString()));
@@ -234,7 +234,7 @@ public class BifRepository extends AbstractRepository{
         final JList resourceList = new JList(model);
         System.out.print("retrieving resource ids ... ");
         Iterator it = getResourceIDs().iterator();
-        System.out.println("done");
+        System.out.println("BifRepository displayGui done");
         //Iterator it = new NwnRepConfig().getNwnRepository().listRealContents().iterator();
         while (it.hasNext())
             model.addElement(it.next());

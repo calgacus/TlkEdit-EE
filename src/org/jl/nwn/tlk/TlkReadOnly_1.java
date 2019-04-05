@@ -104,7 +104,7 @@ public class TlkReadOnly_1 {
         TlkReadOnly_1 tlk = new TlkReadOnly_1( f, 1000 );
         
         for ( int i = 1; i < args.length; i++ )
-            System.out.println(tlk.getString(Integer.parseInt(args[i])));
+            System.out.println("tlkreadonly 107 "+tlk.getString(Integer.parseInt(args[i])));
         //System.out.printf("time : %dms\n", System.currentTimeMillis()-start);
     }
     

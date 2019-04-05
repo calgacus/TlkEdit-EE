@@ -43,7 +43,7 @@ public class Handler extends URLStreamHandler{
                 throw new FileNotFoundException("ERF not found : " + erfFile);
             String resName = getURL().getRef();
             this.erf = Repositories.getInstance().getErfRepository(erfFile);
-            System.out.println(this.erf);
+            System.out.println("Handler.java erf "+this.erf);
             id = ResourceID.forFileName(resName);
             connected = true;
         }

@@ -19,7 +19,7 @@ public class UIDefaultsX extends UIDefaults{
     public UIDefaultsX() {
         super();
         for (Object e : keySet())
-            System.out.println(e);
+            System.out.println("UIDefaultsX "+e);
     }
     
     public Icon getIcon(Object key){

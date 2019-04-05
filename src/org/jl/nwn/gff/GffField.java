@@ -204,7 +204,7 @@ public abstract class GffField<Data extends Object> implements Cloneable{
         DefaultGffReader reader = new DefaultGffReader(Version.getDefaultVersion());
         GffContent c1 = reader.load( new File(args[0]) );
         GffContent c2 = reader.load( new FileInputStream(args[1]) );
-        System.out.println( c1.getTopLevelStruct().equalsGff(c2.getTopLevelStruct()) );
+        System.out.println( "GffField.java "+c1.getTopLevelStruct().equalsGff(c2.getTopLevelStruct()) );
     }
     
 }

@@ -225,7 +225,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                             }.start();
                             return pin;
                         } catch ( IOException ioex ){
-                            System.out.println(ioex);
+                            System.out.println("GFFEditX "+ioex);
                         } catch ( Exception e ){} // Parser & TransformerConfEx
                         return null;
                     } else if ( df.equals(flavorGffObject) )
