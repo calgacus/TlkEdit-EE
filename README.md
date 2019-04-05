@@ -5,6 +5,6 @@ This is a continuation of the TlkEdit project found at https://neverwintervault.
 Any input is welcome, I hope to be able to expand on this tool.  I do not plan to support the launch4j part that creates the *.exe files.
 
 Extra "myspell" format dictionary files can be found -> http://download.services.openoffice.org/contrib/dictionaries/
-Download the desired ones to the folder TlkEdit/dict,
-then update TlkEdit/dict/dictionaries.properties to include the needed code like the others in the same file.
+Download the desired ones to the /dict folder which is in the same follder in which the tlkedit.jar file is present,
+then update ./dict/dictionaries.properties to include the needed code like the others in the same file.
 
