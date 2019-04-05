@@ -22,6 +22,7 @@
 *.nar
 *.ear
 *.zip
+!dict/*zip
 *.tar.gz
 *.rar
 
