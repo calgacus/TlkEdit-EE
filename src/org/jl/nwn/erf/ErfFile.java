@@ -677,7 +677,7 @@ public class ErfFile extends AbstractRepository{
             ErfFile erf = new ErfFile(f);
             Iterator it = erf.getResourceIDs().iterator();
             while ( it.hasNext() )
-                System.out.println(it.next());
+                System.out.println("erffile.java 680 "+it.next());
         }
                 /*
                 extractErf( f, out );

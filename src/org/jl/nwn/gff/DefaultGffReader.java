@@ -161,7 +161,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
                 fis.close();
                 fileCount++;
                 totalSize += f.length();
-                System.out.println(f);
+                System.out.println("def...gffreader.java 164  "+f);
             //}
         }
         System.out.printf("loaded %d files ( %f kb ) in %d ms\n", fileCount, totalSize/1024.0, System.currentTimeMillis()-time);

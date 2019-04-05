@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dd7dd653-a281-4a81-83e2-f38895c48471" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/bif/BifRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/bif/BifRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/erf/Handler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/erf/Handler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffField.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/GffField.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffEditX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/editor/GffEditX.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryFCAccessory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gui/RepositoryFCAccessory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly_1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly_1.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/jl/swing/UIDefaultsX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/swing/UIDefaultsX.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffReader.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -79,7 +73,7 @@
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/Messages.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="240">
-              <caret line="24" column="30" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="30" />
+              <caret line="24" column="30" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -96,8 +90,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/bif/BifRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="197" column="42" lean-forward="true" selection-start-line="197" selection-start-column="42" selection-end-line="197" selection-end-column="42" />
+            <state relative-caret-position="218">
+              <caret line="192" column="6" selection-start-line="192" selection-start-column="6" selection-end-line="192" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -133,6 +127,7 @@
       <find>setting up editor for column</find>
       <find>locale is</find>
       <find>System.out.println</find>
+      <find>System.out.</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\corym\dev\TlkEdit</dir>
@@ -165,6 +160,8 @@
         <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/GffField.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly.java" />
         <option value="$PROJECT_DIR$/src/org/jl/nwn/tlk/TlkReadOnly_1.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/gff/DefaultGffReader.java" />
+        <option value="$PROJECT_DIR$/src/org/jl/nwn/erf/ErfFile.java" />
       </list>
     </option>
   </component>
@@ -317,7 +314,7 @@
     <frame x="15" y="86" width="1890" height="904" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20725109" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -326,7 +323,7 @@
       <window_info id="Learn" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32881773" />
+      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32881773" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32874015" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.13054188" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -601,7 +598,7 @@
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/tlk/editor/Messages.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
-          <caret line="24" column="30" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="30" />
+          <caret line="24" column="30" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="30" />
         </state>
       </provider>
     </entry>
@@ -614,8 +611,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/jl/nwn/bif/BifRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="197" column="42" lean-forward="true" selection-start-line="197" selection-start-column="42" selection-end-line="197" selection-end-column="42" />
+        <state relative-caret-position="218">
+          <caret line="192" column="6" selection-start-line="192" selection-start-column="6" selection-end-line="192" selection-end-column="6" />
         </state>
       </provider>
     </entry>
