@@ -1,0 +1,8 @@
+baseitems.2da   : 1,tlk; 31,tlk; 37,feat.2da; 38,feat.2da; 39,feat.2da; 40,feat.2da; 41,feat.2da; 45,tlk;
+feat.2da        : 2,tlk; 3,tlk; 13,feat.2da; 14,feat.2da; 20,spells.2da; 21,feat.2da; 24,feat.2da; 26,feat.2da; 27,feat.2da; 28,feat.2da; 29,feat.2da; 30,feat.2da; 31,skills.2da; 33,skills.2da;
+iprp_feats.2da  : 1,tlk; 4,feat.2da;
+iprp_spells.2da : 2,tlk; 6,spells.2da;
+racialtypes.2da : 3,tlk; 4,tlk; 5,tlk; 6,tlk; 7,tlk; 8,appearance.2da; 16,classes.2da; 18,tlk; 22,classes.2da;
+skills.2da      : 2,tlk; 3,tlk;
+spells.2da      : 2,tlk; 47,tlk; 50,tlk; 39,spells.2da; 40,spells.2da; 41,spells.2da; 42,spells.2da; 43,spells.2da; 45,spells.2da; 52,feat.2da;
+classes.2da       : 2, tlk ; 3, tlk ; 4, tlk ; 5, tlk;
