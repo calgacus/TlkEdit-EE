@@ -108,6 +108,7 @@ public class RepositoryTreeView {
             return getValueAt(o, 0).toString();
         }
         
+        @Override
         public Object getValueAt(Object object, int i) {
             if ( object instanceof ResourceID ){
                 ResourceID id = (ResourceID) object;
@@ -126,6 +127,7 @@ public class RepositoryTreeView {
             return 3;
         }
         
+        @Override
         public void setValueAt(Object object, Object object0, int i) {
         }
         
@@ -229,20 +231,24 @@ public class RepositoryTreeView {
             list = createList();
         }
         
+        @Override
         public int indexOf(T child) {
             //if (list==null) init();
             return list.indexOf(child);
         }
         
+        @Override
         public T getChild(int index) {
             //if (list==null) init();
             return list.get(index);
         }
         
+        @Override
         public String getPresentationName() {
             return presentationName;
         }
         
+        @Override
         public int getChildCount(){
             if (list==null) init();
             return list.size();

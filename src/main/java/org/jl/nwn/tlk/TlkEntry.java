@@ -98,6 +98,7 @@ public class TlkEntry implements Cloneable{
 		flags = b;
 	}
 	
+	@Override
 	public Object clone(){
 		TlkEntry ret = new TlkEntry();
 		ret.setSoundResRef(this.soundResRef);

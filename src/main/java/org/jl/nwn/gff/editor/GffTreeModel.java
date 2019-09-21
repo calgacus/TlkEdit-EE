@@ -37,6 +37,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getRoot()
 	 */
+	@Override
 	public Object getRoot() {
 		return root;
 	}
@@ -44,6 +45,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getChild(java.lang.Object, int)
 	 */
+	@Override
 	public Object getChild(Object parent, int index) {
 		GffField f = (GffField) parent;
 		if ( f.getType() == Gff.LIST )
@@ -55,6 +57,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getChildCount(java.lang.Object)
 	 */
+	@Override
 	public int getChildCount(Object parent) {
 		GffField f = (GffField) parent;
 		if ( f.getType() == Gff.LIST )
@@ -66,6 +69,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#isLeaf(java.lang.Object)
 	 */
+	@Override
 	public boolean isLeaf(Object node) {
 		GffField f = (GffField) node;
 		return f.isDataField();
@@ -74,6 +78,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#valueForPathChanged(javax.swing.tree.TreePath, java.lang.Object)
 	 */
+	@Override
 	public void valueForPathChanged(TreePath path, Object newValue) {
 		// TODO Auto-generated method stub
 	}
@@ -81,6 +86,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getIndexOfChild(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int getIndexOfChild(Object parent, Object child) {
 		GffField f = (GffField) parent;
 		if ( f.getType() == Gff.LIST )
@@ -92,6 +98,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#addTreeModelListener(javax.swing.event.TreeModelListener)
 	 */
+	@Override
 	public void addTreeModelListener(TreeModelListener l) {
 		listeners.add(l);
 	}
@@ -99,6 +106,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#removeTreeModelListener(javax.swing.event.TreeModelListener)
 	 */
+	@Override
 	public void removeTreeModelListener(TreeModelListener l) {
 		listeners.remove(l);
 	}

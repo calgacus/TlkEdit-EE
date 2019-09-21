@@ -36,14 +36,17 @@ public class StdOutFrame extends JFrame {
 	public static final JTextArea text = new JTextArea();
 
 	private static OutputStream textAreaOutputStream = new OutputStream(){
+		@Override
 		public void write( int i ){
 			text.append( Character.toString( (char) i ) );
 			text.setCaretPosition( text.getText().length() );
 		}
+		@Override
 		public void write(byte[] b, int offset, int length ){
 			text.append( new String( b, offset, length ) );
 			text.setCaretPosition( text.getText().length() );
 		}
+		@Override
 		public void write(byte[] b){
 			write( b, 0, b.length );
 		}
@@ -55,14 +58,17 @@ public class StdOutFrame extends JFrame {
 			this.out2 = out2;
 		}
 		
+		@Override
 		public void write( int i ) throws IOException{
 			out1.write(i);
 			out2.write(i);
 		}		
+		@Override
 		public void write( byte[] b, int offset, int length ) throws IOException{
 			out1.write( b, offset, length );
 			out2.write( b, offset, length );
 		}
+		@Override
 		public void write( byte[] b ) throws IOException{
 			out1.write( b );
 			out2.write( b );
@@ -92,6 +98,7 @@ public class StdOutFrame extends JFrame {
 		
 		tbar.setFloatable( false );
 		Action clear = new AbstractAction("clear"){
+			@Override
 			public void actionPerformed( ActionEvent e ){
 				text.setText("");
 			}

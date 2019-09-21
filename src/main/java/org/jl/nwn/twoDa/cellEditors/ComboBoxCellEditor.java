@@ -34,7 +34,7 @@ public class ComboBoxCellEditor extends DefaultCellEditor {
 		super( new JComboBox() );
 		comboBox = (JComboBox) super.editorComponent;
 		comboBox.getInputMap( JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT ).put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ), "cancel" );
-		comboBox.getActionMap().put( "cancel", new AbstractAction(){ public void actionPerformed( ActionEvent e ){ cancelCellEditing(); } } );
+		comboBox.getActionMap().put( "cancel", new AbstractAction(){ @Override public void actionPerformed( ActionEvent e ){ cancelCellEditing(); } } );
 	}
 	
 	public ComboBoxCellEditor( JComboBox b ){

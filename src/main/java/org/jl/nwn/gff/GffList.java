@@ -82,26 +82,32 @@ public class GffList extends GffField implements Iterable<GffStruct>{
     }
     
     
+    @Override
     public boolean allowsChildren(){
         return true;
     }
     
+    @Override
     public int getChildCount(){
         return getSize();
     }
     
+    @Override
     public GffField getChild( int index ){
         return get(index);
     }
     
+    @Override
     public int getChildIndex( GffField f ){
         return indexOf( f );
     }
     
+    @Override
     public void addChild( int index, GffField f ){
         add(index, (GffStruct) f);
     }
     
+    @Override
     public void removeChild( GffField f ){
         remove((GffStruct)f);
     }

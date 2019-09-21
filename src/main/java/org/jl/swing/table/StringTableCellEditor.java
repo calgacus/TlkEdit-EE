@@ -44,6 +44,7 @@ public class StringTableCellEditor
         scroll.setHorizontalScrollBarPolicy(
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.addFocusListener( new FocusAdapter(){
+            @Override
             public void focusGained(FocusEvent e){
                 textArea.requestFocus();
             }
@@ -81,6 +82,7 @@ public class StringTableCellEditor
         return textArea;
     }
     
+    @Override
     public java.awt.Component getTableCellEditorComponent(
             JTable table,
             Object value,
@@ -119,12 +121,14 @@ public class StringTableCellEditor
         return scroll;
     }
     
+    @Override
     public Object getCellEditorValue() {
         return textArea.getText();
     }
     
     // copied from DefaultCellEditor, double click to start editing
     //this is sometimes called with a null argument ?!?
+    @Override
     public boolean isCellEditable(java.util.EventObject anEvent) {
         if (anEvent instanceof MouseEvent) {
             return ((MouseEvent) anEvent).getClickCount() >= 2;
@@ -139,11 +143,13 @@ public class StringTableCellEditor
         return true;
     }
     
+    @Override
     public boolean stopCellEditing() {
         fireEditingStopped();
         return true;
     }
     
+    @Override
     public JTextArea getTextComponent(){
         return textArea;
     }

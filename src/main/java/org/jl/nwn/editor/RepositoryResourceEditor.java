@@ -37,6 +37,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
     /* (non-Javadoc)
      * @see org.jl.nwn.editor.SimpleFileEditorPanel#addChangeListener(javax.swing.event.ChangeListener)
      */
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener cl) {
         delegate.addPropertyChangeListener(cl);
     }
@@ -44,6 +45,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
     /**
      * @return
      */
+    @Override
     public boolean canSave() {
         return savedAsFile == null ? rep.isWritable() : delegate.canSave();
     }
@@ -51,6 +53,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
     /**
      * @return
      */
+    @Override
     public boolean canSaveAs() {
         return delegate.canSaveAs();
     }
@@ -58,6 +61,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
     /**
      *
      */
+    @Override
     public void close() {
         delegate.close();
     }
@@ -65,6 +69,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
     /**
      * @return
      */
+    @Override
     public File getFile() {
         return savedAsFile == null ? new File(rep.getResourceLocation(resID) + "[" + resID.toFileName() + "]") : delegate.getFile();
     }
@@ -72,6 +77,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
     /* (non-Javadoc)
      * @see org.jl.nwn.editor.SimpleFileEditorPanel#getIsModified()
      */
+    @Override
     public boolean getIsModified() {
         return delegate.getIsModified();
     }
@@ -79,6 +85,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
     /* (non-Javadoc)
      * @see org.jl.nwn.editor.SimpleFileEditorPanel#removeChangeListener(javax.swing.event.ChangeListener)
      */
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener cl) {
         delegate.removePropertyChangeListener(cl);
     }
@@ -86,6 +93,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
     /**
      * @throws IOException
      */
+    @Override
     public void save() throws IOException {
         delegate.save();
         if (savedAsFile == null) {
@@ -135,19 +143,23 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
      * @param f
      * @throws IOException
      */
+    @Override
     public void saveAs(File f, Version v) throws IOException {
         delegate.saveAs(f, v);
         savedAsFile = f;
     }
 
+    @Override
     public JMenu[] getMenus() {
         return delegate.getMenus();
     }
 
+    @Override
     public JToolBar getToolbar() {
         return delegate.getToolbar();
     }
 
+    @Override
     public void showToolbar(boolean b) {
         delegate.showToolbar(b);
     }

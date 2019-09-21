@@ -15,6 +15,7 @@ public class CheckBoxAction extends AbstractAction{
         public TogglePropListener( AbstractButton ab ){
             this.ab = ab;
         }        
+        @Override
         public void propertyChange(java.beans.PropertyChangeEvent evt) {
             if ( evt.getPropertyName() == SELECTED_PROPERTY )
                 ab.setSelected((Boolean)evt.getNewValue());
@@ -30,6 +31,7 @@ public class CheckBoxAction extends AbstractAction{
     public CheckBoxAction(){
     }
     
+    @Override
     public void actionPerformed( ActionEvent e ){
         setSelected(!isSelected());
     }

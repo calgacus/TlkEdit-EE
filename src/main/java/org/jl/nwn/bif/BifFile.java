@@ -39,7 +39,7 @@ abstract class BifFile {
         fixedResourceCount = readIntLE(raf);
         variableResourceOffset = readIntLE(raf);
     }
-    
+
     public File getFile(){
         return file;
     }
@@ -92,6 +92,7 @@ abstract class BifFile {
             super(file);
         }
 
+        @Override
         public InputStream getEntry(int idx) throws IOException {
             if ((idx < 0) | (idx >= size)) {
                 throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
@@ -106,6 +107,7 @@ abstract class BifFile {
 
         }
 
+        @Override
         public int getEntrySize(int idx) {
             if ((idx < 0) | (idx >= size)) {
                 throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
@@ -120,6 +122,7 @@ abstract class BifFile {
             return 0;
         }
 
+        @Override
         public void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException {
             if ((entryIndex < 0) | (entryIndex >= size)) {
                 throw new IndexOutOfBoundsException("Resource index out of bounds : " + entryIndex);
@@ -132,6 +135,7 @@ abstract class BifFile {
             fc.transferTo(offset, length, c);
         }
 
+        @Override
         public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
             if ((idx < 0) | (idx >= size)) {
                 throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
@@ -153,6 +157,7 @@ abstract class BifFile {
             super(file);
         }
 
+        @Override
         public InputStream getEntry(int idx) throws IOException {
             if ((idx < 0) | (idx >= size)) {
                 throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
@@ -169,6 +174,7 @@ abstract class BifFile {
             return new RafInputStream(raf, offset, offset + length);
         }
 
+        @Override
         public int getEntrySize(int idx) {
             if ((idx < 0) | (idx >= size)) {
                 throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
@@ -183,6 +189,7 @@ abstract class BifFile {
             return 0;
         }
 
+        @Override
         public void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException {
             if ((entryIndex < 0) | (entryIndex >= size)) {
                 throw new IndexOutOfBoundsException("Resource index out of bounds : " + entryIndex);
@@ -199,6 +206,7 @@ abstract class BifFile {
             fc.transferTo(offset, length, c);
         }
 
+        @Override
         public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
             if ((idx < 0) | (idx >= size)) {
                 throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);

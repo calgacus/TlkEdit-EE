@@ -34,6 +34,7 @@ public class StatusBar implements MessageListener, ProgressListener {
     protected volatile int progress = 0;
     
     protected Timer progressUpdater = new Timer(50, new ActionListener(){
+        @Override
         public void actionPerformed(ActionEvent evt){
             progressBar.setValue(progress);
         }
@@ -63,6 +64,7 @@ public class StatusBar implements MessageListener, ProgressListener {
             return messageLabel;
         }
 
+        @Override
         public void message(final MessageEvent evt) {
             if (evt.getLevel().intValue() >= messageLevel.intValue()) {
                 if (!SwingUtilities.isEventDispatchThread()) {
@@ -96,20 +98,24 @@ public class StatusBar implements MessageListener, ProgressListener {
         return statusBar;
     }
 
+    @Override
     public void message(final MessageEvent evt) {
         messageLabel.message(evt);
     }
 
+    @Override
     public void progressEnded(ProgressEvent evt) {
         progressUpdater.stop();
         progressBar.setValue(0);
         progressBar.setEnabled(false);
     }
 
+    @Override
     public void progressIncremented(ProgressEvent evt){
         progress = evt.getProgress();
     }
 
+    @Override
     public void progressStarted(ProgressEvent evt) {
         progressBar.setEnabled(true);
         progress = 0;

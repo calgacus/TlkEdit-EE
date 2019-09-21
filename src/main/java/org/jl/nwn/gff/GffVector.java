@@ -19,16 +19,19 @@ public class GffVector extends GffField<float[]>{
         super(label, Gff.VECTOR);
     }
 
+    @Override
     public void setData(float[] data) {
         if ( data.length != 3 )
             throw new IllegalArgumentException("Illegal array length ( !=3 ) !");
         this.data = data;
     }
 
+    @Override
     public float[] getData() {
         return data;
     }
     
+    @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(label).append(" (").append(getTypeName()).append(") : ");

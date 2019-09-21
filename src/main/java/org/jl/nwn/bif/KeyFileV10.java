@@ -97,14 +97,17 @@ public class KeyFileV10 extends KeyFile{
             return bifID % (1 << 20);
         }
 
+        @Override
         public Iterator getResourceIDs() {
             return entryMap.keySet().iterator();
         }
         
+        @Override
         public Set<ResourceID> getResourceIDSet(){
             return Collections.unmodifiableSet(entryMap.keySet());
         }
 
+        @Override
         public BifResourceLocation findResource(String resName, short resType) {
             int bifId = lookup(resName, resType);
             return bifId == -1 ? null : new BifResourceLocation(getBifName(bifId), getBifIndex(bifId));

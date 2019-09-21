@@ -34,6 +34,7 @@ public class ListMutator<E> extends Mutator{
             super(name);
             this.index = index;
         }
+        @Override
         public void redo() {
             super.redo();
             if (lsl != null)
@@ -43,6 +44,7 @@ public class ListMutator<E> extends Mutator{
                     lsl.addSelectionInterval(index, index);
         }
         
+        @Override
         public void undo() {
             super.undo();
             model.add(index, oldValue);
@@ -52,9 +54,11 @@ public class ListMutator<E> extends Mutator{
                 else
                     lsl.addSelectionInterval(index, index);
         }        
+        @Override
         protected E performEdit() {
             return (oldValue = model.remove(index));
         }
+        @Override
         public E invoke(){
             return (E) super.invoke();
         }
@@ -68,6 +72,7 @@ public class ListMutator<E> extends Mutator{
             this.index = index;
             this.value = value;
         }
+        @Override
         public void redo() {
             super.redo();
             if (lsl != null)
@@ -77,6 +82,7 @@ public class ListMutator<E> extends Mutator{
                     lsl.addSelectionInterval(index, index);
         }
         
+        @Override
         public void undo() {
             super.undo();
             model.remove(index);
@@ -86,6 +92,7 @@ public class ListMutator<E> extends Mutator{
                 else
                     lsl.addSelectionInterval(index, index);
         }        
+        @Override
         protected Object performEdit() {
             model.add(index, value);
             return null;
@@ -119,10 +126,12 @@ public class ListMutator<E> extends Mutator{
         endUpdate();
     }
     
+    @Override
     protected void compoundUndo() {
         if ( lsl != null ) lsl.clearSelection();
     }
     
+    @Override
     protected void compoundRedo() {
         if ( lsl != null ) lsl.clearSelection();
     }    

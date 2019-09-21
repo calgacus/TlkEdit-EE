@@ -34,6 +34,7 @@ public class TwoDaTlkLookupLSListener implements ListSelectionListener {
         /* (non-Javadoc)
          * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
          */
+    @Override
     public void valueChanged(ListSelectionEvent e){
         if ( !e.getValueIsAdjusting() ){
             JTable table = this.table.get();

@@ -79,6 +79,7 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
 
         filterField.getDocument().addDocumentListener(new DocumentListener() {
 
+            @Override
             public void changedUpdate(DocumentEvent arg0) {
                 String s = filterField.getText();
                 System.out.println("Repo..FCA...java changedUpdate "+s);
@@ -89,6 +90,7 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
                         tt.setEnabled(false);
                         SwingUtilities.invokeLater(new Runnable() {
 
+                            @Override
                             public void run() {
                                 try {
                                     rview.setFilterPattern(p);
@@ -105,11 +107,13 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
                 }
             }
 
+            @Override
             public void insertUpdate(DocumentEvent arg0) {
                 changedUpdate(arg0);
                 //throw new UnsupportedOperationException("Not supported yet.");
             }
 
+            @Override
             public void removeUpdate(DocumentEvent arg0) {
                 changedUpdate(arg0);
                 //throw new UnsupportedOperationException("Not supported yet.");

@@ -22,10 +22,12 @@ public class TlkModel extends AbstractTableModel
         this.tlkContent = tlkContent;
     }
 
+    @Override
     public int getColumnCount() {
         return 5;
     }
 
+    @Override
     public int getRowCount() {
         return tlkContent.size() + 1;
     }
@@ -46,6 +48,7 @@ public class TlkModel extends AbstractTableModel
         return nonZero ? ret.toString() : ""; //$NON-NLS-1$
     }
 
+    @Override
     public Object getValueAt(int row, int col) {
         if (row == tlkContent.size())
             if (col == 3)
@@ -74,6 +77,7 @@ public class TlkModel extends AbstractTableModel
         return ""; //$NON-NLS-1$
     }
 
+    @Override
     public Class getColumnClass(int col) {
         switch (col) {
             case 0 :
@@ -90,6 +94,7 @@ public class TlkModel extends AbstractTableModel
         return Object.class;
     }
 
+    @Override
     public String getColumnName(int col) {
         switch (col) {
             case 0 :
@@ -106,10 +111,12 @@ public class TlkModel extends AbstractTableModel
         return ""; //$NON-NLS-1$
     }
 
+    @Override
     public boolean isCellEditable(int row, int col) {
         return col > 0 && col < 5;
     }
 
+    @Override
     public void setValueAt(Object aValue, int row, int col) {
         //System.out.println("TlkModel.setValueAt " + aValue);
         boolean append = false;
@@ -187,6 +194,7 @@ public class TlkModel extends AbstractTableModel
         }
     }
 
+    @Override
     public List<TlkEntry> removeRows( int[] selection ){
         if (selection.length > 0) {
             TlkEntry[] r = new TlkEntry[selection.length];
@@ -201,6 +209,7 @@ public class TlkModel extends AbstractTableModel
             return null;
     }
 
+    @Override
     public void insertRows( int pos, List<TlkEntry> entries ){
         int p = pos;
         for ( TlkEntry e : entries )
@@ -253,11 +262,13 @@ public class TlkModel extends AbstractTableModel
         propertyChangeSupport.firePropertyChange("language", oldLanguage, language);
     }
 
+    @Override
     public void add( int index, TlkEntry e ){
         tlkContent.add( index, e );
         fireTableRowsInserted( index, index );
     }
 
+    @Override
     public TlkEntry remove( int index ){
         TlkEntry e = tlkContent.remove( index );
         fireTableRowsDeleted( index, index );

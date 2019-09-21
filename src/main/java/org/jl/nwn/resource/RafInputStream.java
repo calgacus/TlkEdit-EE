@@ -20,16 +20,19 @@ public class RafInputStream extends InputStream {
         raf.seek(start);
     }
     
+    @Override
     public int read() throws IOException {
         if ( !(streamPosition < end )  ) return -1;
         raf.seek( streamPosition++ );
         return raf.read();
     }
     
+    @Override
     public int available(){
         return (int)(end - streamPosition);
     }
     
+    @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int r = 0;
         if ( !(streamPosition < end )  ) return -1;
@@ -39,13 +42,17 @@ public class RafInputStream extends InputStream {
         return r;
     }
     
+    @Override
     public boolean markSupported(){
         return true;
     }
+    @Override
     public void mark( int readLimit ){ markPos = streamPosition; }
     
+    @Override
     public void reset() throws IOException{ streamPosition = markPos; }
     
+    @Override
     public long skip( long skip ) throws IOException{
         long r = Math.min( skip, end - streamPosition );
         streamPosition += r;

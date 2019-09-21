@@ -35,42 +35,52 @@ public class OrderedDataInputStream extends FilterInputStream implements DataInp
     }
     
     
+    @Override
     public void readFully(byte[] b, int off, int len) throws IOException{
         current.readFully(b, off, len);
     }
     
+    @Override
     public void readFully(byte[] b) throws IOException{
         current.readFully(b);
     }
     
+    @Override
     public int skipBytes(int n) throws IOException{
         return current.skipBytes(n);
     }
     
+    @Override
     public int readUnsignedShort() throws IOException{
         return current.readUnsignedShort();
     }
     
+    @Override
     public boolean readBoolean() throws IOException{
         return current.readBoolean();
     }
     
+    @Override
     public byte readByte() throws IOException{
         return current.readByte();
     }
     
+    @Override
     public char readChar() throws IOException{
         return current.readChar();
     }
     
+    @Override
     public double readDouble() throws IOException{
         return current.readDouble();
     }
     
+    @Override
     public float readFloat() throws IOException{
         return current.readFloat();
     }
     
+    @Override
     public int readInt() throws IOException{
         return current.readInt();
     }
@@ -78,26 +88,32 @@ public class OrderedDataInputStream extends FilterInputStream implements DataInp
     /**
      @deprecated string decoding always using default charset
      */
+    @Override
     public String readLine() throws IOException{
         return dataIn.readLine();
     }
     
+    @Override
     public long readLong() throws IOException{
         return current.readLong();
     }
     
+    @Override
     public short readShort() throws IOException{
         return current.readShort();
     }
     
+    @Override
     public String readUTF() throws IOException{
         return dataIn.readUTF();
     }
     
+    @Override
     public int readUnsignedByte() throws IOException{
         return dataIn.readUnsignedByte();
     }
     
+    @Override
     public void close() throws IOException{
         try{
             dataIn.close();

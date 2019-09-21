@@ -99,6 +99,7 @@ public class PatcherGUI extends JFrame {
 		//getContentPane().setLayout(	new BoxLayout( this, BoxLayout.Y_AXIS ) );
 	 	//setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
 				savePreferences();
@@ -113,6 +114,7 @@ public class PatcherGUI extends JFrame {
 		//		tlk source textfield + selector
 		Action selectSourceTlk = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser( repConf.getNwnHome() );
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setMultiSelectionEnabled(false);
 				if (sourceTlk.getText() != "")
@@ -139,6 +141,7 @@ public class PatcherGUI extends JFrame {
 		//		tlk output textfield + selector
 		Action selectoutputTlk = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser( repConf.getNwnHome() );
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setMultiSelectionEnabled(false);
 				if (outputTlk.getText() != "")
@@ -152,6 +155,7 @@ public class PatcherGUI extends JFrame {
 		//JPanel outputTlkPanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
 		Box outputTlkPanel = new Box( BoxLayout.X_AXIS );
 		useOutputTlk.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 				outputTlk.setEnabled(useOutputTlk.isSelected());
 			}
@@ -175,6 +179,7 @@ public class PatcherGUI extends JFrame {
 				fc.setMultiSelectionEnabled(false);
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			}
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (sourceDir.getText() != "")
 					fc.setCurrentDirectory(new File(sourceDir.getText()));
@@ -186,6 +191,7 @@ public class PatcherGUI extends JFrame {
 		};
 		sourceDir.setEditable( false );
 		useSourceDir.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 				sourceDir.setEnabled(useSourceDir.isSelected());
 			}
@@ -199,6 +205,7 @@ public class PatcherGUI extends JFrame {
 		JPanel buildPatchPanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
 		Action selectapplypatch = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser();
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setMultiSelectionEnabled(false);
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -216,9 +223,11 @@ public class PatcherGUI extends JFrame {
 		c3.add(new JButton(selectapplypatch));
 
 		Action buildPatch = new AbstractAction("build") {
+			@Override
 			public void actionPerformed(ActionEvent e){
 				sof.setVisible( true );
 				Thread buildThread = new Thread(){
+				@Override
 					public void run() {
 						build();
 						
@@ -402,6 +411,7 @@ public class PatcherGUI extends JFrame {
 	private static void repackage( File hakFile, File sourceDir, File outputHak ) throws IOException{
 		//File sourceDir = Patcher.getOutputDir( patchDir );
 		File[] files = sourceDir.listFiles( new java.io.FileFilter(){
+			@Override
 			public boolean accept( File f ){
 				return f.isFile();
 			}
@@ -436,6 +446,7 @@ public class PatcherGUI extends JFrame {
 				if (patchListModel.size() > 0)
 					fc.setCurrentDirectory( new File( patchListModel.getElementAt(0).toString() ));
 			}
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setMultiSelectionEnabled(true);
@@ -447,6 +458,7 @@ public class PatcherGUI extends JFrame {
 			}
 		};
 		Action up = new AbstractAction("up") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = patchList.getSelectedIndex();
 				if (line > 0) {
@@ -459,6 +471,7 @@ public class PatcherGUI extends JFrame {
 			}
 		};
 		Action down = new AbstractAction("down") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = patchList.getSelectedIndex();
 				if (line != -1 && line < patchListModel.size() - 1) {
@@ -471,6 +484,7 @@ public class PatcherGUI extends JFrame {
 			}
 		};
 		Action del = new AbstractAction("del") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = patchList.getSelectedIndex();
 				if (line != -1) {
@@ -492,6 +506,7 @@ public class PatcherGUI extends JFrame {
 		joinedPatchName.setEnabled( false );
 		Action selectOutputPatchName = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser();
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setMultiSelectionEnabled(false);
@@ -506,6 +521,7 @@ public class PatcherGUI extends JFrame {
 		p.add( new JButton( selectOutputPatchName ) );
 		
 		Action joinPatches = new AbstractAction( "join" ){
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				final Vector v = new Vector();
 				for ( int i = 0; i < patchListModel.size(); i++ )
@@ -515,6 +531,7 @@ public class PatcherGUI extends JFrame {
 					return;
 				}
 				new Thread(){
+					@Override
 					public void run(){
 						try{
 							setEnabled( false );

@@ -39,12 +39,14 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();        
     }
     
+    @Override
     public Element mkList(String label) {
         Element list = doc.createElement("List");
         list.setAttribute("label", label);
         return list;
     }
 
+    @Override
     public Element mkFloat(String label, float value) {
         Element f = doc.createElement("Float");
         f.setAttribute("label", label);
@@ -52,12 +54,14 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         return f;
     }
 
+    @Override
     public Element mkVoid(String label, byte[] value) {
         Element e = doc.createElement("Void");
         e.setAttribute("label", label);
         return e;
     }
 
+    @Override
     public Element mkCExoLocString(String label, int strRef, int[] stringIDs, String[] strings) {
         Element e = doc.createElement("CExoLocString");
         e.setAttribute("label", label);
@@ -76,20 +80,24 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         return field.getNodeName().equals("List");
     }
 
+    @Override
     public void structSetID(Element struct, int ID){
         struct.setAttribute("sid", Integer.toString(ID));
     }
 
+    @Override
     public Document load(java.io.File file) throws IOException{
         doc = docBuilder.newDocument();
         return (Document) super.load(file);
     }
     
+    @Override
     public Document load(InputStream is) throws IOException{
         doc = docBuilder.newDocument();
         return (Document) super.load(is);
     }
 
+    @Override
     public Element mkStruct(String label, int structID) {
         Element e = doc.createElement("Struct");
         e.setAttribute("label", label);
@@ -97,6 +105,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         return e;
     }
 
+    @Override
     public Element mkDouble(String label, double value) {
         Element f = doc.createElement("Double");
         f.setAttribute("label", label);
@@ -104,6 +113,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         return f;
     }
 
+    @Override
     public Object mkGffObject(Element topLevelStruct, String gffType, java.io.File file){
         doc.appendChild(topLevelStruct);
         topLevelStruct.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance","xsi:noNamespaceSchemaLocation", schemaLocation);
@@ -111,14 +121,17 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         return doc;
     }
 
+    @Override
     public void structAdd(Element struct, Element field) {
         struct.appendChild(field);
     }
 
+    @Override
     public void listAdd(Element list, Element struct) {
         list.appendChild(struct);
     }
 
+    @Override
     public Element mkCExoString(String label, String value) {
         Element e = doc.createElement("CExoString");
         e.setAttribute("label", label);
@@ -126,6 +139,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         return e;
     }
 
+    @Override
     public Element mkInteger(String label, byte type, java.math.BigInteger value) {
         Element f = doc.createElement(Gff.getTypeName(type));
         f.setAttribute("label", label);
@@ -133,6 +147,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         return f;
     }
 
+    @Override
     public Element mkCResRef(String label, String value) {
         Element e = doc.createElement("CResRef");
         e.setAttribute("label", label);
@@ -140,6 +155,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         return e;
     }
     
+    @Override
     public Element mkVector(String label, float[] value) {
         Element e = doc.createElement("Vector");
         e.setAttribute("label", label);

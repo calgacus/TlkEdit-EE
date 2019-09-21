@@ -35,6 +35,7 @@ public class TlkLookupPanel extends JPanel implements MessageSource {
             setEnabled(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             TlkEdit ed = position >= TlkLookup.USERTLKOFFSET ? usertlkedit : tlkedit;
             //ed.tlkTable.getModel().setValueAt(resField.getText(), position, 1);
@@ -156,14 +157,17 @@ public class TlkLookupPanel extends JPanel implements MessageSource {
         setNoValue();
     }
 
+    @Override
     public void removeMessageListener(MessageListener l) {
         messageSupport.removeMessageListener(l);
     }
 
+    @Override
     public MessageListener[] getMessageListeners() {
         return messageSupport.getMessageListeners();
     }
 
+    @Override
     public void addMessageListener(MessageListener l) {
         messageSupport.addMessageListener(l);
     }

@@ -22,10 +22,12 @@ public class GffCResRef extends GffField<String>{
                 //.substring( 0, Math.min( string.length(), Gff.RESREFSIZE ) );
     }
     
+    @Override
     public String getData(){
         return resRef;
     }
     
+    @Override
     public void setData( String data ){
         setResRef( data );
     }

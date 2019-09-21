@@ -144,6 +144,7 @@ public class NwnRepConfig {
 		// nwn home textfield + selector
 		Action selectHome = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser();
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setMultiSelectionEnabled(false);
@@ -163,6 +164,7 @@ public class NwnRepConfig {
 		final JToolBar tbar = new JToolBar(JToolBar.VERTICAL );
 		tbar.setFloatable( false );
 		useSourcehak.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 				sourceHakList.setEnabled(useSourcehak.isSelected());
 				tbar.setVisible(useSourcehak.isSelected());
@@ -184,6 +186,7 @@ public class NwnRepConfig {
 					}
 				}
 			}
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fc.setMultiSelectionEnabled(true);
@@ -202,6 +205,7 @@ public class NwnRepConfig {
 			}
 		};
 		Action up = new AbstractAction("up") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = sourceHakList.getSelectedIndex();
 				if (line > 0) {
@@ -214,6 +218,7 @@ public class NwnRepConfig {
 			}
 		};
 		Action down = new AbstractAction("down") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = sourceHakList.getSelectedIndex();
 				if (line != -1 && line < hakListModel.size() - 1) {
@@ -226,6 +231,7 @@ public class NwnRepConfig {
 			}
 		};
 		Action del = new AbstractAction("del") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = sourceHakList.getSelectedIndex();
 				if (line != -1) {
@@ -265,6 +271,7 @@ public class NwnRepConfig {
 		configPanel.add(keyFilePanel);
 
 		Action store = new AbstractAction("apply settings") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				store();
 			}
@@ -330,7 +337,7 @@ public class NwnRepConfig {
 	public static void main(String[] args) {
 		final NwnRepConfig c = new NwnRepConfig();
 		JFrame f = new JFrame("NWN Repository Settings");
-		f.addWindowListener( new WindowAdapter(){ public void windowClosing(WindowEvent e){
+		f.addWindowListener( new WindowAdapter(){ @Override public void windowClosing(WindowEvent e){
 			c.store();
 		} } );
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

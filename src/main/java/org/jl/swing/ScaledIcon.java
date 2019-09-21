@@ -31,6 +31,7 @@ public class ScaledIcon implements Icon {
 	/* (non-Javadoc)
 	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
 	 */
+	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform t = g2.getTransform();
@@ -43,6 +44,7 @@ public class ScaledIcon implements Icon {
 	/* (non-Javadoc)
 	 * @see javax.swing.Icon#getIconWidth()
 	 */
+	@Override
 	public int getIconWidth() {
 		return x;
 	}
@@ -50,6 +52,7 @@ public class ScaledIcon implements Icon {
 	/* (non-Javadoc)
 	 * @see javax.swing.Icon#getIconHeight()
 	 */
+	@Override
 	public int getIconHeight() {
 		return y;
 	}

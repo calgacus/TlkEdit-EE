@@ -78,15 +78,18 @@ public class KeyFileV11 extends KeyFile {
         }
     }
 
+    @Override
     public Iterator getResourceIDs() {
         return entryMap.keySet().iterator();
     }
 
+    @Override
     public Set<ResourceID> getResourceIDSet() {
         return Collections.unmodifiableSet(entryMap.keySet());
     }
 
 
+    @Override
     public BifResourceLocation findResource(String resName, short resType) {
         int[] a = entryMap.get(new ResourceID(resName, resType));
         if (a == null) {

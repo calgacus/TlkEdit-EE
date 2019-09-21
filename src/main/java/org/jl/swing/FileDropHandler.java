@@ -69,6 +69,7 @@ public abstract class FileDropHandler extends TransferHandler{
     
     abstract public void importFiles( List<File> files );
     
+    @Override
     public int getSourceActions(JComponent c){
         return NONE;
     }

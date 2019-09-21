@@ -28,6 +28,7 @@ import org.jl.swing.ActionListenerAction;
 public class StringPopupCellEditor extends AbstractCellEditor implements TableCellEditor, TextCellEditor{
     JDialog popup;
     JLabel dummy = new JLabel(){
+        @Override
         public void requestFocus(){
             textArea.requestFocus();
         }
@@ -78,6 +79,7 @@ public class StringPopupCellEditor extends AbstractCellEditor implements TableCe
         //popup.pack();
     }
     
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column){
         if (popup == null)
             init(table);
@@ -95,6 +97,7 @@ public class StringPopupCellEditor extends AbstractCellEditor implements TableCe
         return dummy;
     }
     
+    @Override
     public boolean stopCellEditing(){
         popup.setVisible( false );
         popup.dispose();
@@ -102,16 +105,19 @@ public class StringPopupCellEditor extends AbstractCellEditor implements TableCe
         return true;
     }
     
+    @Override
     public void cancelCellEditing(){
         popup.setVisible( false );
         popup.dispose();
         super.cancelCellEditing();
     }
     
+    @Override
     public Object getCellEditorValue(){
         return textArea.getText();
     }
     
+    @Override
     public JTextArea getTextComponent(){
         return textArea;
     }

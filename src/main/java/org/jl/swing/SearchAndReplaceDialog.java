@@ -92,6 +92,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
     protected JButton btnReplaceAll;
     
     Action aSearch = new AbstractAction(){
+        @Override
         public void actionPerformed( ActionEvent e ){
             doSearch();
             if ( !cbKeepDialog.isSelected() ){
@@ -102,6 +103,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
     };
     
     Action aReplace = new AbstractAction(){
+        @Override
         public void actionPerformed( ActionEvent e ){
             if ( haveMatch() ){
                 replaceMatch();
@@ -113,6 +115,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
     };
     
     Action aReplaceAll = new AbstractAction(){
+        @Override
         public void actionPerformed( ActionEvent e ){
             replaceAll();
             if ( !cbKeepDialog.isSelected() )
@@ -130,6 +133,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         super(owner);
         //setModal(true);
         Action aHide = new AbstractAction(){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 setVisible(false);
             }
@@ -186,6 +190,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         bottomPanel.add( boxSettings );
         
         rbSearchSelection.addChangeListener( new ChangeListener(){
+            @Override
             public void stateChanged( ChangeEvent e ){
                 btnSearch.setEnabled( !rbSearchSelection.isSelected() );
                 btnReplace.setEnabled( !rbSearchSelection.isSelected() );
@@ -196,6 +201,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         boxMain.add( bottomPanel );
         
         ChangeListener cl = new ChangeListener(){
+            @Override
             public void stateChanged( ChangeEvent e ){
                 invalidState = true;
                 //invalidate();//init();
@@ -205,6 +211,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         cbRegExp.addChangeListener(cl);
         
         KeyListener kl = new KeyAdapter(){
+            @Override
             public void keyPressed( KeyEvent e ){
                 invalidState = true;
                 //invalidate();//init();
@@ -213,8 +220,11 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         tfReplaceString.addKeyListener(kl);
         
         DocumentListener dl = new DocumentListener(){
+            @Override
             public void changedUpdate( DocumentEvent de ){}
+            @Override
             public void removeUpdate( DocumentEvent de ){}
+            @Override
             public void insertUpdate( DocumentEvent de ){
                 if ( !cbIncrementalSearch.isSelected() ||
                         rbSearchSelection.isSelected() )
@@ -321,6 +331,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
      * should be called by the editor/client when the value of string has changed,
      * i.e. when this object must reread the string and reinitialize the search pattern & matcher.
      * */
+    @Override
     public void invalidate(){
         invalidState = true;
         btnReplace.setEnabled(false);
@@ -417,6 +428,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
     }
     
     protected Runnable GrabFocus = new Runnable() {
+        @Override
         public void run() {
             if ( isVisible() ){
                 requestFocus();
@@ -426,6 +438,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
     };
     
     protected Runnable SetOK = new Runnable() {
+        @Override
         public void run() {
             invalidState = false;
             //System.out.println("SetOK " + invalidState);
@@ -462,23 +475,28 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         f.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         final JTextPane t = new JTextPane();
         final SearchAndReplaceDialog sar = new SearchAndReplaceDialog(){
+            @Override
             public String getString(){
                 return t.getText();
             }
+            @Override
             public void selectText( int a, int b ){
                 t.select( a, b );
             }
+            @Override
             public void updateString( String s ){
                 int p = t.getCaretPosition();
                 t.setText( s );
                 //t.setCaretPosition( p );
             }
+            @Override
             public void init(){
                 super.init();
                 super.searchStartPos = t.getCaretPosition();
             }
         };
         t.addFocusListener( new FocusAdapter(){
+            @Override
             public void focusGained(FocusEvent e){
                 sar.invalidate();
             }

@@ -23,6 +23,7 @@ import org.jl.nwn.resource.ResourceID;
  * object implements only connect() and getInputStream() !
  */
 public class Handler extends URLStreamHandler{
+    @Override
     protected java.net.URLConnection openConnection(java.net.URL u) throws java.io.IOException {
         return new ErfURLConnection(u);
     }
@@ -35,6 +36,7 @@ public class Handler extends URLStreamHandler{
             super(uRL);
         }
         
+        @Override
         public void connect() throws java.io.IOException {
             String erf = getURL().getPath();
             File erfFile = new File( erf );

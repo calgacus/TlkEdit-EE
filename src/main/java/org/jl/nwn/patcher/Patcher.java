@@ -53,6 +53,7 @@ public class Patcher {
 			column = col;
 			target = s;
 		}
+		@Override
 		public String toString() {
 			return "column " + column + " -> " + target;
 		}
@@ -359,6 +360,7 @@ public class Patcher {
 		// read all 2da files from patch directory
 		System.out.println("reading patch 2da files : ");
 		File[] daPatchFiles = patchDir.listFiles(new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return name.toLowerCase().endsWith(".2da");
 			}
@@ -683,6 +685,7 @@ public class Patcher {
 			try {
 				System.out.println("trying to compile scripts ...");
 				File[] scripts = outputDir.listFiles(new FilenameFilter() {
+					@Override
 					public boolean accept(File dir, String name) {
 						return name.toLowerCase().endsWith(".nss");
 					}
@@ -838,6 +841,7 @@ public class Patcher {
 		System.out.println(
 			"reading 2da files from " + patchDir1.getAbsolutePath());
 		File[] daPatchFiles = patchDir1.listFiles(new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return name.toLowerCase().endsWith(".2da");
 			}

@@ -61,6 +61,7 @@ public class NwnFileView extends FileView{
         */
     }
     
+    @Override
     public Icon getIcon(File f){
         // broken symlinks do not exist
         if (!f.exists()) return icon_broken;
@@ -84,6 +85,7 @@ public class NwnFileView extends FileView{
         return fsv.getSystemIcon(f);
     }
     
+    @Override
     public String getTypeDescription(File f){
         if ( f.getName().length() > 4 ){
             String ext = f.getName().toLowerCase().substring( f.getName().length()-3 );

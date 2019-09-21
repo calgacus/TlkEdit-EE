@@ -60,6 +60,7 @@ public class TlkReadOnly_1 {
         stringBytes = fc.map( FileChannel.MapMode.READ_ONLY, stringDataOffset, fc.size() - stringDataOffset );
 
         cache = new LinkedHashMap<Integer, String>(cacheSize, 0.75f, true){
+            @Override
             protected boolean removeEldestEntry(java.util.Map.Entry<Integer, String> eldest) {
                 return size() > cacheSize;
             }            

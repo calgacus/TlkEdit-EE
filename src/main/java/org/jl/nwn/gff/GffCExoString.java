@@ -16,10 +16,12 @@ public class GffCExoString extends GffField<String>{
         this.cExoString = value;
     }
     
+    @Override
     public String getData(){
         return cExoString;
     }
     
+    @Override
     public void setData( String data ){
         cExoString = data;
     }

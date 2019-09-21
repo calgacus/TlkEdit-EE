@@ -24,22 +24,30 @@ public abstract class SimpleFileEditorPanel extends JPanel implements SimpleFile
     
     protected boolean isModified = false;
     
+    @Override
     public abstract boolean canSave();
     
+    @Override
     public abstract boolean canSaveAs();
     
+    @Override
     public abstract void save() throws IOException;
     
+    @Override
     public abstract void saveAs(File f, Version nwnVersion) throws IOException;
     
+    @Override
     public abstract void close();
     
+    @Override
     public abstract File getFile();
     
+    @Override
     public Version getFileVersion(){
         return nwnVersion;
     }
     
+    @Override
     public boolean getIsModified(){
         return isModified;
     }

@@ -29,10 +29,12 @@ public class GffInteger extends GffField<BigInteger>{
         return value.longValue();
     }
     
+    @Override
     public BigInteger getData(){
         return value;
     }
     
+    @Override
     public void setData( BigInteger data ){
         value = data;
     }

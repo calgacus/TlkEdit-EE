@@ -34,6 +34,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         /* (non-Javadoc)
          * @see javax.swing.tree.TreeModel#getChild(java.lang.Object, int)
          */
+    @Override
     public Object getChild(Object arg0, int arg1) {
         return ((GffField) arg0).getChild(arg1);
     }
@@ -41,12 +42,14 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         /* (non-Javadoc)
          * @see javax.swing.tree.TreeModel#getChildCount(java.lang.Object)
          */
+    @Override
     public int getChildCount(Object arg0) {
         return ((GffField) arg0).getChildCount();
     }
         /* (non-Javadoc)
          * @see org.jdesktop.swing.treetable.TreeTableModel#getColumnCount()
          */
+    @Override
     public int getColumnCount() {
         return 3;
     }    
@@ -54,6 +57,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         /* (non-Javadoc)
          * @see javax.swing.tree.TreeModel#getIndexOfChild(java.lang.Object, java.lang.Object)
          */
+    @Override
     public int getIndexOfChild(Object arg0, Object arg1){
         return ((GffField) arg0).getChildIndex((GffField)arg1);
     }
@@ -61,6 +65,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         /* (non-Javadoc)
          * @see javax.swing.tree.TreeModel#getRoot()
          */
+    @Override
     public Object getRoot() {
         return root;
     }
@@ -74,6 +79,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         /* (non-Javadoc)
          * @see org.jdesktop.swing.treetable.TreeTableModel#isCellEditable(java.lang.Object, int)
          */
+    @Override
     public boolean isCellEditable(Object arg0, int arg1) {
         GffField f = (GffField)arg0;
         return ( arg0 != root && // cannot edit top level struct
@@ -84,12 +90,14 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         /* (non-Javadoc)
          * @see javax.swing.tree.TreeModel#isLeaf(java.lang.Object)
          */
+    @Override
     public boolean isLeaf(Object arg0) {
         return !((GffField)arg0).allowsChildren();
     }
     
     /** for columns 0 and 1 return label and typename strings, for column 2 return GffField object
      */
+    @Override
     public Object getValueAt(Object arg0, int arg1){
         GffField f = (GffField)arg0;
         switch (arg1) {
@@ -110,12 +118,14 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         }
     }
     
+    @Override
     public void setValueAt(Object value, Object node, int column) {
         if ( value == null )
             throw new IllegalArgumentException( "value must not be null" );
         mutator.new ValueChangeEdit( (GffField)node, column, value ).invoke();
     }
     
+    @Override
     public String getColumnName(int arg0) {
         switch (arg0){
             case 0 : return "Label";
@@ -125,6 +135,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         }
     }
     
+    @Override
     public Class getColumnClass(int arg0) {
         return super.getColumnClass(arg0);
     }
@@ -187,6 +198,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
                 this.col = col;
                 this.newValue = value;
             }
+            @Override
             protected Object performEdit(){
                 oldValue = setValue( field, col, newValue );
                 return null;
@@ -223,6 +235,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
                 this.child = child;
                 this.index = index;
             }
+            @Override
             protected Object performEdit(){
                 parent.addChild(index, child);
                 modelSupport.fireChildrenAdded(
@@ -248,6 +261,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
                 this.parent = parent;
                 this.child = child;
             }
+            @Override
             protected Object performEdit(){
                 position = parent.getChildIndex(child);
                 parent.removeChild(child);
@@ -260,7 +274,9 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
                 modelSupport.fireChildrenAdded(makePath(parent), new int[]{position}, new Object[]{child});
             }
         }        
+        @Override
         public void compoundUndo(){}
+        @Override
         public void compoundRedo(){}
     }
     

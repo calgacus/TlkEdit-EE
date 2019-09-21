@@ -34,6 +34,7 @@ public abstract class GffField<Data extends Object> implements Cloneable{
         return Gff.getTypeName( type );
     }
     
+    @Override
     public String toString(){
         return label + " (" + getTypeName() + ") " + getData();
     }
@@ -115,6 +116,7 @@ public abstract class GffField<Data extends Object> implements Cloneable{
             return null;
     }
     
+    @Override
     public Object clone(){
         try{
             return super.clone();

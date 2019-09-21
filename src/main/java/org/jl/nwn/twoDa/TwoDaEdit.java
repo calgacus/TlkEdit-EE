@@ -218,6 +218,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
             ListSelectionListener lsl = new ListSelectionListener() {
 
+                @Override
                 public void valueChanged(ListSelectionEvent e) {
                     int c = table.getSelectedColumn();
                     if (!e.getValueIsAdjusting() && c != -1) {
@@ -375,6 +376,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         final JTextField text = new JTextField();
         DefaultCellEditor ce = new DefaultCellEditor(text) {
 
+            @Override
             public java.awt.Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
                 java.awt.Component retValue;
                 retValue = super.getTableCellEditorComponent(table, value, isSelected, row, column);
@@ -417,6 +419,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     private void setupToolbar() {
         Action lock = new AbstractAction("lock row header") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (((JToggleButton) e.getSource()).isSelected()) {
                     lockColumns(new int[]{0, 1});
@@ -430,24 +433,28 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
         Action lock0 = new AbstractAction("") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 lockColumns(new int[]{0});
             }
         };
         Action lock1 = new AbstractAction("") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 lockColumns(new int[]{0, 1});
             }
         };
         Action unlock = new AbstractAction("display row header") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 unlockColumns();
             }
         };
         Action resize = new AbstractAction("resize columns") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 resizeColumns();
             }
@@ -495,6 +502,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
 
         Action lockLabel = new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int labelCol = model.findColumn("label");
                 if ( labelCol != -1 )
@@ -569,14 +577,17 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         return toolbar;
     }
 
+    @Override
     public JMenu[] getMenus() {
         return new JMenu[]{editMenu, viewMenu, toolsMenu};
     }
 
+    @Override
     public JToolBar getToolbar() {
         return toolbar;
     }
 
+    @Override
     public void showToolbar(boolean b) {
         if (b) {
             add(toolbar, java.awt.BorderLayout.NORTH);
@@ -631,6 +642,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             if (e.getFirstRow() == TableModelEvent.HEADER_ROW) {
                 SwingUtilities.invokeLater(new Runnable() {
 
+                    @Override
                     public void run() {
                         resizeColumns();
                     }
@@ -660,6 +672,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     protected class TwoDaSelectionListener implements ListSelectionListener {
 
+        @Override
         public void valueChanged(ListSelectionEvent lse) {
             if (!lse.getValueIsAdjusting()) {
                 updatePositition();
@@ -715,6 +728,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     Action aToggleUserTlk = new AbstractAction("U") {
         private int USERTLKFLAG = 1 << 24;
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int columnIndex = table.getSelectedColumn();
             if (columnIndex != -1) {
@@ -743,6 +757,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     private final Action actFind = new AbstractAction("find") {
         String title = "";
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (searchAndReplace == null) {
                 searchAndReplace = new TableSearchAndReplace((JFrame) SwingUtilities.getWindowAncestor(table), table) {
@@ -764,6 +779,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     private final Action actFindNext = new AbstractAction("find again") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (searchAndReplace != null && searchAndReplace.haveMatch()) {
                 searchAndReplace.doSearch();
@@ -778,6 +794,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     final Action actPasteRows = new AbstractAction("paste") {
 
         //{ super.setEnabled( false ); }
+        @Override
         public void actionPerformed(ActionEvent e) {
             int rowNum = table.getSelectedRow();
             int colNum = table.getSelectedColumn();
@@ -844,6 +861,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
      */
     final Action actCopyRows = new AbstractAction("copy") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int[] selection = table.getSelectedRows();
             if (selection.length > 0) {
@@ -865,14 +883,17 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 final String transfer = sb.toString();
                 Transferable trans = new Transferable() {
 
+                    @Override
                     public Object getTransferData(DataFlavor flavor) throws java.awt.datatransfer.UnsupportedFlavorException, IOException {
                         return transfer;
                     }
 
+                    @Override
                     public boolean isDataFlavorSupported(DataFlavor flavor) {
                         return flavor == tsvFlavor;
                     }
 
+                    @Override
                     public DataFlavor[] getTransferDataFlavors() {
                         return new DataFlavor[]{tsvFlavor, DataFlavor.stringFlavor};
                     }
@@ -885,6 +906,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     };
     final Action actRemoveSelection = new AbstractAction("remove") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             table.removeRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
             int[] selection = table.getSelectedRows();
@@ -897,6 +919,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     Action actCut = new AbstractAction("cut") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             actCopyRows.actionPerformed(e);
             actRemoveSelection.actionPerformed(e);
@@ -905,6 +928,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     Action actToggleAbsolute = new AbstractAction("x^!") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int column = table.getSelectedColumns()[0];
             int[] rows = table.getSelectedRows();
@@ -924,6 +948,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     Action actRenumber = new AbstractAction("renumber") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             mutator.beginUpdate();
             for (int row = 0; row < model.getRowCount() - 1; row++) {
@@ -972,6 +997,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             JPanel buttons = new JPanel(new GridLayout(1, 3));
             JButton colInsertButton = new JButton(new AbstractAction("insert column") {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (parseFields() == 0) {
                         try {
@@ -988,6 +1014,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             });
             JButton colDropButton = new JButton(new AbstractAction("drop column") {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (parseFields() == 0) {
                         try {
@@ -1002,6 +1029,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             });
             JButton colRenameButton = new JButton(new AbstractAction("rename column") {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (parseFields() == 0) {
                         if (!columnHeader.equals(model.getColumnName(columnNumber))) {
@@ -1028,6 +1056,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             alterTableDialog.pack();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (alterTableDialog == null) {
                 init();

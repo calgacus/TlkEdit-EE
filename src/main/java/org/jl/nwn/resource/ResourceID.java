@@ -22,6 +22,7 @@ public class ResourceID implements Comparable {
 
     public static final Comparator<ResourceID> COMPARATOR = new Comparator<ResourceID>() {
 
+        @Override
         public int compare(ResourceID o1, ResourceID o2) {
             int r = o1.getName().compareTo(o2.getName());
             return r == 0 ? o1.getType() - o2.getType() : r;
@@ -30,6 +31,7 @@ public class ResourceID implements Comparable {
 
     public static final Comparator<ResourceID> TYPECOMPARATOR = new Comparator<ResourceID>() {
 
+        @Override
         public int compare(ResourceID o1, ResourceID o2) {
             int r = o1.getType() - o2.getType();
             return r == 0 ? o1.getName().compareTo(o2.getName()) : r;
@@ -372,16 +374,19 @@ public class ResourceID implements Comparable {
         setName(name);
     }
 
+    @Override
     public int compareTo(Object o) {
         ResourceID id = (ResourceID) o;
         int s = getName().compareToIgnoreCase(id.getName());
         return (s == 0) ? getType() - id.getType() : s;
     }
 
+    @Override
     public boolean equals(Object o) {
         return compareTo(o) == 0;
     }
 
+    @Override
     public int hashCode() {
         return getName().hashCode() + getType();
     }
@@ -389,6 +394,7 @@ public class ResourceID implements Comparable {
     /**
      * @return filename for this resource ID
      * */
+    @Override
     public String toString() {
         return getName() + "." + ResourceID.getExtensionForType(getType());
     }

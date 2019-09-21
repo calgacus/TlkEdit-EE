@@ -87,10 +87,12 @@ public class ErfEdit extends SimpleFileEditorPanel{
     private static final UIDefaultsX uid = new UIDefaultsX();
 
     private static FileFilter fFilterErf = new FileFilter(){
+        @Override
         public boolean accept( File f ){
             String s = f.getName().toLowerCase();
             return ( !f.isFile() || s.endsWith(".mod") || s.endsWith(".hak") || s.endsWith(".sav") || s.endsWith(".erf") || s.endsWith(".nwm") );
         }
+        @Override
         public String getDescription(){
             return "erf files";
         }
@@ -103,6 +105,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
 
     private AbstractTableModel tableModel = new AbstractTableModel(){
 
+        @Override
         public String getColumnName(int column){
             switch (column){
                 case 0 : return "name";
@@ -111,12 +114,15 @@ public class ErfEdit extends SimpleFileEditorPanel{
             }
         }
 
+        @Override
         public int getColumnCount(){
             return 3;
         }
+        @Override
         public int getRowCount(){
             return model.size();
         }
+        @Override
         public Object getValueAt( int row, int column ){
             ResourceID id = (ResourceID) model.get(row);
             switch (column){
@@ -135,10 +141,12 @@ public class ErfEdit extends SimpleFileEditorPanel{
             return "0x0000".substring(0, 6-hex.length())+hex;
         }
 
+        @Override
         public boolean isCellEditable(int rowIndex, int columnIndex){
             return columnIndex == 0;
         }
 
+        @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex){
             if ( columnIndex == 0 ){
                 if ( !getValueAt(rowIndex, columnIndex ).equals(aValue.toString()) ){
@@ -159,6 +167,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
             }
         }
 
+        @Override
         public void fireTableChanged( TableModelEvent e ){
             super.fireTableChanged(e);
             setIsModified(true);
@@ -172,6 +181,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
         table.getColumnModel().getColumn(0).setMinWidth(200);
         cbTypeSelector.addItemListener( new ItemListener(){
+            @Override
             public void itemStateChanged( ItemEvent e ){
                 if ( e.getStateChange() == ItemEvent.SELECTED ){
                     ErfFile.ErfType type = (ErfFile.ErfType) cbTypeSelector.getSelectedItem();
@@ -184,6 +194,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         });
         table.setDefaultRenderer( Object.class, new DefaultTableCellRenderer(){
             Color defaultColor = getBackground();
+            @Override
             public Component getTableCellRendererComponent(JTable table,
                     Object value,
                     boolean isSelected,
@@ -199,6 +210,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
             }
         });
         descEditor.addChangeListener( new ChangeListener(){
+            @Override
             public void stateChanged( ChangeEvent e ){
                 setIsModified(true);
             }
@@ -309,6 +321,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     }
 
     private Action actAddFiles = new AbstractAction(){
+        @Override
         public void actionPerformed( ActionEvent e ){
             fChooser.setMultiSelectionEnabled(true);
             fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
@@ -322,6 +335,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     };
 
     protected TransferHandler fileDropHandler = new FileDropHandler() {
+        @Override
         public void importFiles(List<File> files) {
             for ( File f : files )
                 erf.putResource(f);
@@ -330,6 +344,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     };
 
     private Action actSave = new AbstractAction( "save" ){
+        @Override
         public void actionPerformed( ActionEvent e ){
             try{
                 save();
@@ -340,6 +355,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     };
 
     private Action actNew = new AbstractAction( "new erf" ){
+        @Override
         public void actionPerformed( ActionEvent e ){
             GffCExoLocString desc = new GffCExoLocString( "erf_desc" );
             erf = new ErfFile( new File("new erf"), ErfFile.ERF, desc  );
@@ -349,6 +365,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     };
 
     private Action actSaveAs = new AbstractAction( "save as" ){
+        @Override
         public void actionPerformed( ActionEvent e ){
             fChooser.setMultiSelectionEnabled(false);
             fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
@@ -363,6 +380,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     };
 
     private Action actOpen = new AbstractAction( "open" ){
+        @Override
         public void actionPerformed( ActionEvent e ){
             fChooser.setMultiSelectionEnabled(false);
             fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
@@ -377,6 +395,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     };
 
     private Action actRemove = new AbstractAction(){
+        @Override
         public void actionPerformed( ActionEvent e ){
             int[] selection = table.getSelectedRows();
             for ( int i = selection.length-1; i>-1; i-- ){
@@ -394,6 +413,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     private Action actExtractSelected = new AbstractAction(){
         private JButton btnOK = new JButton(
                 new AbstractAction( "OK" ){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 dialog.setVisible(false);
                 dialog.dispose();
@@ -412,6 +432,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                 //pack();
             }
         };
+        @Override
         public void actionPerformed( ActionEvent e ){
             final int[] selection = table.getSelectedRows();
             if ( selection.length > 0 ){
@@ -420,6 +441,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                 if ( fChooser.showDialog( table, "extract here" ) == JFileChooser.APPROVE_OPTION ){
                     final File outputDir = fChooser.getSelectedFile();
                     new Thread(){
+                @Override
                         public void run(){
                             pBar.setMinimum( 0 );
                             pBar.setMaximum( selection.length );
@@ -469,11 +491,13 @@ public class ErfEdit extends SimpleFileEditorPanel{
         redoList();
     }
 
+    @Override
     public void save() throws IOException{
         erf.write();
         setIsModified(false);
     }
 
+    @Override
     public void saveAs(File f, Version nwnVersion) throws IOException{
         erf.write(f);
         actSave.setEnabled(true);
@@ -491,6 +515,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     /**
      * @throws IOException
      */
+    @Override
     public void close(){
         try{
             erf.close();
@@ -503,18 +528,22 @@ public class ErfEdit extends SimpleFileEditorPanel{
         return f.isFile() && fFilterErf.accept(f);
     }
 
+    @Override
     public File getFile() {
         return erf.getFile();
     }
 
+    @Override
     public boolean canSave(){
         return actSave.isEnabled();
     }
 
+    @Override
     public boolean canSaveAs(){
         return true;
     }
 
+    @Override
     public JMenu[] getMenus(){
         return new JMenu[]{menuErf};
     }
@@ -540,10 +569,12 @@ public class ErfEdit extends SimpleFileEditorPanel{
         return ids;
     }
 
+    @Override
     public JToolBar getToolbar() {
         return toolbar;
     }
 
+    @Override
     public void showToolbar(boolean b) {
         if ( b )
             add(toolbar, java.awt.BorderLayout.NORTH);

@@ -39,6 +39,7 @@ public class HexEdit extends JPanel{
     AbstractTableModel model = new AbstractTableModel(){
         byte[] bytes16 = new byte[16];
         
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             int bufferPos = rowIndex * 16 + (columnIndex-1);
             if ( columnIndex == 0 )
@@ -72,15 +73,18 @@ public class HexEdit extends JPanel{
             return b < 16 ? "0" + Integer.toHexString(b) : Integer.toHexString(b);
         }
         
+        @Override
         public int getRowCount() {
             int r = (int) Math.ceil(buffer.capacity() / 16.0);
             return r;
         }
         
+        @Override
         public int getColumnCount() {
             return 18;
         }
         
+        @Override
         public String getColumnName(int column) {
             switch (column) {
                 case 0 : return "Position";
@@ -89,6 +93,7 @@ public class HexEdit extends JPanel{
             }
         }
         
+        @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             int bufferPos = rowIndex * 16 + (columnIndex-1);
             int value = Integer.parseInt(aValue.toString(), 16);
@@ -100,6 +105,7 @@ public class HexEdit extends JPanel{
             }
         }
         
+        @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return (columnIndex > 0 && columnIndex < 17) &&
                     rowIndex * 16 + columnIndex < buffer.capacity();
@@ -109,6 +115,7 @@ public class HexEdit extends JPanel{
     
     JTextField textField = new JTextField(2);
     DefaultCellEditor byteEd = new DefaultCellEditor(textField){
+        @Override
         public java.awt.Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             java.awt.Component retValue;
             retValue = super.getTableCellEditorComponent(table, value, isSelected, row, column);

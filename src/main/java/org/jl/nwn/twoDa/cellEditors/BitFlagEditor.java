@@ -44,9 +44,11 @@ public class BitFlagEditor
     private MyTextField valueField = new MyTextField();
     private JPanel panel = new JPanel(new GridLayout(0, 1));
     private JLabel label = new JLabel(){
+        @Override
         public void requestFocus(){
             valueField.requestFocus();
         }
+        @Override
         public boolean processKeyBinding(KeyStroke ks,
                 KeyEvent e,
                 int condition,
@@ -65,6 +67,7 @@ public class BitFlagEditor
     
     
     private static class MyTextField extends JTextField{
+        @Override
         public boolean processKeyBinding(KeyStroke ks,
                 KeyEvent e,
                 int condition,
@@ -74,6 +77,7 @@ public class BitFlagEditor
     }
     
     private ActionListener al = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             update();
         }
@@ -142,9 +146,9 @@ public class BitFlagEditor
         dialog.setFocusTraversalKeys(
                 KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
                 s2);
-        dialog.getRootPane().getActionMap().put( "cancel", new AbstractAction(){ public void actionPerformed(ActionEvent e){ cancelCellEditing(); } } );
+        dialog.getRootPane().getActionMap().put( "cancel", new AbstractAction(){ @Override public void actionPerformed(ActionEvent e){ cancelCellEditing(); } } );
         dialog.getRootPane().getInputMap( JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT ).put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ), "cancel" );
-        dialog.getRootPane().getActionMap().put( "endEdit", new AbstractAction(){ public void actionPerformed(ActionEvent e){ stopCellEditing(); } } );
+        dialog.getRootPane().getActionMap().put( "endEdit", new AbstractAction(){ @Override public void actionPerformed(ActionEvent e){ stopCellEditing(); } } );
         dialog.getRootPane().getInputMap( JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT ).put( KeyStroke.getKeyStroke( KeyEvent.VK_ENTER, 0 ), "endEdit" );
         dialog.setUndecorated(true);
         //dialog.setAlwaysOnTop(true);
@@ -153,6 +157,7 @@ public class BitFlagEditor
     /* (non-Javadoc)
      * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
      */
+    @Override
     public Component getTableCellEditorComponent(
             JTable table,
             Object value,
@@ -204,6 +209,7 @@ public class BitFlagEditor
         return paddingString.substring(0, paddingString.length() - h.length()) + h;
     }
     
+    @Override
     public boolean stopCellEditing() {
         if ( super.stopCellEditing() ){
             //dialog.setVisible(false);
@@ -216,11 +222,13 @@ public class BitFlagEditor
             return false;
     }
     
+    @Override
     public void cancelCellEditing(){
         hide();
         super.cancelCellEditing();
     }
     
+    @Override
     public Object getCellEditorValue() {
         return valueField.getText();
     }

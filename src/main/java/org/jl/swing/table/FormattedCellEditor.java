@@ -56,6 +56,7 @@ public class FormattedCellEditor extends AbstractCellEditor implements TableCell
                ( min == null || min.compareTo(value) < 1 );
     }
     
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column){
         text.setValue(value);
         int length = text.getDocument().getLength();
@@ -66,10 +67,12 @@ public class FormattedCellEditor extends AbstractCellEditor implements TableCell
         return text;
     }
     
+    @Override
     public Object getCellEditorValue(){
         return text.getValue();
     }
         
+    @Override
     public boolean stopCellEditing(){
         try{
             text.commitEdit();

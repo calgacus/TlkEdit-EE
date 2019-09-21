@@ -75,11 +75,13 @@ public final class ResRefUtil{
      */
     public JFormattedTextField.AbstractFormatter getStringFormatter(final boolean accept2DA_Null){
         return new JFormattedTextField.AbstractFormatter(){
+            @Override
             public Object stringToValue(String text) throws ParseException{
                 if (accept2DA_Null && "****".equals(text))
                     return text;
                 return parseString(text);
             }
+            @Override
             public String valueToString(Object value) throws ParseException{
                 return value!=null?value.toString():"";
             }

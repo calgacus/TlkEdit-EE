@@ -116,10 +116,12 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             this.v = v;
         }        
         
+        @Override
         public boolean accept(File f) {
             return true;
         }
 
+        @Override
         public String getDescription() {
             return "All Files - " + v.getDisplayName();
         }
@@ -163,6 +165,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             super("Open file...");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (tPane.getSelectedIndex() != -1) {
                 if (((SimpleFileEditor) tPane.getSelectedComponent()).getFile() != null) {
@@ -207,6 +210,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             dirChooser.setAccessory(options);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             fChooser.cancelSelection();
             final List<ResourceID> list = acc.getSelectedResources();
@@ -264,6 +268,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actQuit = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             quit();
         }
@@ -271,6 +276,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actClose = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             closePane((JComponent) tPane.getSelectedComponent(), true);
         }
@@ -278,6 +284,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action newTlk = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             TlkEdit ed = new TlkEdit();
             JComboBox cbVersions = new JComboBox(Version.values());
@@ -293,6 +300,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action newGff = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             GffEditX gff = new GffEditX();
             gff.addPropertyChangeListener(EditorFrameX.this);
@@ -303,6 +311,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action newErf = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             ErfEdit erf = new ErfEdit(Version.NWN1);
             erf.addPropertyChangeListener(EditorFrameX.this);
@@ -312,6 +321,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action newErf2 = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             ErfEdit erf = new ErfEdit(Version.NWN2);
             erf.addPropertyChangeListener(EditorFrameX.this);
@@ -321,6 +331,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actSave = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveActivePane();
         }
@@ -328,6 +339,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actSaveAs = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveActivePaneAs();
         }
@@ -335,6 +347,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actSaveAll = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveAll();
         }
@@ -345,6 +358,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             Actions.configureActionUI(this, uid, "EditorFrame.ErfOpenResource");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             ErfEdit erf = (ErfEdit) tPane.getSelectedComponent();
             ResourceID[] ids = erf.getSelectedResources();
@@ -610,12 +624,14 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         tPane = new JTabbedPane();
         Action nextTab = new AbstractAction() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 tPane.setSelectedIndex((tPane.getSelectedIndex() + 1) % tPane.getTabCount());
             }
         };
         Action prevTab = new AbstractAction() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 tPane.setSelectedIndex((tPane.getSelectedIndex() + tPane.getTabCount() - 1) % tPane.getTabCount());
             }
@@ -657,6 +673,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
          */
         tPane.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 SimpleFileEditorPanel ed = (SimpleFileEditorPanel) ((JTabbedPane) e.getSource())
                         .getSelectedComponent();
@@ -781,6 +798,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         ActionListener updateMemoryLabel = new ActionListener() {
             String msg = Messages.getString("EditorFrame.InfoLabelMemoryUsage"); //$NON-NLS-1$
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 long total = Runtime.getRuntime().totalMemory();
                 long free = Runtime.getRuntime().freeMemory();
@@ -904,6 +922,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             final JOptionPane oPane = new JOptionPane(inputValues, JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION, null, optionButtons, optionButtons[0]);
             Action selectValue = new AbstractAction() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     oPane.setValue(e.getSource());
                     dialog.setVisible(false);
@@ -954,6 +973,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         prefs.removeNode();
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SimpleFileEditorPanel.FILE_PROPERTY) || evt.getPropertyName().equals(SimpleFileEditorPanel.ISMODIFIED_PROPERTY)) {
             SimpleFileEditorPanel ed = (SimpleFileEditorPanel) evt.getSource();
@@ -969,6 +989,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actNoTlkLookup = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             SimpleFileEditor ed = (SimpleFileEditor) tPane.getSelectedComponent();
             if (ed instanceof TlkEdit) {
@@ -983,6 +1004,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action useForLookup = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             SimpleFileEditor ed = (SimpleFileEditor) tPane.getSelectedComponent();
             if (ed instanceof TlkEdit) {
@@ -999,6 +1021,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     };
     private Action useForUserLookup = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             SimpleFileEditor ed = (SimpleFileEditor) tPane.getSelectedComponent();
             if (ed instanceof TlkEdit) {
@@ -1076,6 +1099,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             // let the window.close() listeners run before calling exit
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     System.exit(0);
                 }
@@ -1125,6 +1149,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         Actions.configureActionUI(aShowLookup, uid, "EditorFrame.showTlkLookup");
         AbstractAction aLookupAlwaysOnTop = new AbstractAction() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 //System.out.println("set always on top : " + !lookupDialog.isAlwaysOnTop());
                 lookupDialog.setAlwaysOnTop(!lookupDialog.isAlwaysOnTop());
@@ -1145,6 +1170,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     TransferHandler FileTransferHandler = new FileDropHandler() {
 
+        @Override
         public void importFiles(java.util.List<File> files) {
             for (File f : files) {
                 openFile(f, Version.getDefaultVersion());

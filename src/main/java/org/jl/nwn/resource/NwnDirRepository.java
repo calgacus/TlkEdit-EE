@@ -26,6 +26,7 @@ public class NwnDirRepository extends AbstractRepository {
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.resource.NwnRepository#getResource(org.jl.nwn.resource.ResourceID)
 	 */
+	@Override
 	public InputStream getResource(ResourceID id) throws IOException {
 		File f = findFile( id );
 		return f!=null ? new FileInputStream(f) : null;
@@ -57,6 +58,7 @@ public class NwnDirRepository extends AbstractRepository {
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.resource.NwnRepository#getResourceLocation(org.jl.nwn.resource.ResourceID)
 	 */
+	@Override
 	public File getResourceLocation(ResourceID id) {
 		return contains(id)? dir : null;//new File( dir, id.toFileName() );
 	}
@@ -64,14 +66,17 @@ public class NwnDirRepository extends AbstractRepository {
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.resource.NwnRepository#contains(org.jl.nwn.resource.ResourceID)
 	 */
+	@Override
 	public boolean contains(ResourceID id) {
 		return findFile( id ) != null;
 	}
 	
+	@Override
 	public OutputStream putResource( ResourceID id ) throws IOException{
 		return new FileOutputStream( new File( dir, id.toFileName() ) );
 	}	
 	
+	@Override
 	public Set getResourceIDs(){
 		TreeSet s = new TreeSet();
 		File[] files = dir.listFiles();
@@ -81,15 +86,18 @@ public class NwnDirRepository extends AbstractRepository {
 		return Collections.unmodifiableSet( s );
 	}
 
+	@Override
 	public boolean isWritable() {
 		return dir.canWrite();
 	}
 
+	@Override
 	public long lastModified(ResourceID id) {
 		File f = findFile( id );
 		return f!=null? f.lastModified() : 0;
 	}
         
+        @Override
         public int getResourceSize( ResourceID id ){
             File f = findFile(id);
             return f != null ?

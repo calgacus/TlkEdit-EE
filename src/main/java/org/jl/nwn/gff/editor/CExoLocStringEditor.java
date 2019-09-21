@@ -53,9 +53,11 @@ public class CExoLocStringEditor extends JPanel {
     JTextField labelField = new JTextField(16);
     
     private AbstractTableModel model = new AbstractTableModel(){
+        @Override
         public int getColumnCount(){
             return 3;
         }
+        @Override
         public String getColumnName(int column){
             switch (column){
                 case 0 : return "language";
@@ -63,12 +65,15 @@ public class CExoLocStringEditor extends JPanel {
                 default : return "string";
             }
         }
+        @Override
         public int getRowCount(){
             return locString.getSubstringCount();
         }
+        @Override
         public boolean isCellEditable(int rowIndex, int columnIndex){
             return columnIndex == 2;
         }
+        @Override
         public Object getValueAt( int row, int column ){
             CExoLocSubString s = locString.getSubstring( row );
             switch (column) {
@@ -77,6 +82,7 @@ public class CExoLocStringEditor extends JPanel {
                 default : return s.string;
             }
         }
+        @Override
         public void setValueAt( Object o, int row, int column ){
             locString.getSubstring( row ).string = o.toString();
         }
@@ -87,6 +93,7 @@ public class CExoLocStringEditor extends JPanel {
         JComboBox cbGender = new JComboBox( new String[]{"masculine / neutral", "feminine"} );
         JComboBox cbLanguage = new JComboBox( NwnLanguage.LANGUAGES.toArray() );
         ItemListener il = new ItemListener(){
+            @Override
             public void itemStateChanged( ItemEvent e ){
                 if ( e.getStateChange() == ItemEvent.SELECTED ){
                     actOK.setEnabled( locString.getSubstring( (NwnLanguage)cbLanguage.getSelectedItem(), cbGender.getSelectedIndex() )==null );
@@ -94,6 +101,7 @@ public class CExoLocStringEditor extends JPanel {
             }
         };
         Action actOK = new AbstractAction("OK"){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 CExoLocSubString sub = new CExoLocSubString("", (NwnLanguage)cbLanguage.getSelectedItem(), cbGender.getSelectedIndex());
                 locString.addSubstring( sub );
@@ -107,6 +115,7 @@ public class CExoLocStringEditor extends JPanel {
             }
         };
         Action actCancel = new AbstractAction("Cancel"){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 setVisible(false);
                 dispose();
@@ -132,6 +141,7 @@ public class CExoLocStringEditor extends JPanel {
             //pack();
         }
         
+        @Override
         public void setVisible(boolean b){
             if (b){
                 actOK.setEnabled( locString.getSubstring( (NwnLanguage)cbLanguage.getSelectedItem(), cbGender.getSelectedIndex() )==null );
@@ -172,12 +182,14 @@ public class CExoLocStringEditor extends JPanel {
         
         StringTableCellEditor cellEditor =
                 new StringTableCellEditor(){
+            @Override
             public boolean stopCellEditing(){
                 substringTable.setRowHeight( substringTable.getEditingRow(), substringTable.getRowHeight() );//default row height is 16
                 super.stopCellEditing();
                 substringTable.requestFocus();
                 return true;
             }            
+            @Override
             public void cancelCellEditing() {
                 substringTable.setRowHeight( substringTable.getEditingRow(), substringTable.getRowHeight() );//default row height is 16
                 super.cancelCellEditing();
@@ -207,6 +219,7 @@ public class CExoLocStringEditor extends JPanel {
     }
     
     Action actEnter = new AbstractAction("OK"){
+        @Override
         public void actionPerformed( ActionEvent e ){
             try {
                 locString.setStrRef( Integer.parseInt( strRefField.getText() ) );
@@ -220,12 +233,14 @@ public class CExoLocStringEditor extends JPanel {
     };
     
     Action actNew = new AbstractAction("new"){
+        @Override
         public void actionPerformed( ActionEvent e ){
             newSubStringDialog.setVisible(true);
         }
     };
     
     Action actRemove = new AbstractAction("del"){
+        @Override
         public void actionPerformed( ActionEvent e ){
             int[] selection = substringTable.getSelectedRows();
             for ( int i = selection.length - 1; i > -1; i-- )

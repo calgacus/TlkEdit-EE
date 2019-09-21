@@ -23,6 +23,7 @@ public class ActionListenerAction extends AbstractAction{
         this(EventHandler.create(ActionListener.class, target, action, eventPropertyName));
     }
     
+    @Override
     public void actionPerformed( ActionEvent e ){
         al.actionPerformed(e);
     }    

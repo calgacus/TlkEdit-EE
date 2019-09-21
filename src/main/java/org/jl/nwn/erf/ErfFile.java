@@ -86,6 +86,7 @@ public class ErfFile extends AbstractRepository{
             this.typeString = typeString;
             this.name = name;
         }
+        @Override
         public String toString(){
             return name;
         }
@@ -252,6 +253,7 @@ public class ErfFile extends AbstractRepository{
         return type;
     }
     
+    @Override
     public Set<ResourceID> getResourceIDs(){
         return Collections.unmodifiableSet( resources.keySet() );
     }
@@ -259,6 +261,7 @@ public class ErfFile extends AbstractRepository{
     /**
      * @return null if no such resource exists in this erf
      * */
+    @Override
     public InputStream getResource( ResourceID id ) throws IOException{
         Object o = resources.get( id );
         if ( o != null ){
@@ -300,6 +303,7 @@ public class ErfFile extends AbstractRepository{
         return new FileInputStream( f );
     }
     
+    @Override
     public void close() throws IOException{
         if (raf!=null) raf.close();
     }
@@ -307,6 +311,7 @@ public class ErfFile extends AbstractRepository{
     /**
      * @return size of resource, -1 if no such resource exists
      * */
+    @Override
     public int getResourceSize( ResourceID id ){
         Object o = resources.get(id);
         if ( o == null )
@@ -506,6 +511,7 @@ public class ErfFile extends AbstractRepository{
         f.deleteOnExit();
         putResource( id, f );
         return new FileOutputStream( f ){
+            @Override
             public void close() throws IOException{
                 super.close();
                 ErfFile.this.write();
@@ -513,6 +519,7 @@ public class ErfFile extends AbstractRepository{
         };
     }
     
+    @Override
     public boolean contains( ResourceID id ){
         return resources.get( id ) != null;
     }
@@ -713,14 +720,17 @@ public class ErfFile extends AbstractRepository{
         /* (non-Javadoc)
          * @see org.jl.nwn.resource.NwnRepository#getResourceLocation(org.jl.nwn.resource.ResourceID)
          */
+    @Override
     public File getResourceLocation(ResourceID id) {
         return contains(id)? file : null;
     }
     
+    @Override
     public boolean isWritable() {
         return true;
     }
     
+    @Override
     public long lastModified(ResourceID id) {
         if ( contains(id) ){
             if ( isFileResource( id ) )
@@ -731,6 +741,7 @@ public class ErfFile extends AbstractRepository{
         return super.lastModified(id);
     }
     
+    @Override
     public OutputStream putResource(ResourceID id)
     throws IOException, UnsupportedOperationException {
         return put( id );

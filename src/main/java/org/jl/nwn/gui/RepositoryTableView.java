@@ -106,14 +106,17 @@ public class RepositoryTableView {
             fireTableDataChanged();
         }
         
+        @Override
         public int getColumnCount() {
             return 6;
         }
         
+        @Override
         public int getRowCount() {
             return resources.size();
         }
         
+        @Override
         public Object getValueAt(int arg0, int arg1) {
             ResourceID id = resources.get(arg0);
             switch (arg1) {

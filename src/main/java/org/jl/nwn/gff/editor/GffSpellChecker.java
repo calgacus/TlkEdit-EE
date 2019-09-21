@@ -135,6 +135,7 @@ public class GffSpellChecker {
         checkListener = new UISpellCheckListener(d);
         //marker.setTextComponent(cellEditor.getTextComponent());
         ActionListener al = new ActionListener(){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 cancel = true;
                 d.cancel();
@@ -149,6 +150,7 @@ public class GffSpellChecker {
         cbCaseSensitive.setMnemonic('s');
         cbCaseSensitive.setDisplayedMnemonicIndex(5);
         cbCaseSensitive.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 checker.setCaseSensitive(cbCaseSensitive.isSelected());
             }

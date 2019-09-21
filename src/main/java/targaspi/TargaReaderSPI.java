@@ -33,7 +33,7 @@ public class TargaReaderSPI extends ImageReaderSpi{
     static String nativeImageMetadataFormatClassName = null;
     static String[] extraImageMetadataFormatNames = null;
     static String[] extraImageMetadataFormatClassNames = null;
-    
+
     /** Creates a new instance of TargaReaderSPI */
     public TargaReaderSPI() {
         super(
@@ -57,20 +57,23 @@ public class TargaReaderSPI extends ImageReaderSpi{
                 extraImageMetadataFormatClassNames
                 );
     }
-    
+
+    @Override
     public String getDescription(java.util.Locale locale) {
         return "Targa Image Reader";
     }
-    
+
     TargaReader readerInstance = null;
-    
+
+    @Override
     public javax.imageio.ImageReader createReaderInstance(Object extension) throws java.io.IOException {
         //System.out.println("createReaderInstance");
         if ( readerInstance == null )
             readerInstance = new TargaReader(this);
         return readerInstance;
     }
-    
+
+    @Override
     public boolean canDecodeInput(Object source) throws java.io.IOException {
         //System.out.println("TargaReaderSPI.canDecodeInput : " + source);
         /*
@@ -93,7 +96,7 @@ public class TargaReaderSPI extends ImageReaderSpi{
         //System.out.println("TargaReaderSPI accept");
         return true;
     }
-    
+
     @Override public void onRegistration(ServiceRegistry registry, Class<?> category){
         super.onRegistration( registry, category );
         boolean b = false;
@@ -112,8 +115,8 @@ public class TargaReaderSPI extends ImageReaderSpi{
             }
         } catch ( ClassNotFoundException cnfe ){
             //System.out.println("com.sun.imageio.plugins.wbmp.WBMPImageReaderSPI not installed");
-        }        
+        }
         //System.out.println("registered TargaReader SPI, setOrdering vs WBMP : " +b);
     }
-    
+
 }

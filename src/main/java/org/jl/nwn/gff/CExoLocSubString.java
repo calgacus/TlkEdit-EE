@@ -14,6 +14,7 @@ import org.jl.nwn.NwnLanguage;
 public class CExoLocSubString extends GffField<String> implements Cloneable{
     
     public static final Comparator comparator = new Comparator(){
+        @Override
         public int compare( Object o1, Object o2 ){
             CExoLocSubString s1 = (CExoLocSubString) o1;
             CExoLocSubString s2 = (CExoLocSubString) o2;
@@ -23,18 +24,22 @@ public class CExoLocSubString extends GffField<String> implements Cloneable{
     
     public byte[] getRawData(){return null;}
     
+    @Override
     public String getData(){
         return string;
     }
     
+    @Override
     public void setData( String data ){
         string = data;
     }
     
+    @Override
     public String getTypeName(){
         return "Substring";
     }
     
+    @Override
     public Object clone(){
         GffField f = (GffField) super.clone();
         f.parent = null;

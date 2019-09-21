@@ -29,6 +29,7 @@ public class GffCExoLocString extends GffField implements Iterable<CExoLocSubStr
         setData(data);
     }
     
+    @Override
     public Iterator<CExoLocSubString> iterator(){
         return substrings.iterator();
     }
@@ -85,6 +86,7 @@ public class GffCExoLocString extends GffField implements Iterable<CExoLocSubStr
         substrings.remove(pos).parent = null;
     }
     
+    @Override
     public String toString() {
         String s =
                 label + " (" + getTypeName() + ") [StrRef " + getStrRef() + "] ";
@@ -93,22 +95,27 @@ public class GffCExoLocString extends GffField implements Iterable<CExoLocSubStr
         return s;
     }
     
+    @Override
     public boolean allowsChildren(){
         return true;
     }
     
+    @Override
     public int getChildCount(){
         return getSubstringCount();
     }
     
+    @Override
     public GffField getChild( int index ){
         return getSubstring(index);
     }
     
+    @Override
     public int getChildIndex( GffField f ){
         return substrings.indexOf(f);
     }
     
+    @Override
     public void addChild( int index, GffField f ){
         CExoLocSubString sub = (CExoLocSubString) f;
         if ( getSubstring(sub.language, sub.gender) != null )
@@ -117,14 +124,17 @@ public class GffCExoLocString extends GffField implements Iterable<CExoLocSubStr
         addSubstring(sub);
     }
     
+    @Override
     public void removeChild( GffField f ){
         substrings.remove(f);
     }
     
+    @Override
     public Object getData(){
         return BigInteger.valueOf(getStrRef());
     }
     
+    @Override
     public void setData( Object data ){
         setStrRef(((Number)data).intValue());
     }

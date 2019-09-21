@@ -25,30 +25,37 @@ public class DefaultGffWriter extends AbstractGffWriter<GffField, GffStruct, Gff
         super(v);
     }
     
+    @Override
     protected GffStruct listGet(GffList list, int index) {
         return list.get(index);
     }
     
+    @Override
     protected int listSize(GffList list) {
         return list.getSize();
     }
     
+    @Override
     protected GffField structGet(GffStruct struct, int index) {
         return struct.getChild(index);
     }
     
+    @Override
     protected int fieldType(GffField field) {
         return field.getType();
     }
     
+    @Override
     protected String fieldLabel(GffField field) {
         return field.getLabel();
     }
     
+    @Override
     protected int structSize(GffStruct struct) {
         return struct.getSize();
     }
     
+    @Override
     protected void cExoLocStringData(GffField Field, int[] intValues, org.jl.nwn.NwnLanguage[] languages, int[] genders, String[] strings) {
         GffCExoLocString s = (GffCExoLocString) Field;
         intValues[0] = s.getStrRef();
@@ -76,35 +83,43 @@ public class DefaultGffWriter extends AbstractGffWriter<GffField, GffStruct, Gff
      * int64    64-bit signed       long     
      */
     
+    @Override
     protected byte[] intFieldData(GffField field, int type) {
         //byte[] data = ( type==Gff.INT64 || type==Gff.DWORD64 )? b8 : b4;
         return Gff.bigInt2raw( (BigInteger)field.getData(), (byte)type, null );
     }
     
+    @Override
     protected byte[] voidFieldData(GffField field) {
         return ((GffVoid)field).getData();
     }
     
+    @Override
     protected String resRefFieldData(GffField field) {
         return ((GffCResRef)field).getResRef();
     }
     
+    @Override
     protected float floatFieldData(GffField field) {
         return ((GffFloat)field).getData().floatValue();
     }
     
+    @Override
     protected double doubleFieldData(GffField field) {
         return ((GffDouble)field).getData().doubleValue();
     }
     
+    @Override
     protected String cExoStringFieldData(GffField field) {
         return ((GffCExoString)field).getData();
     }
     
+    @Override
     protected void vectorData(GffField field, float[] vector){
         System.arraycopy(((GffVector)field).getData(),0,vector,0,3);
     }
     
+    @Override
     protected int structID(GffStruct struct){
         return struct.getId();
     }

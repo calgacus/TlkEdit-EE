@@ -65,6 +65,7 @@ public class TlkReadOnly {
                 fc.size() - stringDataStart );
 
         cache = new LinkedHashMap<Integer, String>(cacheSize, 0.75f, true){
+            @Override
             protected boolean removeEldestEntry(
                     java.util.Map.Entry<Integer, String> eldest) {
                 return size() > cacheSize;

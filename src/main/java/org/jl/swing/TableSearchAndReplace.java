@@ -33,6 +33,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         this.table = aTable;
         table.getModel().addTableModelListener(
                 new TableModelListener(){
+            @Override
             public void tableChanged( TableModelEvent e ){
                 TableSearchAndReplace.this.invalidate();
             }
@@ -40,6 +41,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         );
         // invalidate matcher when the user changes the row selection
         table.getSelectionModel().addListSelectionListener( new ListSelectionListener(){
+            @Override
             public void valueChanged(ListSelectionEvent lse){
                 if ( !lse.getValueIsAdjusting() ){
                     TableSearchAndReplace.this.invalidate();
@@ -50,12 +52,15 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         bottomPanel.validate();
         
         DocumentListener docChangeListener = new DocumentListener(){
+            @Override
             public void changedUpdate( DocumentEvent de ){
                 //invalidate();
             }
+            @Override
             public void removeUpdate( DocumentEvent de ){
                 invalidate();
             }
+            @Override
             public void insertUpdate( DocumentEvent de ){
                 invalidate();
             }
@@ -76,6 +81,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
             rbSearchSelection.setSelected(true);
     }
     
+    @Override
     public void init(){
 
         if ( table.getSelectedRow() != -1 ) row = table.getSelectedRow();
@@ -90,6 +96,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         /* (non-Javadoc)
          * @see org.jl.swingutil.SearchAndReplaceDialog#selectText(int, int)
          */
+    @Override
     protected void selectText(int start, int end) {
         table.scrollRectToVisible( table.getCellRect( row, col, true ) );
         JTextComponent text = getTextComponent();
@@ -121,6 +128,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         /* (non-Javadoc)
          * @see org.jl.swingutil.SearchAndReplaceDialog#getString()
          */
+    @Override
     public String getString() {
         if ( table.getEditingColumn() == col && table.getEditingRow() == row )
             if ( (table.getCellEditor()) instanceof TextCellEditor )
@@ -157,6 +165,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         /* (non-Javadoc)
          * @see org.jl.swingutil.SearchAndReplaceDialog#updateString(java.lang.String)
          */
+    @Override
     public void updateString(String s){
         if ( table.getEditingRow() == row && table.getEditingColumn() == col){
             if (table.getCellEditor() instanceof TextCellEditor){
@@ -169,6 +178,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         table.setValueAt( string2ModelObject(s, row, col), row, col );
     }
     
+    @Override
     public boolean search(){
         if ( invalidState )
             init();
@@ -191,6 +201,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         return match;
     }
     
+    @Override
     public void replaceAll(){
         if ( table.getCellEditor() != null )
             if (!table.getCellEditor().stopCellEditing())
@@ -223,6 +234,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         invalidState = true;
     }
     
+    @Override
     protected boolean matchIsInSelection() throws IllegalStateException{
         if ( rbSearchSelection.isEnabled() && rbSearchSelection.isSelected() ){
             return table.isRowSelected( row );

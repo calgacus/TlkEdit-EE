@@ -41,6 +41,7 @@ public class GffTlkLookup implements TreeSelectionListener {
 	/* (non-Javadoc)
 	 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
 	 */
+	@Override
 	public void valueChanged(TreeSelectionEvent e) {		
 		GffField field = (GffField) e.getPath().getLastPathComponent();
 		if ( field.getType() == Gff.CEXOLOCSTRING ){

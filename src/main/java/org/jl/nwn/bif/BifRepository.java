@@ -43,17 +43,17 @@ public class BifRepository extends AbstractRepository{
     private KeyFile[] keyFiles;
     private File baseDir;
     private TreeSet resources;
-    
+
     private Map<String, BifFile> bifFiles = new HashMap<String, BifFile>();
-    
+
     private static String[] defaultkeys = { "xp2patch.key", "xp2.key", "xp1patch.key", "xp1.key", "patch.key", "chitin.key" };
     public static final List<String> DEFAULTKEYFILENAMES = Collections.unmodifiableList(Arrays.asList(defaultkeys));
-    
+
     public BifRepository( File baseDir, KeyFile[] keys ){
         this.baseDir = baseDir;
         this.keyFiles = keys;
     }
-    
+
     /** @param baseDir bif file names contained in keyfiles are all relative to basedir
      * @param keyFiles array of key file names, keyFiles[0] has highest priority
      */
@@ -64,11 +64,11 @@ public class BifRepository extends AbstractRepository{
             this.keyFiles[i] = KeyFile.open(new File(baseDir, keyFiles[i]));
         }
     }
-    
+
     public BifRepository( File baseDir ) throws IOException{
         this( baseDir, testKeyFiles( defaultkeys, baseDir ) );
     }
-    
+
     private static String[] testKeyFiles( String[] keys, File baseDir ){
         Vector v = new Vector();
         for ( int i = 0; i < keys.length; i++ )
@@ -76,7 +76,7 @@ public class BifRepository extends AbstractRepository{
                 v.add( keys[i] );
         return (String[]) v.toArray( new String[ v.size() ] );
     }
-    
+
     /**
      * returns null if resource is not found
      */
@@ -87,11 +87,13 @@ public class BifRepository extends AbstractRepository{
             null :
             getBifFile(loc.getBifName()).getEntry(loc.getBifIndex());
     }
-    
+
+    @Override
     public InputStream getResource(ResourceID id) throws IOException {
         return getResource(id.getName(), id.getType());
     }
-    
+
+    @Override
     public int getResourceSize( ResourceID id ){
         KeyFile kf = findKeyFile( id.getName(), id.getType() );
         if ( kf != null ){
@@ -102,14 +104,14 @@ public class BifRepository extends AbstractRepository{
         }
         else return 0;
     }
-    
+
     protected KeyFile findKeyFile( String resName, short resType ){
         for (KeyFile kf : keyFiles)
             if ( kf.findResource(resName, resType) != null )
                 return kf;
         return null;
     }
-    
+
     protected BifFile getBifFile( String bifName ){
         BifFile bif = (BifFile) bifFiles.get(bifName);
         if (bif == null) {
@@ -123,12 +125,12 @@ public class BifRepository extends AbstractRepository{
         }
         return bif;
     }
-    
+
     protected BifFile findBifFile( String resName, short resType ){
         KeyFile.BifResourceLocation loc = findResourceLocation(resName, resType);
         return loc == null ? null : getBifFile(loc.getBifName());
     }
-    
+
     protected KeyFile.BifResourceLocation findResourceLocation(String resName, short resType){
         for (KeyFile kf: keyFiles){
         KeyFile.BifResourceLocation loc = kf.findResource(resName, resType);
@@ -138,22 +140,25 @@ public class BifRepository extends AbstractRepository{
         }
         return null;
     }
-    
-    @Override public MappedByteBuffer getResourceAsBuffer( ResourceID id ) throws IOException{
+
+    @Override
+    public MappedByteBuffer getResourceAsBuffer( ResourceID id ) throws IOException{
         KeyFile.BifResourceLocation loc = findResourceLocation(id.getName(), id.getType());
         return loc == null ? null :  getBifFile(loc.getBifName()).getEntryAsBuffer(loc.getBifIndex());
     }
-    
+
+    @Override
     public File getResourceLocation(ResourceID id) {
         BifFile bif = findBifFile(id.getName(), id.getType());
         return bif == null ? null : bif.getFile();
     }
-    
+
     public String getResourceKeyFile(ResourceID id) {
         KeyFile kf = findKeyFile(id.getName(), id.getType());
         return kf == null ? null : kf.getFileName();
     }
-    
+
+    @Override
     public Set getResourceIDs() {
         if ( resources == null ){
             resources = new TreeSet(this.keyFiles[0].getResourceIDSet());
@@ -162,7 +167,7 @@ public class BifRepository extends AbstractRepository{
         }
         return Collections.unmodifiableSet( resources );
     }
-    
+
     public boolean transferResourceToFile( ResourceID id, File file ) throws IOException{
         KeyFile.BifResourceLocation loc = findResourceLocation(id.getName(), id.getType());
         if (loc == null)
@@ -171,7 +176,7 @@ public class BifRepository extends AbstractRepository{
         bif.transferEntryToFile(loc.getBifIndex(), file);
         return true;
     }
-    
+
     public static void main(String[] args) throws Exception {
         //System.getProperties().list( System.out );
         String keys = System.getProperty("nwn.bifkeys");
@@ -224,9 +229,9 @@ public class BifRepository extends AbstractRepository{
             System.out.println(ioex);
             ioex.printStackTrace();
         }
-        
+
     }
-    
+
     private void displayGui() throws IOException{
         final JFrame f = new JFrame("bifextract");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -241,6 +246,7 @@ public class BifRepository extends AbstractRepository{
         JLabel filterLabel = new JLabel("RegExp : ");
         final JTextField regexpField = new JTextField(".+");
         Action filter = new AbstractAction("filter") {
+            @Override
             public void actionPerformed(ActionEvent e){
                 Matcher m = null;
                 try {
@@ -266,7 +272,7 @@ public class BifRepository extends AbstractRepository{
         filterControls.add(filterLabel);
         filterControls.add(regexpField);
         filterControls.add( new JButton( filter ) );
-        
+
         final JTextField outputDir = new JTextField( new File("").getAbsolutePath() );
         Action selectOutputDir = new AbstractAction("select") {
             JFileChooser fc = new JFileChooser();
@@ -274,6 +280,7 @@ public class BifRepository extends AbstractRepository{
                 fc.setMultiSelectionEnabled(false);
                 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             }
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (outputDir.getText().length() > 0 )
                     fc.setCurrentDirectory(new File(outputDir.getText()));
@@ -287,13 +294,13 @@ public class BifRepository extends AbstractRepository{
         outputControls.add( new JLabel("Output dir ") );
         outputControls.add( outputDir );
         outputControls.add( new JButton( selectOutputDir ) );
-        
+
         final JDialog infoDialog = new JDialog( f, "extracting files ...", false );
         final JLabel fileLabel = new JLabel("abcdefghijklmn.opq");
         infoDialog.getContentPane().add( fileLabel );
         infoDialog.pack();
         infoDialog.setSize( 200, 80 );
-        
+
         final Action extractSelected = new AbstractAction("extract selected") {
             private void extract(){
                 int[] selected = resourceList.getSelectedIndices();
@@ -317,11 +324,13 @@ public class BifRepository extends AbstractRepository{
                     f.setEnabled( true );
                 }
             }
-            
+
+            @Override
             public void actionPerformed(ActionEvent e){
                 infoDialog.setLocationRelativeTo( f );
                 f.setEnabled( false );
                 Thread t = new Thread(){
+                    @Override
                     public void run(){
                         extract();
                     }
@@ -329,7 +338,7 @@ public class BifRepository extends AbstractRepository{
                 t.start();
             }
         };
-        
+
         Box southBox = new Box(BoxLayout.Y_AXIS);
         southBox.add(new JScrollPane(resourceList));
         southBox.add(filterControls);
@@ -338,7 +347,7 @@ public class BifRepository extends AbstractRepository{
         tbar.setFloatable( false );
         tbar.add( extractSelected );
         southBox.add( tbar );
-        
+
         f.getContentPane().setLayout( new BorderLayout() );
         //f.getContentPane().add( new NwnRepConfig().getConfigPanel(), BorderLayout.NORTH );
         f.getContentPane().add( new JScrollPane( resourceList ), BorderLayout.CENTER );
@@ -362,6 +371,7 @@ public class BifRepository extends AbstractRepository{
         /* (non-Javadoc)
          * @see org.jl.nwn.resource.NwnRepository#contains(org.jl.nwn.resource.ResourceID)
          */
+    @Override
     public boolean contains(ResourceID id) {
         for ( int i = 0, n = keyFiles.length; i < n; i++ )
             if ( null != keyFiles[i].findResource(id.getName(), id.getType()) )
@@ -369,5 +379,4 @@ public class BifRepository extends AbstractRepository{
         return false;
         //return resources.contains(id);
     }
-    
 }

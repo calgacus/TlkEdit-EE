@@ -22,6 +22,7 @@ public class UIDefaultsX extends UIDefaults{
             System.out.println("UIDefaultsX "+e);
     }
     
+    @Override
     public Icon getIcon(Object key){
         Object o = get( key );
         if ( o == null )

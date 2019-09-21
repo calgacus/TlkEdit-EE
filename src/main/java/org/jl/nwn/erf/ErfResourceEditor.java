@@ -41,6 +41,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.editor.SimpleFileEditorPanel#addChangeListener(javax.swing.event.ChangeListener)
 	 */
+	@Override
 	public void addPropertyChangeListener(PropertyChangeListener cl) {
 		delegate.addPropertyChangeListener(cl);
 	}
@@ -48,6 +49,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	/**
 	 * @return
 	 */
+	@Override
 	public boolean canSave() {
 		return erf.canSave();
 	}
@@ -55,6 +57,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	/**
 	 * @return
 	 */
+	@Override
 	public boolean canSaveAs() {
 		return false;
 		//return delegate.canSaveAs();
@@ -63,6 +66,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	/**
 	 * 
 	 */
+	@Override
 	public void close() {
 		delegate.close();
 	}
@@ -70,6 +74,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	/**
 	 * @return
 	 */
+	@Override
 	public File getFile() {
 		//return new File( erf.getFile(), resID.toFileName() );
 		return new File( erf.getFile().getName()+"["+resID.toFileName()+"]" );
@@ -79,6 +84,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.editor.SimpleFileEditorPanel#getIsModified()
 	 */
+	@Override
 	public boolean getIsModified() {
 		return delegate.getIsModified();
 	}
@@ -86,6 +92,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.editor.SimpleFileEditorPanel#removeChangeListener(javax.swing.event.ChangeListener)
 	 */
+	@Override
 	public void removePropertyChangeListener(PropertyChangeListener cl) {
 		delegate.removePropertyChangeListener(cl);
 	}
@@ -93,6 +100,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	/**
 	 * @throws IOException
 	 */
+	@Override
 	public void save() throws IOException {
 		delegate.save();
 		erf.save();
@@ -102,18 +110,22 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	 * @param f
 	 * @throws IOException
 	 */
+	@Override
 	public void saveAs(File f, Version v) throws IOException {
 		//delegate.saveAs(f);
 	}
 	
+	@Override
 	public JMenu[] getMenus() {
 		return delegate.getMenus();
 	}
 	
+	@Override
 	public JToolBar getToolbar() {
 		return delegate.getToolbar();
 	}
 
+	@Override
 	public void showToolbar(boolean b) {
 		delegate.showToolbar(b);
 	}

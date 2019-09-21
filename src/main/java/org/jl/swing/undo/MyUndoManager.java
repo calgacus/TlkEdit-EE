@@ -12,12 +12,14 @@ import javax.swing.undo.UndoManager;
 public class MyUndoManager extends UndoManager{
     
     protected Action undoAction = new AbstractAction(){
+        @Override
         public void actionPerformed( ActionEvent e ){
             undo();
         }
     };
     
     protected Action redoAction = new AbstractAction(){
+        @Override
         public void actionPerformed( ActionEvent e ){
             redo();
         }
@@ -35,26 +37,31 @@ public class MyUndoManager extends UndoManager{
         super();
     }
     
+    @Override
     public void undoableEditHappened(javax.swing.event.UndoableEditEvent e) {
         super.undoableEditHappened(e);
         updateActions();
     }
     
+    @Override
     public void undoOrRedo() throws javax.swing.undo.CannotRedoException, javax.swing.undo.CannotUndoException {
         super.undoOrRedo();
         updateActions();
     }
     
+    @Override
     public void undo() throws javax.swing.undo.CannotUndoException {
         super.undo();
         updateActions();
     }
     
+    @Override
     public void redo() throws javax.swing.undo.CannotRedoException {
         super.redo();
         updateActions();
     }
     
+    @Override
     public void discardAllEdits() {
         super.discardAllEdits();
         updateActions();

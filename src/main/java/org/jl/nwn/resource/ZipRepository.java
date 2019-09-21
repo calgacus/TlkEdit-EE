@@ -43,10 +43,12 @@ public class ZipRepository extends AbstractRepository{
         buildMap();
     }
     
+    @Override
     public Iterator<ResourceID> iterator() {
         return getResourceIDs().iterator();
     }
     
+    @Override
     public boolean isWritable() {
         return false;
     }
@@ -65,39 +67,47 @@ public class ZipRepository extends AbstractRepository{
         }
     }
     
+    @Override
     public Set<ResourceID> getResourceIDs() {
         return entries.keySet();
     }
     
+    @Override
     public OutputStream putResource(ResourceID id) throws IOException, UnsupportedOperationException {
         throw new UnsupportedOperationException("zip repository is write only");
     }
     
+    @Override
     public long lastModified(ResourceID id) {
         ZipEntry e = entries.get(id);
         return e!=null? e.getTime() : -1;
     }
     
+    @Override
     public int getResourceSize(ResourceID id) {
         ZipEntry e = entries.get(id);
         long zipSize = e!=null? e.getSize() : 0;
         return zipSize==-1? 0 : (int)zipSize;
     }
     
+    @Override
     public File getResourceLocation(ResourceID id) {
         return contains(id)? file : null;
     }
     
+    @Override
     public InputStream getResource(ResourceID id) throws IOException {
         return contains(id) ?
             zipFile.getInputStream(entries.get(id)) :
             null;
     }
     
+    @Override
     public boolean contains(ResourceID id) {
         return entries.containsKey(id);
     }
     
+    @Override
     public void close() throws IOException{
         zipFile.close();
     }
@@ -111,6 +121,7 @@ public class ZipRepository extends AbstractRepository{
     
     public static FilenameFilter zipFileFilter(){
         return new FilenameFilter(){
+            @Override
             public boolean accept(File dir, String name){
                 return name.toLowerCase().endsWith(".zip");
             }
