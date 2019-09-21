@@ -17,9 +17,9 @@ import org.jdesktop.swingx.util.OS;
 /**
  */
 public class Actions {
-    
+
     public final static String EMPTYICONKEY = "empty_icon";
-    
+
     public final static String[] ActionProperties = new String[]{
         Action.NAME,
                 Action.LONG_DESCRIPTION,
@@ -30,9 +30,9 @@ public class Actions {
                 Action.MNEMONIC_KEY
     };
     public static final String MNEMONIC_INDEX = "MnemonicIndex";
-    
+
     private static Icon emptyIcon = new EmptyIcon(22,22);
-    
+
     static{
         Icon i = null;
         if (emptyIcon == (i=getIcon(UIManager.getDefaults(), EMPTYICONKEY)))
@@ -41,11 +41,11 @@ public class Actions {
             emptyIcon = i;
         //System.out.println("Actions.init : " + emptyIcon);
     }
-    
+
     /** Creates a new instance of Actions */
     protected Actions() {
     }
-    
+
     protected static Icon getIcon(UIDefaults uid, Object key){
         Object o = uid.get( key );
         Icon icon = null;
@@ -63,7 +63,7 @@ public class Actions {
         }
         return null;
     }
-    
+
     protected static Icon loadIcon(final UIDefaults uid, final String path) {
         if ( path == null )
             return null;
@@ -75,10 +75,10 @@ public class Actions {
         }
         return icon;
     }
-    
+
     static final int SHORTCUTMASK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     static final boolean IS_OSX = OS.isMacOSX();
-    
+
     public static void configureActionUI( Action a, UIDefaults uid, String name ){
         String key;
         for(int i=0; i < ActionProperties.length; i++) {
@@ -88,12 +88,12 @@ public class Actions {
                 KeyStroke ks = KeyStroke.getKeyStroke(uid.getString(defKey));
                 a.putValue(key, ks);
                 //System.out.println(ks);
-                if ( IS_OSX && ks != null && (ks.getModifiers() & Event.CTRL_MASK) == Event.CTRL_MASK ){                    
+                if ( IS_OSX && ks != null && (ks.getModifiers() & Event.CTRL_MASK) == Event.CTRL_MASK ){
                     KeyStroke ks2 = KeyStroke.getKeyStroke( ks.getKeyCode(),
                             ks.getModifiers() ^ Event.CTRL_MASK | SHORTCUTMASK );
                     a.putValue(key, ks2);
                     //System.out.println("modify ... : " + ks2);
-                } 
+                }
                 if ( a.getValue(Action.SHORT_DESCRIPTION) != null && a.getValue(Action.ACCELERATOR_KEY) != null )
                     a.putValue(Action.SHORT_DESCRIPTION, I18nUtil.makeKeyStrokeTooltip((String)a.getValue(Action.SHORT_DESCRIPTION), KeyStroke.getKeyStroke(uid.getString(defKey))));
             } else if (key == Action.SMALL_ICON){
@@ -103,8 +103,8 @@ public class Actions {
                 if ( s == null ) break;
                 a.putValue(Action.NAME, I18nUtil.removeMnemonicInfo(s));
                 int idx = I18nUtil.getMnemonicIndex(s);
-                a.putValue(MNEMONIC_INDEX, new Integer(idx));
-                a.putValue(Action.MNEMONIC_KEY, new Integer(I18nUtil.getMnemonic(s)));
+                a.putValue(MNEMONIC_INDEX, idx);
+                a.putValue(Action.MNEMONIC_KEY, I18nUtil.getMnemonic(s));
             } else {
                 Object o = uid.get(defKey);
                 if (o!=null)
@@ -116,19 +116,19 @@ public class Actions {
             a.putValue( Action.ACTION_COMMAND_KEY, a.getValue(Action.NAME) );
         }
     }
-    
+
     public static void setEmptyIcon( int width, int height ){
         emptyIcon = new EmptyIcon(width, height);
     }
-    
+
     public static void setEmptyIcon( Icon icon ){
         emptyIcon = icon;
     }
-    
+
     public static Icon getEmptyIcon(){
         return emptyIcon;
     }
-    
+
     public static void registerActions( InputMap im, ActionMap am, Action ... actions ){
         for ( Action a : actions ){
             KeyStroke ks = (KeyStroke)a.getValue( a.ACCELERATOR_KEY );
@@ -137,5 +137,5 @@ public class Actions {
             am.put(a.getValue( a.ACTION_COMMAND_KEY ), a );
         }
     }
-    
+
 }

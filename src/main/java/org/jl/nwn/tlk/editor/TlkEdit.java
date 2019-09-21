@@ -383,13 +383,11 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
             public Object getCellEditorValue() {
                 String s = (String) super.getCellEditorValue();
-                Byte b = null;
                 try {
-                    b = new Byte(s.indexOf('x') == -1 ? s : s.substring(2));
+                    return Byte.parseByte(s.indexOf('x') == -1 ? s : s.substring(2));
                 } catch (NumberFormatException nfe) {
-                    b = Byte.valueOf((byte) 1);
+                    return 1;
                 }
-                return b;
             }
         };
 
@@ -780,7 +778,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                         TreeSet ts = new TreeSet();
                         for (int i = 0, n = model.size(); i < n; i++) {
                             if (model.getEntryModified(i)) {
-                                ts.add(new Integer(i));
+                                ts.add(i);
                             }
                         }
                         int[] newDiffs = new int[ts.size()];
@@ -879,7 +877,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                         for (int i = 0; i < model.size(); i++) {
                             TlkEntry e = model.getEditorEntry(i);
                             if (e instanceof EditorTlkEntry && ((EditorTlkEntry) e).isModified()) {
-                                listModel.addElement(new Integer(i));
+                                listModel.addElement(i);
                             }
                         }
                     }
@@ -944,7 +942,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
         //$NON-NLS-1$
         public void actionPerformed(ActionEvent e) {
-            String s = JOptionPane.showInputDialog((JComponent) e.getSource(), uid.getString("TlkEdit.resize_enterNewSize"), new Integer(model.size()));
+            String s = JOptionPane.showInputDialog((JComponent) e.getSource(), uid.getString("TlkEdit.resize_enterNewSize"), model.size());
             if (s == null) {
                 return;
             }

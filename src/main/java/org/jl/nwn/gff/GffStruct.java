@@ -9,31 +9,31 @@ import org.jl.nwn.Version;
 /**
  */
 public class GffStruct extends GffField implements Iterable<GffField>{
-    
+
     private int id = 0;
-    
+
     private List<GffField> children = new ArrayList<GffField>();
-    
+
     public GffStruct( int ID ){
         this( null, ID );
     }
-    
+
     public GffStruct( String label ){
         super( label==null?"":label, Gff.STRUCT );
     }
-    
+
     public GffStruct( String label, int ID ){
         this( label );
         setId( ID );
     }
-    
+
     /**
      * @return empty struct with the top level id ( -1 )
      * */
     public static GffStruct mkTopLevelStruct(){
         return new GffStruct( Gff.STRUCT_ID_TOPLEVEL );
     }
-    
+
     /**
      * get field by label
      * @return field with given label or null if no such field exists in this struct
@@ -48,18 +48,18 @@ public class GffStruct extends GffField implements Iterable<GffField>{
         }
         return field;
     }
-    
+
     public void addChild( GffField s ){
         addChild( getSize(), s );
     }
-    
+
     public void addChild( int pos, GffField s ){
         if ( s.getType() == GffCExoLocString.SUBSTRINGTYPE )
             throw new IllegalArgumentException( "cannot add this type of node ! tpye : " + GffCExoLocString.SUBSTRINGTYPE );
         children.add(pos,s);
         s.parent = this;
     }
-    
+
     /**
      * remove field with given label. if no such field exists the struct remains unchanged.
      * @param label label of the field to be removed
@@ -71,7 +71,7 @@ public class GffStruct extends GffField implements Iterable<GffField>{
             f.parent = null;
         }
     }
-    
+
     /**
      * remove given field from this struct. if field does not belong to this struct the struct remains unchanged.
      * @param field field to be removed
@@ -80,7 +80,7 @@ public class GffStruct extends GffField implements Iterable<GffField>{
         children.remove( field );
         field.parent = null;
     }
-    
+
     /**
      * remove field at position pos
      * @param pos position of field to be removed
@@ -88,14 +88,14 @@ public class GffStruct extends GffField implements Iterable<GffField>{
     public void remove( int pos ){
         ((GffField) children.remove(pos)).parent = null;
     }
-    
+
     /**
      * @return number of fields in this struct
      * */
     public int getSize(){
         return children.size();
     }
-    
+
     public String toString(){
         StringBuffer sb = new StringBuffer();
         sb.append("********[struct " + label + " (" + id + ") ]********\n" );
@@ -104,21 +104,21 @@ public class GffStruct extends GffField implements Iterable<GffField>{
         sb.append("********[struct end]********\n" );
         return sb.toString();
     }
-    
+
     /**
      * @return id of this struct
      */
     public int getId() {
         return id;
     }
-    
+
     /**
      * @param id new struct id
      */
     public void setId(int id) {
         this.id = id;
     }
-    
+
     /**
      * does a deep copy of this struct
      * @return deep copy of this GffStruct
@@ -131,14 +131,14 @@ public class GffStruct extends GffField implements Iterable<GffField>{
         }
         return clone;
     }
-    
+
     /**
      * return an iterator over this struct's children.
      */
     public Iterator<GffField> iterator(){
         return children.iterator();
     }
-    
+
     public Iterator<GffField> getDFIterator(){
         return new Iterator<GffField>(){
             Stack<Iterator> iterators = new Stack<Iterator>();
@@ -146,13 +146,13 @@ public class GffStruct extends GffField implements Iterable<GffField>{
             {
                 iterators.push( iterator() );
             }
-            
+
             public boolean hasNext(){
                 while ( !first && (!iterators.isEmpty() && !iterators.peek().hasNext()) )
                     iterators.pop();
                 return !iterators.isEmpty();
             }
-            
+
             public GffField next(){
                 if ( first ){
                     first = false;
@@ -166,41 +166,41 @@ public class GffStruct extends GffField implements Iterable<GffField>{
                 }
                 return f;
             }
-            
+
             public void remove(){
                 throw new UnsupportedOperationException();
             }
         };
     }
-    
+
     public int indexOf(Object o) {
         return children.indexOf(o);
     }
-    
+
     public boolean allowsChildren(){
         return true;
     }
-    
+
     public int getChildCount(){
         return getSize();
     }
-    
+
     public GffField getChild( int index ){
         return children.get(index);
     }
-    
+
     public int getChildIndex( GffField f ){
         return indexOf( f );
     }
-    
+
     public Object getData(){
-        return new Integer(getId());
+        return getId();
     }
-    
+
     public void setData( Object data ){
         setId(((Number)data).intValue());
     }
-    
+
     public static void main( String ... args ) throws Exception{
         GffContent c =
                 new DefaultGffReader(Version.getDefaultVersion())
@@ -211,5 +211,5 @@ public class GffStruct extends GffField implements Iterable<GffField>{
             System.out.println( "GFFStruct " + (f.isDataField() ? f.toString() : f.label + "(" + f.getTypeName() + ")" ));
         }
     }
-    
+
 }
