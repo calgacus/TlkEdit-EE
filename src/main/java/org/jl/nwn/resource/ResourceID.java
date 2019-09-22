@@ -413,7 +413,7 @@ public class ResourceID implements Comparable {
     public static ResourceID forFileName(String fname) {
         fname = fname.toLowerCase();
 
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < fname.length(); i++) {
             char c = fname.charAt(i);
             if (Character.isLetterOrDigit(c) || c == '_' || c == '.') {

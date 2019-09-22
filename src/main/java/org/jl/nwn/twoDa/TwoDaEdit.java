@@ -866,7 +866,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 List rowBuffer = new Vector();
                 String[] row;
                 String value;
-                StringBuffer sb = new StringBuffer();
+                final StringBuilder sb = new StringBuilder();
                 for (int r = 0; r < selection.length; r++) {
                     row = new String[model.getColumnCount()];
                     for (int i = 0; i < model.getColumnCount(); i++) {

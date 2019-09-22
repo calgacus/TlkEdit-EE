@@ -144,7 +144,7 @@ public class TwoDaTable {
 
     protected String mk2daString(String s) { // enclose String in " if it contains spaces
         if ( s.indexOf(' ') != -1&& (s = s.trim()).indexOf(' ') != -1 ){
-            StringBuffer sb = new StringBuffer( s );
+            final StringBuilder sb = new StringBuilder( s );
             if (!s.startsWith("\""))
                 sb.insert( 0, '"' );
             if (!s.endsWith("\""))

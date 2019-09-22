@@ -145,7 +145,7 @@ public class Gff2Xml {
 
     protected static Element mkVoidElement( Node el, GffVoid field ){
         Element e = mkFieldElement( el, field );
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         byte[] b = field.getData();
         for ( int i = 0; i < b.length; i++ ){
             int v = b[i] < 0 ? 256 + b[i] : b[i];

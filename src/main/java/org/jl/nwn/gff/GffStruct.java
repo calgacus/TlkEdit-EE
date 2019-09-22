@@ -102,7 +102,7 @@ public class GffStruct extends GffField implements Iterable<GffField>{
 
     @Override
     public String toString(){
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("********[struct " + label + " (" + id + ") ]********\n" );
         for ( int i = 0; i < getSize(); i++ )
             sb.append( getChild(i).toString() + "\n" );

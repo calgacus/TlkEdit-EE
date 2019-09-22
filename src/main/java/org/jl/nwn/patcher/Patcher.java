@@ -588,7 +588,7 @@ public class Patcher {
 						// need to read the script and remove existing RACIAL_TYPE_ALL and
 						// RACIAL_TYPE_INVALID definitions
 						append = false;
-						StringBuffer sb = new StringBuffer();
+						final StringBuilder sb = new StringBuilder();
 						String line = "";
 						BufferedReader in =
 							new BufferedReader(new FileReader(includeFile));

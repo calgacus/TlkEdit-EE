@@ -39,18 +39,18 @@ public class TlkModel extends AbstractTableModel
     }
 
     private String hex(byte[] bytes) {
-        StringBuffer ret = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         boolean nonZero = false;
         for (final byte b : bytes) {
             final int unsigned = b & 0xFF;
             if (unsigned != 0)
                 nonZero = true;
             if (unsigned < 16)
-                ret.append("0"); //$NON-NLS-1$
-            ret.append(Integer.toHexString(unsigned));
-            ret.append(" "); //$NON-NLS-1$
+                sb.append("0"); //$NON-NLS-1$
+            sb.append(Integer.toHexString(unsigned));
+            sb.append(" "); //$NON-NLS-1$
         }
-        return nonZero ? ret.toString() : ""; //$NON-NLS-1$
+        return nonZero ? sb.toString() : ""; //$NON-NLS-1$
     }
 
     @Override

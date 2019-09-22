@@ -55,7 +55,7 @@ public class GffList extends GffField implements Iterable<GffStruct>{
     }
 
     @Override public String toString(){
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append( "----------------- [ begin list " + label + " ] -------------------\n" );
         for ( int i = 0; i < getSize(); i++ ){
             sb.append( get(i).toString() );
