@@ -3,7 +3,7 @@ package org.jl.nwn;
 public enum Version {
     NWN1("NWN 1"), NWN2("NWN 2"), WITCHER("The Witcher");
     
-    private String displayName;
+    private final String displayName;
     
     private Version(String s){
         this.displayName = s;

@@ -20,18 +20,17 @@ import org.jl.swing.UIDefaultsX;
 
 /**
  */
-public class NwnFileView extends FileView{
+public class NwnFileView extends FileView {
+    static final FileSystemView fsv = FileSystemView.getFileSystemView();
+    static final UIDefaultsX uid = new UIDefaultsX();
 
-    static Icon icon_folder;
-    static Icon icon_mime;
-    static Icon icon_tlk;
-    static Icon icon_2da;
-    static Icon icon_erf;
-    static Icon icon_gff;
-    static Icon icon_broken;
-
-    static FileSystemView fsv = FileSystemView.getFileSystemView();
-    static UIDefaultsX uid = new UIDefaultsX();
+    static final Icon icon_folder;
+    static final Icon icon_mime;
+    static final Icon icon_tlk;
+    static final Icon icon_2da;
+    static final Icon icon_erf;
+    static final Icon icon_gff;
+    static final Icon icon_broken;
 
     static{
         uid.addResourceBundle("org.jl.nwn.editor.fileview");

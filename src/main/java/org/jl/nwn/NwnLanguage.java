@@ -54,11 +54,11 @@ public enum NwnLanguage{
     WI_CHIN_TRAD("Chinese, Traditional", Version.WITCHER, 21, Locale.TRADITIONAL_CHINESE),
     WI_CHIN_SIMP("Chinese, Simplified", Version.WITCHER, 22, Locale.SIMPLIFIED_CHINESE );
 
-    private String name;
-    private int code;
+    private final String name;
+    private final int code;
     private Version version;
     // language locale
-    private Locale locale;
+    private final Locale locale;
 
     private NwnLanguage( String name, Version v, int code, Locale locale ){
         this.name=name;

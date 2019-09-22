@@ -13,13 +13,12 @@ import javax.swing.Icon;
 /**
  */
 public class ScaledIcon implements Icon {
-	
-	private int x;
-	private int y;
-	private double scaleX;
-	private double scaleY;
-	private Icon icon;
-	
+	private final int x;
+	private final int y;
+	private final double scaleX;
+	private final double scaleY;
+	private final Icon icon;
+
 	public ScaledIcon( Icon icon, int x, int y ){
 		this.icon=icon;
 		this.x=x;
@@ -56,5 +55,4 @@ public class ScaledIcon implements Icon {
 	public int getIconHeight() {
 		return y;
 	}
-
 }

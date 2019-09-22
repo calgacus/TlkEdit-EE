@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
 
     private Document doc;
-    private DocumentBuilder docBuilder;
+    private final DocumentBuilder docBuilder;
 
     protected String schemaLocation = "gff.xsd";
 

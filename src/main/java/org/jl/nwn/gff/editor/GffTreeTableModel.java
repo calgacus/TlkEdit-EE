@@ -23,8 +23,8 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
 
     protected GffStruct root;
 
-    // used for constructing TreePath objects
-    private LinkedList stack = new LinkedList();
+    /** Used for constructing {@link TreePath} objects. */
+    private final LinkedList stack = new LinkedList();
 
     protected GffMutator mutator = new GffMutator();
 

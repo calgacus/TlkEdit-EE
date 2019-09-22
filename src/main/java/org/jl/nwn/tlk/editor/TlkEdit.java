@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -120,7 +121,7 @@ import org.jl.swing.undo.RowMutator;
 
 public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeListener, MessageSource {
 
-    private java.util.prefs.Preferences uPrefs = java.util.prefs.Preferences.userNodeForPackage(TlkEdit.class);
+    private Preferences uPrefs = Preferences.userNodeForPackage(TlkEdit.class);
 
     private MessageSourceSupport messageSupport = new MessageSourceSupport(this);
 
@@ -185,8 +186,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     protected TableColumn col_Flags = new TableColumn(4, 50);
     protected BitFlagEditor flagEditor;
 
-    private JToolBar toolbar;
-    private static byte[] tlkHead = {0x54, 0x4c, 0x4b, 0x20}; // "TLK "
+    private final JToolBar toolbar;
+    private static final byte[] tlkHead = {0x54, 0x4c, 0x4b, 0x20}; // "TLK "
     private static final String ERROR_DIALOG_TITLE = uid.getString("TlkEdit.error_dialog_title"); //$NON-NLS-1$
     private JMenu diffMenu = null;
     private JMenu editMenu = null;
@@ -204,7 +205,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         DocumentWordFinder finder = null;
 
         @Override
-        public java.awt.Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             Component c = super.getTableCellEditorComponent(table, value, isSelected, row, column);
             dict = Dictionaries.forLanguage(tlkContent.getLanguage());
             if (!noRealTimeSpellChecking && dict != null) {

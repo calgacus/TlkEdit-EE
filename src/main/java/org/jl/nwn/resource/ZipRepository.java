@@ -30,9 +30,9 @@ import java.util.zip.ZipFile;
  */
 public class ZipRepository extends AbstractRepository{
     
-    private ZipFile zipFile;
-    private File file;
-    private Set<ResourceID> resourceSet = null;
+    private final ZipFile zipFile;
+    private final File file;
+    private final Set<ResourceID> resourceSet = null;
     
     private Map<ResourceID, ZipEntry> entries = null;
     

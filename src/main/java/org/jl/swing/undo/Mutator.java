@@ -15,10 +15,10 @@ import javax.swing.undo.UndoableEditSupport;
 public abstract class Mutator{
     public static final String PROP_MODIFIED = "modified";
 
-    private MutatorUndoSupport undoSupport;
+    private final MutatorUndoSupport undoSupport;
 
     protected class MutatorUndoSupport extends UndoableEditSupport{
-        private List<Mutator> mutators = new LinkedList<Mutator>();
+        private final List<Mutator> mutators = new LinkedList<Mutator>();
         private int editState, editStateSaved;
 
         @Override protected CompoundEdit createCompoundEdit(){

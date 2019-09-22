@@ -187,8 +187,8 @@ public class RepositoryTreeView {
     }
 
     protected static class TypeNode extends DefaultListNode<ResourceID>{
-        private TreeSet<ResourceID> ids;
-        private short type;
+        private final TreeSet<ResourceID> ids;
+        private final short type;
         public TypeNode( TreeSet<ResourceID> resources, short type ){
             super(ResourceID.getExtensionForType(type), null);
             this.ids = resources;

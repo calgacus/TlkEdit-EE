@@ -23,9 +23,9 @@ import org.jl.nwn.Version;
  * [\w]{0,16}
  */
 public final class ResRefUtil{
-    final public Pattern RESREFPATTERN;
+    public final Pattern RESREFPATTERN;
 
-    private static EnumMap<Version, ResRefUtil> map =
+    private static final EnumMap<Version, ResRefUtil> map =
             new EnumMap(Version.class);
 
     static{

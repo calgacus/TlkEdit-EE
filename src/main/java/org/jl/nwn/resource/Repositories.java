@@ -21,7 +21,7 @@ import org.jl.nwn.erf.ErfFile;
  */
 public final class Repositories {
 
-    private HashMap<Descriptor, NwnRepository> repositories;
+    private final HashMap<Descriptor, NwnRepository> repositories;
 
     /** Creates a new instance of Repositories */
     private Repositories() {
@@ -37,12 +37,12 @@ public final class Repositories {
         return InstanceHolder.instance;
     }
 
-    private class Descriptor {
+    private static final class Descriptor {
 
-        Class rClass;
-        File[] files;
+        final Class<?> rClass;
+        final File[] files;
 
-        private Descriptor(Class c, File[] files) {
+        private Descriptor(Class<?> c, File[] files) {
             this.rClass = c;
             this.files = files;
         }

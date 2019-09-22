@@ -25,9 +25,9 @@ import org.jl.nwn.resource.ResourceID;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ErfResourceEditor extends SimpleFileEditorPanel {
-	private SimpleFileEditorPanel delegate;
-	private ErfEdit erf;
-	private ResourceID resID;
+	private final SimpleFileEditorPanel delegate;
+	private final ErfEdit erf;
+	private final ResourceID resID;
 
 	public ErfResourceEditor( SimpleFileEditorPanel delegate, ErfEdit erf, ResourceID resID ){
 		super();

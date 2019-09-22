@@ -22,18 +22,16 @@ import org.jl.nwn.Version;
  */
 public abstract class AbstractTlkReader<TlkTable>{
 
-    //"TLK "
-    private final static byte[] TLKHEADER =
-            new byte[]{ 0x54, 0x4c, 0x4b, 0x20 };
-    //"V3.0"
-    private final static byte[] TLKVERSION =
-            new byte[]{ 0x56, 0x33, 0x2e, 0x30 };
+    /** {@code "TLK "}. */
+    private final static byte[] TLKHEADER  = { 0x54, 0x4c, 0x4b, 0x20 };
+    /** {@code "V3.0"}. */
+    private final static byte[] TLKVERSION = { 0x56, 0x33, 0x2e, 0x30 };
     /**
      * Tlk file version supported by this class : {@value}.
      */
     public final static String TLKHEADERSTRING = "TLK V3.0";
 
-    private Version nwnVersion;
+    private final Version nwnVersion;
 
     /** Creates a new instance of AbstractTlkReader
      * @param nwnVersion version of tlk files to be read by this object,

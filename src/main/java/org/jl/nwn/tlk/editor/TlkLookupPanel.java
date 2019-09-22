@@ -27,12 +27,12 @@ public class TlkLookupPanel extends JPanel implements MessageSource {
 
     protected MessageSourceSupport messageSupport = new MessageSourceSupport(this);
 
-    private JTextField resField = new JTextField(16);
-    private JTextArea textArea = new JTextArea();
-    private JLabel posLabel = new JLabel("0");
-    private JButton updateButton;
+    private final JTextField resField = new JTextField(16);
+    private final JTextArea textArea = new JTextArea();
+    private final JLabel posLabel = new JLabel("0");
+    private final JButton updateButton;
     private int position = -1; // displayed position
-    private Action updateModel = new AbstractAction("update tlk") {
+    private final Action updateModel = new AbstractAction("update tlk") {
         {
             setEnabled(false);
         }

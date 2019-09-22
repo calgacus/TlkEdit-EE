@@ -23,9 +23,9 @@ import org.jl.nwn.resource.ResourceID;
 
 public class RepositoryResourceEditor extends SimpleFileEditorPanel {
 
-    private SimpleFileEditorPanel delegate;
-    private NwnRepository rep;
-    private ResourceID resID;
+    private final SimpleFileEditorPanel delegate;
+    private final NwnRepository rep;
+    private final ResourceID resID;
     private File savedAsFile = null;
 
     public RepositoryResourceEditor(SimpleFileEditorPanel delegate, NwnRepository rep, ResourceID resID) {

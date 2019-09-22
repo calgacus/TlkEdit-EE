@@ -46,9 +46,9 @@ public class BifRepository extends AbstractRepository{
     private File baseDir;
     private TreeSet resources;
 
-    private Map<String, BifFile> bifFiles = new HashMap<String, BifFile>();
+    private final Map<String, BifFile> bifFiles = new HashMap<>();
 
-    private static String[] defaultkeys = { "xp2patch.key", "xp2.key", "xp1patch.key", "xp1.key", "patch.key", "chitin.key" };
+    private static final String[] defaultkeys = { "xp2patch.key", "xp2.key", "xp1patch.key", "xp1.key", "patch.key", "chitin.key" };
     public static final List<String> DEFAULTKEYFILENAMES = Collections.unmodifiableList(Arrays.asList(defaultkeys));
 
     public BifRepository( File baseDir, KeyFile[] keys ){

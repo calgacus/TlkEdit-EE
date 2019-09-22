@@ -486,8 +486,8 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
     };
 
     protected TableCellRenderer renderer = new DefaultTableCellRenderer(){
-        private NumberFormat intFormat = NumberFormat.getIntegerInstance();
-        private NumberFormat floatFormat = DecimalFormat.getInstance();
+        private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
+        private final NumberFormat floatFormat = DecimalFormat.getInstance();
 
         @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
             GffField f = (GffField) treeTable.getPathForRow(row).getLastPathComponent();

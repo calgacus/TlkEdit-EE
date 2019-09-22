@@ -22,7 +22,7 @@ import javax.swing.table.TableCellEditor;
  */
 public class CellEditorDecorator implements TableCellEditor{
 
-    private TableCellEditor delegate;
+    private final TableCellEditor delegate;
 
     /** Creates a new instance of CellEditorDecorator */
     public CellEditorDecorator(TableCellEditor delegate) {

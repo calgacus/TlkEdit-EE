@@ -13,13 +13,10 @@ import java.util.Arrays;
 
 import org.jl.nwn.resource.RafInputStream;
 
-/**
- * read only representation of a bif file
- */
+/** Read only representation of a bif file. */
 abstract class BifFile {
-
-    protected static byte[] header10 = new byte[]{66, 73, 70, 70, 86, 49, 32, 32};
-    protected static byte[] header11 = new byte[]{66, 73, 70, 70, 86, 49, 46, 49};
+    protected static final byte[] header10 = {66, 73, 70, 70, 86, 49, 32, 32};
+    protected static final byte[] header11 = {66, 73, 70, 70, 86, 49, 46, 49};
 
     protected RandomAccessFile raf;
     protected File file;
@@ -85,7 +82,7 @@ abstract class BifFile {
         fos.close();
     }
 
-    public static class BifFile10 extends BifFile {
+    public static final class BifFile10 extends BifFile {
 
         public static final int BIFINDEXENTRYSIZE = 16;
 
@@ -105,7 +102,6 @@ abstract class BifFile {
             int type = readIntLE(raf);
 
             return new RafInputStream(raf, offset, offset + length);
-
         }
 
         @Override
@@ -150,7 +146,7 @@ abstract class BifFile {
         }
     }
 
-    public static class BifFile11 extends BifFile {
+    public static final class BifFile11 extends BifFile {
 
         public static final int BIFINDEXENTRYSIZE = 20;
 

@@ -23,8 +23,8 @@ import org.jl.nwn.tlk.editor.TlkLookupPanel;
 public class TwoDaTlkLookupLSListener implements ListSelectionListener {
 
     //private JTable table;
-    private WeakReference<JTable> table;
-    private TlkLookupPanel tlp;
+    private final WeakReference<JTable> table;
+    private final TlkLookupPanel tlp;
 
     public TwoDaTlkLookupLSListener(TwoDaEdit ed, TlkLookupPanel tlp ){
         //this.table = ed.table;

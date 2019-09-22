@@ -28,7 +28,7 @@ import org.jl.nwn.resource.ResourceID;
  */
 public class KeyFileV10 extends KeyFile{
 
-        protected TreeMap<ResourceID, Integer> entryMap = new TreeMap<ResourceID, Integer>();
+        protected final TreeMap<ResourceID, Integer> entryMap = new TreeMap<>();
 
         public KeyFileV10(File key) throws IOException {
             //bifs = new java.util.Vector();
@@ -113,6 +113,4 @@ public class KeyFileV10 extends KeyFile{
             int bifId = lookup(resName, resType);
             return bifId == -1 ? null : new BifResourceLocation(getBifName(bifId), getBifIndex(bifId));
         }
-
-
 }

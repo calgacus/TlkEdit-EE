@@ -16,7 +16,7 @@ import org.jdesktop.swingx.event.ProgressSource;
 import org.jl.nwn.Version;
 
 public abstract class SimpleFileEditorPanelX extends SimpleFileEditorPanel implements MessageSource, ProgressSource {
-    protected MessageSourceSupport msgSup = new MessageSourceSupport(this);
+    protected final MessageSourceSupport msgSup = new MessageSourceSupport(this);
 
     public abstract boolean load( File file, Version nwnVersion );
 

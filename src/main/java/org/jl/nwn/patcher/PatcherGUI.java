@@ -63,7 +63,7 @@ public class PatcherGUI extends JFrame {
 
 	StdOutFrame sof = StdOutFrame.getInstance();
 
-	private static Preferences prefs =
+	private static final Preferences prefs =
 		Preferences.userNodeForPackage(PatcherGUI.class);
 
 	private NwnRepConfig repConf = new NwnRepConfig( prefs );

@@ -71,18 +71,18 @@ public class ErfEdit extends SimpleFileEditorPanel{
 
     private ErfFile erf;
 
-    private DefaultListModel model = new DefaultListModel();
-    private JToolBar toolbar = new JToolBar();
-    private JMenuBar mbar = new JMenuBar();
-    private JMenu menuFile = new JMenu("File");
-    private JMenu menuErf = new JMenu();
-    private JSplitPane sPane;
+    private final DefaultListModel model = new DefaultListModel();
+    private final JToolBar toolbar = new JToolBar();
+    private final JMenuBar mbar = new JMenuBar();
+    private final JMenu menuFile = new JMenu("File");
+    private final JMenu menuErf = new JMenu();
+    private final JSplitPane sPane;
 
-    private JComboBox cbTypeSelector = new JComboBox(ErfFile.ERFTYPES.toArray());
-    private CExoLocStringEditor descEditor = new CExoLocStringEditor();
-    private Box descriptionBox = new Box(BoxLayout.Y_AXIS);
+    private final JComboBox cbTypeSelector = new JComboBox(ErfFile.ERFTYPES.toArray());
+    private final CExoLocStringEditor descEditor = new CExoLocStringEditor();
+    private final Box descriptionBox = new Box(BoxLayout.Y_AXIS);
 
-    private JFileChooser fChooser = new JFileChooser( new File(".") );
+    private final JFileChooser fChooser = new JFileChooser( new File(".") );
 
     private static final UIDefaultsX uid = new UIDefaultsX();
 

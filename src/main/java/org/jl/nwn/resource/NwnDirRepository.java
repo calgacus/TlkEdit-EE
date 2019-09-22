@@ -17,8 +17,8 @@ import java.util.TreeSet;
  */
 public class NwnDirRepository extends AbstractRepository {
 
-	private File dir;
-	
+	private final File dir;
+
 	public NwnDirRepository( File dir ){
 		this.dir = dir;
 	}
@@ -31,7 +31,7 @@ public class NwnDirRepository extends AbstractRepository {
 		File f = findFile( id );
 		return f!=null ? new FileInputStream(f) : null;
 	}
-	
+
 	/**
 	 * return the File containing the given resource. if no file with the exact name
 	 * returned by id.toFileName() is found, the method will perform a case insensitive
@@ -43,7 +43,7 @@ public class NwnDirRepository extends AbstractRepository {
 		File f = new File( dir, fName );
 		return f.isFile() ? f : findFileIgnoreCase( fName );
 	}
-	
+
 	private File findFileIgnoreCase( String fileName ){
 		String[] fNames = dir.list();
 		for ( int i = 0, n = fNames.length; i<n; i++ ){
@@ -52,7 +52,7 @@ public class NwnDirRepository extends AbstractRepository {
 				return f.isFile() ? f : null;
 			}
 		}
-		return null; 
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -70,12 +70,12 @@ public class NwnDirRepository extends AbstractRepository {
 	public boolean contains(ResourceID id) {
 		return findFile( id ) != null;
 	}
-	
+
 	@Override
 	public OutputStream putResource( ResourceID id ) throws IOException{
 		return new FileOutputStream( new File( dir, id.toFileName() ) );
-	}	
-	
+	}
+
 	@Override
 	public Set getResourceIDs(){
 		TreeSet s = new TreeSet();

@@ -28,26 +28,26 @@ import org.jdesktop.swingx.event.ProgressListener;
  */
 public class StatusBar implements MessageListener, ProgressListener {
 
-    protected JProgressBar progressBar = new JProgressBar();
-    protected MessageLabel messageLabel = new MessageLabel(new JLabel(), Level.ALL, 5000);
-    protected MessageLabel heapLabel = new MessageLabel(new JLabel(), Level.ALL, Integer.MAX_VALUE);
-    protected JXStatusBar statusBar = new JXStatusBar();
+    protected final JProgressBar progressBar = new JProgressBar();
+    protected final MessageLabel messageLabel = new MessageLabel(new JLabel(), Level.ALL, 5000);
+    protected final MessageLabel heapLabel = new MessageLabel(new JLabel(), Level.ALL, Integer.MAX_VALUE);
+    protected final JXStatusBar statusBar = new JXStatusBar();
 
     protected volatile int progress = 0;
 
-    protected Timer progressUpdater = new Timer(50, new ActionListener(){
+    protected final Timer progressUpdater = new Timer(50, new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent evt){
+        public void actionPerformed(ActionEvent evt) {
             progressBar.setValue(progress);
         }
     });
 
     public static class MessageLabel implements MessageListener {
 
-        protected Level messageLevel = Level.ALL;
-        protected JLabel messageLabel;
+        protected final Level messageLevel;
+        protected final JLabel messageLabel;
 
-        protected Timer wipeTimer = new Timer(5000, new ActionListener() {
+        protected final Timer wipeTimer = new Timer(5000, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {

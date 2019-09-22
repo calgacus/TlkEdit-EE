@@ -1066,7 +1066,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     public static class TwoDaTableModel extends AbstractTableModel implements RowMutator.RowMutable<String[]>, TableMutator.ColumnMutable<String[]> {
 
-        private TwoDaTable twoDa;
+        private final TwoDaTable twoDa;
 
         public TwoDaTableModel(TwoDaTable t) {
             twoDa = t;

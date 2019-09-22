@@ -58,7 +58,7 @@ public class Gff {
 
     public static final List TYPENAMES = Collections.unmodifiableList(Arrays.asList(typeNames));
 
-    private static String[] gffFileTypes = new String[]{
+    private static final String[] gffFileTypes = {
         "ifo",
         "are", "git", "gic",
         "utc", "utd", "ute", "uti", "utp", "uts", "utm", "utt", "utw",
@@ -80,7 +80,7 @@ public class Gff {
         GFFTYPES = Collections.unmodifiableList(Arrays.asList(gffFileTypes));
     }
 
-    private static BigInteger INT64_SIGNBIT1= BigInteger.ZERO.setBit( 63 );
+    private static final BigInteger INT64_SIGNBIT1= BigInteger.ZERO.setBit( 63 );
 
     public static String getTypeName( int type ){
         if ( type > -1 && type < 18 )
