@@ -457,7 +457,7 @@ public class TwoDaTable {
 
         for (int i = 0; i < t.rows.size(); i++) {
             if (canAppend)
-                appendRow((String[]) ((String[]) t.rows.get(i)).clone());
+                appendRow(t.rows.get(i).clone());
             else {
                 appendRow(emptyRow());
                 int row = rows.size() - 1;

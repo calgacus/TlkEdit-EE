@@ -1328,7 +1328,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                     List<TlkEntry> entries = (List<TlkEntry>) t.getTransferData(flavorTlkList);
                     List<TlkEntry> clones = new ArrayList<TlkEntry>(entries.size());
                     for (TlkEntry e : entries) {
-                        clones.add((TlkEntry) e.clone());
+                        clones.add(e.clone());
                     }
                     int viewRow = table.getSelectedRow();
                     int modelRow = table.convertRowIndexToModel(viewRow);
@@ -1348,7 +1348,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         private Transferable makeTransferable(final int[] modelSelection) {
             final TlkEntry[] rows = new TlkEntry[modelSelection.length];
             for (int i = 0; i < modelSelection.length; i++) {
-                rows[i] = (TlkEntry) tlkContent.get(modelSelection[i]).clone();
+                rows[i] = tlkContent.get(modelSelection[i]).clone();
             }
             final boolean hex = model.isDisplayHex();
             final boolean userTlk = model.getIsUserTlk();

@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
-import java.util.Vector;
 
 import org.jl.nwn.Version;
 
-/**
- */
-public class GffStruct extends GffField implements Iterable<GffField>{
+public class GffStruct extends GffField<Integer> implements Iterable<GffField> {
 
     private int id = 0;
 
-    private List<GffField> children = new ArrayList<GffField>();
+    private List<GffField> children = new ArrayList<>();
 
     public GffStruct( int ID ){
         this( null, ID );
@@ -31,7 +28,7 @@ public class GffStruct extends GffField implements Iterable<GffField>{
 
     /**
      * @return empty struct with the top level id ( -1 )
-     * */
+     */
     public static GffStruct mkTopLevelStruct(){
         return new GffStruct( Gff.STRUCT_ID_TOPLEVEL );
     }
@@ -39,16 +36,14 @@ public class GffStruct extends GffField implements Iterable<GffField>{
     /**
      * get field by label
      * @return field with given label or null if no such field exists in this struct
-     * */
-    public GffField getChild( String label ){
-        GffField field = null;
-        for ( int i = 0; i < getSize(); i++ ){
-            if ( getChild(i).getLabel().equals( label ) ){
-                field = getChild(i);
-                break;
+     */
+    public GffField getChild( String label ) {
+        for (final GffField field : children) {
+            if (field.label.equals(label)) {
+                return field;
             }
         }
-        return field;
+        return null;
     }
 
     public void addChild( GffField s ){
@@ -90,22 +85,21 @@ public class GffStruct extends GffField implements Iterable<GffField>{
      * @param pos position of field to be removed
      * */
     public void remove( int pos ){
-        ((GffField) children.remove(pos)).parent = null;
+        children.remove(pos).parent = null;
     }
 
     /**
      * @return number of fields in this struct
-     * */
-    public int getSize(){
-        return children.size();
-    }
+     */
+    public int getSize() { return children.size(); }
 
     @Override
-    public String toString(){
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("********[struct " + label + " (" + id + ") ]********\n" );
-        for ( int i = 0; i < getSize(); i++ )
-            sb.append( getChild(i).toString() + "\n" );
+        for (final GffField field : children) {
+            sb.append(field).append('\n');
+        }
         sb.append("********[struct end]********\n" );
         return sb.toString();
     }
@@ -113,42 +107,34 @@ public class GffStruct extends GffField implements Iterable<GffField>{
     /**
      * @return id of this struct
      */
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
 
     /**
      * @param id new struct id
      */
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setId(int id) { this.id = id; }
 
     /**
      * does a deep copy of this struct
      * @return deep copy of this GffStruct
-     * */
+     */
     @Override
-    public Object clone(){
-        GffStruct clone = ( GffStruct ) super.clone();
-        clone.children = new Vector();
+    public GffStruct clone(){
+        final GffStruct clone = ( GffStruct ) super.clone();
+        clone.children = new ArrayList<>();
         for (final GffField field : children) {
-            clone.children.add( (GffField) field.clone() );
+            clone.children.add(field.clone());
         }
         return clone;
     }
 
-    /**
-     * return an iterator over this struct's children.
-     */
+    /** @return an iterator over this struct's children. */
     @Override
-    public Iterator<GffField> iterator(){
-        return children.iterator();
-    }
+    public Iterator<GffField> iterator() { return children.iterator(); }
 
     public Iterator<GffField> getDFIterator(){
         return new Iterator<GffField>(){
-            Stack<Iterator> iterators = new Stack<Iterator>();
+            final Stack<Iterator> iterators = new Stack<>();
             boolean first = true;
             {
                 iterators.push( iterator() );
@@ -167,11 +153,11 @@ public class GffStruct extends GffField implements Iterable<GffField>{
                     first = false;
                     return GffStruct.this;
                 }
-                Iterator it = iterators.peek();
-                GffField f = (GffField) it.next();
-                if ( f.type == Gff.STRUCT || f.type == Gff.LIST ){
-                    Iterator subIt = (f.type == Gff.STRUCT)? ((GffStruct) f).iterator() : ((GffList) f).iterator();
-                    iterators.push( subIt );
+                final Iterator<GffField> it = iterators.peek();
+                final GffField f = it.next();
+                if ( f.type == Gff.STRUCT || f.type == Gff.LIST ) {
+                    final Iterable<GffField> iterable = (Iterable<GffField>) f;
+                    iterators.push(iterable.iterator());
                 }
                 return f;
             }
@@ -183,49 +169,34 @@ public class GffStruct extends GffField implements Iterable<GffField>{
         };
     }
 
-    public int indexOf(Object o) {
-        return children.indexOf(o);
-    }
+    public int indexOf(Object o) { return children.indexOf(o); }
 
     @Override
-    public boolean allowsChildren(){
-        return true;
-    }
+    public boolean allowsChildren() { return true; }
 
     @Override
-    public int getChildCount(){
-        return getSize();
-    }
+    public int getChildCount() { return children.size(); }
 
     @Override
-    public GffField getChild( int index ){
-        return children.get(index);
-    }
+    public GffField getChild(int index) { return children.get(index); }
 
     @Override
-    public int getChildIndex( GffField f ){
-        return indexOf( f );
-    }
+    public int getChildIndex(GffField f) { return indexOf( f ); }
 
     @Override
-    public Object getData(){
-        return getId();
-    }
+    public Integer getData() { return getId(); }
 
     @Override
-    public void setData( Object data ){
-        setId(((Number)data).intValue());
-    }
+    public void setData(Integer data) { setId(data.intValue()); }
 
     public static void main( String ... args ) throws Exception{
         GffContent c =
                 new DefaultGffReader(Version.getDefaultVersion())
                 .load( new java.io.File( args[0] ) );
-        Iterator it = c.getTopLevelStruct().getDFIterator();
+        final Iterator<GffField> it = c.getTopLevelStruct().getDFIterator();
         while ( it.hasNext() ){
-            GffField f = ( GffField ) it.next();
+            final GffField f = it.next();
             System.out.println( "GFFStruct " + (f.isDataField() ? f.toString() : f.label + "(" + f.getTypeName() + ")" ));
         }
     }
-
 }

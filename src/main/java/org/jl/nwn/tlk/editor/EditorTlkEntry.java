@@ -17,10 +17,7 @@ class EditorTlkEntry extends TlkEntry implements Cloneable, Serializable{
     }
 
     @Override
-    public Object clone(){
-        EditorTlkEntry ret = new EditorTlkEntry( this, this.modified );
-        return ret;
-    }
+    public EditorTlkEntry clone() { return new EditorTlkEntry(this, modified); }
 
     @Override
     public void setFlags(byte type) {

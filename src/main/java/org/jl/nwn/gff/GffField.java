@@ -118,9 +118,9 @@ public abstract class GffField<Data extends Object> implements Cloneable{
     }
 
     @Override
-    public Object clone(){
+    public GffField clone() {
         try{
-            return super.clone();
+            return (GffField)super.clone();
         } catch ( CloneNotSupportedException cnse){
         }
         return null;

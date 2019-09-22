@@ -10,19 +10,20 @@ package org.jl.nwn.gff;
  *
  * @author ich
  */
-public class GffVector extends GffField<float[]>{
-    
+public class GffVector extends GffField<float[]> {
+
     private float[] data = new float[]{0,0,0};
-    
+
     /** Creates a new instance of GffVector */
-    protected GffVector(String label){
+    protected GffVector(String label) {
         super(label, Gff.VECTOR);
     }
 
     @Override
     public void setData(float[] data) {
-        if ( data.length != 3 )
-            throw new IllegalArgumentException("Illegal array length ( !=3 ) !");
+        if (data.length != 3) {
+            throw new IllegalArgumentException("Illegal array length, expected 3: " + data.length);
+        }
         this.data = data;
     }
 
@@ -30,10 +31,10 @@ public class GffVector extends GffField<float[]>{
     public float[] getData() {
         return data;
     }
-    
+
     @Override
     public String toString(){
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(label).append(" (").append(getTypeName()).append(") : ");
         sb.append("(");
         sb.append(data[0]);
@@ -43,6 +44,5 @@ public class GffVector extends GffField<float[]>{
         sb.append(data[2]);
         sb.append(")");
         return sb.toString();
-    }    
-    
+    }
 }

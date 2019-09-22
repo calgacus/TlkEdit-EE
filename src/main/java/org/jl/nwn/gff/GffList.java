@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- */
-public class GffList extends GffField implements Iterable<GffStruct>{
+public class GffList extends GffField implements Iterable<GffStruct> {
 
     private List<GffStruct> structs;
 
     public GffList( String label ){
-        super( label, Gff.LIST );
-        structs = new ArrayList<GffStruct>();
+        this(new ArrayList<>(), label);
     }
 
     public GffList( List<GffStruct> structs, String label ){
-        this( label );
+        super( label, Gff.LIST );
         this.structs = structs;
     }
 
@@ -40,7 +37,7 @@ public class GffList extends GffField implements Iterable<GffStruct>{
     }
 
     public void remove( int pos ){
-        ((GffField)structs.remove( pos )).parent = null;
+        structs.remove( pos ).parent = null;
     }
 
     public int getSize(){
@@ -49,17 +46,18 @@ public class GffList extends GffField implements Iterable<GffStruct>{
 
     /**
      * return an iterator over the structs contained in this list.
-     * */
-    @Override public Iterator<GffStruct> iterator(){
+     */
+    @Override
+    public Iterator<GffStruct> iterator() {
         return structs.iterator();
     }
 
-    @Override public String toString(){
+    @Override
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append( "----------------- [ begin list " + label + " ] -------------------\n" );
-        for ( int i = 0; i < getSize(); i++ ){
-            sb.append( get(i).toString() );
-            sb.append("\n");
+        for (final GffStruct struct : structs) {
+            sb.append(struct).append('\n');
         }
         sb.append( "----------------- [ end of list " + label + " ] ------------------"   );
         return sb.toString();
@@ -69,11 +67,12 @@ public class GffList extends GffField implements Iterable<GffStruct>{
      * does a deep copy of this list
      * @return deep copy of this GffLIst
      * */
-    @Override public Object clone(){
-        GffList clone = ( GffList ) super.clone();
-        clone.structs = new ArrayList<GffStruct>();
-        for (final GffStruct struct : structs){
-            clone.structs.add( (GffStruct) struct.clone() );
+    @Override
+    public GffList clone() {
+        final GffList clone = ( GffList ) super.clone();
+        clone.structs = new ArrayList<>();
+        for (final GffStruct struct : structs) {
+            clone.structs.add(struct.clone());
         }
         return clone;
     }

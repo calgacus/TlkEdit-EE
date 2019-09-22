@@ -10,53 +10,37 @@ import java.util.Comparator;
 
 import org.jl.nwn.NwnLanguage;
 
+public class CExoLocSubString extends GffField<String> implements Cloneable {
 
-public class CExoLocSubString extends GffField<String> implements Cloneable{
-    
-    public static final Comparator comparator = new Comparator(){
-        @Override
-        public int compare( Object o1, Object o2 ){
-            CExoLocSubString s1 = (CExoLocSubString) o1;
-            CExoLocSubString s2 = (CExoLocSubString) o2;
-            return (s1.language.getCode()*2+s1.gender) - (s2.language.getCode()*2+s2.gender);
-        }
-    };
-    
-    public byte[] getRawData(){return null;}
-    
-    @Override
-    public String getData(){
-        return string;
-    }
-    
-    @Override
-    public void setData( String data ){
-        string = data;
-    }
-    
-    @Override
-    public String getTypeName(){
-        return "Substring";
-    }
-    
-    @Override
-    public Object clone(){
-        GffField f = (GffField) super.clone();
-        f.parent = null;
-        return f;
-    }
-    
-    @Override public String getLabel(){
-        return language.getName() + (gender==0?"-M":"-F");
-    }
-    
-    public String string = "";
-    public NwnLanguage language = NwnLanguage.ENGLISH;
-    public int gender = 0;
+    public static final Comparator<CExoLocSubString> COMPARATOR =
+            (CExoLocSubString s1, CExoLocSubString s2) ->
+                    (s1.language.getCode()*2+s1.gender)
+                  - (s2.language.getCode()*2+s2.gender);
+
+    public String string;
+    public final NwnLanguage language;
+    public final int gender;
+
     public CExoLocSubString(String s, NwnLanguage lang, int gender) {
-        super( "", GffCExoLocString.SUBSTRINGTYPE );
+        super(lang.getName() + (gender==0?"-M":"-F"), GffCExoLocString.SUBSTRINGTYPE);
         this.string = s;
         this.language = lang;
         this.gender = gender;
+    }
+
+    @Override
+    public String getData() { return string; }
+
+    @Override
+    public void setData(String data) { string = data; }
+
+    @Override
+    public String getTypeName() { return "Substring"; }
+
+    @Override
+    public CExoLocSubString clone() {
+        final GffField f = super.clone();
+        f.parent = null;
+        return (CExoLocSubString)f;
     }
 }

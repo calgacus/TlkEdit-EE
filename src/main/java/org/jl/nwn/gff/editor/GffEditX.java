@@ -176,7 +176,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             selectionPath = tt.getTreeSelectionModel().getSelectionPath();
             if ( selectionPath == null )
                 return;
-            final GffField o = (GffField)((GffField) selectionPath.getLastPathComponent()).clone();
+            final GffField o = ((GffField) selectionPath.getLastPathComponent()).clone();
             Transferable trans = makeTransferable(o);
             clip.setContents( trans, GffEditX.this );
             exportDone( comp, trans, action );
@@ -889,7 +889,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                     indexDialog.setVisible( true );
                     indexDialog.dispose();
                     if ( indexOptions.getValue() == "OK" ){
-                        model.insert( insPath, (GffStruct) newField.clone(), ((Number)indexModel.getValue()).intValue() );
+                        model.insert(insPath, newField.clone(), ((Number)indexModel.getValue()).intValue() );
                         return true;
                     }
                 }
@@ -902,7 +902,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             } else {
                 TreePath insertionPath = (insertAt!=struct)?model.makePath(struct):insPath;
                 int insertionIndex = (insertAt!=struct)?struct.indexOf(insertAt):struct.getSize();
-                model.insert(insertionPath, (GffField) newField.clone(), insertionIndex);
+                model.insert(insertionPath, newField.clone(), insertionIndex);
                 return true;
             }
         }
