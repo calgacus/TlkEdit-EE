@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.EventHandler;
 import java.util.Iterator;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -15,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
 import org.dts.spell.SpellChecker;
 import org.dts.spell.dictionary.SpellDictionary;
 import org.dts.spell.finder.CharSequenceWordFinder;
@@ -36,7 +38,7 @@ import org.jl.nwn.spell.Dictionaries;
 /**
  */
 public class GffSpellChecker {
-    
+
     GffTreeTableModel model;
     JSpellDialog d = null;
     JSpellPanel sPanel = null;
@@ -49,22 +51,22 @@ public class GffSpellChecker {
     JFrame owner;
     JTextArea text = new JTextArea();
     NwnLanguage languageOverride = null;
-    
+
     protected class GffWordFinder extends CharSequenceWordFinder{
         protected StringBuffer sb = new StringBuffer();
         CExoLocSubString substring;
-        
+
         public GffWordFinder(){
             super("");
         }
-        
+
         public void setSubstring( CExoLocSubString s ){
             sb.replace(0, sb.length(), s.string);
             this.substring = s;
             getTokenizer().setCharSequence(sb);
             init();
         }
-        
+
         @Override public void replace(String newWord, Word currentWord){
             int start = currentWord.getStart();
             int end = currentWord.getEnd();
@@ -82,19 +84,19 @@ public class GffSpellChecker {
             model.setValueAt(sb.toString(), substring, 2);
 
         }
-        
+
     }
-    
+
     /** Creates a new instance of GffSpellChecker */
     public GffSpellChecker( GffTreeTableModel model ){
         this.model = model;
     }
-    
+
     public GffSpellChecker( JFrame owner, GffTreeTableModel model ){
         this.owner = owner;
         this.model = model;
     }
-    
+
     /**
      * Perform all spell checking with the given language, use <code>null</code>
      * to perform checking with the substring's language ( default ).
@@ -103,7 +105,7 @@ public class GffSpellChecker {
     public void forceLanguage( NwnLanguage lang ){
         languageOverride = lang;
     }
-    
+
     public void performChecking(){
         GffStruct topLevel = ((GffStruct)model.getRoot());
         Iterator<GffField> it = topLevel.getDFIterator();
@@ -126,7 +128,7 @@ public class GffSpellChecker {
         }
         cancel = false;
     }
-    
+
     protected void init(){
         checker = new SpellChecker(dict);
         sPanel = new JSpellPanel();
@@ -143,7 +145,7 @@ public class GffSpellChecker {
             }
         };
         sPanel.setCancelListener(al);
-        
+
         //JPanel p = (JPanel)((BorderLayout)sPanel.getLayout()).getLayoutComponent(BorderLayout.SOUTH);
         JPanel p = new JPanel();
         final JCheckBox cbCaseSensitive = new JCheckBox("Case Sensitive", checker.isCaseSensitive());
@@ -186,5 +188,4 @@ public class GffSpellChecker {
                 SeparatorLineBorder.get(), "Spell Checker Options"));
         d.getContentPane().add(p, BorderLayout.SOUTH);
     }
-    
 }

@@ -11,6 +11,7 @@ package org.jl.swing.table;
 
 import java.awt.Component;
 import java.util.EventObject;
+
 import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
@@ -20,9 +21,9 @@ import javax.swing.table.TableCellEditor;
  * @author ich
  */
 public class CellEditorDecorator implements TableCellEditor{
-    
+
     private TableCellEditor delegate;
-    
+
     /** Creates a new instance of CellEditorDecorator */
     public CellEditorDecorator(TableCellEditor delegate) {
         this.delegate = delegate;
@@ -67,5 +68,4 @@ public class CellEditorDecorator implements TableCellEditor{
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         return delegate.getTableCellEditorComponent(table,value,isSelected,row,column);
     }
-    
 }

@@ -3,6 +3,7 @@ package org.jl.swing;
 import java.awt.Event;
 import java.awt.Toolkit;
 import java.net.URL;
+
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
@@ -11,6 +12,7 @@ import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+
 import org.jdesktop.swingx.icon.EmptyIcon;
 import org.jdesktop.swingx.util.OS;
 

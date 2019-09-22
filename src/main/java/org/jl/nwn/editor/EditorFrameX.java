@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
@@ -61,6 +62,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
+
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.event.MessageEvent;
 import org.jdesktop.swingx.event.MessageSourceSupport;
@@ -78,9 +80,9 @@ import org.jl.nwn.tlk.editor.TlkLookupPanel;
 import org.jl.nwn.twoDa.TwoDaEdit;
 import org.jl.nwn.twoDa.TwoDaTlkLookupLSListener;
 import org.jl.swing.Actions;
+import org.jl.swing.CheckBoxAction;
 import org.jl.swing.FileDropHandler;
 import org.jl.swing.I18nUtil;
-import org.jl.swing.CheckBoxAction;
 import org.jl.swing.UIDefaultsX;
 
 public class EditorFrameX extends JXFrame implements PropertyChangeListener {
@@ -108,14 +110,14 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     private GffTlkLookup gffTlkLookup = new GffTlkLookup(tlp);
 
     private JFileChooser fChooser = new JFileChooser();
-    
+
     protected class VersionSelectionFilter extends FileFilter{
         private Version v;
 
         public VersionSelectionFilter(Version v) {
             this.v = v;
-        }        
-        
+        }
+
         @Override
         public boolean accept(File f) {
             return true;
@@ -125,13 +127,13 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         public String getDescription() {
             return "All Files - " + v.getDisplayName();
         }
-        
+
         public Version getVersion(){
             return v;
         }
-        
+
     }
-    
+
     private static final UIDefaultsX uid = new UIDefaultsX();
 
     private StatusBar statusBar = new StatusBar();
@@ -259,9 +261,9 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                         msgSup.fireProgressEnded();
                         msgSup.fireMessage("extracted " + extractedFiles.size() + " files");
                         super.done();
-                    }                    
+                    }
                 }.execute();
-                
+
             }
         }
     };

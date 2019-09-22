@@ -13,7 +13,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import javax.swing.table.AbstractTableModel;
+
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.PatternFilter;
@@ -25,12 +27,12 @@ import org.jl.nwn.resource.ResourceID;
  * @author ich
  */
 public class RepositoryTableView {
-    
+
     protected JXTable table;
     protected PatternFilter filter;
     protected NwnRepository rep;
     protected RepositoryTableModel model;
-    
+
     public RepositoryTableView() {
         model = new RepositoryTableModel();
         table = new JXTable(model);
@@ -38,28 +40,28 @@ public class RepositoryTableView {
         filter.setColumnIndex(0);
         table.setFilters(new FilterPipeline(filter));
     }
-    
+
     public void setRepository(NwnRepository rep){
         this.rep = rep;
         model.setRepository(rep);
     }
-    
+
     public NwnRepository getRepository(){
         return rep;
     }
-    
+
     public JXTable getViewComponent(){
         return table;
     }
-    
+
     public void setFilterPattern(Pattern p){
         filter.setPattern(p);
     }
-    
+
     public void clear(){
         ((RepositoryTableModel)table.getModel()).clear();
     }
-    
+
     public List<ResourceID> getSelectedResources(){
         List<ResourceID> r = new ArrayList<ResourceID>();
         int[] s = table.getSelectedRows();
@@ -69,53 +71,53 @@ public class RepositoryTableView {
         }
         return r;
     }
-    
+
     public static class RepositoryTableModel extends AbstractTableModel {
-        
+
         protected NwnRepository repository;
         protected List<ResourceID> resources = new ArrayList<ResourceID>();
-        
-        public RepositoryTableModel(){            
+
+        public RepositoryTableModel(){
         }
-        
+
         public RepositoryTableModel( NwnRepository rep ){
             this.repository = rep;
             init();
         }
-        
+
         public void clear(){
             repository = null;
             resources = new ArrayList<ResourceID>();
             fireTableDataChanged();
         }
-        
+
         private void init(){
             resources = new ArrayList<ResourceID>();
             for (ResourceID id : repository){
                 resources.add(id);
             }
         }
-        
+
         public ResourceID getResourceID(int index){
             return resources.get(index);
         }
-        
+
         public void setRepository(NwnRepository rep){
             this.repository = rep;
             init();
             fireTableDataChanged();
         }
-        
+
         @Override
         public int getColumnCount() {
             return 6;
         }
-        
+
         @Override
         public int getRowCount() {
             return resources.size();
         }
-        
+
         @Override
         public Object getValueAt(int arg0, int arg1) {
             ResourceID id = resources.get(arg0);
@@ -136,9 +138,9 @@ public class RepositoryTableView {
                 return "<what's this?!?>";
             }
         }
-        
-        
-        
+
+
+
         @Override
         public Class<?> getColumnClass(int arg0) {
             switch (arg0) {
@@ -158,7 +160,7 @@ public class RepositoryTableView {
                 return String.class;
             }
         }
-        
+
         @Override
         public String getColumnName(int arg0) {
             switch (arg0) {
@@ -178,7 +180,7 @@ public class RepositoryTableView {
                 return "foo";
             }
         }
-        
+
         @Override
         public boolean isCellEditable(int arg0, int arg1) {
             return false;

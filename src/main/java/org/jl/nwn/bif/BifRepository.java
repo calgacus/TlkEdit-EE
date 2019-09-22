@@ -36,7 +36,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
-import org.jl.nwn.resource.*;
+import org.jl.nwn.resource.AbstractRepository;
+import org.jl.nwn.resource.ResourceID;
+
 /**
  */
 public class BifRepository extends AbstractRepository{

@@ -7,7 +7,6 @@
 package org.jl.nwn.twoDa.cellEditors;
 
 import java.awt.Component;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Map;

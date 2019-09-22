@@ -6,6 +6,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
@@ -22,12 +23,12 @@ public abstract class FileDropHandler extends TransferHandler{
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
-    }    
-    
+    }
+
     /** Creates a new instance of FileDropHandler */
     public FileDropHandler(){
     }
-    
+
     @Override public boolean canImport(JComponent comp, DataFlavor[] transferFlavors){
 
         for ( DataFlavor d : transferFlavors ){
@@ -37,7 +38,7 @@ public abstract class FileDropHandler extends TransferHandler{
         }
         return false;
     }
-    
+
     @Override public boolean importData(JComponent comp, Transferable t){
         //System.out.println("importData");
         try{
@@ -66,12 +67,11 @@ public abstract class FileDropHandler extends TransferHandler{
         }
         return false;
     }
-    
+
     abstract public void importFiles( List<File> files );
-    
+
     @Override
     public int getSourceActions(JComponent c){
         return NONE;
     }
-    
 }

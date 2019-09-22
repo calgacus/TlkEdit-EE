@@ -13,8 +13,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.swing.JMenu;
 import javax.swing.JToolBar;
+
 import org.jl.nwn.Version;
 import org.jl.nwn.resource.NwnRepository;
 import org.jl.nwn.resource.ResourceID;

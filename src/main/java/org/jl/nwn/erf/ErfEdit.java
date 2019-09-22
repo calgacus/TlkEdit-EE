@@ -48,21 +48,21 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+
 import org.jdesktop.swingx.JXTable;
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
-
 import org.jl.nwn.editor.SimpleFileEditorPanel;
 import org.jl.nwn.gff.CExoLocSubString;
 import org.jl.nwn.gff.Gff;
 import org.jl.nwn.gff.GffCExoLocString;
 import org.jl.nwn.gff.editor.CExoLocStringEditor;
-import org.jl.swing.FileDropHandler;
-import org.jl.swing.UIDefaultsX;
 import org.jl.nwn.resource.ResRefUtil;
 import org.jl.nwn.resource.ResourceID;
 import org.jl.swing.Actions;
+import org.jl.swing.FileDropHandler;
 import org.jl.swing.I18nUtil;
+import org.jl.swing.UIDefaultsX;
 import org.jl.swing.table.FormattedCellEditor;
 
 /**

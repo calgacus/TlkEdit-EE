@@ -5,14 +5,14 @@
 package org.jl.nwn.patcher;
 
 import java.io.File;
+
 import org.jl.nwn.Version;
 import org.jl.nwn.gff.DefaultGffReader;
-
 import org.jl.nwn.gff.GffContent;
 import org.jl.nwn.gff.GffInteger;
 
 public class GffBatchEdit {
-    
+
     public static void main(String[] args) throws Exception{
         String label = args[0];
         int start = Integer.parseInt( args[1] );

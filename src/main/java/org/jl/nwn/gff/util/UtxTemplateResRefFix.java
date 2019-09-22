@@ -4,15 +4,15 @@
 package org.jl.nwn.gff.util;
 
 import java.io.File;
+
 import org.jl.nwn.Version;
 import org.jl.nwn.gff.DefaultGffReader;
-
-import org.jl.nwn.gff.GffContent;
 import org.jl.nwn.gff.GffCResRef;
+import org.jl.nwn.gff.GffContent;
 import org.jl.nwn.resource.ResourceID;
 
 public class UtxTemplateResRefFix {
-    
+
     public static void main(String[] args) throws Exception{
         if ( args.length == 0 )
             System.out.println( "usage : UtxTemplateResRefFix <files>" );

@@ -12,10 +12,12 @@ package org.jl.nwn.editor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
+
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.event.MessageEvent;
 import org.jdesktop.swingx.event.MessageListener;
@@ -30,9 +32,9 @@ public class StatusBar implements MessageListener, ProgressListener {
     protected MessageLabel messageLabel = new MessageLabel(new JLabel(), Level.ALL, 5000);
     protected MessageLabel heapLabel = new MessageLabel(new JLabel(), Level.ALL, Integer.MAX_VALUE);
     protected JXStatusBar statusBar = new JXStatusBar();
-    
+
     protected volatile int progress = 0;
-    
+
     protected Timer progressUpdater = new Timer(50, new ActionListener(){
         @Override
         public void actionPerformed(ActionEvent evt){

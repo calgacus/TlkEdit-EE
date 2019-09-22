@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.jl.nwn.resource.ResourceID;
 
 /**

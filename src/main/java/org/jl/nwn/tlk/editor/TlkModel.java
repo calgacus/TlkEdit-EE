@@ -4,9 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
+
 import org.jl.nwn.NwnLanguage;
-import org.jl.nwn.tlk.*;
+import org.jl.nwn.tlk.TlkContent;
+import org.jl.nwn.tlk.TlkEntry;
+import org.jl.nwn.tlk.TlkLookup;
 import org.jl.swing.undo.ListMutator;
 import org.jl.swing.undo.RowMutator;
 

@@ -7,6 +7,7 @@
 package org.jl.nwn.twoDa;
 
 import java.lang.ref.WeakReference;
+
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -20,17 +21,17 @@ import org.jl.nwn.tlk.editor.TlkLookupPanel;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class TwoDaTlkLookupLSListener implements ListSelectionListener {
-    
+
     //private JTable table;
     private WeakReference<JTable> table;
     private TlkLookupPanel tlp;
-    
+
     public TwoDaTlkLookupLSListener(TwoDaEdit ed, TlkLookupPanel tlp ){
         //this.table = ed.table;
         this.table = new WeakReference(ed.table);
         this.tlp = tlp;
     }
-    
+
         /* (non-Javadoc)
          * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
          */
@@ -49,7 +50,7 @@ public class TwoDaTlkLookupLSListener implements ListSelectionListener {
             }
         }
     }
-    
+
     public static void main(String[] args) {
     }
 }

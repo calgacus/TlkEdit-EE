@@ -2,6 +2,7 @@ package org.jl.swing.undo;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CompoundEdit;
@@ -181,6 +182,4 @@ public abstract class Mutator{
         this.modified = modified;
         propertyChangeSupport.firePropertyChange(PROP_MODIFIED, oldModified, modified);
     }
-
 }
-

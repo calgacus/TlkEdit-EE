@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JFormattedTextField;
+
 import org.jl.nwn.Version;
 
 /**
@@ -23,19 +24,19 @@ import org.jl.nwn.Version;
  */
 public final class ResRefUtil{
     final public Pattern RESREFPATTERN;
-    
+
     private static EnumMap<Version, ResRefUtil> map =
             new EnumMap(Version.class);
-    
+
     static{
         map.put( Version.NWN1, new ResRefUtil(Pattern.compile("[\\w]{0,16}")) );
         map.put( Version.NWN2, new ResRefUtil(Pattern.compile("[\\w]{0,32}")) );
     }
-    
+
     public static ResRefUtil instance(Version v){
         return map.get(v);
     }
-    
+
     public static int resRefSize(Version v){
         switch (v){
             case NWN1 : return 16;
@@ -43,11 +44,11 @@ public final class ResRefUtil{
             default : return 32;
         }
     }
-    
+
     private ResRefUtil(Pattern p){
         RESREFPATTERN = p;
     }
-    
+
     /**
      * tests whether the given string is a valid ResRef
      * @return true if the argument is a valid ResRef
@@ -56,7 +57,7 @@ public final class ResRefUtil{
         Matcher m = RESREFPATTERN.matcher(s);
         return m.matches();
     }
-    
+
     /**
      * unless the argument is a valid ResRef, this method will raise an exception
      * @return the argument
@@ -67,7 +68,7 @@ public final class ResRefUtil{
             throw new ParseException( "invalid resref", 0 );
         return s;
     }
-    
+
     /**
      * formatter for strings which are valid ResRefs
      * @param accept2DA_Null if true the formatter will accept **** as valid input
@@ -87,5 +88,4 @@ public final class ResRefUtil{
             }
         };
     }
-    
 }

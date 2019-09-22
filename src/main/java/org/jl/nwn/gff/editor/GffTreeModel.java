@@ -14,8 +14,8 @@ import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import org.jl.nwn.Version;
 
+import org.jl.nwn.Version;
 import org.jl.nwn.gff.DefaultGffReader;
 import org.jl.nwn.gff.Gff;
 import org.jl.nwn.gff.GffField;
@@ -25,11 +25,11 @@ import org.jl.nwn.gff.GffStruct;
 /**
  */
 public class GffTreeModel implements TreeModel {
-	
+
 	protected GffStruct root;
-	
+
 	protected List listeners = new LinkedList();
-	
+
 	public GffTreeModel( GffStruct s ){
 		root = s;
 	}
@@ -110,7 +110,7 @@ public class GffTreeModel implements TreeModel {
 	public void removeTreeModelListener(TreeModelListener l) {
 		listeners.remove(l);
 	}
-	
+
 	public static void main( String[] args ) throws IOException{
 		GffStruct s = (GffStruct)(new DefaultGffReader(Version.getDefaultVersion()).load(new File("/usr/local/neverwinter/localvault/stormofblaark.bic"))).getTopLevelStruct();
 		TreeModel m = new GffTreeModel(s);

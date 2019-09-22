@@ -3,6 +3,7 @@ package targaspi;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
+
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
@@ -11,9 +12,9 @@ import javax.imageio.stream.ImageInputStream;
 /**
  */
 public class TargaReader extends ImageReader{
-    
+
     protected TargaImage image = null;
-    
+
     /** Creates a new instance of TargaReader */
     protected TargaReader(ImageReaderSpi originatingProvider) {
         super( originatingProvider );
@@ -64,10 +65,9 @@ public class TargaReader extends ImageReader{
     public javax.imageio.metadata.IIOMetadata getStreamMetadata() throws java.io.IOException {
         return null;
     }
-    
+
     @Override public void reset(){
         super.reset();
         image = null;
     }
-    
 }

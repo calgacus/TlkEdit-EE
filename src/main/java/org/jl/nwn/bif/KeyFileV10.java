@@ -1,8 +1,8 @@
 /*
  * KeyFileV10.java
- * 
+ *
  * Created on 05.12.2007, 19:16:24
- * 
+ *
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.jl.nwn.resource.ResourceID;
 
 /**
@@ -101,7 +102,7 @@ public class KeyFileV10 extends KeyFile{
         public Iterator getResourceIDs() {
             return entryMap.keySet().iterator();
         }
-        
+
         @Override
         public Set<ResourceID> getResourceIDSet(){
             return Collections.unmodifiableSet(entryMap.keySet());

@@ -3,6 +3,7 @@ package org.jl.nwn.tlk.editor;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -11,10 +12,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
 import org.jdesktop.swingx.event.MessageListener;
 import org.jdesktop.swingx.event.MessageSource;
 import org.jdesktop.swingx.event.MessageSourceSupport;
-import org.jl.nwn.tlk.*;
+import org.jl.nwn.tlk.TlkLookup;
 
 /**
  */
@@ -138,7 +140,7 @@ public class TlkLookupPanel extends JPanel implements MessageSource {
             }
         }
     }
-    
+
     protected void message(String tlkString, int position){
         messageSupport.fireMessage(MessageFormat.format("[StrRef {0}] {1}", position, tlkString));
     }

@@ -17,8 +17,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
-import javax.swing.AbstractAction;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -38,7 +38,7 @@ import org.w3c.dom.NodeList;
 public class BitFlagEditor
         extends AbstractCellEditor
         implements TableCellEditor {
-    
+
     private int value;
     private WeakReference<JTable> tableRef;
     private MyTextField valueField = new MyTextField();
@@ -55,17 +55,17 @@ public class BitFlagEditor
                 boolean pressed){
             return valueField.processKeyBinding(ks,e,condition,pressed);
         }
-        
+
     };
-    
+
     private JDialog dialog;
-    
+
     private String paddingString = "0x00";
-    
+
     protected int[] flags;
     protected JCheckBox[] boxes;
-    
-    
+
+
     private static class MyTextField extends JTextField{
         @Override
         public boolean processKeyBinding(KeyStroke ks,
@@ -75,37 +75,37 @@ public class BitFlagEditor
             return super.processKeyBinding(ks,e,condition,pressed);
         }
     }
-    
+
     private ActionListener al = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             update();
         }
     };
-    
+
     {
         // initializer -------------------
         label.setLabelFor(valueField);
     }
-    
+
     BitFlagEditor(){
         panel.add(valueField);
     }
-    
+
     public BitFlagEditor( String[] labels, int[] flags ){
         this();
         setup( labels, flags );
     }
-    
+
     private void setup( String[] labels, int[] flags ){
         panel.removeAll();
-        
+
         panel.setLayout(new GridLayout(Math.min(8,labels.length+1),0));
-        
+
         panel.add( valueField );
         boxes = new JCheckBox[ labels.length ];
         this.flags = flags;
-        
+
         for ( int i = 0; i < boxes.length; i++ ){
             boxes[i] = new JCheckBox( labels[i] );
             boxes[i].addActionListener(al);
@@ -118,14 +118,14 @@ public class BitFlagEditor
         while ( ( max = max / 16 ) > 0 )
             paddingString += "0";
     }
-    
+
     private void update() {
         value = 0;
         for (int i = 0; i < boxes.length; i++)
             value = value | (boxes[i].isSelected() ? flags[i] : 0);
         valueField.setText(hex(value));
     }
-    
+
     // lazy initialization so that we can get a proper JFrame parent for the popup
     private void init( JTable table ){
         dialog = new JDialog((JFrame)SwingUtilities.getWindowAncestor(table));
@@ -153,7 +153,7 @@ public class BitFlagEditor
         dialog.setUndecorated(true);
         //dialog.setAlwaysOnTop(true);
     }
-    
+
     /* (non-Javadoc)
      * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
      */
@@ -188,27 +188,27 @@ public class BitFlagEditor
         show(p.x + r.x, p.y + r.y);
         return label;
     }
-    
+
     private void show( int x, int y ){
         dialog.getContentPane().add(panel);
         dialog.setLocation(x, y);
         dialog.pack();
         dialog.setVisible(true);
     }
-    
+
     private void hide(){
         dialog.getContentPane().removeAll();
         dialog.setVisible(false);
         dialog.dispose();
         //System.out.println("BitFlagEditor : disposing dialog");
     }
-    
+
     private String hex(int i) {
         String h = Integer.toHexString(i);
         //return "0x00".substring(0, 4 - h.length()) + h;
         return paddingString.substring(0, paddingString.length() - h.length()) + h;
     }
-    
+
     @Override
     public boolean stopCellEditing() {
         if ( super.stopCellEditing() ){
@@ -221,18 +221,18 @@ public class BitFlagEditor
         } else
             return false;
     }
-    
+
     @Override
     public void cancelCellEditing(){
         hide();
         super.cancelCellEditing();
     }
-    
+
     @Override
     public Object getCellEditorValue() {
         return valueField.getText();
     }
-    
+
     public BitFlagEditor( Element n ){
         this();
         NodeList flags = n.getElementsByTagName("flag");
@@ -245,16 +245,15 @@ public class BitFlagEditor
         }
         setup( labels, bitflags );
     }
-    
+
     public void dispose(){
         if ( dialog != null )
             dialog.dispose();
         //System.out.println("BitFlagEditor.dispose()");
     }
-    
+
     @Override protected void finalize() throws Throwable{
         if ( dialog != null )
             dialog.dispose();
     }
-    
 }

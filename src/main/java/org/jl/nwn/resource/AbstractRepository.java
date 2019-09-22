@@ -5,13 +5,11 @@ package org.jl.nwn.resource;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
-import java.util.regex.Pattern;
 
 /**
  */

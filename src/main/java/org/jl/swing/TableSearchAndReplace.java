@@ -5,11 +5,10 @@ package org.jl.swing;
 
 import java.awt.Color;
 import java.text.MessageFormat;
+
 import javax.swing.CellEditor;
 import javax.swing.JFrame;
-
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -18,16 +17,17 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.text.JTextComponent;
+
 import org.jl.swing.table.TextCellEditor;
 
 public class TableSearchAndReplace extends SearchAndReplaceDialog {
-    
+
     protected int row = 0;
     protected int col = 0;
     protected int startRow, startCol;
-    
+
     protected JTable table;
-    
+
     public TableSearchAndReplace( JFrame owner, JTable aTable ){
         super(owner);
         this.table = aTable;
@@ -50,7 +50,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         });
         I18nUtil.setText( rbSearchSelection, "&Selected Rows" );
         bottomPanel.validate();
-        
+
         DocumentListener docChangeListener = new DocumentListener(){
             @Override
             public void changedUpdate( DocumentEvent de ){
@@ -74,13 +74,13 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         }
         pack();
     }
-    
+
     @Override public void setVisible(boolean v){
         super.setVisible(v);
         if ( v && table.getSelectedRowCount() > 1 )
             rbSearchSelection.setSelected(true);
     }
-    
+
     @Override
     public void init(){
 
@@ -92,7 +92,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         super.init();
 
     }
-    
+
         /* (non-Javadoc)
          * @see org.jl.swingutil.SearchAndReplaceDialog#selectText(int, int)
          */
@@ -136,15 +136,15 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         Object o =  table.getValueAt( row, col );
         return o==null? "":modelObject2String(o, row, col);
     }
-    
+
     public String modelObject2String(Object value, int row, int col){
         return value.toString();
     }
-    
+
     public Object string2ModelObject(String s, int row, int col){
         return s;
     }
-    
+
     protected JTextComponent getTextComponent(){
         CellEditor ed;
         if ( table.getEditingColumn() == col && table.getEditingRow() == row ){
@@ -161,7 +161,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         } else
             return null;
     }
-    
+
         /* (non-Javadoc)
          * @see org.jl.swingutil.SearchAndReplaceDialog#updateString(java.lang.String)
          */
@@ -177,7 +177,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         }
         table.setValueAt( string2ModelObject(s, row, col), row, col );
     }
-    
+
     @Override
     public boolean search(){
         if ( invalidState )
@@ -200,7 +200,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         }
         return match;
     }
-    
+
     @Override
     public void replaceAll(){
         if ( table.getCellEditor() != null )
@@ -233,7 +233,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         } while ( nextCell() && row < lastRow+1 );
         invalidState = true;
     }
-    
+
     @Override
     protected boolean matchIsInSelection() throws IllegalStateException{
         if ( rbSearchSelection.isEnabled() && rbSearchSelection.isSelected() ){
@@ -241,7 +241,7 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         } else
             return true;
     }
-    
+
     /**
      * iterates through the table cells, returns false if the cell at (startRow, startCol)
      * has been reached again, else returns true.
@@ -261,6 +261,6 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
             super.init();
             return false;
         }
-        
+
     }
 }

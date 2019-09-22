@@ -3,6 +3,7 @@ package org.jl.nwn.gff.editor;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.logging.Level;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -14,6 +15,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.tree.TreePath;
+
 import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.event.MessageSourceSupport;
 import org.jl.nwn.NwnLanguage;
@@ -25,14 +27,14 @@ import org.jl.nwn.gff.GffList;
 import org.jl.nwn.gff.GffStruct;
 
 class NewNodeDialog {
-    
+
     GffEditX gffEd;
     MessageSourceSupport msgSup;
     JXTreeTable treeTable;
     GffTreeTableModel model;
     JOptionPane op;
     JDialog newNodeDialog;
-    
+
     JPanel newNodeInListPanel = new JPanel();
     JTextField txtIndex = new JTextField(16);
     JTextField txtLabel = new JTextField(16);
@@ -43,14 +45,14 @@ class NewNodeDialog {
     JPanel pNewSubstring;
     JComboBox cbLang = new JComboBox( NwnLanguage.LANGUAGES.toArray() );
     JComboBox cbGender = new JComboBox( new String[]{ "masculine / neutral", "feminine" } );
-    
+
     /** Creates a new instance of NewNodeDialog */
     public NewNodeDialog( GffEditX gffEd, MessageSourceSupport msgSup ){
         this.gffEd = gffEd;
         this.model = gffEd.model;
         this.msgSup = msgSup;
         this.treeTable = gffEd.treeTable;
-        
+
         JPanel newNodePanel = new JPanel(){
             final JLabel lLabel = new JLabel("Label");
             final JLabel lType = new JLabel( "Type" );
@@ -68,7 +70,7 @@ class NewNodeDialog {
                 //lIndex.setLabelFor(txtIndex);
                 lIndex.setLabelFor(spIndex);
                 lStructID.setDisplayedMnemonic('I');
-                
+
                 JPanel p1 = new JPanel();
                 GridLayout grid1 = new GridLayout(0,2);
                 grid1.setHgap(10);
@@ -78,7 +80,7 @@ class NewNodeDialog {
                 p1.add(txtLabel);
                 p1.add(lType);
                 p1.add(cbType);
-                
+
                 GridLayout grid2 = new GridLayout(0,2);
                 grid2.setHgap(10);
                 grid2.setVgap(10);
@@ -90,7 +92,7 @@ class NewNodeDialog {
                 newNodeInListPanel.add(spIndex);
                 newNodeInListPanel.add(Box.createVerticalStrut(5));
                 centerBox.add(newNodeInListPanel);
-                
+
                 centerBox.add(p1);
                 add( centerBox, BorderLayout.CENTER );
                 setVisible(true);
@@ -99,7 +101,7 @@ class NewNodeDialog {
         };
         op = new JOptionPane(newNodePanel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_OPTION, null, new String[]{newNodeOK}, newNodeOK);
     }
-    
+
     public void newNode(){
         if ( newNodeDialog == null )
             newNodeDialog = op.createDialog(treeTable, "new node");
@@ -108,12 +110,12 @@ class NewNodeDialog {
             if ( path == null )
                 return;
             GffField field = (GffField) path.getLastPathComponent();
-            
+
             if ( field.getType() == Gff.CEXOLOCSTRING || field.getType() == GffCExoLocString.SUBSTRINGTYPE ){
                 doNewSubstring();
                 return;
             }
-            
+
             GffStruct struct = null;
             GffList list = null;
             int insertionindex = 0;
@@ -169,7 +171,7 @@ class NewNodeDialog {
                 newNodeDialog.dispose();
         }
     }
-    
+
     public void doNewSubstring(){
         TreePath path = treeTable.getTreeSelectionModel().getSelectionPath();
         if ( path == null )
@@ -200,6 +202,4 @@ class NewNodeDialog {
             }
         }
     }
-    
-    
 }

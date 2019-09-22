@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipFile;
+
 import org.dts.spell.dictionary.OpenOfficeSpellDictionary;
 import org.dts.spell.dictionary.SpellDictionary;
 import org.jl.nwn.NwnLanguage;
@@ -18,11 +19,11 @@ import org.jl.nwn.NwnLanguage;
 /**
  */
 public class Dictionaries {
-    
+
     static Map<NwnLanguage, SpellDictionary> dicts = new HashMap<NwnLanguage, SpellDictionary>();
-    
+
     static Properties props = new Properties();
-    
+
     static{
         try{
             InputStream is = Dictionaries.class.getClassLoader().getResourceAsStream(
@@ -35,7 +36,7 @@ public class Dictionaries {
             ioex.printStackTrace();
         }
     }
-    
+
     public static SpellDictionary forLanguage( NwnLanguage lang ){
         String dictName = (String) props.get(lang.getLocale().getLanguage());
         OpenOfficeSpellDictionary dict = null;
@@ -62,5 +63,4 @@ public class Dictionaries {
         dicts.put( lang, dict );
         return dict;
     }
-    
 }

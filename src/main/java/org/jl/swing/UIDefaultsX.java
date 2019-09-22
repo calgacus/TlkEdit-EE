@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.UIDefaults;
@@ -21,7 +22,7 @@ public class UIDefaultsX extends UIDefaults{
         for (Object e : keySet())
             System.out.println("UIDefaultsX "+e);
     }
-    
+
     @Override
     public Icon getIcon(Object key){
         Object o = get( key );
@@ -37,7 +38,7 @@ public class UIDefaultsX extends UIDefaults{
         }
         return null;
     }
-    
+
     protected Icon loadIcon( String name ){
         URL url = getClass().getResource(name);
         Icon i = null;
@@ -46,11 +47,11 @@ public class UIDefaultsX extends UIDefaults{
         }
         return i;
     }
-    
+
     @Override public void addResourceBundle(String bundle){
         super.addResourceBundle(bundle);
     }
-    
+
     public void addResourceBundle(String bundle, Locale locale, ClassLoader loader){
         ResourceBundle rb = ResourceBundle.getBundle(bundle, locale, loader);
         Enumeration<String> e = rb.getKeys();
@@ -60,5 +61,4 @@ public class UIDefaultsX extends UIDefaults{
         }
         //super.addResourceBundle(bundle);
     }
-    
 }

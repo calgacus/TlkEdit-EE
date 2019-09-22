@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -59,18 +60,16 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.Caret;
-import javax.swing.text.html.HTMLDocument;
+
 import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jl.nwn.Version;
 import org.jl.nwn.editor.SimpleFileEditorPanel;
 import org.jl.nwn.tlk.editor.TlkEdit;
-import org.jl.swing.UIDefaultsX;
 import org.jl.swing.Actions;
 import org.jl.swing.I18nUtil;
 import org.jl.swing.TableSearchAndReplace;
+import org.jl.swing.UIDefaultsX;
 import org.jl.swing.table.TableMutator;
 import org.jl.swing.undo.MappedListSelectionModel;
 import org.jl.swing.undo.MyUndoManager;
@@ -245,7 +244,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             table.getColumnModel().getSelectionModel().addListSelectionListener(lsl);
         }
     }
-    
+
     public void load(File f, Version v) throws IOException {
         //putClientProperty(resources, new TreeMap());
 
@@ -255,11 +254,11 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         nwnVersion = v;
         model = new TwoDaTableModel(twoDa);
         table.setModel(model);
-        
+
         if (mutator!=null)
             mutator.removeUndoableEditListener(undoManager);
         undoManager.discardAllEdits();
-        
+
         mutator = new TableMutator<String[], String[]>(model, mappedLsl);
         mutator.addUndoableEditListener(undoManager);
         mutator.addPropertyChangeListener(new PropertyChangeListener() {
@@ -884,7 +883,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 Transferable trans = new Transferable() {
 
                     @Override
-                    public Object getTransferData(DataFlavor flavor) throws java.awt.datatransfer.UnsupportedFlavorException, IOException {
+                    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
                         return transfer;
                     }
 

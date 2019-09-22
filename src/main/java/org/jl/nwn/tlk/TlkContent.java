@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
@@ -32,62 +31,62 @@ import org.jl.nwn.Version;
  * tlk content = List of tlk entries + language ID
  */
 public class TlkContent {
-    
+
     private NwnLanguage language;
     private List<TlkEntry> tlkEntries = new ArrayList();
-    
+
     //"TLK "
     public final static byte[] TLKHEADER = new byte[]{ 0x54, 0x4c, 0x4b, 0x20 };
     //"V3.0"
     public final static byte[] TLKVERSION = new byte[]{ 0x56, 0x33, 0x2e, 0x30 };
-    
+
     public TlkContent(NwnLanguage lang) {
         this.language = lang;
     }
-    
+
     public TlkContent(List<TlkEntry> entries, NwnLanguage lang) {
         this(lang);
         tlkEntries = entries;
     }
-    
+
     public void set( int pos, TlkEntry e ){
         for ( int i = tlkEntries.size(); i < pos + 1; i++ )
             tlkEntries.add( new TlkEntry() );
         tlkEntries.set( pos, e );
     }
-    
+
     public void add( TlkEntry e ){
         tlkEntries.add( e );
     }
-    
+
     public void add( int pos, TlkEntry e ){
         tlkEntries.add( pos, e );
     }
-    
+
     public void addAll( int pos, TlkContent c ){
         tlkEntries.addAll( pos, c.tlkEntries );
     }
-    
+
     public void addAll( TlkContent c ){
         addAll( size(), c );
     }
-    
+
     public TlkEntry remove( int pos ){
         return ( TlkEntry ) tlkEntries.remove( pos );
     }
-    
+
     public TlkEntry get( int pos ){
         return ( TlkEntry ) tlkEntries.get( pos );
     }
-    
+
     public int size(){
         return tlkEntries.size();
     }
-    
+
     public Iterator iterator(){
         return tlkEntries.iterator();
     }
-    
+
     public void saveAs(File file, Version nwnVersion) throws IOException {
                 /* use BufferedOutputStream for performance and FileChannel
                  * to set the write position
@@ -99,7 +98,7 @@ public class TlkContent {
             fos = new FileOutputStream(file);
             out = new BufferedOutputStream( fos );
             fc = fos.getChannel();
-            
+
             byte[] zero = new byte[40];
             int headerSize = 20;
             int entrySize = 40;
@@ -114,7 +113,7 @@ public class TlkContent {
             int start = tlkEntries.size() * entrySize + headerSize;
             writeIntLE(out, start);
             out.flush();
-            
+
             int posFromStart = 0;
             TlkEntry entry;
             int[] stringSizes = new int[ tlkEntries.size() ];
@@ -128,17 +127,17 @@ public class TlkContent {
                 stringSizes[i] = bytes.length;
                 out.write(bytes);
             }
-            
+
             // write index entries
 
             out.flush();
             fc.position( headerSize );
             for (int i = 0; i < tlkEntries.size(); i++) {
                 entry = (TlkEntry) tlkEntries.get(i);
-                
+
                 out.write(entry.getFlags());
                 out.write(zero, 0, 3);
-                
+
                 // write resName and fill with 0
                 String resRef = entry.getSoundResRef();
                 if ( resRef != null && resRef.length() > 0 ){
@@ -150,20 +149,20 @@ public class TlkContent {
                 }
                 else
                     out.write(zero, 0, 16);
-                
+
                 // 8 bytes sound stuff, unused ( always 0 )
                 out.write(zero, 0, 8);
-                
+
                 // relative position of entry, used only if length > 0
                 if ( entry.getString().length() > 0 ) {
                     writeIntLE(out, posFromStart);
                     posFromStart += stringSizes[i];
                 } else
                     out.write(zero, 0, 4);
-                
+
                 // length of entry
                 writeIntLE(out, stringSizes[i]);
-                
+
                 //float ( sound length )
                 if ( entry.getSoundLength() != 0 )
                     writeIntLE( out, Float.floatToIntBits( entry.getSoundLength() ) );
@@ -176,8 +175,8 @@ public class TlkContent {
             if ( fos != null ) fos.close();
         }
     }
-    
-    
+
+
     private static void writeIntLE( OutputStream out, int i)
     throws IOException {
         out.write(i & 255);
@@ -185,7 +184,7 @@ public class TlkContent {
         out.write((i >> 16) & 255);
         out.write((i >> 24) & 255);
     }
-    
+
     private static void writeIntLE( DataOutput out, int i)
     throws IOException {
         out.write(i & 255);
@@ -193,7 +192,7 @@ public class TlkContent {
         out.write((i >> 16) & 255);
         out.write((i >> 24) & 255);
     }
-    
+
     /* reads an int value stored in little endian byte order, starting at current file pointer */
     private static int readIntLE( DataInput raf ) throws IOException {
         return raf.readUnsignedByte()
@@ -201,7 +200,7 @@ public class TlkContent {
         | (raf.readUnsignedByte() << 16)
         | (raf.readUnsignedByte() << 24);
     }
-    
+
         /*
                 loads file into memory using a MappedByteBuffer
                 might also throw a number of runtime exceptions ( java.nio.BufferUnderflowException,
@@ -211,18 +210,18 @@ public class TlkContent {
         load( null );
     }
          */
-    
+
     // loads the file through an inputstream
     private void load2( Version v, InputStream inputStream, final ProgressMonitor pm ) throws IOException{
         long time = System.currentTimeMillis();
         long streamSize = inputStream.available();
-        
+
         BufferedInputStream bis = new BufferedInputStream( inputStream, 16384 );
         byte[] indexEntryBytes = new byte[40];
         ByteBuffer mbb = ByteBuffer.wrap( indexEntryBytes );
         mbb.order( ByteOrder.LITTLE_ENDIAN );
         bis.read( indexEntryBytes, 0, 20 );
-        
+
         for ( int i = 0; i < 4; i++ ){
             if ( indexEntryBytes[i] != TLKHEADER[i] ){
                 System.err.println("not a tlk file !");
@@ -235,28 +234,28 @@ public class TlkContent {
                 throw new IllegalArgumentException("wrong tlk file version");
             }
         }
-        
+
         mbb.position(8);
         language = NwnLanguage.find( v, mbb.getInt() );
         //System.out.println( "TlkContent : " + language );
         int entries = mbb.getInt();
         int stringDataStart = mbb.getInt();
-        
+
         if ( pm != null ){
             pm.setMinimum( 0 );
             pm.setMaximum( entries );
             //pm.setNote("reading tlk index");
         }
-        
+
         tlkEntries = new ArrayList( entries );
-        
+
         int[] stringSizes = new int[entries];
         int maxStringSize = 0;
-        
+
         // reading index entries & create tlk entries
         for ( int i = 0; i < entries; i++ ){
             bis.read( indexEntryBytes );
-            
+
             TlkEntry e = new TlkEntry();
             e.setFlags( indexEntryBytes[0] );
             if ( indexEntryBytes[4] != 0 )
@@ -268,26 +267,26 @@ public class TlkContent {
             e.setSoundLength( mbb.getFloat() );
             tlkEntries.add( e );
         }
-        
+
         int skip = stringDataStart - ( 0x14 + (40*entries) );
         if ( skip != 0 ){
             System.out.println( "unused bytes between index and string data ?!? : " + skip );
             if ( skip > 0 )
                 bis.skip(skip);
         }
-        
+
         // read string data
         byte[] strBuf = new byte[maxStringSize];
-        
+
         if ( pm != null ){
             //pm.setNote("reading strings");
         }
-        
+
         Charset charset = Charset.forName(language.getEncoding());
         CharsetDecoder decoder = charset.newDecoder();
         CharBuffer cbuf = CharBuffer.allocate((int)Math.ceil(maxStringSize * decoder.maxCharsPerByte()));
         ByteBuffer bb = ByteBuffer.wrap(strBuf);
-        
+
         for ( int i = 0; i < entries; i++ ){
             bis.read( strBuf, 0, stringSizes[i] );
             bb.rewind();
@@ -310,7 +309,7 @@ public class TlkContent {
         inputStream.close();
         System.out.printf("loaded %d entries (%d KB) in %d ms\n", entries, streamSize/1024, System.currentTimeMillis()-time);
     }
-    
+
     /*
     private void load( final ProgressMonitor pm ) throws IOException {
         tlkEntries = new Vector();
@@ -321,7 +320,7 @@ public class TlkContent {
         mbb.load();
         mbb.order(ByteOrder.LITTLE_ENDIAN);
         mbb.position(8);
-     
+
         language = NwnLanguage.forCode( mbb.getInt() );
         //System.out.println( "TlkContent : " + language );
         int entries = mbb.getInt();
@@ -336,12 +335,12 @@ public class TlkContent {
         String content = "";
         String soundResRef = "";
         float soundLength = 0;
-     
+
         if ( pm != null ){
             pm.setMinimum( 0 );
             pm.setMaximum( entries );
         }
-     
+
         byte[] buf = new byte[200000];
         for ( int count=0; count < entries; count++ ) {
             if ( pm != null && ( count & 255 ) == 0 ) pm.setProgress( count );
@@ -358,7 +357,7 @@ public class TlkContent {
                 soundResRef = "";
             // 8 byte sound stuff ( unused ), skip
             mbb.position(indexPos + 28);
-     
+
             // 4 byte offset
             contentPos = mbb.getInt();
             // 4 byte length ( size )
@@ -371,7 +370,7 @@ public class TlkContent {
             mbb.position(contentPos + start);
             mbb.get(buf, 0, contentSize);
             content = new String(buf, 0, contentSize, language.getEncoding() );
-     
+
             entry = new TlkEntry( type, content, soundResRef, soundLength );
             tlkEntries.add(entry);
             // System.out.println( count + " : " + entry.resName + " : " + entry.content );
@@ -383,7 +382,7 @@ public class TlkContent {
         in.close();
     }
      */
-    
+
     public void writeDiff( File file, int[] selection ) throws IOException{
         //System.out.println("writing diff");
         RandomAccessFile raf = new RandomAccessFile( file, "rw" );
@@ -404,7 +403,7 @@ public class TlkContent {
         raf.writeInt( size );
         raf.close();
     }
-    
+
     public int[] mergeDiff( File file ) throws IOException{
         FileInputStream fis = new FileInputStream( file );
         DataInputStream dis = new DataInputStream( fis );
@@ -422,7 +421,7 @@ public class TlkContent {
         fis.close();
         return positions;
     }
-    
+
     public int[] mergeDtu( File file ) throws IOException{
         FileInputStream fis = new FileInputStream( file );
         DataInputStream dis = new DataInputStream( fis );
@@ -451,7 +450,7 @@ public class TlkContent {
         fis.close();
         return positions;
     }
-    
+
     public static void main( String[] args ) throws Exception{
         //long now = System.currentTimeMillis();
         //TlkContent c = new TlkContent( new File(args[0]), new ProgressMonitor(null, "foo", "bar", 0, 1 ) );
@@ -475,13 +474,12 @@ public class TlkContent {
                 }
                  */
     }
-    
+
     public NwnLanguage getLanguage() {
         return language;
     }
-    
+
     public void setLanguage(NwnLanguage language) {
         this.language = language;
     }
-
 }

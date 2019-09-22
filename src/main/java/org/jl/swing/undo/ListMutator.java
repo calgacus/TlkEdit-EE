@@ -2,6 +2,7 @@ package org.jl.swing.undo;
 
 import java.util.Arrays;
 import java.util.Collection;
+
 import javax.swing.ListSelectionModel;
 
 /**
@@ -9,12 +10,12 @@ import javax.swing.ListSelectionModel;
 public class ListMutator<E> extends Mutator{
     protected ListMutable<E> model;
     protected ListSelectionModel lsl;
-    
+
     public static interface ListMutable<E>{
         public E remove( int index );
         public void add( int index, E element );
     }
-    
+
     /** Creates a new instance of ListMutator */
     public ListMutator(Mutator m, ListMutable<E> model, ListSelectionModel lsl){
         super(m);
@@ -26,7 +27,7 @@ public class ListMutator<E> extends Mutator{
         this.model = model;
         this.lsl = lsl;
     }
-    
+
     public class RemoveEdit extends ModelEdit{
         protected E oldValue;
         protected int index;
@@ -43,7 +44,7 @@ public class ListMutator<E> extends Mutator{
                 else
                     lsl.addSelectionInterval(index, index);
         }
-        
+
         @Override
         public void undo() {
             super.undo();
@@ -53,7 +54,7 @@ public class ListMutator<E> extends Mutator{
                     lsl.setSelectionInterval(index, index);
                 else
                     lsl.addSelectionInterval(index, index);
-        }        
+        }
         @Override
         protected E performEdit() {
             return (oldValue = model.remove(index));
@@ -63,7 +64,7 @@ public class ListMutator<E> extends Mutator{
             return (E) super.invoke();
         }
     }
-    
+
     public class AddEdit extends ModelEdit{
         protected E value;
         protected int index;
@@ -81,7 +82,7 @@ public class ListMutator<E> extends Mutator{
                 else
                     lsl.addSelectionInterval(index, index);
         }
-        
+
         @Override
         public void undo() {
             super.undo();
@@ -91,22 +92,22 @@ public class ListMutator<E> extends Mutator{
                     lsl.setSelectionInterval(index, index);
                 else
                     lsl.addSelectionInterval(index, index);
-        }        
+        }
         @Override
         protected Object performEdit() {
             model.add(index, value);
             return null;
         }
     }
-    
+
     public void add( int index, E elem ){
         new AddEdit( "Insert", index, elem ).invoke();
     }
-    
+
     public E remove( int index ){
         return new RemoveEdit( "Remove", index ).invoke();
     }
-    
+
     public void addAll( int index, Collection<E> elements ){
         if ( lsl != null )
             lsl.clearSelection();
@@ -115,7 +116,7 @@ public class ListMutator<E> extends Mutator{
             add( index++, e );
         endUpdate();
     }
-    
+
     public void remove( int[] indices ){
         if ( lsl != null )
             lsl.clearSelection();
@@ -125,14 +126,14 @@ public class ListMutator<E> extends Mutator{
             remove(indices[i]);
         endUpdate();
     }
-    
+
     @Override
     protected void compoundUndo() {
         if ( lsl != null ) lsl.clearSelection();
     }
-    
+
     @Override
     protected void compoundRedo() {
         if ( lsl != null ) lsl.clearSelection();
-    }    
+    }
 }

@@ -10,7 +10,8 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
-import org.jl.nwn.resource.*;
+
+import org.jl.nwn.resource.RafInputStream;
 
 /**
  * read only representation of a bif file

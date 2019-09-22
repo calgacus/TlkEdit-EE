@@ -1,4 +1,5 @@
 package org.jl.nwn.patcher;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;

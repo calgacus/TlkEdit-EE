@@ -7,10 +7,12 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-import org.jl.nwn.resource.*; /**
+
+import org.jl.nwn.resource.ResourceID;
+
+/**
  * read only representation of a key file
  */
-
 public abstract class KeyFile {
 
     protected File file;
@@ -71,7 +73,7 @@ public abstract class KeyFile {
     }
 
     public abstract Iterator getResourceIDs();
-    
+
     public abstract Set<ResourceID> getResourceIDSet();
 
     public abstract BifResourceLocation findResource(String resName, short resType);

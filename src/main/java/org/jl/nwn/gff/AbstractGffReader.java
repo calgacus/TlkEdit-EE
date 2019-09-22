@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
+
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
@@ -373,5 +374,4 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
         }
         return struct;
     }
-
 }

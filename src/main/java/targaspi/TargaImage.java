@@ -1,19 +1,16 @@
 /*
  Targa image loader.
  Original written by Ben Stahl <benstahl@earthlink.net>
- 
+
  This file is PUBLIC DOMAIN.
  */
 package targaspi;
 
-import java.awt.*;
-import java.awt.color.ColorSpace;
-import java.awt.color.ICC_ColorSpace;
-import java.awt.color.ICC_Profile;
-import java.awt.image.BandedSampleModel;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
@@ -23,11 +20,18 @@ import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Hashtable;
+
 import javax.imageio.ImageTypeSpecifier;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -36,7 +40,7 @@ import javax.swing.JOptionPane;
 public class TargaImage {
     private static final int    NO_TRANSPARENCY = 255;
     private static final int    FULL_TRANSPARENCY = 0;
-    
+
     private short               idLength;
     private short               colorMapType;
     private short               imageType;
@@ -49,15 +53,15 @@ public class TargaImage {
     private int                 height;
     private short               pixelDepth;
     private short               imageDescriptor;
-    
+
     private ColorModel          cm;
     public int[]                pixels;
-    
+
     SampleModel                 sm;
     byte[]                      bytes;
-    
+
     BufferedImage               image;
-    
+
     public TargaImage(File srcFile) throws IOException {
         this(srcFile, true);
     }
@@ -75,15 +79,15 @@ public class TargaImage {
             throw e;
         }
     }
-    
+
     public TargaImage(DataInput in, boolean autoFlip) throws IOException {
         open(in, autoFlip);
     }
-    
+
     public TargaImage(byte[] buffer) throws IOException {
         this(new ByteArrayInputStream(buffer), true);
     }
-    
+
     public TargaImage(InputStream is, boolean autoFlip) throws IOException{
         DataInputStream dis = new DataInputStream(is);
         try{
@@ -92,7 +96,7 @@ public class TargaImage {
             is.close();
         }
     }
-    
+
     /* ----------------------------------------------------------- open */
     private void open(DataInput in, boolean autoFlip) throws IOException {
         int                 alpha = FULL_TRANSPARENCY;
@@ -110,7 +114,7 @@ public class TargaImage {
         width = (int) readShortLE(in);
         height = (int) readShortLE(in);
         pixelDepth = (short) in.readUnsignedByte();//Number of bits in stored pixel index
-        
+
         imageDescriptor = (short) in.readUnsignedByte();
         /* bits           5 & 4 : image orientation :
          * bottom left    0   0  ( default )
@@ -122,7 +126,7 @@ public class TargaImage {
         boolean flipVert = ((imageDescriptor & 16) == 1) && autoFlip; // unused
         int targaAlpha = imageDescriptor & 15;
         //System.out.println("alpha : " + (imageDescriptor & 15));
-        
+
         /* --- skip over image id info (if present) --- */
         if (idLength > 0) {
             in.skipBytes(idLength);
@@ -190,7 +194,7 @@ public class TargaImage {
             throw new IOException("Unhandled Image Type: " + imageType);
         }
     }
-    
+
     public BufferedImage getImage() {
         if ( image == null ){
             if ( imageType == 2 ){
@@ -241,11 +245,11 @@ public class TargaImage {
         }
         return image;
     }
-    
+
     public ImageTypeSpecifier getImageTypeSpecifier(){
         return ImageTypeSpecifier.createFromRenderedImage((RenderedImage)getImage());
     }
-    
+
     /* --------------------------------------------------- getThumbnail */
     public Image getThumbnail(int maxSize, boolean smooth) {
         //System.out.println("getThumbnail...");
@@ -255,12 +259,12 @@ public class TargaImage {
         int         srcY = 0;
         double      multiplier = 0.0;
         int         smoothArea;
-        
+
         if (((width == maxSize) && (height == maxSize)) ||
                 ((width < maxSize) && (height < maxSize))) {
             smooth = false;
         }
-        
+
         if (width >= height) {
             thumbnailSize.width = maxSize;
             thumbnailSize.height =
@@ -272,12 +276,12 @@ public class TargaImage {
                     (int) (Math.round(((float) width / (float) height)
                     * (float) maxSize));
         }
-        
+
         multiplier = (double) width / (double) thumbnailSize.width;
-        
+
         int[] thumbnailData =
                 new int[thumbnailSize.width * thumbnailSize.height];
-        
+
         for (int i = 0; i < thumbnailSize.height; i++) {
             srcY = (int) (i * multiplier);
             for (int j = 0; j < thumbnailSize.width; j++) {
@@ -288,16 +292,16 @@ public class TargaImage {
                     int green = 0;
                     int blue = 0;
                     int[] kernel = new int[5];
-                    
+
                     /* Don't smooth as much if image is already square */
                     if (width == height) {
                         smoothArea = 1;
                     } else {
                         smoothArea = 2;
                     }
-                    
+
                     kernel[2] = pixels[(srcY * width) + srcX];
-                    
+
                     if ((srcY - smoothArea) < 0) {
                         kernel[0] = kernel[2];
                     } else {
@@ -310,27 +314,27 @@ public class TargaImage {
                         kernel[1] = pixels[(srcY * width)
                         + srcX - smoothArea];
                     }
-                    
+
                     if ((srcX + smoothArea) > (width - 1)) {
                         kernel[3] = kernel[2];
                     } else {
                         kernel[3] = pixels[(srcY * width)
                         + srcX + smoothArea];
                     }
-                    
+
                     if ((srcY + smoothArea) > (height - 1)) {
                         kernel[4] = kernel[2];
                     } else {
                         kernel[4] = pixels[((srcY + smoothArea) * width)
                         + srcX];
                     }
-                    
+
                     for (int k = 0; k < kernel.length; k++) {
                         red += ((kernel[k] & 0x00FF0000) >>> 16);
                         green += ((kernel[k] & 0x0000FF00) >>> 8);
                         blue += (kernel[k] & 0x000000FF);
                     }
-                    
+
                     red /= kernel.length;
                     green /= kernel.length;
                     blue /= kernel.length;
@@ -343,24 +347,24 @@ public class TargaImage {
         }
         DirectColorModel tcm =
                 new DirectColorModel(24, 0xFF0000, 0xFF00, 0xFF);
-        
-        
+
+
         // --- set up an image from memory and return it ---
         return Toolkit.getDefaultToolkit().createImage(
                 new MemoryImageSource(
                 thumbnailSize.width, thumbnailSize.height, tcm,
                 thumbnailData, 0, thumbnailSize.width));
     }
-    
+
     /* -------------------------------------------------------- getSize */
     public Dimension getSize() {
         return new Dimension(width, height);
     }
-    
+
     static short readShortLE( DataInput in ) throws IOException{
         return (short) (in.readUnsignedByte() | in.readUnsignedByte() << 8);
     }
-    
+
     public static boolean canDecode( File f ) throws IOException{
         FileInputStream fis = new FileInputStream(f);
         byte[] header = new byte[8];
@@ -371,7 +375,7 @@ public class TargaImage {
             return false;
         return true;
     }
-    
+
     public static void main( String ... args ) throws IOException{
         if ( args[0].equalsIgnoreCase("-show") ){
             for ( int i = 1; i < args.length; i++ ){
@@ -387,5 +391,4 @@ public class TargaImage {
             System.out.printf("%d images loaded in %d ms\n", args.length, System.currentTimeMillis()-time);
         }
     }
-    
 }

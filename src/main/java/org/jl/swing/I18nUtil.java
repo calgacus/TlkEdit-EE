@@ -7,10 +7,8 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
-import javax.swing.UIDefaults;
 
 /**
  */

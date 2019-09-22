@@ -13,8 +13,8 @@ import java.io.IOException;
 
 import javax.swing.JMenu;
 import javax.swing.JToolBar;
-import org.jl.nwn.Version;
 
+import org.jl.nwn.Version;
 import org.jl.nwn.editor.SimpleFileEditorPanel;
 import org.jl.nwn.resource.ResourceID;
 
@@ -64,7 +64,7 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void close() {
@@ -114,12 +114,12 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	public void saveAs(File f, Version v) throws IOException {
 		//delegate.saveAs(f);
 	}
-	
+
 	@Override
 	public JMenu[] getMenus() {
 		return delegate.getMenus();
 	}
-	
+
 	@Override
 	public JToolBar getToolbar() {
 		return delegate.getToolbar();

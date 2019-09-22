@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,6 +19,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.jl.nwn.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,18 +29,18 @@ import org.w3c.dom.Element;
  * creates a dom Document object from a binary gff file/stream
  */
 public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
-    
+
     private Document doc;
     private DocumentBuilder docBuilder;
-    
+
     protected String schemaLocation = "gff.xsd";
-    
+
     /** Creates a new instance of XmlGffBuilder */
     public XmlGffBuilder(Version nwnVersion) throws ParserConfigurationException{
         super(nwnVersion);
-        docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();        
+        docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
-    
+
     @Override
     public Element mkList(String label) {
         Element list = doc.createElement("List");
@@ -90,7 +92,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         doc = docBuilder.newDocument();
         return (Document) super.load(file);
     }
-    
+
     @Override
     public Document load(InputStream is) throws IOException{
         doc = docBuilder.newDocument();
@@ -154,7 +156,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         e.setTextContent(value);
         return e;
     }
-    
+
     @Override
     public Element mkVector(String label, float[] value) {
         Element e = doc.createElement("Vector");
@@ -162,7 +164,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
         e.setTextContent(Arrays.asList(value).toString());
         return e;
     }
-    
+
     public static void main( String[] args ) throws Exception{
         Transformer trans = TransformerFactory.newInstance().newTransformer();
         StreamResult result = new StreamResult(System.out);

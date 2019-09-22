@@ -1,7 +1,8 @@
 package targaspi;
 
-import java.io.File;
-import javax.imageio.spi.IIORegistry;
+import java.io.IOException;
+
+import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
@@ -66,7 +67,7 @@ public class TargaReaderSPI extends ImageReaderSpi{
     TargaReader readerInstance = null;
 
     @Override
-    public javax.imageio.ImageReader createReaderInstance(Object extension) throws java.io.IOException {
+    public ImageReader createReaderInstance(Object extension) throws IOException {
         //System.out.println("createReaderInstance");
         if ( readerInstance == null )
             readerInstance = new TargaReader(this);
@@ -118,5 +119,4 @@ public class TargaReaderSPI extends ImageReaderSpi{
         }
         //System.out.println("registered TargaReader SPI, setOrdering vs WBMP : " +b);
     }
-
 }
