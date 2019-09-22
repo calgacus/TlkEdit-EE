@@ -739,9 +739,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             public void actionPerformed(ActionEvent e) {
                 boolean modified = false;
                 modified = ((AbstractButton) e.getSource()).getText() == set_modified;
-                int[] selection = tlkTable.getSelectedRows();
-                for (int i = 0; i < selection.length; i++) {
-                    model.setEntryModified(selection[i], modified);
+                for (final int row : tlkTable.getSelectedRows()) {
+                    model.setEntryModified(row, modified);
                 }
                 tlkTable.requestFocus();
             }
@@ -756,15 +755,13 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 fc.setSelectedFile(f);
                 if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        int[] changes = tlkContent.mergeDiff(f = fc.getSelectedFile());
-                        for (int i = 0, n = changes.length; i < n; i++) {
-                            model.setEntryModified(changes[i], true);
+                        for (final int change : tlkContent.mergeDiff(f = fc.getSelectedFile())) {
+                            model.setEntryModified(change, true);
                         }
                         uPrefs.put("lastDiff", f.getAbsolutePath()); //$NON-NLS-1$
                     } catch (IOException ioex) {
                         JOptionPane.showMessageDialog(toolbar, uid.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
                         ioex.printStackTrace();
-                    } finally {
                     }
                 }
             }
@@ -779,15 +776,13 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 fc.setSelectedFile(f);
                 if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        int[] changes = tlkContent.mergeDtu(f = fc.getSelectedFile());
-                        for (int i = 0, n = changes.length; i < n; i++) {
-                            model.setEntryModified(changes[i], true);
+                        for (final int change : tlkContent.mergeDtu(f = fc.getSelectedFile())) {
+                            model.setEntryModified(change, true);
                         }
                         uPrefs.put("lastDtu", f.getAbsolutePath()); //$NON-NLS-1$
                     } catch (IOException ioex) {
                         ioex.printStackTrace();
                         JOptionPane.showMessageDialog(toolbar, uid.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
-                    } finally {
                     }
                 }
             }

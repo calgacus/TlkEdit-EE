@@ -731,17 +731,16 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         public void actionPerformed(ActionEvent e) {
             int columnIndex = table.getSelectedColumn();
             if (columnIndex != -1) {
-                int[] rows = table.getSelectedRows();
                 mutator.beginUpdate();
-                for (int i = 0; i < rows.length; i++) {
+                for (final int row : table.getSelectedRows()) {
                     try {
-                        String s = model.getValueAt(rows[i], columnIndex).toString();
+                        String s = model.getValueAt(row, columnIndex).toString();
                         if (s.startsWith("0x")) {
                             int value = Integer.parseInt(s.substring(2), 16);
-                            mutator.new SetValueAtEdit("Toggle User StrRef", "0x" + Integer.toHexString(value ^ USERTLKFLAG), rows[i], columnIndex).invoke();
+                            mutator.new SetValueAtEdit("Toggle User StrRef", "0x" + Integer.toHexString(value ^ USERTLKFLAG), row, columnIndex).invoke();
                         } else {
                             int value = Integer.parseInt(s);
-                            mutator.new SetValueAtEdit("Toggle User StrRef", Integer.toString(value ^ USERTLKFLAG), rows[i], columnIndex).invoke();
+                            mutator.new SetValueAtEdit("Toggle User StrRef", Integer.toString(value ^ USERTLKFLAG), row, columnIndex).invoke();
                         }
                     } catch (NumberFormatException nfe) {
                     }
@@ -931,14 +930,13 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         public void actionPerformed(ActionEvent e) {
             int column = table.getSelectedColumns()[0];
             int[] rows = table.getSelectedRows();
-            String v = "";
             mutator.beginUpdate();
-            for (int i = 0; i < rows.length; i++) {
-                v = (String) model.getValueAt(rows[i], column);
+            for (final int row : rows) {
+                final String v = (String) model.getValueAt(row, column);
                 if (v.startsWith("!")) {
-                    mutator.new SetValueAtEdit("!", v.substring(1), rows[i], column).invoke();
+                    mutator.new SetValueAtEdit("!", v.substring(1), row, column).invoke();
                 } else if (!v.startsWith("*")) {
-                    mutator.new SetValueAtEdit("!", "!" + v, rows[i], column).invoke();
+                    mutator.new SetValueAtEdit("!", "!" + v, row, column).invoke();
                 }
             }
             mutator.endUpdate();

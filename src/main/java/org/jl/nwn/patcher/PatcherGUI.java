@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.prefs.BackingStoreException;
@@ -411,7 +412,7 @@ public class PatcherGUI extends JFrame {
 	 * */
 	private static void repackage( File hakFile, File sourceDir, File outputHak ) throws IOException{
 		//File sourceDir = Patcher.getOutputDir( patchDir );
-		File[] files = sourceDir.listFiles( new java.io.FileFilter(){
+		final File[] files = sourceDir.listFiles( new FileFilter(){
 			@Override
 			public boolean accept( File f ){
 				return f.isFile();
@@ -420,9 +421,9 @@ public class PatcherGUI extends JFrame {
 		System.out.println( "files : " + files.length );
 		System.out.println( hakFile );
 		ErfFile baseHak = new ErfFile( hakFile );
-		for ( int i = 0; i < files.length; i++ ){
-			baseHak.putResource( files[i] );
-		}
+        for (final File file : files) {
+            baseHak.putResource(file);
+        }
 		baseHak.write( outputHak );
 	}
 
@@ -451,10 +452,10 @@ public class PatcherGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setMultiSelectionEnabled(true);
-				if (fc.showDialog( patchList, "add" )
-					== JFileChooser.APPROVE_OPTION) {
-					for (int i = 0; i < fc.getSelectedFiles().length; i++)
-						patchListModel.addElement(fc.getSelectedFiles()[i].getAbsolutePath() );
+                if (fc.showDialog( patchList, "add" ) == JFileChooser.APPROVE_OPTION) {
+                    for (final File file : fc.getSelectedFiles()) {
+                        patchListModel.addElement(file.getAbsolutePath());
+                    }
 				}
 			}
 		};

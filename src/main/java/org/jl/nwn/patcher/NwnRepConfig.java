@@ -64,7 +64,7 @@ public class NwnRepConfig {
 
 	/*(forum post by sidney tang,
 	 * In order of lowest to highest priority, resources are loaded in this order:
-	 * 
+	 *
 		chitin.key, patch.key, xp1.key, xp1patch.key, xp2.key, xp2patch.key,
 		override, module temp dir (if using toolset),
 		module/savegame erf (if running game), texture pack erf, hak paks.
@@ -88,7 +88,7 @@ public class NwnRepConfig {
 	private JCheckBox useKeyfiles;
 	private JTextField keyfiles;
 	private JPanel configPanel = null;
-	
+
 	private void restore() {
 		nwnhome = new JTextField(prefs.get(PREFS_NWNHOME, ""), 40);
 		nwnhome.setEditable( false );
@@ -119,7 +119,7 @@ public class NwnRepConfig {
 				prefs.get(PREFS_BIFKEYS, "" ), //patch.key chitin.key"),
 				40);
 	}
-	
+
 	public void store(){
 		prefs.put(PREFS_NWNHOME, nwnhome.getText());
 		prefs.putBoolean(PREFS_USEHAK, useSourcehak.isSelected());
@@ -190,17 +190,17 @@ public class NwnRepConfig {
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fc.setMultiSelectionEnabled(true);
-				if (hakListModel.size() == 0 && getNwnHome() != null ){
+                if (hakListModel.isEmpty() && getNwnHome() != null) {
 					File defHakDir = new File( getNwnHome(), "hak" );
 					if ( defHakDir.exists() )
 						fc.setCurrentDirectory( defHakDir );
 					else
 						fc.setCurrentDirectory( getNwnHome() );
 				}
-				if (fc.showDialog(nwnhome, "add")
-					== JFileChooser.APPROVE_OPTION) {
-					for (int i = 0; i < fc.getSelectedFiles().length; i++)
-						hakListModel.addElement(fc.getSelectedFiles()[i]);
+                if (fc.showDialog(nwnhome, "add") == JFileChooser.APPROVE_OPTION) {
+                    for (final File selectedFile : fc.getSelectedFiles()) {
+                        hakListModel.addElement(selectedFile);
+                    }
 				}
 			}
 		};
@@ -257,14 +257,14 @@ public class NwnRepConfig {
 		label_keyoverride.setForeground( Color.RED );
 		label_keyoverride.setText( "keyfile override" );
 		String tt_keyoverride = "<html>key files should be detected automatically -<br>if it doesn't work enter list of key file names here, highest priority first<br>e.g. 'xp1patch.key xp1.key patch.key chitin.key'";
-		label_keyoverride.setToolTipText( tt_keyoverride ); 
+		label_keyoverride.setToolTipText( tt_keyoverride );
 		keyFilePanel.add( label_keyoverride );
 		keyFilePanel.add(keyfiles);
 		keyfiles.setToolTipText( tt_keyoverride );
 
 		configPanel.add(selectNwnHomePanel);
 		configPanel.add(sourceHakPanel);
-		
+
 		JPanel overridePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		overridePanel.add( useOverride );
 		configPanel.add( overridePanel );
@@ -281,21 +281,21 @@ public class NwnRepConfig {
 		//configPanel.setPreferredSize( new Dimension( 620, 320 ) );
 		return configPanel;
 	}
-	
+
 	public File getNwnHome(){
 		return new File( nwnhome.getText() );
 	}
-	
+
 	public void setNwnHome( File f ){
 		if ( f.isDirectory() ) nwnhome.setText( f.getAbsolutePath() );
 	}
-	
+
 	public File[] getHakList(){
 		File[] r = new File[ hakListModel.size() ];
 		hakListModel.copyInto( r );
 		return r;
 	}
-	
+
 	public NwnRepository getNwnRepository() throws IOException {
 		store();
 		Vector reps = new Vector();

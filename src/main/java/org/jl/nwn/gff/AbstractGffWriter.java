@@ -287,10 +287,9 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             writeStructArray(out);
             writeFieldArray(out);
 
-            byte[] zero = new byte[16];
-            for ( int i = 0; i < labels.size(); i++ ){
-                String label = labels.get(i);
-                out.write( label.getBytes() );
+            final byte[] zero = new byte[16];
+            for (final String label : labels) {
+                out.write( label.getBytes() );//FIXME: This uses default JVM encoding
                 out.write( zero, 0, 16 - label.length() );
             }
 
@@ -419,7 +418,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
         for ( int i = 0; i < structs.size(); i++ ){
             Strct s = structs.get(i);
             int ssize = structSize(s);
-            if ( structSize(s) > 1 ){
+            if (ssize > 1) {
                 for ( int f = 0; f < ssize; f++ ){
                     Fld field = structGet(s, f);
                     int fieldIndex = structIndices.get(i) + f;

@@ -82,9 +82,7 @@ public class Actions {
     static final boolean IS_OSX = OS.isMacOSX();
 
     public static void configureActionUI( Action a, UIDefaults uid, String name ){
-        String key;
-        for(int i=0; i < ActionProperties.length; i++) {
-            key = ActionProperties[i];
+        for (final String key : ActionProperties) {
             String defKey = name + "." + key;
             if (key == Action.ACCELERATOR_KEY){
                 KeyStroke ks = KeyStroke.getKeyStroke(uid.getString(defKey));
@@ -139,5 +137,4 @@ public class Actions {
             am.put(a.getValue( a.ACTION_COMMAND_KEY ), a );
         }
     }
-
 }

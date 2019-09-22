@@ -46,12 +46,12 @@ import org.jl.swing.table.StringTableCellEditor;
  */
 public class CExoLocStringEditor extends JPanel {
     private GffCExoLocString locString = new GffCExoLocString("new");
-    
+
     public Box labelBox = new Box( BoxLayout.X_AXIS );
     Box substringBox = new Box(BoxLayout.Y_AXIS);
     JTextField strRefField = new JTextField(6);
     JTextField labelField = new JTextField(16);
-    
+
     private AbstractTableModel model = new AbstractTableModel(){
         @Override
         public int getColumnCount(){
@@ -88,7 +88,7 @@ public class CExoLocStringEditor extends JPanel {
         }
     };
     JTable substringTable = new JTable(model);
-    
+
     JDialog newSubStringDialog = new JDialog(){
         JComboBox cbGender = new JComboBox( new String[]{"masculine / neutral", "feminine"} );
         JComboBox cbLanguage = new JComboBox( NwnLanguage.LANGUAGES.toArray() );
@@ -140,7 +140,7 @@ public class CExoLocStringEditor extends JPanel {
             getRootPane().getActionMap().put("escape", actCancel);
             //pack();
         }
-        
+
         @Override
         public void setVisible(boolean b){
             if (b){
@@ -156,17 +156,17 @@ public class CExoLocStringEditor extends JPanel {
             }
         }
     };
-    
+
     public CExoLocStringEditor( GffCExoLocString s ){
         this();
         setCExoLocString( s );
     }
-    
+
     public CExoLocStringEditor(){
         setLayout( new BorderLayout() );
         labelBox.add( new JLabel("label ") );
         labelBox.add( labelField );
-        
+
         Box topBox = new Box( BoxLayout.X_AXIS );
         topBox.add(labelBox);
         topBox.add( new JLabel("StrRef ") );
@@ -179,7 +179,7 @@ public class CExoLocStringEditor extends JPanel {
         btnRemove.setToolTipText( "remove selected substrings" );
         btnRemove.setMnemonic('d');
         topBox.add( btnRemove );
-        
+
         StringTableCellEditor cellEditor =
                 new StringTableCellEditor(){
             @Override
@@ -188,7 +188,7 @@ public class CExoLocStringEditor extends JPanel {
                 super.stopCellEditing();
                 substringTable.requestFocus();
                 return true;
-            }            
+            }
             @Override
             public void cancelCellEditing() {
                 substringTable.setRowHeight( substringTable.getEditingRow(), substringTable.getRowHeight() );//default row height is 16
@@ -198,16 +198,16 @@ public class CExoLocStringEditor extends JPanel {
         };
         substringTable.getColumnModel().getColumn(2).setCellEditor( cellEditor );
         substringTable.setSurrendersFocusOnKeystroke(true);
-        
+
         KeyStroke ksEnter = KeyStroke.getKeyStroke( KeyEvent.VK_ENTER, 0 );
         labelField.getInputMap( JComponent.WHEN_FOCUSED ).put( ksEnter, "setdata" );
         labelField.getActionMap().put("setdata", actEnter);
         strRefField.getInputMap( JComponent.WHEN_FOCUSED ).put( ksEnter, "setdata" );
         strRefField.getActionMap().put("setdata", actEnter);
-        
+
         add( topBox, BorderLayout.NORTH );
         add( new JScrollPane(substringTable), BorderLayout.CENTER );
-        
+
         setPreferredSize( new Dimension(500,120) );
         substringTable.setAutoResizeMode( JTable.AUTO_RESIZE_LAST_COLUMN );
         substringTable.getColumnModel().getColumn(0).setMinWidth(80);
@@ -217,7 +217,7 @@ public class CExoLocStringEditor extends JPanel {
         substringTable.getColumnModel().getColumn(1).setWidth(60);
         substringTable.getColumnModel().getColumn(2).setWidth(300);
     }
-    
+
     Action actEnter = new AbstractAction("OK"){
         @Override
         public void actionPerformed( ActionEvent e ){
@@ -231,14 +231,14 @@ public class CExoLocStringEditor extends JPanel {
             fireStateChanged();
         }
     };
-    
+
     Action actNew = new AbstractAction("new"){
         @Override
         public void actionPerformed( ActionEvent e ){
             newSubStringDialog.setVisible(true);
         }
     };
-    
+
     Action actRemove = new AbstractAction("del"){
         @Override
         public void actionPerformed( ActionEvent e ){
@@ -249,7 +249,7 @@ public class CExoLocStringEditor extends JPanel {
             fireStateChanged();
         }
     };
-    
+
     public void setCExoLocString( GffCExoLocString s ){
         locString = s;
         strRefField.setText( Integer.toString(s.getStrRef()) );
@@ -257,21 +257,21 @@ public class CExoLocStringEditor extends JPanel {
         model.fireTableDataChanged();
         fireStateChanged();
     }
-    
+
     protected List changeListeners = new Vector();
     public void addChangeListener( ChangeListener cl ){
         if ( !changeListeners.contains( cl ) )
             changeListeners.add( cl );
     }
-    
+
     public void removeChangeListener( ChangeListener cl ){
         changeListeners.remove( cl );
     }
-    
+
     protected void fireStateChanged(){
-        ChangeEvent e = new ChangeEvent(locString);
-        for ( int i = 0; i < changeListeners.size(); i++ )
-            ( (ChangeListener) changeListeners.get(i) ).stateChanged( e );
+        final ChangeEvent e = new ChangeEvent(locString);
+        for (final Object l : changeListeners) {
+            ((ChangeListener)l).stateChanged(e);
+        }
     }
-    
 }

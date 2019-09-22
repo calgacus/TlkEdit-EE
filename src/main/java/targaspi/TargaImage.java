@@ -329,10 +329,10 @@ public class TargaImage {
                         + srcX];
                     }
 
-                    for (int k = 0; k < kernel.length; k++) {
-                        red += ((kernel[k] & 0x00FF0000) >>> 16);
-                        green += ((kernel[k] & 0x0000FF00) >>> 8);
-                        blue += (kernel[k] & 0x000000FF);
+                    for (final int k : kernel) {
+                        red   += ((k & 0x00FF0000) >>> 16);
+                        green += ((k & 0x0000FF00) >>> 8);
+                        blue  +=  (k & 0x000000FF);
                     }
 
                     red /= kernel.length;

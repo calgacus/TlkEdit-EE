@@ -72,8 +72,8 @@ public class GffList extends GffField implements Iterable<GffStruct>{
     @Override public Object clone(){
         GffList clone = ( GffList ) super.clone();
         clone.structs = new ArrayList<GffStruct>();
-        for ( int i = 0; i < structs.size(); i++ ){
-            clone.structs.add( (GffStruct) structs.get(i).clone() );
+        for (final GffStruct struct : structs){
+            clone.structs.add( (GffStruct) struct.clone() );
         }
         return clone;
     }

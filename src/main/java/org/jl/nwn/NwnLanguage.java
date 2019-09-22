@@ -110,10 +110,12 @@ public enum NwnLanguage{
     }
 
     public static List<NwnLanguage> findAll(Version v){
-        List<NwnLanguage> l = new ArrayList<NwnLanguage>();
-        for (NwnLanguage lang : EnumSet.allOf(NwnLanguage.class))
-            if (lang.getVersion().equals(v))
+        final List<NwnLanguage> l = new ArrayList<>();
+        for (final NwnLanguage lang : NwnLanguage.values()) {
+            if (lang.getVersion().equals(v)) {
                 l.add(lang);
+            }
+        }
         return l;
     }
 
@@ -181,9 +183,9 @@ public enum NwnLanguage{
         if ( ( enc = System.getProperty( "tlkedit.charsetOverride" )) != null ){
             String[] values = enc.split(";");
             try{
-                for ( int p = 0; p < values.length; p++ ){
-                    String[] triple = values[p].split(":");
-                    Version v = Enum.valueOf(Version.class, triple[0]);
+                for (final String value : values) {
+                    final String[] triple = value.split(":");
+                    final Version v = Version.valueOf(triple[0]);
                     NwnLanguage l = find( v, Integer.parseInt(triple[1]) );
                     String encoding = triple[2];
                     encodings.put(l, encoding);

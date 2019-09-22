@@ -24,7 +24,6 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,9 +90,11 @@ public class ErfFile extends AbstractRepository{
             return name;
         }
         public static ErfType forTypeString( String s ){
-            for ( int i = 0; i < types.length; i++ )
-                if ( types[i].typeString.equals( s ) )
-                    return types[i];
+            for (final ErfType type : types) {
+                if (type.typeString.equals(s)) {
+                    return type;
+                }
+            }
             return ERF;
         }
         public String getName() {
@@ -383,9 +384,7 @@ public class ErfFile extends AbstractRepository{
             int resIdCounter = 0;
             int offset = offsetToResourceData;
             byte[] zero = new byte[resrefsize];
-            Iterator it = resources.keySet().iterator();
-            while ( it.hasNext() ){
-                ResourceID id = (ResourceID) it.next();
+            for (final ResourceID id : resources.keySet()) {
                 // write key list entry
                 out.seek( offsetToKeyList + (resIdCounter*(resrefsize+8)) );
                 //String name = id.getName();
@@ -483,9 +482,7 @@ public class ErfFile extends AbstractRepository{
      * adds all resource from erf to this file, if they do not already exist in this file and rewrites this erf
      * */
     public void merge( ErfFile erf ) throws IOException{
-        Iterator it = erf.resources.keySet().iterator();
-        while (it.hasNext()){
-            ResourceID id = ( ResourceID ) it.next();
+        for (final ResourceID id : erf.resources.keySet()) {
             if ( !resources.keySet().contains(id) )
                 putResource( id, erf.getResource( id ) );
         }
@@ -545,14 +542,12 @@ public class ErfFile extends AbstractRepository{
      * */
     public void extractToDir( File outputDir ) throws IOException{
         if ( !outputDir.exists() ) outputDir.mkdirs();
-        Iterator it = getResourceIDs().iterator();
         //byte[] buf = new byte[64000];
-        while ( it.hasNext() ){
-            ResourceID id = (ResourceID) it.next();
+        for (final ResourceID id : getResourceIDs()) {
             writeStreamToFile(
                     getResource( id ),
                     new File( outputDir, id.toFileName() )
-                    );
+            );
         }
     }
 
@@ -671,16 +666,17 @@ public class ErfFile extends AbstractRepository{
         } else if ( args[0].equals("-c") ){
             ErfFile erf = new ErfFile(f, HAK, new GffCExoLocString("foo") );
             File out = new File( args[2] );
-            File[] files = out.listFiles();
-            for ( int i = 0; i < files.length; i++ )
-                if ( files[i].isFile() )
-                    erf.putResource( files[i] );
+            for (final File file : out.listFiles()) {
+                if (file.isFile()) {
+                    erf.putResource(file);
+                }
+            }
             erf.write();
         } else if ( args[0].equals("-l") ){
             ErfFile erf = new ErfFile(f);
-            Iterator it = erf.getResourceIDs().iterator();
-            while ( it.hasNext() )
-                System.out.println("erffile.java 680 "+it.next());
+            for (final ResourceID id : erf.getResourceIDs()) {
+                System.out.println("erffile.java 679 "+ id);
+            }
         }
                 /*
                 extractErf( f, out );

@@ -134,8 +134,9 @@ public class Patcher {
 	private static void delRek(File f) {
 		if (f.isDirectory()) {
 			File[] files = f.listFiles();
-			for (int i = 0; i < files.length; i++)
-				delRek(files[i]);
+            for (final File file : files) {
+                delRek(file);
+            }
 			f.delete();
 		} else if (f.isFile())
 			f.delete();
@@ -147,17 +148,16 @@ public class Patcher {
 		//char[] buffer = new char[32000];
 		//int p = 0;
 		String line = "";
-		for (int i = 0; i < input.length; i++) {
-			if (input[i].exists() && input[i].isFile()) {
-				BufferedReader in =
-					new BufferedReader(new FileReader(input[i]));
-				while ((line = in.readLine()) != null) {
-					out.write(line);
-					out.write(lineSeparator);
-				}
-				in.close();
-			}
-		}
+        for (final File file : input) {
+            if (file.exists() && file.isFile()) {
+                final BufferedReader in = new BufferedReader(new FileReader(file));
+                while ((line = in.readLine()) != null) {
+                    out.write(line);
+                    out.write(lineSeparator);
+                }
+                in.close();
+            }
+        }
 		out.close();
 	}
 
@@ -331,16 +331,18 @@ public class Patcher {
 		File tlkOutDir = new File(outputDir, "tlk");
 		File tlkOutputFile = new File(tlkOutDir, "dialog.tlk");
 		// remove files in output dir
-		File[] rem = outputDir.listFiles();
-		for (int i = 0; i < rem.length; i++)
-			if (rem[i].isFile())
-				rem[i].delete();
+        for (final File file : outputDir.listFiles()) {
+            if (file.isFile()) {
+                file.delete();
+            }
+        }
 		// copy files from script dir to output dir
 		if (scriptSrcDir.exists()) {
-			File[] f = scriptSrcDir.listFiles();
-			for (int i = 0; i < f.length; i++)
-				if (f[i].isFile())
-					filecopy(f[i], new File(outputDir, f[i].getName()));
+            for (final File file : scriptSrcDir.listFiles()) {
+                if (file.isFile()) {
+                    filecopy(file, new File(outputDir, file.getName()));
+                }
+            }
 		}
 
 		PrintWriter patchinfo = new PrintWriter( new FileOutputStream( new File( outputDir, "patchinfo.txt")));
@@ -514,29 +516,15 @@ public class Patcher {
 					"updating 2da references for patch file "
 						+ daPatchFiles[i].getName()
 						+ " ----------------------------------");
-				for (int ref = 0; ref < refs.length; ref++) {
-					shift = (Integer) offsetMap.get(refs[ref].target);
-					if (shift == null) {
-						System.out.println(
-							"no patch applied to "
-								+ refs[ref].target
-								+ ", checking for absolute references");
-						shift = 0;
-					}
-					System.out.println(
-						"updating reference from column "
-							+ refs[ref].column
-							+ " into "
-							+ refs[ref].target
-							+ " ( shift by "
-							+ shift
-							+ " )");
-					shiftReference(
-						daPatchTables[i],
-						shift.intValue(),
-						refs[ref].column,
-						true);
-				}
+                for (final daReference ref : refs) {
+                    shift = (Integer) offsetMap.get(ref.target);
+                    if (shift == null) {
+                        System.out.println("no patch applied to " + ref.target + ", checking for absolute references");
+                        shift = 0;
+                    }
+                    System.out.println("updating reference from column " + ref.column + " into " + ref.target + " ( shift by " + shift + " )");
+                    shiftReference(daPatchTables[i], shift.intValue(), ref.column, true);
+                }
 			}
 			daReference cdef =
 				(daReference) cdefMap.get(
@@ -691,13 +679,15 @@ public class Patcher {
 						return name.toLowerCase().endsWith(".nss");
 					}
 				});
-				for (int i = 0; i < scripts.length; i++) {
-					if ( scripts[i].getName().equalsIgnoreCase("nwscript.nss"))
-						continue;
-					if ( scripts[i].getName().equalsIgnoreCase("patchdefinitions.nss") )
-						continue;
-					compileScript( scripts[i], nwnDir, outputDir );
-				}
+                for (final File script : scripts) {
+                    if (script.getName().equalsIgnoreCase("nwscript.nss")) {
+                        continue;
+                    }
+                    if (script.getName().equalsIgnoreCase("patchdefinitions.nss")) {
+                        continue;
+                    }
+                    compileScript(script, nwnDir, outputDir);
+                }
 
 			} catch (Exception ex) {
 				System.out.println(
@@ -712,11 +702,12 @@ public class Patcher {
 			File hakDir = new File(outputDir, "hak");
 			hakDir.mkdir();
 			List files = new Vector();
-			File[] f = outputDir.listFiles();
 			ErfFile erf = new ErfFile( new File(hakDir, patchDir.getName() + ".hak"), ErfFile.HAK, new GffCExoLocString("foo") );
-			for (int i = 0; i < f.length; i++)
-				if (f[i].isFile())
-					erf.putResource( f[i] );
+            for (final File file : outputDir.listFiles()) {
+                if (file.isFile()) {
+                    erf.putResource(file);
+                }
+            }
 			erf.write();
 			/*
 			for (int i = 0; i < f.length; i++)
@@ -809,25 +800,28 @@ public class Patcher {
 		File scriptDirNew = new File(joinedDir, "scripts");
 		if (scriptDir1.exists()) {
 			scriptDirNew.mkdirs();
-			File[] f = scriptDir1.listFiles();
-			for (int i = 0; i < f.length; i++)
-				if (f[i].isFile())
-					filecopy(f[i], new File(scriptDirNew, f[i].getName()));
+            for (final File file : scriptDir1.listFiles()) {
+                if (file.isFile()) {
+                    filecopy(file, new File(scriptDirNew, file.getName()));
+                }
+            }
 		}
 		File scriptDir2 = new File(patchDir2, "scripts");
 		if (scriptDir2.exists()) {
 			scriptDirNew.mkdirs();
-			File[] f = scriptDir2.listFiles();
-			for (int i = 0; i < f.length; i++)
-				if (f[i].isFile())
-					filecopy(f[i], new File(scriptDirNew, f[i].getName()));
+            for (final File file : scriptDir2.listFiles()) {
+                if (file.isFile()) {
+                    filecopy(file, new File(scriptDirNew, file.getName()));
+                }
+            }
 		}
 		// copy contents of patchDir1 to joinedDir
 		System.out.println("copying patch2 2da files ...");
-		File[] f = patchDir2.listFiles();
-		for (int i = 0; i < f.length; i++)
-			if (f[i].isFile())
-				filecopy(f[i], new File(joinedDir, f[i].getName()));
+        for (final File file : patchDir2.listFiles()) {
+            if (file.isFile()) {
+                filecopy(file, new File(joinedDir, file.getName()));
+            }
+        }
 		// read reference file ...............
 		Map refMap = readReferenceDefs(new File(patchDir1, referencesFilename));
 		Map defaultRefMap =
@@ -906,10 +900,10 @@ public class Patcher {
 			int[] diffs1 = c.mergeDiff( tlkDiff1 );
 			int[] diffs2 = c.mergeDiff( tlkDiff2 );
 			TreeSet ts = new TreeSet();
-			for ( int i = 0; i < diffs1.length; i++ )
-				ts.add(diffs1[i]);
-			for ( int i = 0; i < diffs2.length; i++ )
-				ts.add(diffs2[i]);
+			for (final int diff : diffs1)
+				ts.add(diff);
+			for (final int diff : diffs2)
+				ts.add(diff);
 			int[] newDiffs = new int[ ts.size() ];
 			int itCount = 0;
 			for ( Iterator it = ts.iterator(); it.hasNext(); itCount++ )
@@ -936,27 +930,15 @@ public class Patcher {
 					"updating 2da references for patch file "
 						+ daPatchFiles[i].getName()
 						+ " ----------------------------------");
-				for (int ref = 0; ref < refs.length; ref++) {
-					shift = (Integer) offsetMap.get(refs[ref].target);
-					if (shift == null) {
-						System.out.println(
-							"no patch applied to " + refs[ref].target);
-						shift = 0;
-					}
-					System.out.println(
-						"updating reference from column "
-							+ refs[ref].column
-							+ " into "
-							+ refs[ref].target
-							+ " ( shift by "
-							+ shift
-							+ " )");
-					shiftReference(
-						daPatchTables[i],
-						shift.intValue(),
-						refs[ref].column,
-						false);
-				}
+                for (final daReference ref : refs) {
+                    shift = (Integer) offsetMap.get(ref.target);
+                    if (shift == null) {
+                        System.out.println("no patch applied to " + ref.target);
+                        shift = 0;
+                    }
+                    System.out.println("updating reference from column " + ref.column + " into " + ref.target + " ( shift by " + shift + " )");
+                    shiftReference(daPatchTables[i], shift.intValue(), ref.column, false);
+                }
 			}
 			if (daSourceTables[i] == null)
 				daSourceTables[i] = new TwoDaTable(daPatchTables[i]);

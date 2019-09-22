@@ -132,8 +132,8 @@ public class GffStruct extends GffField implements Iterable<GffField>{
     public Object clone(){
         GffStruct clone = ( GffStruct ) super.clone();
         clone.children = new Vector();
-        for ( int i = 0; i < children.size(); i++ ){
-            clone.children.add( (GffField) children.get(i).clone() );
+        for (final GffField field : children) {
+            clone.children.add( (GffField) field.clone() );
         }
         return clone;
     }

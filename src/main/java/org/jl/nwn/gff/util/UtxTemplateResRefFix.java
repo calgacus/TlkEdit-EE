@@ -14,11 +14,12 @@ import org.jl.nwn.resource.ResourceID;
 public class UtxTemplateResRefFix {
 
     public static void main(String[] args) throws Exception{
-        if ( args.length == 0 )
+        if ( args.length == 0 ) {
             System.out.println( "usage : UtxTemplateResRefFix <files>" );
-        else
-            for ( int i = 0; i < args.length; i++ ){
-            File f = new File(args[i]);
+            return;
+        }
+        for (final String arg : args) {
+            final File f = new File(arg);
             GffContent c = new DefaultGffReader(Version.getDefaultVersion()).load( f );
             GffCResRef resRef = (GffCResRef) c.getTopLevelStruct().getChild("TemplateResRef");
             if ( resRef == null )
@@ -33,6 +34,6 @@ public class UtxTemplateResRefFix {
                     c.write( f, Version.getDefaultVersion() );
                 }
             }
-            }
+        }
     }
 }

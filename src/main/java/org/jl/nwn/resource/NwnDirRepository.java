@@ -44,14 +44,13 @@ public class NwnDirRepository extends AbstractRepository {
 		return f.isFile() ? f : findFileIgnoreCase( fName );
 	}
 
-	private File findFileIgnoreCase( String fileName ){
-		String[] fNames = dir.list();
-		for ( int i = 0, n = fNames.length; i<n; i++ ){
-			if ( fNames[i].equalsIgnoreCase( fileName ) ){
-				File f = new File( dir, fNames[i] );
-				return f.isFile() ? f : null;
-			}
-		}
+    private File findFileIgnoreCase(String fileName) {
+        for (final String name : dir.list()) {
+            if (name.equalsIgnoreCase(fileName)) {
+                final File f = new File(dir, name);
+                return f.isFile() ? f : null;
+            }
+        }
 		return null;
 	}
 
@@ -79,10 +78,11 @@ public class NwnDirRepository extends AbstractRepository {
 	@Override
 	public Set getResourceIDs(){
 		TreeSet s = new TreeSet();
-		File[] files = dir.listFiles();
-		for ( int i = 0; i < files.length; i++ )
-			if ( files[i].isFile() )
-				s.add( ResourceID.forFile( files[i] ) );
+        for (final File file : dir.listFiles()) {
+            if (file.isFile()) {
+                s.add(ResourceID.forFile(file));
+            }
+        }
 		return Collections.unmodifiableSet( s );
 	}
 
@@ -96,13 +96,10 @@ public class NwnDirRepository extends AbstractRepository {
 		File f = findFile( id );
 		return f!=null? f.lastModified() : 0;
 	}
-        
-        @Override
-        public int getResourceSize( ResourceID id ){
-            File f = findFile(id);
-            return f != null ?
-                (int)f.length():
-                0;
-        }
 
+    @Override
+    public int getResourceSize(ResourceID id) {
+        final File f = findFile(id);
+        return f != null ? (int)f.length() : 0;
+    }
 }

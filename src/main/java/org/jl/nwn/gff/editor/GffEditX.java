@@ -722,13 +722,11 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
 
         ActionMap amTop = getActionMap();
 
-        for ( Action a : actions ){
-            im.put((KeyStroke)a.getValue( a.ACCELERATOR_KEY ), a.getValue( a.ACTION_COMMAND_KEY ));
-            am.put(a.getValue( a.ACTION_COMMAND_KEY ), a );
-        }
-
-        for ( Action a : actions ){
-            amTop.put(a.getValue( a.ACTION_COMMAND_KEY ), a );
+        for (final Action a : actions) {
+            final Object cmdKey = a.getValue(a.ACTION_COMMAND_KEY);
+            im.put((KeyStroke)a.getValue( a.ACCELERATOR_KEY ), cmdKey);
+            am.put(cmdKey, a);
+            amTop.put(cmdKey, a);
         }
         amTop.put( DefaultEditorKit.copyAction, aCopy );
         amTop.put( DefaultEditorKit.cutAction, aCut );

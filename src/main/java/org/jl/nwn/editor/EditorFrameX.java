@@ -363,12 +363,11 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             ErfEdit erf = (ErfEdit) tPane.getSelectedComponent();
-            ResourceID[] ids = erf.getSelectedResources();
-            for (int i = 0; i < ids.length; i++) {
+            for (final ResourceID id : erf.getSelectedResources()) {
                 try {
-                    SimpleFileEditorPanel ed = openFile(erf.extractAsTempFile(ids[i], true), erf.getFileVersion());
+                    final SimpleFileEditorPanel ed = openFile(erf.extractAsTempFile(id, true), erf.getFileVersion());
                     if (ed != null) {
-                        ErfResourceEditor erfEd = new ErfResourceEditor(ed, erf, ids[i]);
+                        final ErfResourceEditor erfEd = new ErfResourceEditor(ed, erf, id);
                         tPane.add(erfEd.getFile().getName(), erfEd);
                     }
                 } catch (IOException ioex) {
@@ -907,8 +906,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         if (unsaved.size() > 0) {
             JPanel inputValues = new JPanel(new GridLayout(0, 1));
             inputValues.add(new JLabel(MessageFormat.format(Messages.getString("EditorFrame.MsgListOfUnsavedFiles"), Integer.valueOf(unsaved.size())))); //$NON-NLS-1$
-            JCheckBox[] boxes;
-            boxes = new JCheckBox[unsaved.size()];
+            final JCheckBox[] boxes = new JCheckBox[unsaved.size()];
             for (int i = 0; i < unsaved.size(); i++) {
                 SimpleFileEditor sfe = unsaved.get(i);
                 boxes[i] = new JCheckBox(sfe.getFile() == null ? Messages.getString("EditorFrame.FileNameUnsavedFile") : sfe.getFile().getAbsolutePath(), true);
@@ -966,8 +964,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         EditorFrameX f = new EditorFrameX("TlkEdit"); //$NON-NLS-1$
-        for (int i = 0; i < args.length; i++) {
-            f.openFile(new File(args[i]), Version.getDefaultVersion());
+        for (final String arg : args) {
+            f.openFile(new File(arg), Version.getDefaultVersion());
         }
     }
 
@@ -1058,8 +1056,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             menuBar.removeAll();
             menuBar.add(fileMenu);
             if (menus != null) {
-                for (int i = 0; i < menus.length; i++) {
-                    menuBar.add(menus[i]);
+                for (final JMenu menu : menus) {
+                    menuBar.add(menu);
                 }
             }
             //boolean enableTlkLookup = ed instanceof GffEditX || ed instanceof TwoDaEdit;

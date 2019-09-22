@@ -38,12 +38,11 @@ public class TlkModel extends AbstractTableModel
         return tlkContent.size() + 1;
     }
 
-    private String hex(byte[] b){
+    private String hex(byte[] bytes) {
         StringBuffer ret = new StringBuffer();
-        int unsigned = 0;
         boolean nonZero = false;
-        for (int i = 0; i < b.length; i++) {
-            unsigned = b[i] < 0 ? 256 + b[i] : b[i];
+        for (final byte b : bytes) {
+            final int unsigned = b & 0xFF;
             if (unsigned != 0)
                 nonZero = true;
             if (unsigned < 16)

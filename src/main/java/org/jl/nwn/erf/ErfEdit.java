@@ -13,7 +13,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -314,9 +313,9 @@ public class ErfEdit extends SimpleFileEditorPanel{
 
     private void redoList(){
         model.clear();
-        Iterator it = erf.getResourceIDs().iterator();
-        while ( it.hasNext() )
-            model.addElement( it.next() );
+        for (final ResourceID id : erf.getResourceIDs()) {
+            model.addElement(id);
+        }
         tableModel.fireTableDataChanged();
     }
 
@@ -326,9 +325,9 @@ public class ErfEdit extends SimpleFileEditorPanel{
             fChooser.setMultiSelectionEnabled(true);
             fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
             if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION ){
-                File[] files = fChooser.getSelectedFiles();
-                for ( int i = 0; i < files.length; i++ )
-                    erf.putResource( files[i] );
+                for (final File file : fChooser.getSelectedFiles()) {
+                    erf.putResource(file);
+                }
                 redoList();
             }
         }

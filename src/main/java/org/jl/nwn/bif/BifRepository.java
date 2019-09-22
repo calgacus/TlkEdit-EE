@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.MappedByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -72,11 +72,13 @@ public class BifRepository extends AbstractRepository{
     }
 
     private static String[] testKeyFiles( String[] keys, File baseDir ){
-        Vector v = new Vector();
-        for ( int i = 0; i < keys.length; i++ )
-            if ( new File( baseDir, keys[i]).exists() )
-                v.add( keys[i] );
-        return (String[]) v.toArray( new String[ v.size() ] );
+        final ArrayList<String> v = new ArrayList<>(keys.length);
+        for (final String key : keys) {
+            if (new File(baseDir, key).exists()) {
+                v.add(key);
+            }
+        }
+        return v.toArray( new String[ v.size() ] );
     }
 
     /**
@@ -134,8 +136,8 @@ public class BifRepository extends AbstractRepository{
     }
 
     protected KeyFile.BifResourceLocation findResourceLocation(String resName, short resType){
-        for (KeyFile kf: keyFiles){
-        KeyFile.BifResourceLocation loc = kf.findResource(resName, resType);
+        for (final KeyFile kf : keyFiles) {
+            final KeyFile.BifResourceLocation loc = kf.findResource(resName, resType);
             if ( loc != null ){
                 return loc;
             }
@@ -163,9 +165,10 @@ public class BifRepository extends AbstractRepository{
     @Override
     public Set getResourceIDs() {
         if ( resources == null ){
-            resources = new TreeSet(this.keyFiles[0].getResourceIDSet());
-            for (int i = 1; i < this.keyFiles.length; i++)
-                resources.addAll(this.keyFiles[i].getResourceIDSet());
+            resources = new TreeSet();
+            for (final KeyFile key : keyFiles) {
+                resources.addAll(key.getResourceIDSet());
+            }
         }
         return Collections.unmodifiableSet( resources );
     }
@@ -311,8 +314,8 @@ public class BifRepository extends AbstractRepository{
                         f.setEnabled( false );
                         infoDialog.setVisible(true);
                         File outputDirFile = new File( outputDir.getText() );
-                        for ( int index = 0; index < selected.length; index++ ){
-                            ResourceID id  = ( ResourceID ) model.get( selected[index] );
+                        for (final int index : selected) {
+                            final ResourceID id = ( ResourceID ) model.get(index);
                             String filename = id.toString();
                             fileLabel.setText( filename );
                             //writeFile( new File( outputDirFile, filename ), getResource( id ) );
@@ -375,10 +378,11 @@ public class BifRepository extends AbstractRepository{
          */
     @Override
     public boolean contains(ResourceID id) {
-        for ( int i = 0, n = keyFiles.length; i < n; i++ )
-            if ( null != keyFiles[i].findResource(id.getName(), id.getType()) )
+        for (final KeyFile key : keyFiles) {
+            if (null != key.findResource(id.getName(), id.getType())) {
                 return true;
+            }
+        }
         return false;
-        //return resources.contains(id);
     }
 }

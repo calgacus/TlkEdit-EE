@@ -312,9 +312,7 @@ public class TwoDaTable {
         }
         out.write("\r\n");
         // write entries
-        String[] row;
-        for (int i = 0; i < rows.size(); i++) {
-            row = (String[]) rows.get(i);
+        for (final String[] row : rows) {
             for (int j = 0; j < row.length; j++) {
                 out.write(row[j]);
                 if ( TWODA_TSV )
@@ -386,25 +384,27 @@ public class TwoDaTable {
             defaultValue = mk2daString(defaultValue);
         int cCount = getColumnCount() + 1;
         String[] newHeaders = new String[cCount];
-        for (int i = 0, n = 0; n < cCount; n++)
+        for (int i = 0, n = 0; n < cCount; n++) {
             if (n == pos) {
-            newHeaders[n] = header;
+                newHeaders[n] = header;
             } else {
-            newHeaders[n] = columnHeaders[i];
-            i++;
+                newHeaders[n] = columnHeaders[i];
+                i++;
             }
+        }
         columnHeaders = newHeaders;
 
         for (int row = 0; row < rows.size(); row++) {
             String[] newRow = new String[cCount];
             String[] oldRow = (String[]) rows.get(row);
-            for (int i = 0, n = 0; n < cCount; n++)
+            for (int i = 0, n = 0; n < cCount; n++) {
                 if (n == pos) {
-                newRow[n] = defaultValue;
+                    newRow[n] = defaultValue;
                 } else {
-                newRow[n] = oldRow[i];
-                i++;
+                    newRow[n] = oldRow[i];
+                    i++;
                 }
+            }
             rows.set(row, newRow);
         }
 
