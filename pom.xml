@@ -23,8 +23,11 @@
               <!--
                 Include current working directory to class path, because it used to get
                 resources via Class.getResource that needed for working with 2DA meta.xml files
+
+                Include unknown version of swingx.jar, that located in our repository
+                just for compatibility with older version
               -->
-              <Class-Path>./</Class-Path>
+              <Class-Path>lib/swingx.jar ./</Class-Path>
             </manifestEntries>
           </archive>
         </configuration>
