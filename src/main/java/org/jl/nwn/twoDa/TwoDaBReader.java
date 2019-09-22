@@ -29,7 +29,7 @@ import java.util.List;
  *pointing to a 0-terminated string. {row count} consecutive values represent one row.
  */
 public class TwoDaBReader {
-    
+
     private static String readStringTerminated(InputStream is, int term) throws IOException{
         StringBuilder sb = new StringBuilder();
         int b = 0;
@@ -37,7 +37,7 @@ public class TwoDaBReader {
             sb.append((char)b);
         return b != -1 ? sb.toString() : null;
     }
-    
+
     private static String readString0(byte[] buffer, int offset){
         StringBuilder sb = new StringBuilder();
         int b = 0;
@@ -45,11 +45,11 @@ public class TwoDaBReader {
             sb.append((char)b);
         return sb.toString();
     }
-    
+
     private static int readIntLE(InputStream in) throws IOException{
         return in.read() | in.read() << 8 | in.read() << 16 | in.read() << 24;
     }
-    
+
     /**
      @param withHeader try to parse first 9 bytes as header, else assume the inputstream is already at position 9.
      */
@@ -62,13 +62,12 @@ public class TwoDaBReader {
                 throw new IOException("Not a 2DA file !");
             //pbis.skip(8);
             //pbis.read(); // ???
-        }        
-        List<String> headers = new ArrayList<String>();
+        }
+        final List<String> headers = new ArrayList<>();
         while ( true ){
             String s = readStringTerminated(pbis,9);
             headers.add(s);
-            //System.out.println(s);            
-            int b = pbis.read();            
+            int b = pbis.read();
             if ( b==0 )
                 break;
             else
@@ -78,11 +77,11 @@ public class TwoDaBReader {
         int columns = headers.size();
         headers.add(0," ");
         TwoDaTable twoDa = new TwoDaTable(headers.toArray(new String[headers.size()]));
-        
+
         int rows = readIntLE(pbis);
         //System.out.printf("size : %s x %s\n", rows, headers.size());
-        
-        List<String> rowHeaders = new ArrayList<String>();
+
+        final List<String> rowHeaders = new ArrayList<>();
         for ( int i = 0; i < rows; i++ )
             rowHeaders.add(readStringTerminated(pbis,9));
         int indexSize = rows*columns*2;
@@ -90,11 +89,11 @@ public class TwoDaBReader {
         pbis.read(index);
         ByteBuffer bb = ByteBuffer.wrap(index);
         bb.order(ByteOrder.LITTLE_ENDIAN);
-        
+
         int dataSize = pbis.read() | pbis.read()<<8; // unsigned short
         byte[] data = new byte[dataSize];
         pbis.read(data);
-        
+
         for ( int i = 0; i < rows; i++ ){
             String[] row = new String[twoDa.getColumnCount()];
             row[0] = rowHeaders.get(i);
@@ -106,22 +105,21 @@ public class TwoDaBReader {
                 row[j+1] = s;
             }
             twoDa.appendRow(row);
-        }        
+        }
         //twoDa.write(System.out);
         return twoDa;
     }
-    
+
     public static TwoDaTable readTwoDaBinary( File f ) throws IOException{
         return readTwoDaBinary(new FileInputStream(f), true);
     }
-    
+
     public static TwoDaTable readTwoDaBinary( String filename ) throws IOException{
         return readTwoDaBinary(new FileInputStream(filename), true);
     }
-    
+
     public static void main( String ... args ) throws IOException{
         TwoDaTable twoDa = TwoDaBReader.readTwoDaBinary(args[0]);
         twoDa.write(System.out);
     }
-    
 }

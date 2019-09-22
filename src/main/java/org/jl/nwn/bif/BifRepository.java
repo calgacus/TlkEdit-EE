@@ -44,7 +44,7 @@ import org.jl.nwn.resource.ResourceID;
 public class BifRepository extends AbstractRepository{
     private KeyFile[] keyFiles;
     private File baseDir;
-    private TreeSet resources;
+    private TreeSet<ResourceID> resources;
 
     private final Map<String, BifFile> bifFiles = new HashMap<>();
 
@@ -117,7 +117,7 @@ public class BifRepository extends AbstractRepository{
     }
 
     protected BifFile getBifFile( String bifName ){
-        BifFile bif = (BifFile) bifFiles.get(bifName);
+        BifFile bif = bifFiles.get(bifName);
         if (bif == null) {
             try{
               bif = BifFile.openBifFile(new File(baseDir, bifName));
@@ -163,9 +163,9 @@ public class BifRepository extends AbstractRepository{
     }
 
     @Override
-    public Set getResourceIDs() {
+    public Set<ResourceID> getResourceIDs() {
         if ( resources == null ){
-            resources = new TreeSet();
+            resources = new TreeSet<>();
             for (final KeyFile key : keyFiles) {
                 resources.addAll(key.getResourceIDSet());
             }
@@ -215,10 +215,8 @@ public class BifRepository extends AbstractRepository{
         OutputStream os = null;
         InputStream is;
         int count = 0;
-        Iterator it = br.getResourceIDs().iterator();
         try {
-            while (it.hasNext()) {
-                ResourceID id = (ResourceID) it.next();
+            for (final ResourceID id : br.getResourceIDs()) {
                 String s = id.toString();
                 if (m.reset(s).matches()) {
                     System.out.println("BifRepository "+s);
@@ -240,12 +238,11 @@ public class BifRepository extends AbstractRepository{
     private void displayGui() throws IOException{
         final JFrame f = new JFrame("bifextract");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        final DefaultListModel model = new DefaultListModel();
-        final JList resourceList = new JList(model);
+        final DefaultListModel<ResourceID> model = new DefaultListModel<>();
+        final JList<ResourceID> resourceList = new JList<>(model);
         System.out.print("retrieving resource ids ... ");
-        Iterator it = getResourceIDs().iterator();
+        final Iterator<ResourceID> it = getResourceIDs().iterator();
         System.out.println("BifRepository displayGui done");
-        //Iterator it = new NwnRepConfig().getNwnRepository().listRealContents().iterator();
         while (it.hasNext())
             model.addElement(it.next());
         JLabel filterLabel = new JLabel("RegExp : ");
@@ -264,12 +261,12 @@ public class BifRepository extends AbstractRepository{
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                Iterator it = getResourceIDs().iterator();
+                final Iterator<ResourceID> it = getResourceIDs().iterator();
                 model.clear();
                 while (it.hasNext()) {
-                    Object o = it.next();
-                    if (m.reset(o.toString()).matches())
-                        model.addElement(o);
+                    final ResourceID id = it.next();
+                    if (m.reset(id.toString()).matches())
+                        model.addElement(id);
                 }
             }
         };

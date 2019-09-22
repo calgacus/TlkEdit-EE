@@ -48,15 +48,13 @@ public class Gff {
     public static final int GENDER_MALE = 0;
     public static final int GENDER_FEMALE = 1;
 
-    private static final String[] typeNames = {
+    public static final String[] TYPENAMES = {
         "Byte", "Char", "Word", "Short", "DWord", "Int", "DWord64", "Int64",
         "Float", "Double",
         "CExoString", "CResRef", "CExoLocString",
         "Void",
         "Struct", "List", null, "Vector"
     };
-
-    public static final List TYPENAMES = Collections.unmodifiableList(Arrays.asList(typeNames));
 
     private static final String[] gffFileTypes = {
         "ifo",
@@ -73,7 +71,7 @@ public class Gff {
         "ros"
     };
 
-    public static final List GFFTYPES;
+    public static final List<String> GFFTYPES;
 
     static {
         Arrays.sort(gffFileTypes);
@@ -84,7 +82,7 @@ public class Gff {
 
     public static String getTypeName( int type ){
         if ( type > -1 && type < 18 )
-            return typeNames[type];
+            return TYPENAMES[type];
         else
             return "unknown : " + type;
     }

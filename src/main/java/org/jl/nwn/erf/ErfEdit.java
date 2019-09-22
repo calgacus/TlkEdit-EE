@@ -77,7 +77,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     private final JMenu menuErf = new JMenu();
     private final JSplitPane sPane;
 
-    private final JComboBox cbTypeSelector = new JComboBox(ErfFile.ERFTYPES.toArray());
+    private final JComboBox<ErfFile.ErfType> cbTypeSelector = new JComboBox<>(ErfFile.TYPES);
     private final CExoLocStringEditor descEditor = new CExoLocStringEditor();
     private final Box descriptionBox = new Box(BoxLayout.Y_AXIS);
 

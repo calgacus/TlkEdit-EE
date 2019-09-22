@@ -3,7 +3,6 @@ package org.jl.nwn.gff;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import org.jl.nwn.NwnLanguage;
 
@@ -11,7 +10,7 @@ public class GffCExoLocString extends GffField<Integer> implements Iterable<CExo
     public static final byte SUBSTRINGTYPE = 47;
 
     private int strRef = -1;
-    private final List<CExoLocSubString> substrings = new ArrayList();
+    private final ArrayList<CExoLocSubString> substrings = new ArrayList<>();
 
     public GffCExoLocString(String label) {
         super(label, Gff.CEXOLOCSTRING);

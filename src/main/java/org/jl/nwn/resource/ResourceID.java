@@ -2,7 +2,6 @@ package org.jl.nwn.resource;
 
 import java.io.File;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -16,26 +15,18 @@ public class ResourceID implements Comparable {
     private String name;
     private short type;
 
-    public static final Map<String, Short> extension2typeMap = new TreeMap<String, Short>();
+    public static final Map<String, Short> extension2typeMap = new TreeMap<>();
 
-    public static final Map<Short, String> type2extensionMap = new TreeMap<Short, String>();
+    public static final Map<Short, String> type2extensionMap = new TreeMap<>();
 
-    public static final Comparator<ResourceID> COMPARATOR = new Comparator<ResourceID>() {
-
-        @Override
-        public int compare(ResourceID o1, ResourceID o2) {
-            int r = o1.getName().compareTo(o2.getName());
-            return r == 0 ? o1.getType() - o2.getType() : r;
-        }
+    public static final Comparator<ResourceID> COMPARATOR = (ResourceID o1, ResourceID o2) -> {
+        final int r = o1.getName().compareTo(o2.getName());
+        return r == 0 ? o1.getType() - o2.getType() : r;
     };
 
-    public static final Comparator<ResourceID> TYPECOMPARATOR = new Comparator<ResourceID>() {
-
-        @Override
-        public int compare(ResourceID o1, ResourceID o2) {
-            int r = o1.getType() - o2.getType();
-            return r == 0 ? o1.getName().compareTo(o2.getName()) : r;
-        }
+    public static final Comparator<ResourceID> TYPECOMPARATOR = (ResourceID o1, ResourceID o2) -> {
+        final int r = o1.getType() - o2.getType();
+        return r == 0 ? o1.getName().compareTo(o2.getName()) : r;
     };
 
     public static final short TYPE_RES = 0x0;
@@ -300,10 +291,10 @@ public class ResourceID implements Comparable {
         ResourceID.type2extensionMap.put(TYPE_ERF, "erf");
         ResourceID.type2extensionMap.put(TYPE_BIF, "bif");
         ResourceID.type2extensionMap.put(TYPE_KEY, "key");
-        
+
         // witcher stuff starts here
         ResourceID.type2extensionMap.put(TYPE_BIK, "bik");
-        ResourceID.type2extensionMap.put(TYPE_NDB, "ndb");        
+        ResourceID.type2extensionMap.put(TYPE_NDB, "ndb");
         ResourceID.type2extensionMap.put(TYPE_PTM, "ptm");
         ResourceID.type2extensionMap.put(TYPE_PTT, "ptt");
         ResourceID.type2extensionMap.put(TYPE_NCM, "ncm");
@@ -314,10 +305,10 @@ public class ResourceID implements Comparable {
         ResourceID.type2extensionMap.put(TYPE_TTF, "ttf");
         ResourceID.type2extensionMap.put(TYPE_TTC, "ttc");
         ResourceID.type2extensionMap.put(TYPE_CUT, "cut");
-        ResourceID.type2extensionMap.put(TYPE_KA, "ka");        
+        ResourceID.type2extensionMap.put(TYPE_KA, "ka");
         ResourceID.type2extensionMap.put(TYPE_ICO, "ico");
-        ResourceID.type2extensionMap.put(TYPE_OGG, "ogg");        
-        ResourceID.type2extensionMap.put(TYPE_SPW, "spw");        
+        ResourceID.type2extensionMap.put(TYPE_OGG, "ogg");
+        ResourceID.type2extensionMap.put(TYPE_SPW, "spw");
         ResourceID.type2extensionMap.put(TYPE_UGM, "ugm");
         ResourceID.type2extensionMap.put(TYPE_QDB, "qdb");
         ResourceID.type2extensionMap.put(TYPE_QST, "qst");
@@ -339,16 +330,13 @@ public class ResourceID implements Comparable {
         ResourceID.type2extensionMap.put(TYPE_CFX, "cfx");
         ResourceID.type2extensionMap.put(TYPE_LUC, "luc");
         ResourceID.type2extensionMap.put(TYPE_PRB, "prb");
-        ResourceID.type2extensionMap.put( TYPE_WOB, "wob");
+        ResourceID.type2extensionMap.put(TYPE_WOB, "wob");
         // witcher stuff end
 
-        Iterator<Short> it = ResourceID.type2extensionMap.keySet().iterator();
-        while (it.hasNext()) {
-            Short key = it.next();
-            String extension = ResourceID.type2extensionMap.get(key);
-            ResourceID.extension2typeMap.put(extension, key);
+        for (final Map.Entry<Short, String> e : ResourceID.type2extensionMap.entrySet()) {
+            ResourceID.extension2typeMap.put(e.getValue(), e.getKey());
         }
-        
+
         //FIXME:
         // some types appearing in The Witcher bifs with same extensions
         // as a type from nwn; putting them in after building the type2ext map
@@ -356,7 +344,7 @@ public class ResourceID implements Comparable {
         ResourceID.type2extensionMap.put(TYPE_JPG_WI, "jpg");
         ResourceID.type2extensionMap.put(TYPE_WFX_WI, "wfx");
         ResourceID.type2extensionMap.put(TYPE_SPT_WI, "spt");
-        ResourceID.type2extensionMap.put( TYPE_CAM_WI, "cam" );
+        ResourceID.type2extensionMap.put(TYPE_CAM_WI, "cam");
 
     }
 

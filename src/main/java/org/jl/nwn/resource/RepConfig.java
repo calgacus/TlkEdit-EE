@@ -49,7 +49,7 @@ public class RepConfig {
     }
 
     public static List<NwnRepository> initRepositories(Properties props) throws IOException{
-        ArrayList<NwnRepository> reps = new ArrayList<NwnRepository>();
+        final ArrayList<NwnRepository> reps = new ArrayList<>();
         try{
             int filecount = Integer.parseInt( props.getProperty( "filecount", "0" ) );
             String basepath = props.getProperty("basedir");

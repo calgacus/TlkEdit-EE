@@ -222,28 +222,24 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             if (dirChooser.showDialog(fChooser, "Extract to directory" ) == JFileChooser.APPROVE_OPTION) {
                 final File dir = dirChooser.getSelectedFile();
                 msgSup.fireProgressStarted(0, list.size());
-                new SwingWorker<List<File>,File>(){
-                    List<File> extractedFiles = new ArrayList<File>();
+                new SwingWorker<List<File>, File>() {
+                    final List<File> extractedFiles = new ArrayList<>();
                     @Override
                     public List<File> doInBackground() {
                         actOpen.setEnabled(false);
-                        try {
-                            msgSup.fireProgressStarted(0, list.size());
-                            for (ResourceID id : list) {
-                                try {
-                                    //File f = Repositories.extractAsTempFile(rep, id);
-                                    File rFile = new File(dir, id.getNameExt());
-                                    Repositories.extractResourceToFile(rep, id, rFile);
-                                    extractedFiles.add(rFile);
-                                    super.publish(rFile);
-                                    if (cbOpenAfterExtracting.isSelected()){
-                                        openFile(rFile, fileOpenVersion);
-                                    }
-                                } catch (IOException ioex) {
-                                    msgSup.fireMessage(id + ": " + ioex.getMessage());
+                        msgSup.fireProgressStarted(0, list.size());
+                        for (final ResourceID id : list) {
+                            try {
+                                final File rFile = new File(dir, id.getNameExt());
+                                Repositories.extractResourceToFile(rep, id, rFile);
+                                extractedFiles.add(rFile);
+                                super.publish(rFile);
+                                if (cbOpenAfterExtracting.isSelected()){
+                                    openFile(rFile, fileOpenVersion);
                                 }
+                            } catch (IOException ioex) {
+                                msgSup.fireMessage(id + ": " + ioex.getMessage());
                             }
-                        } finally {
                         }
                         return extractedFiles;
                     }
@@ -289,7 +285,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             TlkEdit ed = new TlkEdit();
-            JComboBox cbVersions = new JComboBox(Version.values());
+            final JComboBox<Version> cbVersions = new JComboBox<>(Version.values());
             int r = JOptionPane.showConfirmDialog(EditorFrameX.this, cbVersions, "Select Version", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (r!=JOptionPane.OK_OPTION)
                 return;
@@ -897,7 +893,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
      * @return false if user pressed cancel option - ( return to  editor program )
      * */
     private boolean checkUnsaved() {
-        final List<SimpleFileEditor> unsaved = new ArrayList<SimpleFileEditor>();
+        final List<SimpleFileEditor> unsaved = new ArrayList<>();
         for (int i = 0; i < tPane.getTabCount(); i++) {
             if (((SimpleFileEditor) tPane.getComponentAt(i)).getIsModified()) {
                 unsaved.add((SimpleFileEditor) tPane.getComponentAt(i));
@@ -1171,7 +1167,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     TransferHandler FileTransferHandler = new FileDropHandler() {
 
         @Override
-        public void importFiles(java.util.List<File> files) {
+        public void importFiles(List<File> files) {
             for (File f : files) {
                 openFile(f, Version.getDefaultVersion());
             }

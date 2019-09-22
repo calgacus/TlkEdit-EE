@@ -83,7 +83,7 @@ public class TlkModel extends AbstractTableModel
     }
 
     @Override
-    public Class getColumnClass(int col) {
+    public Class<?> getColumnClass(int col) {
         switch (col) {
             case 0 :
                 return Integer.class;
@@ -192,7 +192,7 @@ public class TlkModel extends AbstractTableModel
                 indexes[i] = newSize + i;
             removeRows(indexes);
         } else {
-            List<TlkEntry> e = new ArrayList<TlkEntry>(newSize-size());
+            final List<TlkEntry> e = new ArrayList<>(newSize-size());
             for ( int i = 0; i < newSize-size(); i++ )
                 e.add(new EditorTlkEntry());
             insertRows( size(), e );

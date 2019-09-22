@@ -3,7 +3,7 @@
  */
 package org.jl.nwn.gff.editor;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.tree.TreePath;
@@ -23,9 +23,6 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
 
     protected GffStruct root;
 
-    /** Used for constructing {@link TreePath} objects. */
-    private final LinkedList stack = new LinkedList();
-
     protected GffMutator mutator = new GffMutator();
 
     public GffTreeTableModel( GffStruct root ){
@@ -37,16 +34,16 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
          * @see javax.swing.tree.TreeModel#getChild(java.lang.Object, int)
          */
     @Override
-    public Object getChild(Object arg0, int arg1) {
-        return ((GffField) arg0).getChild(arg1);
+    public Object getChild(Object parent, int index) {
+        return ((GffField) parent).getChild(index);
     }
 
         /* (non-Javadoc)
          * @see javax.swing.tree.TreeModel#getChildCount(java.lang.Object)
          */
     @Override
-    public int getChildCount(Object arg0) {
-        return ((GffField) arg0).getChildCount();
+    public int getChildCount(Object parent) {
+        return ((GffField) parent).getChildCount();
     }
         /* (non-Javadoc)
          * @see org.jdesktop.swing.treetable.TreeTableModel#getColumnCount()
@@ -60,15 +57,15 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
          * @see javax.swing.tree.TreeModel#getIndexOfChild(java.lang.Object, java.lang.Object)
          */
     @Override
-    public int getIndexOfChild(Object arg0, Object arg1){
-        return ((GffField) arg0).getChildIndex((GffField)arg1);
+    public int getIndexOfChild(Object parent, Object child){
+        return ((GffField) parent).getChildIndex((GffField)child);
     }
 
         /* (non-Javadoc)
          * @see javax.swing.tree.TreeModel#getRoot()
          */
     @Override
-    public Object getRoot() {
+    public GffStruct getRoot() {
         return root;
     }
 
@@ -82,27 +79,27 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
          * @see org.jdesktop.swing.treetable.TreeTableModel#isCellEditable(java.lang.Object, int)
          */
     @Override
-    public boolean isCellEditable(Object arg0, int arg1) {
-        GffField f = (GffField)arg0;
-        return ( arg0 != root && // cannot edit top level struct
-                ( arg1 == 0 && f.getType() != GffCExoLocString.SUBSTRINGTYPE && f.getParent().getType() != Gff.LIST ) || // cannot edit substring label
-                ( arg1==2 && f.getType()!=Gff.LIST ) ); // cannot edit void / list has no additional data
+    public boolean isCellEditable(Object node, int column) {
+        GffField f = (GffField)node;
+        return ( node != root && // cannot edit top level struct
+                ( column == 0 && f.getType() != GffCExoLocString.SUBSTRINGTYPE && f.getParent().getType() != Gff.LIST ) || // cannot edit substring label
+                ( column==2 && f.getType()!=Gff.LIST ) ); // cannot edit void / list has no additional data
     }
 
         /* (non-Javadoc)
          * @see javax.swing.tree.TreeModel#isLeaf(java.lang.Object)
          */
     @Override
-    public boolean isLeaf(Object arg0) {
-        return !((GffField)arg0).allowsChildren();
+    public boolean isLeaf(Object node) {
+        return !((GffField)node).allowsChildren();
     }
 
     /** for columns 0 and 1 return label and typename strings, for column 2 return GffField object
      */
     @Override
-    public Object getValueAt(Object arg0, int arg1){
-        GffField f = (GffField)arg0;
-        switch (arg1) {
+    public Object getValueAt(Object node, int column){
+        GffField f = (GffField)node;
+        switch (column) {
             case 0 : { // label or list index
                 if ( f.getType() == Gff.STRUCT && f.getParent() != null && f.getParent().getType() == Gff.LIST )
                     return "["+((GffList)f.getParent()).indexOf(f)+"]";
@@ -128,21 +125,17 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
     }
 
     @Override
-    public String getColumnName(int arg0) {
-        switch (arg0){
+    public String getColumnName(int column) {
+        switch (column) {
             case 0 : return "Label";
             case 1 : return "Type";
             case 2 : return "Value";
-            default : return "foo";
+            default : return "<unknown>";
         }
     }
 
     @Override
-    public Class getColumnClass(int arg0) {
-        return super.getColumnClass(arg0);
-    }
-
-    @Override public int getHierarchicalColumn(){
+    public int getHierarchicalColumn() {
        return 0;
     }
 
@@ -175,16 +168,13 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
      * @return TreePath object for the path from the model root to the given field
      */
     public TreePath makePath( GffField field ){
-        stack.clear();
+        final ArrayDeque<GffField> stack = new ArrayDeque<>();
         GffField f = field;
         while ( f != null ){
             stack.addFirst(f);
             f = f.getParent();
         }
-        Object[] path = new Object[stack.size()];
-        for ( int index = 0; index < path.length; index++ )
-            path[index] = stack.removeFirst();
-        return new TreePath(path);
+        return new TreePath(stack.toArray());
     }
 
     // undo support ----------------------------------

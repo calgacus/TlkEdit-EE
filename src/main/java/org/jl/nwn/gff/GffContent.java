@@ -62,11 +62,10 @@ public class GffContent{
         GffContent c =
                 new DefaultGffReader(Version.getDefaultVersion())
                 .load(new File( args[0]) );
-        Iterator it = c.getTopLevelStruct().getDFIterator();
+        final Iterator<GffField> it = c.getTopLevelStruct().getDFIterator();
         while ( it.hasNext() ){
-            GffField f = (GffField) it.next();
+            final GffField f = it.next();
             System.out.println("gffcontent.java "+ f.getLabel() + "(" + f.getTypeName() + ")" );
         }
-
     }
 }

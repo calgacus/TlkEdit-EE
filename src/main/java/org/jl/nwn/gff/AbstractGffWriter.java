@@ -14,11 +14,12 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
@@ -26,26 +27,25 @@ import org.jl.nwn.Version;
 /**
  *
  */
-public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld>{
+public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld> {
 
-    protected List<Fld> fields = new ArrayList<Fld>();
-    protected List<Integer> labelIndices = new ArrayList<Integer>();
-    protected List<String> labels = new ArrayList<String>();
+    protected List<Fld> fields = new ArrayList<>();
+    protected List<Integer> labelIndices = new ArrayList<>();
+    protected List<String> labels = new ArrayList<>();
     protected int labelDataSize = 0;
 
-    protected List<Lst> lists = new ArrayList<Lst>();
-    protected List<Integer> listIndices = new ArrayList<Integer>();
-    protected List<Strct> structs = new ArrayList<Strct>();
-    protected List<Integer> structIndices = new ArrayList<Integer>();
+    protected List<Lst> lists = new ArrayList<>();
+    protected List<Integer> listIndices = new ArrayList<>();
+    protected List<Strct> structs = new ArrayList<>();
+    protected List<Integer> structIndices = new ArrayList<>();
 
-    // map field index to field data for complex field with variable size
-    protected Map<Integer, byte[]> fieldDataMap = new HashMap<Integer, byte[]>();
+    /** Map field index to field data for complex field with variable size. */
+    protected Map<Integer, byte[]> fieldDataMap = new HashMap<>();
 
-    // map <field array index, struct array index>
-    protected Map<Integer, Integer> namedStructs = new HashMap<Integer, Integer>();
+    /** Map {@code <field array index, struct array index>}. */
+    protected Map<Integer, Integer> namedStructs = new HashMap<>();
 
-    //protected int[] dataPointers;
-    protected List<Integer> dataPointerList = new ArrayList<Integer>();
+    protected List<Integer> dataPointerList = new ArrayList<>();
 
     private Version nwnVersion;
 
@@ -140,7 +140,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
              i.e. CResRef, CExoString, CExoLocString & Void in order to compute
              the size of the field data block and the data pointers
              */
-            List<Fld> queue = new LinkedList<Fld>();
+            final Queue<Fld> queue = new ArrayDeque<>();
             queue.add(topLevelStruct);
             structs.add(topLevelStruct);
 
@@ -150,7 +150,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             String[] celsStrings = new String[celsLang.length];
 
             while (!queue.isEmpty()){
-                Fld f = queue.remove(0);
+                final Fld f = queue.remove();
                 int type = fieldType(f);
                 if ( type==Gff.STRUCT ){
                     Strct struct = (Strct) f;

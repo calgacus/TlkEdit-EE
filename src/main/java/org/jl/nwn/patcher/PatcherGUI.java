@@ -9,7 +9,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -59,7 +59,7 @@ public class PatcherGUI extends JFrame {
 	final String PREFS_JOINPATCHES = "joinpatches";
 	final String PREFS_JOINEDPATCH = "joinedpatch";
 
-	final DefaultListModel patchListModel = new DefaultListModel();
+	final DefaultListModel<String> patchListModel = new DefaultListModel<>();
 	final JTextField joinedPatchName = new JTextField( prefs.get(PREFS_JOINEDPATCH, ""), 40 );
 
 	StdOutFrame sof = StdOutFrame.getInstance();
@@ -91,7 +91,6 @@ public class PatcherGUI extends JFrame {
 			prefs.getBoolean(PREFS_USEPATCHEROVERRIDE, false));
 	JTextField sourceDir = new JTextField(prefs.get(PREFS_PATCHEROVERRIDE, ""), 40);
 
-	JList joinpatches = new JList();
 	JTextField joinedpatch = new JTextField(40);
 
 	JTextField applypatch = new JTextField(prefs.get(PREFS_BUILDPATCH, ""), 40);
@@ -338,7 +337,7 @@ public class PatcherGUI extends JFrame {
 
 		int numjoinpatches = patchListModel.size();
 		for ( int i = 0; i < numjoinpatches; i++ )
-		 	prefs.put( PREFS_JOINPATCHES + i, patchListModel.get( i ).toString() );
+            prefs.put(PREFS_JOINPATCHES + i, patchListModel.get( i ) );
 		 prefs.putInt( PREFS_NUMJOINPATCHES, numjoinpatches );
 		 prefs.put( PREFS_JOINEDPATCH, joinedPatchName.getText() );
 
@@ -435,7 +434,7 @@ public class PatcherGUI extends JFrame {
 		for ( int i = 0; i < n; i++ )
 			patchListModel.addElement( prefs.get( PREFS_JOINPATCHES + i, "" ) );
 
-		final JList patchList = new JList( patchListModel );
+        final JList<String> patchList = new JList<>( patchListModel );
 		JPanel patchListPanel = new JPanel( new BorderLayout() );
 
 		final JToolBar tbar = new JToolBar(JToolBar.VERTICAL );
@@ -445,8 +444,8 @@ public class PatcherGUI extends JFrame {
 		Action add = new AbstractAction("add") {
 			JFileChooser fc = new JFileChooser();
 			{
-				if (patchListModel.size() > 0)
-					fc.setCurrentDirectory( new File( patchListModel.getElementAt(0).toString() ));
+				if (!patchListModel.isEmpty())
+                    fc.setCurrentDirectory( new File( patchListModel.getElementAt(0) ));
 			}
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -491,7 +490,7 @@ public class PatcherGUI extends JFrame {
 				int line = patchList.getSelectedIndex();
 				if (line != -1) {
 					patchListModel.remove(line);
-					if (patchListModel.size() > 0)
+                    if (!patchListModel.isEmpty())
 						patchList.setSelectedIndex(Math.max(line - 1, 0));
 				}
 			}
@@ -525,10 +524,10 @@ public class PatcherGUI extends JFrame {
 		Action joinPatches = new AbstractAction( "join" ){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				final Vector v = new Vector();
+                final ArrayList<String> v = new ArrayList<>();
 				for ( int i = 0; i < patchListModel.size(); i++ )
 					v.add( patchListModel.get( i ) );
-				if ( joinedPatchName.getText().length() == 0 ){
+                if (joinedPatchName.getText().isEmpty()) {
 					JOptionPane.showMessageDialog( p, "Must specify output dir", "", JOptionPane.ERROR_MESSAGE );
 					return;
 				}

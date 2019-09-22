@@ -21,10 +21,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -56,7 +54,7 @@ public class ErfFile extends AbstractRepository{
     private ErfType type;
     private int buildYear;
     private int buildDay;
-    private final Map<ResourceID, Object> resources = new TreeMap();
+    private final Map<ResourceID, Object> resources = new TreeMap<>();
     private Version nwnVersion;
 
     private static final String TMPFILEPREFIX = "erftmp_";
@@ -75,8 +73,7 @@ public class ErfFile extends AbstractRepository{
     //public static final ErfType SAV = new ErfType( "MOD ", "sav" );
     public static final ErfType ERF = new ErfType( "ERF ", "erf" );
     public static final ErfType MOD = new ErfType( "MOD ", "mod" );
-    private static final ErfType[] types = { HAK, MOD, ERF };
-    public static final List ERFTYPES = Collections.unmodifiableList( Arrays.asList( types ) );
+    public static final ErfType[] TYPES = { HAK, MOD, ERF };
 
     public static class ErfType{
         private final String typeString;
@@ -90,7 +87,7 @@ public class ErfFile extends AbstractRepository{
             return name;
         }
         public static ErfType forTypeString( String s ){
-            for (final ErfType type : types) {
+            for (final ErfType type : TYPES) {
                 if (type.typeString.equals(s)) {
                     return type;
                 }

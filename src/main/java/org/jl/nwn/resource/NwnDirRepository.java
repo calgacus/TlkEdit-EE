@@ -76,8 +76,8 @@ public class NwnDirRepository extends AbstractRepository {
 	}
 
 	@Override
-	public Set getResourceIDs(){
-		TreeSet s = new TreeSet();
+    public Set<ResourceID> getResourceIDs() {
+        final TreeSet<ResourceID> s = new TreeSet<>();
         for (final File file : dir.listFiles()) {
             if (file.isFile()) {
                 s.add(ResourceID.forFile(file));

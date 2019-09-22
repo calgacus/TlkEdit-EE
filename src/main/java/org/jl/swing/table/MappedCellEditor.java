@@ -87,8 +87,8 @@ public class MappedCellEditor extends AbstractCellEditor implements TableCellEdi
         public abstract Object computeKey( Object value, int row, int column );
     }
 
-    protected Map<Object, CellEditor> map = new HashMap<Object, CellEditor>();
-    protected Map<Object, Projection> projectionMap = new HashMap<Object, Projection>();
+    protected Map<Object, CellEditor> map = new HashMap<>();
+    protected Map<Object, Projection> projectionMap = new HashMap<>();
     protected KeyFunction keyFunction;
     protected CellEditor delegate;
 

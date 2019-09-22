@@ -134,7 +134,7 @@ public class GffStruct extends GffField<Integer> implements Iterable<GffField> {
 
     public Iterator<GffField> getDFIterator(){
         return new Iterator<GffField>(){
-            final Stack<Iterator> iterators = new Stack<>();
+            final Stack<Iterator<GffField>> iterators = new Stack<>();
             boolean first = true;
             {
                 iterators.push( iterator() );

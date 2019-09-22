@@ -45,11 +45,11 @@ public class TlkTool{
 	public static final int LANGUAGE_CHINESE_SIMPLIFIED = 130;
 	public static final int LANGUAGE_JAPANESE = 131;
 */
-	public static void writeTlkFile( List tlkList, File file ) throws IOException{
+	public static void writeTlkFile(List<TlkEntry> tlkList, File file) throws IOException{
 		writeTlkFile( tlkList, file, NwnLanguage.ENGLISH );
 	}
 
-	public static void writeTlkFile( List tlkList, File file, NwnLanguage lang ) throws IOException{
+	public static void writeTlkFile(List<TlkEntry> tlkList, File file, NwnLanguage lang) throws IOException{
 		( new TlkContent( tlkList, lang ) ).saveAs( file, Version.getDefaultVersion() );
 	}
 

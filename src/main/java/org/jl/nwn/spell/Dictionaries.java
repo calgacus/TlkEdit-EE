@@ -7,8 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 import java.util.Properties;
 import java.util.zip.ZipFile;
 
@@ -20,7 +19,7 @@ import org.jl.nwn.NwnLanguage;
  */
 public class Dictionaries {
 
-    static Map<NwnLanguage, SpellDictionary> dicts = new HashMap<NwnLanguage, SpellDictionary>();
+    static EnumMap<NwnLanguage, SpellDictionary> dicts = new EnumMap<>(NwnLanguage.class);
 
     static Properties props = new Properties();
 

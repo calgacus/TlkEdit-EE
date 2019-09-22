@@ -1,6 +1,6 @@
 package org.jl.swing.undo;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.event.UndoableEditListener;
@@ -18,7 +18,7 @@ public abstract class Mutator{
     private final MutatorUndoSupport undoSupport;
 
     protected class MutatorUndoSupport extends UndoableEditSupport{
-        private final List<Mutator> mutators = new LinkedList<Mutator>();
+        private final List<Mutator> mutators = new ArrayList<>();
         private int editState, editStateSaved;
 
         @Override protected CompoundEdit createCompoundEdit(){

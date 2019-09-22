@@ -22,7 +22,7 @@ public class TargaReaderSPI extends ImageReaderSpi{
         "image/x-targa"
     };
     static String readerClassName = "targaspi.TargaReader";
-    static Class[] inputTypes = new Class[]{ ImageInputStream.class };
+    static Class<?>[] inputTypes = { ImageInputStream.class };
     static String[] writerSpiNames = null;
     static boolean supportsStandardStreamMetadataFormat = false;
     static String nativeStreamMetadataFormatName = null;

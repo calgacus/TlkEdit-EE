@@ -30,10 +30,10 @@ import org.jl.nwn.Version;
 /**
  * tlk content = List of tlk entries + language ID
  */
-public class TlkContent {
+public class TlkContent implements Iterable<TlkEntry> {
 
     private NwnLanguage language;
-    private List<TlkEntry> tlkEntries = new ArrayList();
+    private List<TlkEntry> tlkEntries = new ArrayList<>();
 
     //"TLK "
     public final static byte[] TLKHEADER = new byte[]{ 0x54, 0x4c, 0x4b, 0x20 };
@@ -72,18 +72,19 @@ public class TlkContent {
     }
 
     public TlkEntry remove( int pos ){
-        return ( TlkEntry ) tlkEntries.remove( pos );
+        return tlkEntries.remove( pos );
     }
 
     public TlkEntry get( int pos ){
-        return ( TlkEntry ) tlkEntries.get( pos );
+        return tlkEntries.get( pos );
     }
 
     public int size(){
         return tlkEntries.size();
     }
 
-    public Iterator iterator(){
+    @Override
+    public Iterator<TlkEntry> iterator(){
         return tlkEntries.iterator();
     }
 
@@ -115,13 +116,12 @@ public class TlkContent {
             out.flush();
 
             int posFromStart = 0;
-            TlkEntry entry;
             int[] stringSizes = new int[ tlkEntries.size() ];
             fc.position( start );
             // write strings & store byte[] sizes
 
             for (int i = 0; i < tlkEntries.size(); i++) {
-                entry = (TlkEntry) tlkEntries.get(i);
+                final TlkEntry entry = tlkEntries.get(i);
                 byte[] bytes = entry.getString().getBytes(
                         language.getEncoding() );
                 stringSizes[i] = bytes.length;
@@ -133,7 +133,7 @@ public class TlkContent {
             out.flush();
             fc.position( headerSize );
             for (int i = 0; i < tlkEntries.size(); i++) {
-                entry = (TlkEntry) tlkEntries.get(i);
+                final TlkEntry entry = tlkEntries.get(i);
 
                 out.write(entry.getFlags());
                 out.write(zero, 0, 3);
@@ -247,7 +247,7 @@ public class TlkContent {
             //pm.setNote("reading tlk index");
         }
 
-        tlkEntries = new ArrayList( entries );
+        tlkEntries = new ArrayList<>( entries );
 
         int[] stringSizes = new int[entries];
         int maxStringSize = 0;

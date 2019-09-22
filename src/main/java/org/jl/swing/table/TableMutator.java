@@ -13,7 +13,7 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
 
     public interface ColumnMutable<ColumnData>{
         public ColumnData dropColumn( int index );
-        public void insertColumn(int position, String name, Class cClass, ColumnData data);
+        public void insertColumn(int position, String name, Class<?> cClass, ColumnData data);
         public void setColumnName( int index, String name );
     }
 
@@ -55,7 +55,7 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
     }
 
     public class DropColumnEdit extends ModelEdit{
-        Class cClass;
+        Class<?> cClass;
         String name;
         int pos;
         ColumnData data;
@@ -76,11 +76,11 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
     }
 
     public class InsertColumnEdit extends ModelEdit{
-        Class cClass;
+        Class<?> cClass;
         String name;
         int pos;
         ColumnData data;
-        public InsertColumnEdit(String pName, int pos, String cName, Class cClass, ColumnData data){
+        public InsertColumnEdit(String pName, int pos, String cName, Class<?> cClass, ColumnData data){
             super(pName);
             this.pos = pos;
             this.name = cName;

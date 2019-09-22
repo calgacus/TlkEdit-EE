@@ -17,7 +17,7 @@ import java.util.List;
 public class TwoDaTable {
     protected int[] columnWidth; // column width
     protected String[] columnHeaders;
-    protected List<String[]> rows = new ArrayList<String[]>();
+    protected List<String[]> rows = new ArrayList<>();
     protected String defaultString = null;
 
     protected File file = null;
@@ -120,7 +120,7 @@ public class TwoDaTable {
     public static String[] split2daLine(String line) {
         if (line.indexOf('"') != -1) { // damn !
             line = line.trim();
-            List<String> row = new ArrayList<String>();
+            final List<String> row = new ArrayList<>();
             int pos = 0;
             StringBuilder s = new StringBuilder();
             while (pos < line.length()) {

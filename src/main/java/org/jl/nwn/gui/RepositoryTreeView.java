@@ -67,16 +67,16 @@ public class RepositoryTreeView {
 
     protected static class Model extends AbstractTreeTableModel{
         private Set<ResourceID> resources;
-        private Object root;
+        private DefaultListNode<TypeNode> root;
         private NwnRepository rep;
 
         public Model(){
             super();
-            root = new DefaultListNode("<Empty>", Collections.EMPTY_LIST);
+            root = new DefaultListNode<>("<Empty>", Collections.EMPTY_LIST);
         }
 
         public void clear(){
-            root = new DefaultListNode("<Empty>", Collections.EMPTY_LIST);
+            root = new DefaultListNode<>("<Empty>", Collections.EMPTY_LIST);
             rep = null;
             modelSupport.fireNewRoot();
         }
@@ -87,13 +87,10 @@ public class RepositoryTreeView {
         }
 
         private void init(){
-            TreeSet<ResourceID> idsByType =
-                    new TreeSet<ResourceID>(ResourceID.TYPECOMPARATOR);
+            final TreeSet<ResourceID> idsByType = new TreeSet<>(ResourceID.TYPECOMPARATOR);
             idsByType.addAll(rep.getResourceIDs());
-            //root = new TypeNode( idsByType, ResourceID.TYPE_2DA );
 
-            List<TypeNode> list = new ArrayList<TypeNode>();
-            //for ( short type : ResourceID.type2extensionMap.keySet() ){
+            final List<TypeNode> list = new ArrayList<>();
             for ( String typeName : ResourceID.extension2typeMap.keySet() ){
                 short type = ResourceID.getTypeForExtension(typeName);
                 ResourceID id = new ResourceID( "", type );
@@ -102,7 +99,7 @@ public class RepositoryTreeView {
                     list.add(new TypeNode(idsByType, type));
                 }
             }
-            root = new DefaultListNode( "Resources", list );
+            root = new DefaultListNode<>( "Resources", list );
             modelSupport.fireNewRoot();
         }
 
@@ -130,7 +127,7 @@ public class RepositoryTreeView {
         }
 
         @Override
-        public void setValueAt(Object object, Object object0, int i) {
+        public void setValueAt(Object value, Object node, int column) {
         }
 
         @Override public String getColumnName(int c){
@@ -142,7 +139,7 @@ public class RepositoryTreeView {
             }
         }
 
-        @Override public Class getColumnClass(int c){
+        @Override public Class<?> getColumnClass(int c) {
             switch (c){
                 case 0 : return super.getColumnClass(c);
                 case 1 : return String.class;
@@ -165,16 +162,16 @@ public class RepositoryTreeView {
             return -1;
         }
 
-        @Override public Object getChild(java.lang.Object parent, int index){
+        @Override public Object getChild(Object parent, int index) {
             if ( parent instanceof ListNode ){
                 return ((ListNode)parent).getChild(index);
             }
             return null;
         }
 
-        @Override public int getIndexOfChild(Object arg0, Object arg1){
-            if ( arg0 instanceof ListNode ){
-                return ((ListNode)arg0).indexOf( arg1 );
+        @Override public int getIndexOfChild(Object parent, Object child) {
+            if ( parent instanceof ListNode ){
+                return ((ListNode)parent).indexOf( child );
             }
             return -1;
         }
@@ -195,14 +192,11 @@ public class RepositoryTreeView {
             this.type = type;
         }
 
-        @Override protected List<ResourceID> createList(){
-
-            ResourceID from = new ResourceID("", type);
-            ResourceID to = new ResourceID("", (short)(type+1));
-            SortedSet<ResourceID> ss = ids.subSet(from, to);
-            ArrayList children = new ArrayList<ResourceID>(ss.size());
-            children.addAll(ss);
-            return children;
+        @Override
+        protected List<ResourceID> createList(){
+            final ResourceID from = new ResourceID("", type);
+            final ResourceID to   = new ResourceID("", (short)(type+1));
+            return new ArrayList<>(ids.subSet(from, to));
         }
 
         @Override public int indexOf(ResourceID id){

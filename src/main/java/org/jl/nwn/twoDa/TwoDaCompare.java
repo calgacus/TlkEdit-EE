@@ -108,7 +108,7 @@ public class TwoDaCompare {
 
     public static class CompareFilter extends Filter {
 
-        protected List<Integer> rows = new ArrayList<Integer>();
+        protected List<Integer> rows = new ArrayList<>();
         protected TableModel tableB = null;
         protected boolean enabled = true;
 
@@ -195,7 +195,7 @@ public class TwoDaCompare {
         @Override
         protected void init() {
             if (rows == null) {
-                rows = new ArrayList<Integer>();
+                rows = new ArrayList<>();
             } else {
                 rows.clear();
             }

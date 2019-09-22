@@ -47,8 +47,8 @@ public class BmuPlayer implements Runnable {
         } catch (UnsupportedAudioFileException uafe) {
 
             try{
-                Class player = Class.forName("javazoom.jl.player.Player");
-                Constructor c = player.getConstructor(InputStream.class);
+                final Class<?> player = Class.forName("javazoom.jl.player.Player");
+                final Constructor<?> c = player.getConstructor(InputStream.class);
                 playerObject = c.newInstance(is);
             } catch (Exception e){
                 e.printStackTrace();

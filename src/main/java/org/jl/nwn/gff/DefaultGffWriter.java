@@ -8,8 +8,7 @@ package org.jl.nwn.gff;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.jl.nwn.Version;
 
@@ -130,7 +129,7 @@ public class DefaultGffWriter extends AbstractGffWriter<GffField, GffStruct, Gff
         long totalSize = 0;
         DefaultGffReader reader = new DefaultGffReader(Version.getDefaultVersion());
         DefaultGffWriter writer = new DefaultGffWriter(Version.getDefaultVersion());
-        List<File> errors = new LinkedList<File>();
+        final ArrayList<File> errors = new ArrayList<>();
         for ( String filename : args ){
 
             File file = new File(filename);

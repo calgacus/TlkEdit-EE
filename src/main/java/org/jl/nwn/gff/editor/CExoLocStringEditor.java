@@ -12,8 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -90,8 +91,8 @@ public class CExoLocStringEditor extends JPanel {
     JTable substringTable = new JTable(model);
 
     JDialog newSubStringDialog = new JDialog(){
-        JComboBox cbGender = new JComboBox( new String[]{"masculine / neutral", "feminine"} );
-        JComboBox cbLanguage = new JComboBox( NwnLanguage.LANGUAGES.toArray() );
+        final JComboBox<String> cbGender = new JComboBox<>( new String[]{"masculine / neutral", "feminine"} );
+        final JComboBox<NwnLanguage> cbLanguage = new JComboBox<>(NwnLanguage.LANGUAGES);
         ItemListener il = new ItemListener(){
             @Override
             public void itemStateChanged( ItemEvent e ){
@@ -258,7 +259,7 @@ public class CExoLocStringEditor extends JPanel {
         fireStateChanged();
     }
 
-    protected List changeListeners = new Vector();
+    protected List<ChangeListener> changeListeners = Collections.synchronizedList(new ArrayList<>());
     public void addChangeListener( ChangeListener cl ){
         if ( !changeListeners.contains( cl ) )
             changeListeners.add( cl );
@@ -270,8 +271,8 @@ public class CExoLocStringEditor extends JPanel {
 
     protected void fireStateChanged(){
         final ChangeEvent e = new ChangeEvent(locString);
-        for (final Object l : changeListeners) {
-            ((ChangeListener)l).stateChanged(e);
+        for (final ChangeListener l : changeListeners) {
+            l.stateChanged(e);
         }
     }
 }

@@ -5,7 +5,7 @@ package org.jl.nwn.gff.editor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -17,7 +17,6 @@ import javax.swing.tree.TreePath;
 
 import org.jl.nwn.Version;
 import org.jl.nwn.gff.DefaultGffReader;
-import org.jl.nwn.gff.Gff;
 import org.jl.nwn.gff.GffField;
 import org.jl.nwn.gff.GffList;
 import org.jl.nwn.gff.GffStruct;
@@ -28,7 +27,7 @@ public class GffTreeModel implements TreeModel {
 
 	protected GffStruct root;
 
-	protected List listeners = new LinkedList();
+	protected List<TreeModelListener> listeners = new ArrayList<>();
 
 	public GffTreeModel( GffStruct s ){
 		root = s;
@@ -38,7 +37,7 @@ public class GffTreeModel implements TreeModel {
 	 * @see javax.swing.tree.TreeModel#getRoot()
 	 */
 	@Override
-	public Object getRoot() {
+	public GffStruct getRoot() {
 		return root;
 	}
 
@@ -46,12 +45,12 @@ public class GffTreeModel implements TreeModel {
 	 * @see javax.swing.tree.TreeModel#getChild(java.lang.Object, int)
 	 */
 	@Override
-	public Object getChild(Object parent, int index) {
-		GffField f = (GffField) parent;
-		if ( f.getType() == Gff.LIST )
-			return ((GffList)f).get(index);
-		else
-			return ((GffStruct)f).getChild(index);
+	public GffField getChild(Object parent, int index) {
+        final GffField f = (GffField) parent;
+        if (f instanceof GffList) {
+            return ((GffList)f).get(index);
+        }
+        return f.getChild(index);
 	}
 
 	/* (non-Javadoc)
@@ -59,11 +58,8 @@ public class GffTreeModel implements TreeModel {
 	 */
 	@Override
 	public int getChildCount(Object parent) {
-		GffField f = (GffField) parent;
-		if ( f.getType() == Gff.LIST )
-			return ((GffList)f).getSize();
-		else
-			return ((GffStruct)f).getSize();
+        final GffField f = (GffField) parent;
+        return f.getChildCount();
 	}
 
 	/* (non-Javadoc)
@@ -88,11 +84,8 @@ public class GffTreeModel implements TreeModel {
 	 */
 	@Override
 	public int getIndexOfChild(Object parent, Object child) {
-		GffField f = (GffField) parent;
-		if ( f.getType() == Gff.LIST )
-			return ((GffList)f).indexOf(child);
-		else
-			return ((GffStruct)f).indexOf(child);
+        final GffField f = (GffField) parent;
+        return f.getChildIndex((GffField)child);
 	}
 
 	/* (non-Javadoc)
@@ -112,7 +105,7 @@ public class GffTreeModel implements TreeModel {
 	}
 
 	public static void main( String[] args ) throws IOException{
-		GffStruct s = (GffStruct)(new DefaultGffReader(Version.getDefaultVersion()).load(new File("/usr/local/neverwinter/localvault/stormofblaark.bic"))).getTopLevelStruct();
+        final GffStruct s = (new DefaultGffReader(Version.getDefaultVersion()).load(new File("/usr/local/neverwinter/localvault/stormofblaark.bic"))).getTopLevelStruct();
 		TreeModel m = new GffTreeModel(s);
 		JTree tree = new JTree(m);
 		JFrame f = new JFrame("test");
@@ -121,5 +114,4 @@ public class GffTreeModel implements TreeModel {
 		f.pack();
 		f.setVisible(true);
 	}
-
 }

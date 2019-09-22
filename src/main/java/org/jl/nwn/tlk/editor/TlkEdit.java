@@ -798,7 +798,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 fc.setSelectedFile(f);
                 if (fc.showSaveDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        TreeSet ts = new TreeSet();
+                        final TreeSet<Integer> ts = new TreeSet<>();
                         for (int i = 0, n = model.size(); i < n; i++) {
                             if (model.getEntryModified(i)) {
                                 ts.add(i);
@@ -806,8 +806,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                         }
                         int[] newDiffs = new int[ts.size()];
                         int itCount = 0;
-                        for (Iterator it = ts.iterator(); it.hasNext(); itCount++) {
-                            newDiffs[itCount] = ((Integer) it.next()).intValue();
+                        for (final Iterator<Integer> it = ts.iterator(); it.hasNext(); itCount++) {
+                            newDiffs[itCount] = it.next().intValue();
                         }
                         tlkContent.writeDiff(fc.getSelectedFile(), newDiffs);
                         uPrefs.put("lastDiff", fc.getSelectedFile().getAbsolutePath());
@@ -860,8 +860,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                             update();
                         }
                     };
-                    JList list = new JList();
-                    DefaultListModel listModel = new DefaultListModel();
+                    final JList<Integer> list = new JList<>();
+                    final DefaultListModel<Integer> listModel = new DefaultListModel<>();
                     {
                         tlkTable.getModel().addTableModelListener(tml);
                         setTitle(uid.getString("TlkEdit.diff_overviewDialogTitle")); //$NON-NLS-1$
@@ -876,9 +876,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                             @Override
                             public void valueChanged(ListSelectionEvent e) {
                                 if (!e.getValueIsAdjusting()) {
-                                    Integer r = (Integer) list.getModel().getElementAt(
-                                            list.getSelectedIndex());
-                                    //System.out.println( r );
+                                    final Integer r = list.getModel().getElementAt(list.getSelectedIndex());
                                     tlkTable.changeSelection(r.intValue(), 1, false, false);
                                 }
                             }
@@ -1001,7 +999,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 //listMutator.remove(indexes);
                 rowMutator.new RemoveRowsEdit("Resize", indexes).invoke();
             } else {
-                List<TlkEntry> entries = new ArrayList<TlkEntry>(newSize - model.size());
+                final List<TlkEntry> entries = new ArrayList<>(newSize - model.size());
                 for (int i = 0; i < newSize - model.size(); i++) {
                     entries.add(new EditorTlkEntry());
                 }
@@ -1325,8 +1323,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             JTable table = (JTable) comp;
             try {
                 if (t.isDataFlavorSupported(flavorTlkList)) {
-                    List<TlkEntry> entries = (List<TlkEntry>) t.getTransferData(flavorTlkList);
-                    List<TlkEntry> clones = new ArrayList<TlkEntry>(entries.size());
+                    final List<TlkEntry> entries = (List<TlkEntry>) t.getTransferData(flavorTlkList);
+                    final List<TlkEntry> clones = new ArrayList<>(entries.size());
                     for (TlkEntry e : entries) {
                         clones.add(e.clone());
                     }

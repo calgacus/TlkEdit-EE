@@ -70,7 +70,7 @@ public abstract class KeyFile {
         }
     }
 
-    public abstract Iterator getResourceIDs();
+    public abstract Iterator<ResourceID> getResourceIDs();
 
     public abstract Set<ResourceID> getResourceIDSet();
 

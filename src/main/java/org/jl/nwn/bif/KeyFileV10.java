@@ -99,7 +99,7 @@ public class KeyFileV10 extends KeyFile{
         }
 
         @Override
-        public Iterator getResourceIDs() {
+        public Iterator<ResourceID> getResourceIDs() {
             return entryMap.keySet().iterator();
         }
 

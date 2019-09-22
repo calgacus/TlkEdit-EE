@@ -48,7 +48,7 @@ public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
     public GffTreeCellRenderer( TreeTableModel ttm ){
         super();
         this.ttm = ttm;
-        typeIconMap = new HashMap<Byte,Icon>();
+        typeIconMap = new HashMap<>();
         typeIconMap.put(Gff.STRUCT, loadIcon(uid.getString("gffstruct.icon")));
         typeIconMap.put(Gff.LIST, loadIcon(uid.getString("gfflist.icon")));
         Icon voidIcon = loadIcon(uid.getString("gffvoid.icon"));
@@ -70,7 +70,7 @@ public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
         typeIconMap.put(Gff.CEXOSTRING,stringIcon);
         typeIconMap.put(Gff.RESREF,stringIcon);
 
-        languageIconMap = new HashMap<NwnLanguage, Icon>();
+        languageIconMap = new HashMap<>();
         languageIconMap.put(NwnLanguage.ENGLISH, loadIcon(uid.getString("flag.canada")));
         languageIconMap.put(NwnLanguage.GERMAN, loadIcon(uid.getString("flag.germany")));
         languageIconMap.put(NwnLanguage.FRENCH, loadIcon(uid.getString("flag.france")));

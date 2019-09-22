@@ -21,12 +21,10 @@ import org.jl.nwn.erf.ErfFile;
  */
 public final class Repositories {
 
-    private final HashMap<Descriptor, NwnRepository> repositories;
+    private final HashMap<Descriptor, NwnRepository> repositories = new HashMap<>();
 
     /** Creates a new instance of Repositories */
-    private Repositories() {
-        repositories = new HashMap<Descriptor, NwnRepository>();
-    }
+    private Repositories() {}
 
     private static class InstanceHolder {
 
@@ -160,7 +158,7 @@ public final class Repositories {
         }
     }
 
-    protected static Map<NwnRepository, File> tmpDirMap = new HashMap<NwnRepository, File>();
+    protected static Map<NwnRepository, File> tmpDirMap = new HashMap<>();
 
     public static File extractAsTempFile(NwnRepository rep, ResourceID id) throws IOException {
         File dir = tmpDirMap.get(rep);

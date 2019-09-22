@@ -63,7 +63,7 @@ public class RepositoryTableView {
     }
 
     public List<ResourceID> getSelectedResources(){
-        List<ResourceID> r = new ArrayList<ResourceID>();
+        final List<ResourceID> r = new ArrayList<>();
         int[] s = table.getSelectedRows();
         RepositoryTableModel model = (RepositoryTableModel) table.getModel();
         for (int i : s){
@@ -75,7 +75,7 @@ public class RepositoryTableView {
     public static class RepositoryTableModel extends AbstractTableModel {
 
         protected NwnRepository repository;
-        protected List<ResourceID> resources = new ArrayList<ResourceID>();
+        protected List<ResourceID> resources = new ArrayList<>();
 
         public RepositoryTableModel(){
         }
@@ -87,12 +87,12 @@ public class RepositoryTableView {
 
         public void clear(){
             repository = null;
-            resources = new ArrayList<ResourceID>();
+            resources = new ArrayList<>();
             fireTableDataChanged();
         }
 
         private void init(){
-            resources = new ArrayList<ResourceID>();
+            resources = new ArrayList<>();
             for (ResourceID id : repository){
                 resources.add(id);
             }

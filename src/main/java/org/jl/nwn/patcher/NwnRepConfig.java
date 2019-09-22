@@ -14,7 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -298,7 +298,7 @@ public class NwnRepConfig {
 
 	public NwnRepository getNwnRepository() throws IOException {
 		store();
-		Vector reps = new Vector();
+        final ArrayList<NwnRepository> reps = new ArrayList<>();
 		File nwnhome = new File(prefs.get(PREFS_NWNHOME, ""));
 		if (prefs.getBoolean(PREFS_USEHAK, false)){
 			int haknum = prefs.getInt( PREFS_HAKNUM, 0 );
@@ -327,10 +327,10 @@ public class NwnRepConfig {
 		}
 		NwnRepository r = null;
 		if (reps.size() > 0)
-			r = (NwnRepository) reps.get(0);
+            r = reps.get(0);
 		if (reps.size() > 1)
 			for (int i = 1; i < reps.size(); i++)
-				r = new NwnChainRepository(r, (NwnRepository) reps.get(i));
+                r = new NwnChainRepository(r, reps.get(i));
 		return r;
 	}
 
@@ -346,4 +346,3 @@ public class NwnRepConfig {
 		f.setVisible(true);
 	}
 }
-

@@ -84,7 +84,7 @@ public enum NwnLanguage{
     }
 
     public String getEncoding(){
-        return encodings.get(this);
+        return ENCODINGS.get(this);
     }
 
     @Override
@@ -120,10 +120,10 @@ public enum NwnLanguage{
     }
 
     public static void setEncoding(NwnLanguage l, String enc){
-        encodings.put(l, enc);
+        ENCODINGS.put(l, enc);
     }
 
-    private static EnumMap<NwnLanguage, String> encodings;
+    private static EnumMap<NwnLanguage, String> ENCODINGS;
 
     public final static Set<NwnLanguage> NWN1_LANGUAGES = Collections.unmodifiableSet(
             EnumSet.range(NwnLanguage.ENGLISH, NwnLanguage.JAPANESE));
@@ -134,23 +134,23 @@ public enum NwnLanguage{
     public final static Set<NwnLanguage> WITCHER_LANGUAGES = Collections.unmodifiableSet(
             EnumSet.range(NwnLanguage.WI_DEBUG, NwnLanguage.WI_CHIN_SIMP));
 
-    public final static List<NwnLanguage> LANGUAGES = Arrays.asList(NWN1_LANGUAGES.toArray(new NwnLanguage[0]));
+    public final static NwnLanguage[] LANGUAGES = NWN1_LANGUAGES.toArray(new NwnLanguage[NWN1_LANGUAGES.size()]);
 
     static{
-        encodings = new EnumMap<NwnLanguage, String>(NwnLanguage.class);
-        encodings.put( ENGLISH, "windows-1252" );
-        encodings.put( FRENCH, "windows-1252" );
-        encodings.put( GERMAN, "windows-1252" );
-        encodings.put( ITALIAN, "windows-1252" );
-        encodings.put( SPANISH, "windows-1252" );
-        encodings.put( POLISH, "windows-1250" );
-        encodings.put( KOREAN, "MS949" );
-        encodings.put( CHIN_TRAD, "MS950" );
-        encodings.put( CHIN_SIMP, "MS936" );
-        encodings.put( JAPANESE, "MS932" );
+        ENCODINGS = new EnumMap<>(NwnLanguage.class);
+        ENCODINGS.put( ENGLISH, "windows-1252" );
+        ENCODINGS.put( FRENCH, "windows-1252" );
+        ENCODINGS.put( GERMAN, "windows-1252" );
+        ENCODINGS.put( ITALIAN, "windows-1252" );
+        ENCODINGS.put( SPANISH, "windows-1252" );
+        ENCODINGS.put( POLISH, "windows-1250" );
+        ENCODINGS.put( KOREAN, "MS949" );
+        ENCODINGS.put( CHIN_TRAD, "MS950" );
+        ENCODINGS.put( CHIN_SIMP, "MS936" );
+        ENCODINGS.put( JAPANESE, "MS932" );
 
         for (NwnLanguage l : NWN2_LANGUAGES )
-            encodings.put( l, "UTF-8" );
+            ENCODINGS.put( l, "UTF-8" );
         /*
         encodings.put( WI_DEBUG, "windows-1252" );
         encodings.put( WI_ENGLISH, "windows-1252" );
@@ -175,7 +175,7 @@ public enum NwnLanguage{
         // languages.2da lists different codepages, however the tlk files in the
         // game seem to use UTF-8
         for (NwnLanguage l : WITCHER_LANGUAGES )
-            encodings.put( l, "UTF-8" );
+            ENCODINGS.put( l, "UTF-8" );
 
 
 
@@ -188,7 +188,7 @@ public enum NwnLanguage{
                     final Version v = Version.valueOf(triple[0]);
                     NwnLanguage l = find( v, Integer.parseInt(triple[1]) );
                     String encoding = triple[2];
-                    encodings.put(l, encoding);
+                    ENCODINGS.put(l, encoding);
                     System.out.printf("nwnlanguage.java encoding for %s (%s) set to %s\n",
                             l.getName(), v, encoding);
                 }

@@ -38,13 +38,13 @@ class NewNodeDialog {
     JPanel newNodeInListPanel = new JPanel();
     JTextField txtIndex = new JTextField(16);
     JTextField txtLabel = new JTextField(16);
-    JComboBox cbType = new JComboBox( Gff.TYPENAMES.toArray() );
+    final JComboBox<String> cbType = new JComboBox<>(Gff.TYPENAMES);
     JTextField txtStructID = new JTextField(16);
     JSpinner spIndex = new JSpinner( new SpinnerNumberModel() );
     String newNodeOK = "OK";
     JPanel pNewSubstring;
-    JComboBox cbLang = new JComboBox( NwnLanguage.LANGUAGES.toArray() );
-    JComboBox cbGender = new JComboBox( new String[]{ "masculine / neutral", "feminine" } );
+    final JComboBox<NwnLanguage> cbLang = new JComboBox<>(NwnLanguage.LANGUAGES);
+    final JComboBox<String> cbGender = new JComboBox<>(new String[]{ "masculine / neutral", "feminine" });
 
     /** Creates a new instance of NewNodeDialog */
     public NewNodeDialog( GffEditX gffEd, MessageSourceSupport msgSup ){

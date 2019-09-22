@@ -12,7 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -31,13 +30,13 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
 
     protected Version nwnVersion;
 
-    private final List<Fld> fieldList = new ArrayList<Fld>();
-    private final List<Integer> listIndices= new LinkedList(); // indices of fields that are lists
-    private final List<Strct> structList = new ArrayList<Strct>();
+    private final List<Fld> fieldList = new ArrayList<>();
+    private final List<Integer> listIndices= new ArrayList<>(); // indices of fields that are lists
+    private final List<Strct> structList = new ArrayList<>();
 
-    private final List<String> labelList = new ArrayList<String>();
+    private final List<String> labelList = new ArrayList<>();
 
-    private HashMap<Integer, Integer> dataPointers = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> dataPointers = new HashMap<>();
 
     // the file type string is always in upper case with length 4
     private String fileTypeString = "GFF ";
@@ -61,11 +60,11 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
     private int listIndicesCount = 0;
 
     final private byte[] buf = new byte[1024]; // max length of a CExoString
-        /*
-         * readField(int) will put struct fields in this map ( key = struct array position )
-         * readStruct(int) will then use objects from this map
-         * */
-    private final TreeMap<Integer, Strct> namedStructs = new TreeMap<Integer, Strct>();
+    /*
+     * readField(int) will put struct fields in this map ( key = struct array position )
+     * readStruct(int) will then use objects from this map
+     */
+    private final TreeMap<Integer, Strct> namedStructs = new TreeMap<>();
 
     /**
         @deprecated unsafe : relies on a correct default version.

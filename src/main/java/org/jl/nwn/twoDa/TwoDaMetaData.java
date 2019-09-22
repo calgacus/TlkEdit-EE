@@ -11,9 +11,8 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.HashSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -30,7 +29,7 @@ public class TwoDaMetaData{
     /** Map containing all loaded table name<->meta data mapping. */
     private static TreeMap<String, TwoDaMetaData> metaDataMap = new TreeMap<>();
 
-    private static final Set blockedEditors = new TreeSet();
+    private static final HashSet<String> blockedEditors = new HashSet<>();
 
     private static String metaDataPrefix = "meta/";
 
@@ -46,7 +45,7 @@ public class TwoDaMetaData{
         return map.get( columnLabel );
     }
 
-    public static boolean useEditorClass( Class c ){
+    public static boolean useEditorClass( Class<?> c ){
         return !blockedEditors.contains( c.getName() );
     }
 
@@ -122,8 +121,8 @@ public class TwoDaMetaData{
                         System.out.println( "missing 'class' attribute on 'editor' element" );
                         continue;
                     }
-                    Class editorClass = Class.forName( attrClass.getNodeValue() );
-                    Constructor cons = editorClass.getConstructor( new Class[]{Element.class} );
+                    final Class<?> editorClass = Class.forName( attrClass.getNodeValue() );
+                    final Constructor<?> cons = editorClass.getConstructor( new Class[]{Element.class} );
                     cMeta.editor = (TableCellEditor) cons.newInstance( new Object[]{ (Element)n } );
 
                     if ( n.getAttributes().getNamedItem( "use" ) != null ){
@@ -134,8 +133,8 @@ public class TwoDaMetaData{
                 if ( list.getLength() > 0 ){
                     Node n = list.item(0);
                     System.out.println( "setting up renderer for column : " + columnLabel );
-                    Class editorClass = Class.forName( n.getAttributes().getNamedItem( "class" ).getNodeValue() );
-                    Constructor cons = editorClass.getConstructor( new Class[]{Element.class} );
+                    final Class<?> editorClass = Class.forName( n.getAttributes().getNamedItem( "class" ).getNodeValue() );
+                    final Constructor<?> cons = editorClass.getConstructor( new Class[]{Element.class} );
                     cMeta.renderer = (TableCellRenderer) cons.newInstance( new Object[]{ (Element)n } );
                 }
                 data.put( columnLabel, cMeta );

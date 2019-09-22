@@ -20,9 +20,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -259,7 +259,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             mutator.removeUndoableEditListener(undoManager);
         undoManager.discardAllEdits();
 
-        mutator = new TableMutator<String[], String[]>(model, mappedLsl);
+        mutator = new TableMutator<>(model, mappedLsl);
         mutator.addUndoableEditListener(undoManager);
         mutator.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -863,7 +863,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         public void actionPerformed(ActionEvent e) {
             int[] selection = table.getSelectedRows();
             if (selection.length > 0) {
-                List rowBuffer = new Vector();
+                final List<String[]> rowBuffer = new ArrayList<>();
                 String[] row;
                 String value;
                 final StringBuilder sb = new StringBuilder();
@@ -1071,7 +1071,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         }
 
         @Override
-        public Class getColumnClass(int c) {
+        public Class<?> getColumnClass(int c) {
             return String.class;
         }
 
@@ -1158,7 +1158,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         }
 
         @Override
-        public void insertColumn(int columnNumber, String columnHeader, Class cClass, String[] values) {
+        public void insertColumn(int columnNumber, String columnHeader, Class<?> cClass, String[] values) {
             twoDa.insertColumn(columnNumber, columnHeader, values[0]);
             for (int i = 0; i < twoDa.getRowCount(); i++) {
                 twoDa.setValueAt(values[i], i, columnNumber);
