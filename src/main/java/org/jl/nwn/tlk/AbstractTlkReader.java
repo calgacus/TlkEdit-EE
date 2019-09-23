@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 import javax.swing.ProgressMonitor;
+
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
 
@@ -20,20 +21,18 @@ import org.jl.nwn.Version;
  * a builder pattern.
  */
 public abstract class AbstractTlkReader<TlkTable>{
-    
-    //"TLK "
-    private final static byte[] TLKHEADER =
-            new byte[]{ 0x54, 0x4c, 0x4b, 0x20 };
-    //"V3.0"
-    private final static byte[] TLKVERSION =
-            new byte[]{ 0x56, 0x33, 0x2e, 0x30 };
+
+    /** {@code "TLK "}. */
+    private final static byte[] TLKHEADER  = { 0x54, 0x4c, 0x4b, 0x20 };
+    /** {@code "V3.0"}. */
+    private final static byte[] TLKVERSION = { 0x56, 0x33, 0x2e, 0x30 };
     /**
      * Tlk file version supported by this class : {@value}.
      */
     public final static String TLKHEADERSTRING = "TLK V3.0";
-    
-    private Version nwnVersion;
-    
+
+    private final Version nwnVersion;
+
     /** Creates a new instance of AbstractTlkReader
      * @param nwnVersion version of tlk files to be read by this object,
      *        determines the charset used to decode strings.
@@ -41,11 +40,11 @@ public abstract class AbstractTlkReader<TlkTable>{
     public AbstractTlkReader( Version nwnVersion ){
         this.nwnVersion = nwnVersion;
     }
-    
+
     public Version getVersion(){
         return nwnVersion;
     }
-    
+
     /**
      * Convenience method for {@link #load(InputStream, ProgressMonitor)}.
      */
@@ -62,7 +61,7 @@ public abstract class AbstractTlkReader<TlkTable>{
             if ( fis != null ) fis.close();
         }
     }
-    
+
     /**
      * Loads a tlk file through an InputStream. Will first call
      * {@link #createTlk} to create a new Talk Table object and then call
@@ -79,7 +78,7 @@ public abstract class AbstractTlkReader<TlkTable>{
         ByteBuffer mbb = ByteBuffer.wrap( indexEntryBytes );
         mbb.order( ByteOrder.LITTLE_ENDIAN );
         is.read( indexEntryBytes, 0, 20 );
-        
+
         for ( int i = 0; i < 4; i++ ){
             if ( indexEntryBytes[i] != TLKHEADER[i] ){
                 System.err.println("not a tlk file !");
@@ -94,33 +93,33 @@ public abstract class AbstractTlkReader<TlkTable>{
                 throw new IllegalArgumentException("wrong tlk file version");
             }
         }
-        
+
         mbb.position(8);
         NwnLanguage language = NwnLanguage.find( getVersion(), mbb.getInt() );
         //System.out.println( "TlkContent : " + language );
         int entries = mbb.getInt();
         TlkTable tlk = createTlk(entries, language, nwnVersion);
-        
+
         int stringDataStart = mbb.getInt();
-        
+
         if ( pm != null ){
             pm.setMinimum( 0 );
             pm.setMaximum( entries );
             //pm.setNote("reading tlk index");
         }
-        
+
         int[] stringSizes = new int[entries];
-        
+
         byte[] flags = new byte[entries];
         float[] sndlength = new float[entries];
         String[] resrefs = new String[entries];
-        
+
         int maxStringSize = 0;
-        
+
         // reading index entries
         for ( int i = 0; i < entries; i++ ){
             is.read( indexEntryBytes );
-            
+
             flags[i] = indexEntryBytes[0];
             if ( indexEntryBytes[4] != 0 )
                 resrefs[i] = new String( indexEntryBytes, 4, 16 ).trim();
@@ -131,7 +130,7 @@ public abstract class AbstractTlkReader<TlkTable>{
                 stringSize :  maxStringSize;
             sndlength[i] = mbb.getFloat();
         }
-        
+
         int skip = stringDataStart - ( 0x14 + (40*entries) );
         if ( skip != 0 ){
             System.out.println(
@@ -140,19 +139,19 @@ public abstract class AbstractTlkReader<TlkTable>{
             if ( skip > 0 )
                 is.skip(skip);
         }
-        
+
         // read string data
         byte[] strBuf = new byte[maxStringSize];
         if ( pm != null ){
             //pm.setNote("reading strings");
         }
-        
+
         Charset charset = Charset.forName(language.getEncoding());
         CharsetDecoder decoder = charset.newDecoder();
         CharBuffer cbuf = CharBuffer.allocate(
                 (int)Math.ceil(maxStringSize * decoder.maxCharsPerByte()));
         ByteBuffer bb = ByteBuffer.wrap(strBuf);
-        
+
         for ( int i = 0; i < entries; i++ ){
             is.read( strBuf, 0, stringSizes[i] );
             bb.rewind();
@@ -173,7 +172,7 @@ public abstract class AbstractTlkReader<TlkTable>{
                     resrefs[i],
                     sndlength[i],
                     s );
-            
+
             if ( pm!=null ){
                 if ( pm.isCanceled() )
                     break;
@@ -185,7 +184,7 @@ public abstract class AbstractTlkReader<TlkTable>{
         is.close();
         return tlk;
     }
-    
+
     /**
      * Called to create new Talk Table object.
      * @param size number of entries in the tlk file content being loaded
@@ -197,9 +196,9 @@ public abstract class AbstractTlkReader<TlkTable>{
             int size,
             NwnLanguage lang,
             Version nwnVersion );
-    
+
     /**
-     * Called to create and add a new Talk Table entry, will be called by 
+     * Called to create and add a new Talk Table entry, will be called by
      * {@code AbstractTlkReader.load} strictly in the order in which the entries
      * are found in the input file/stream.
      * @param tlk Talk Table object to which the new entry should be added

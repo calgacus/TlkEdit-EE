@@ -1,4 +1,5 @@
 package org.jl.nwn.patcher;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -6,8 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -49,22 +51,22 @@ public class PatcherGUI extends JFrame {
 	private static final String PREFS_USEPATCHEROVERRIDE = "usesourcedir ";
 	private static final String PREFS_PATCHEROVERRIDE =  "sourcedir";
 	private static final String PREFS_BUILDPATCH =  "applypatch";
-	
+
 	private static final String PREFS_HAKMOVE =  "hakmove";
 	private static final String PREFS_HAKNAME =  "hakname";
-	
+
 	final String PREFS_NUMJOINPATCHES = "numjoinpatches";
 	final String PREFS_JOINPATCHES = "joinpatches";
 	final String PREFS_JOINEDPATCH = "joinedpatch";
-		
-	final DefaultListModel patchListModel = new DefaultListModel();
+
+	final DefaultListModel<String> patchListModel = new DefaultListModel<>();
 	final JTextField joinedPatchName = new JTextField( prefs.get(PREFS_JOINEDPATCH, ""), 40 );
-	
+
 	StdOutFrame sof = StdOutFrame.getInstance();
-	
-	private static Preferences prefs =
+
+	private static final Preferences prefs =
 		Preferences.userNodeForPackage(PatcherGUI.class);
-		
+
 	private NwnRepConfig repConf = new NwnRepConfig( prefs );
 
 	JTextField sourceTlk = new JTextField(prefs.get(PREFS_SOURCETLK, ""), 40);
@@ -78,7 +80,7 @@ public class PatcherGUI extends JFrame {
 
 	JCheckBox repackageSourcehak =
 		new JCheckBox("repackage first source hak", prefs.getBoolean(PREFS_REPACKAGEHAK, false));
-	
+
 	JCheckBox moveHakToHakDir =
 		new JCheckBox("move hak to nwn hak dir", prefs.getBoolean(PREFS_HAKMOVE, false));
 	JTextField hakName = new JTextField(prefs.get(PREFS_HAKNAME, ""), 40);
@@ -89,7 +91,6 @@ public class PatcherGUI extends JFrame {
 			prefs.getBoolean(PREFS_USEPATCHEROVERRIDE, false));
 	JTextField sourceDir = new JTextField(prefs.get(PREFS_PATCHEROVERRIDE, ""), 40);
 
-	JList joinpatches = new JList();
 	JTextField joinedpatch = new JTextField(40);
 
 	JTextField applypatch = new JTextField(prefs.get(PREFS_BUILDPATCH, ""), 40);
@@ -99,13 +100,14 @@ public class PatcherGUI extends JFrame {
 		//getContentPane().setLayout(	new BoxLayout( this, BoxLayout.Y_AXIS ) );
 	 	//setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
 				savePreferences();
 				System.exit(0);
 			}
 		});
-		
+
 		JPanel c1 = new JPanel( new GridLayout( 0, 1 ) );
 		JPanel c2 = new JPanel( new GridLayout( 0, 1 ) );
 		JPanel c3 = new JPanel( new GridLayout( 0, 1 ) );
@@ -113,6 +115,7 @@ public class PatcherGUI extends JFrame {
 		//		tlk source textfield + selector
 		Action selectSourceTlk = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser( repConf.getNwnHome() );
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setMultiSelectionEnabled(false);
 				if (sourceTlk.getText() != "")
@@ -124,14 +127,14 @@ public class PatcherGUI extends JFrame {
 			}
 		};
 		JPanel sourceTlkPanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
-		
+
 		Box sourceTlkBox = new Box( BoxLayout.X_AXIS );
 		sourceTlkBox.add( new JLabel("source TLK file ") );
 		sourceTlkBox.add( isUserTlk );
-				
+
 		//c1.add(new JLabel("source TLK file "));
 		c1.add( sourceTlkBox );
-		
+
 		c2.add(sourceTlk);
 		sourceTlk.setEditable( false );
 		c3.add(new JButton(selectSourceTlk));
@@ -139,6 +142,7 @@ public class PatcherGUI extends JFrame {
 		//		tlk output textfield + selector
 		Action selectoutputTlk = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser( repConf.getNwnHome() );
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setMultiSelectionEnabled(false);
 				if (outputTlk.getText() != "")
@@ -152,6 +156,7 @@ public class PatcherGUI extends JFrame {
 		//JPanel outputTlkPanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
 		Box outputTlkPanel = new Box( BoxLayout.X_AXIS );
 		useOutputTlk.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 				outputTlk.setEnabled(useOutputTlk.isSelected());
 			}
@@ -175,6 +180,7 @@ public class PatcherGUI extends JFrame {
 				fc.setMultiSelectionEnabled(false);
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			}
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (sourceDir.getText() != "")
 					fc.setCurrentDirectory(new File(sourceDir.getText()));
@@ -186,6 +192,7 @@ public class PatcherGUI extends JFrame {
 		};
 		sourceDir.setEditable( false );
 		useSourceDir.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 				sourceDir.setEnabled(useSourceDir.isSelected());
 			}
@@ -199,6 +206,7 @@ public class PatcherGUI extends JFrame {
 		JPanel buildPatchPanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
 		Action selectapplypatch = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser();
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setMultiSelectionEnabled(false);
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -216,16 +224,18 @@ public class PatcherGUI extends JFrame {
 		c3.add(new JButton(selectapplypatch));
 
 		Action buildPatch = new AbstractAction("build") {
+			@Override
 			public void actionPerformed(ActionEvent e){
 				sof.setVisible( true );
 				Thread buildThread = new Thread(){
+				@Override
 					public void run() {
 						build();
-						
+
 						//XXX things get messy down here
 						File[] haks = repConf.getHakList();
 						File outputHakFile = null;
-						File patchDir = new File( applypatch.getText() );							
+						File patchDir = new File( applypatch.getText() );
 						if ( repackageSourcehak.isSelected() && haks.length > 0 )
 							try {
 								File hakOutputDir = Patcher.getOutputHak( new File( applypatch.getText() ) ).getParentFile();
@@ -235,12 +245,12 @@ public class PatcherGUI extends JFrame {
 							} catch (IOException e1) {
 								popupErrorMsg( "failed to repackage hak : " + e1 );
 							}
-							
+
 						if ( moveHakToHakDir.isSelected() ){
 							// move generated hak file to nwn hak dir
 							if ( outputHakFile == null )
 								outputHakFile = Patcher.getOutputHak( patchDir );
-							String hakFileName = hakName.getText().length() > 0 ? hakName.getText() : outputHakFile.getName(); 
+							String hakFileName = hakName.getText().length() > 0 ? hakName.getText() : outputHakFile.getName();
 							File target = new File( new File( repConf.getNwnHome(), "hak" ), hakFileName );
 							try {
 								Patcher.filemove( outputHakFile, target );
@@ -268,10 +278,10 @@ public class PatcherGUI extends JFrame {
 
 		};
 		Box b = new Box( BoxLayout.Y_AXIS );
-		
+
 		b.add( repConf.getConfigPanel() );
 		//b.add( repackageSourcehak );
-		
+
 		JPanel p = new JPanel();
 		p.setLayout( new BoxLayout( p, BoxLayout.X_AXIS ) );
 		p.add( c1 );
@@ -279,9 +289,9 @@ public class PatcherGUI extends JFrame {
 		p.add( c3 );
 		p.setBorder(new TitledBorder("Build settings"));
 		//p.add( new JButton( buildPatch ) );
-		
+
 		b.add( p );
-		
+
 		Box b2 = new Box( BoxLayout.Y_AXIS );
 		b2.add( outputTlkPanel );
 		JPanel px = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
@@ -292,10 +302,10 @@ public class PatcherGUI extends JFrame {
 		outputHakSettings.add( hakName );
 		b2.add( px );
 		b2.add( outputHakSettings );
-		b2.setBorder(new TitledBorder("Misc. settings"));		
-		
+		b2.setBorder(new TitledBorder("Misc. settings"));
+
 		b.add( b2 );
-		
+
 		b.add( new JButton( buildPatch ) );
 		//getContentPane().add( b );
 		JTabbedPane tpane = new JTabbedPane();
@@ -303,11 +313,11 @@ public class PatcherGUI extends JFrame {
 		tpane.add( b, "build" );
 		tpane.add( setupJoinPanel(), "join" );
 		tpane.setSelectedIndex( 0 );
-				
+
 		pack();
 		setVisible(true);
 	}
-	
+
 	private void popupErrorMsg( String msg ){
 		JOptionPane.showMessageDialog( this, msg, "Error", JOptionPane.ERROR_MESSAGE );
 	}
@@ -321,16 +331,16 @@ public class PatcherGUI extends JFrame {
 		prefs.putBoolean(PREFS_USEPATCHEROVERRIDE, useSourceDir.isSelected());
 		prefs.put(PREFS_PATCHEROVERRIDE, sourceDir.getText());
 		prefs.put(PREFS_BUILDPATCH, applypatch.getText());
-		
+
 		prefs.put(PREFS_HAKNAME, hakName.getText());
 		prefs.putBoolean(PREFS_HAKMOVE, moveHakToHakDir.isSelected());
-		
+
 		int numjoinpatches = patchListModel.size();
 		for ( int i = 0; i < numjoinpatches; i++ )
-		 	prefs.put( PREFS_JOINPATCHES + i, patchListModel.get( i ).toString() );
+            prefs.put(PREFS_JOINPATCHES + i, patchListModel.get( i ) );
 		 prefs.putInt( PREFS_NUMJOINPATCHES, numjoinpatches );
 		 prefs.put( PREFS_JOINEDPATCH, joinedPatchName.getText() );
-		
+
 		repConf.store();
 	}
 
@@ -338,7 +348,7 @@ public class PatcherGUI extends JFrame {
 	public static NwnRepository getNwnRepository() throws IOException {
 		return new NwnRepConfig( prefs ).getNwnRepository();
 	}
-	
+
 	private void build() {
 		NwnRepository rep = null;
 		try{
@@ -375,7 +385,7 @@ public class PatcherGUI extends JFrame {
 			return;
 		}
 		if ( useOutputTlk.isSelected() ){
-			File tlk = Patcher.getOutputTlk( buildDir ); 
+			File tlk = Patcher.getOutputTlk( buildDir );
 			//new File( new File( new File( buildDir, "out" ), "tlk" ), "dialog.tlk" );
 			try {
 			Patcher.filemove( tlk, new File( outputTlk.getText() ) );
@@ -387,21 +397,22 @@ public class PatcherGUI extends JFrame {
 		/*
 		if ( moveHakToHakDir.isSelected() ){
 			File hakDir = new File( repConf.getNwnHome(), "hak" );
-			// argh! different file name if repackage is selected 
-			//File hak = 
+			// argh! different file name if repackage is selected
+			//File hak =
 		}
 		*/
 	}
-	
+
 	/**
 	 * add files in sourceDir to hak file hakFile (replacing resources in hakFile), write new hak file to outputHak
 	 * @param hakFile source hak file
-	 * @param sourceDir directory containing the files to add to hak file 
+	 * @param sourceDir directory containing the files to add to hak file
 	 * @param outputHak output hak file
-	 * */	
+	 * */
 	private static void repackage( File hakFile, File sourceDir, File outputHak ) throws IOException{
 		//File sourceDir = Patcher.getOutputDir( patchDir );
-		File[] files = sourceDir.listFiles( new java.io.FileFilter(){
+		final File[] files = sourceDir.listFiles( new FileFilter(){
+			@Override
 			public boolean accept( File f ){
 				return f.isFile();
 			}
@@ -409,44 +420,46 @@ public class PatcherGUI extends JFrame {
 		System.out.println( "files : " + files.length );
 		System.out.println( hakFile );
 		ErfFile baseHak = new ErfFile( hakFile );
-		for ( int i = 0; i < files.length; i++ ){
-			baseHak.putResource( files[i] );
-		}
-		baseHak.write( outputHak ); 
+        for (final File file : files) {
+            baseHak.putResource(file);
+        }
+		baseHak.write( outputHak );
 	}
-	
+
 	private JComponent setupJoinPanel(){
-		final Box joinBox = new Box( BoxLayout.Y_AXIS ); 
-		
+		final Box joinBox = new Box( BoxLayout.Y_AXIS );
+
 		// read Preferences
 		int n = prefs.getInt( PREFS_NUMJOINPATCHES, 0 );
 		for ( int i = 0; i < n; i++ )
 			patchListModel.addElement( prefs.get( PREFS_JOINPATCHES + i, "" ) );
-			
-		final JList patchList = new JList( patchListModel );
+
+        final JList<String> patchList = new JList<>( patchListModel );
 		JPanel patchListPanel = new JPanel( new BorderLayout() );
-		
+
 		final JToolBar tbar = new JToolBar(JToolBar.VERTICAL );
 		tbar.setFloatable( false );
 
 		patchListPanel.add(new JScrollPane(patchList), BorderLayout.CENTER);
 		Action add = new AbstractAction("add") {
-			JFileChooser fc = new JFileChooser();			
+			JFileChooser fc = new JFileChooser();
 			{
-				if (patchListModel.size() > 0)
-					fc.setCurrentDirectory( new File( patchListModel.getElementAt(0).toString() ));
+				if (!patchListModel.isEmpty())
+                    fc.setCurrentDirectory( new File( patchListModel.getElementAt(0) ));
 			}
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setMultiSelectionEnabled(true);
-				if (fc.showDialog( patchList, "add" )
-					== JFileChooser.APPROVE_OPTION) {
-					for (int i = 0; i < fc.getSelectedFiles().length; i++)
-						patchListModel.addElement(fc.getSelectedFiles()[i].getAbsolutePath() );
+                if (fc.showDialog( patchList, "add" ) == JFileChooser.APPROVE_OPTION) {
+                    for (final File file : fc.getSelectedFiles()) {
+                        patchListModel.addElement(file.getAbsolutePath());
+                    }
 				}
 			}
 		};
 		Action up = new AbstractAction("up") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = patchList.getSelectedIndex();
 				if (line > 0) {
@@ -459,6 +472,7 @@ public class PatcherGUI extends JFrame {
 			}
 		};
 		Action down = new AbstractAction("down") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = patchList.getSelectedIndex();
 				if (line != -1 && line < patchListModel.size() - 1) {
@@ -471,11 +485,12 @@ public class PatcherGUI extends JFrame {
 			}
 		};
 		Action del = new AbstractAction("del") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = patchList.getSelectedIndex();
 				if (line != -1) {
 					patchListModel.remove(line);
-					if (patchListModel.size() > 0)
+                    if (!patchListModel.isEmpty())
 						patchList.setSelectedIndex(Math.max(line - 1, 0));
 				}
 			}
@@ -485,13 +500,14 @@ public class PatcherGUI extends JFrame {
 		tbar.add( down );
 		tbar.add( del ).setToolTipText( "remove selected patch from list" );
 		patchListPanel.add( tbar, BorderLayout.EAST);
-		
+
 		final JPanel p = new JPanel();
 		p.add( new JLabel( "output dir" ) );
 		p.add( joinedPatchName );
 		joinedPatchName.setEnabled( false );
 		Action selectOutputPatchName = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser();
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setMultiSelectionEnabled(false);
@@ -504,24 +520,26 @@ public class PatcherGUI extends JFrame {
 			}
 		};
 		p.add( new JButton( selectOutputPatchName ) );
-		
+
 		Action joinPatches = new AbstractAction( "join" ){
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				final Vector v = new Vector();
+                final ArrayList<String> v = new ArrayList<>();
 				for ( int i = 0; i < patchListModel.size(); i++ )
 					v.add( patchListModel.get( i ) );
-				if ( joinedPatchName.getText().length() == 0 ){
+                if (joinedPatchName.getText().isEmpty()) {
 					JOptionPane.showMessageDialog( p, "Must specify output dir", "", JOptionPane.ERROR_MESSAGE );
 					return;
 				}
 				new Thread(){
+					@Override
 					public void run(){
 						try{
 							setEnabled( false );
 							StdOutFrame.display( true );
 							Patcher.joinPatches( v, new File( joinedPatchName.getText() ) );
 						} catch ( Exception ioex ){
-							JOptionPane.showMessageDialog( p, "Exception during join operation : " + ioex.toString() + "\n" + ioex.getMessage(), "d'oh", JOptionPane.ERROR_MESSAGE );					
+							JOptionPane.showMessageDialog( p, "Exception during join operation : " + ioex.toString() + "\n" + ioex.getMessage(), "d'oh", JOptionPane.ERROR_MESSAGE );
 						} finally {
 							setEnabled( true );
 						}
@@ -535,11 +553,11 @@ public class PatcherGUI extends JFrame {
 		joinBox.add( new JButton( joinPatches ) );
 		return joinBox;
 	}
-	
+
 	public static void removePreferences() throws BackingStoreException{
 		prefs.removeNode();
 	}
-	
+
 	public static void main(String[] args) {
 		new PatcherGUI();
 	}

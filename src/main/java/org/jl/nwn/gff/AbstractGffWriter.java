@@ -14,51 +14,50 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
-
-
 
 /**
  *
  */
-public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld>{
-    
-    protected List<Fld> fields = new ArrayList<Fld>();
-    protected List<Integer> labelIndices = new ArrayList<Integer>();
-    protected List<String> labels = new ArrayList<String>();
+public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld> {
+
+    protected List<Fld> fields = new ArrayList<>();
+    protected List<Integer> labelIndices = new ArrayList<>();
+    protected List<String> labels = new ArrayList<>();
     protected int labelDataSize = 0;
-    
-    protected List<Lst> lists = new ArrayList<Lst>();
-    protected List<Integer> listIndices = new ArrayList<Integer>();
-    protected List<Strct> structs = new ArrayList<Strct>();
-    protected List<Integer> structIndices = new ArrayList<Integer>();
-    
-    // map field index to field data for complex field with variable size
-    protected Map<Integer, byte[]> fieldDataMap = new HashMap<Integer, byte[]>();
-    
-    // map <field array index, struct array index>
-    protected Map<Integer, Integer> namedStructs = new HashMap<Integer, Integer>();
-    
-    //protected int[] dataPointers;
-    protected List<Integer> dataPointerList = new ArrayList<Integer>();
-    
+
+    protected List<Lst> lists = new ArrayList<>();
+    protected List<Integer> listIndices = new ArrayList<>();
+    protected List<Strct> structs = new ArrayList<>();
+    protected List<Integer> structIndices = new ArrayList<>();
+
+    /** Map field index to field data for complex field with variable size. */
+    protected Map<Integer, byte[]> fieldDataMap = new HashMap<>();
+
+    /** Map {@code <field array index, struct array index>}. */
+    protected Map<Integer, Integer> namedStructs = new HashMap<>();
+
+    protected List<Integer> dataPointerList = new ArrayList<>();
+
     private Version nwnVersion;
-    
+
     /** Creates a new instance of AbstractGffWriter */
     public AbstractGffWriter(){
         this(Version.getDefaultVersion());
     }
-    
+
     public AbstractGffWriter(Version nwnVersion){
         this.nwnVersion = nwnVersion;
     }
-    
+
     /**
      *retrieve field label
      *@return field label
@@ -70,14 +69,14 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
      *@return field type
      */
     protected abstract int fieldType( Fld field );
-    
+
     protected abstract int structSize( Strct struct );
     protected abstract int structID( Strct struct );
     protected abstract Fld structGet( Strct struct, int index );
-    
+
     protected abstract int listSize( Lst list );
     protected abstract Strct listGet( Lst list, int index );
-    
+
     /**
      * @see Gff#bigInt2raw conversion method in class Gff
      */
@@ -91,7 +90,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
      * return the bytes making up the void data (without the length field)
      */
     protected abstract byte[] voidFieldData( Fld field );
-    
+
     /**
      *write CExoLocString data into given arrays.
      *intValues[0] = strRef<br/>
@@ -100,11 +99,11 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
      *gender : 0 = neutral/masc., 1 = feminine
      */
     protected abstract void cExoLocStringData( Fld Field, int[] intValues, NwnLanguage[] languages, int[] genders, String[] strings );
-    
+
     public Version getVersion(){
         return nwnVersion;
     }
-    
+
     /**
      * @throws IOException
      * @throws IllegalArgumentException if length of gffType != 4, or any argument is null
@@ -121,15 +120,15 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
         bos.close();
         fos.close();
     }
-    
+
     public void write( Strct topLevelStruct, String gffType, OutputStream out ) throws IOException{
         int fieldIndicesEntries = 0; //number of values in the FieldIndicesArray
         int listIndicesCount = 0; // size of the list indices block
         int fieldDataBlockSize = 0;
-        
+
         try{
             //System.out.printf("AbstractGffWriter.write(%1s)\n", file);
-            
+
             /* do a breadth-first traversal of the gff tree to build
              lists of fields, structs, and lists.
              because of the traversal order, fields belonging to one struct will
@@ -141,17 +140,17 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
              i.e. CResRef, CExoString, CExoLocString & Void in order to compute
              the size of the field data block and the data pointers
              */
-            List<Fld> queue = new LinkedList<Fld>();
+            final Queue<Fld> queue = new ArrayDeque<>();
             queue.add(topLevelStruct);
             structs.add(topLevelStruct);
-            
+
             int[] celsInts = new int[2];
             NwnLanguage[] celsLang = new NwnLanguage[NwnLanguage.findAll(nwnVersion).size()*2];
             int[] celsGenders = new int[celsLang.length];
             String[] celsStrings = new String[celsLang.length];
-            
+
             while (!queue.isEmpty()){
-                Fld f = queue.remove(0);
+                final Fld f = queue.remove();
                 int type = fieldType(f);
                 if ( type==Gff.STRUCT ){
                     Strct struct = (Strct) f;
@@ -164,7 +163,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
                         Fld field = structGet(struct, i);
                         int fType = fieldType(field);
                         fields.add( field );
-                        
+
                         // get field data & compute data pointer
                         int fieldIndex = fields.size() - 1;
                         int dataSize = 0;
@@ -207,7 +206,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
                         }
                         dataPointerList.add( fieldDataBlockSize );
                         fieldDataBlockSize += dataSize;
-                        
+
                         labelIndices.add( addLabel( fieldLabel(field) ) );
                         if ( fType == Gff.LIST )
                             queue.add( field );
@@ -234,71 +233,70 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
                 } else { //simple field
                 }
             }
-            
+
             //header size is 14*4 = 56 bytes
             // header fields
             int structOffset = 0;
             int structCount = 0;
-            
+
             int fieldOffset = 0;
             int fieldCount = 0;
-            
+
             int labelOffset = 0;
             int labelCount = 0;
-            
+
             int fieldDataOffset = 0;
             int fieldDataCount = 0;
-            
+
             int fieldIndicesOffset = 0;
-            
+
             int listIndicesOffset = 0;
-            
+
             out.write( gffType.getBytes() );
             out.write( "V3.2".getBytes() );
-            
+
             structOffset = 56;
             writeIntLE( structOffset, out );
             structCount = structs.size();
             writeIntLE( structCount, out );
-            
+
             fieldOffset = structOffset + structCount * 12;
             writeIntLE( fieldOffset, out );
             fieldCount = fields.size();
             writeIntLE( fieldCount, out );
-            
+
             labelOffset = fieldOffset + fieldCount * 12;
             writeIntLE( labelOffset, out );
             labelCount = labels.size();
             writeIntLE( labelCount, out );
-            
+
             fieldDataOffset = labelOffset + labelCount * 16;
             writeIntLE( fieldDataOffset, out );
             fieldDataCount = fieldDataBlockSize;
             writeIntLE( fieldDataCount, out );
-            
+
             fieldIndicesOffset = fieldDataOffset + fieldDataCount;
             writeIntLE( fieldIndicesOffset, out );
             int fieldIndicesCount = fieldIndicesEntries * 4;
             writeIntLE( fieldIndicesCount, out );
-            
+
             listIndicesOffset  = fieldIndicesOffset + fieldIndicesCount;
             writeIntLE( listIndicesOffset, out );
             writeIntLE( listIndicesCount, out );
-            
+
             writeStructArray(out);
             writeFieldArray(out);
-            
-            byte[] zero = new byte[16];
-            for ( int i = 0; i < labels.size(); i++ ){
-                String label = labels.get(i);
-                out.write( label.getBytes() );
+
+            final byte[] zero = new byte[16];
+            for (final String label : labels) {
+                out.write( label.getBytes() );//FIXME: This uses default JVM encoding
                 out.write( zero, 0, 16 - label.length() );
             }
-            
+
             writeFieldData(out);
             writeFieldIndecesArray(out);
             writeListIndicesArray(out);
-            
+
             out.close();
         } finally {
             dataPointerList.clear();
@@ -316,9 +314,9 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
                     out.close();
             } catch (IOException ioex){}
         }
-        
+
     }
-    
+
     // add label to list if neccessary, return label's index
     private int addLabel( String label ){
         int labelIndex = labels.indexOf(label);
@@ -329,20 +327,20 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
         }
         return labelIndex;
     }
-    
+
     private void writeFieldData( OutputStream raf ) throws IOException{
         int offset = 0;
         byte[] data = null;
-        
+
         byte[] bytes8 = new byte[8];
         ByteBuffer bb8 = ByteBuffer.wrap(bytes8);
         bb8.order(ByteOrder.LITTLE_ENDIAN);
-        
+
         float[] vector = new float[3];
         byte[] bytes12 = new byte[12];
         ByteBuffer bb12 = ByteBuffer.wrap(bytes12);
         bb12.order(ByteOrder.LITTLE_ENDIAN);
-        
+
         for ( int i = 0; i < fields.size(); i++ ){
             Fld f = fields.get( i );
             int type = fieldType(f);
@@ -392,7 +390,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             }
         }
     }
-    
+
     protected byte[] buildCExoStringData( String cExoString ){
         byte[] data = new byte[ 4 + cExoString.length() ];
         ByteBuffer b = ByteBuffer.wrap( data );
@@ -408,19 +406,19 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
         }
         return data;
     }
-    
+
     protected byte[] buildCResRefData( String resRef ){
         byte[] data = new byte[ 1 + resRef.length() ];
         data[0] = ( byte ) resRef.length();
         System.arraycopy( resRef.getBytes(), 0, data, 1, data.length -1 );
         return data;
     }
-    
+
     private void writeFieldIndecesArray( OutputStream raf ) throws IOException{
         for ( int i = 0; i < structs.size(); i++ ){
             Strct s = structs.get(i);
             int ssize = structSize(s);
-            if ( structSize(s) > 1 ){
+            if (ssize > 1) {
                 for ( int f = 0; f < ssize; f++ ){
                     Fld field = structGet(s, f);
                     int fieldIndex = structIndices.get(i) + f;
@@ -431,7 +429,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             }
         }
     }
-    
+
     protected byte[] buildCExoLocStringData(
             int[] celsInts,
             NwnLanguage[] celsLang,
@@ -465,7 +463,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
         }
         return data;
     }
-    
+
     private void writeListIndicesArray( OutputStream raf ) throws IOException{
         int entries = 0;
         for ( int listNum = 0; listNum < lists.size(); listNum++ ){
@@ -478,7 +476,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             }
         }
     }
-    
+
     private void writeFieldArray( OutputStream raf ) throws IOException{
         // for every list compute the list indices array offset
         int[] liaOffsets = new int[lists.size()];
@@ -490,7 +488,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             liao += ( 1 + listSize ) * 4;
         }
         int listNum = 0;
-        
+
         byte[] type = new byte[4];
         byte[] floatBytes = new byte[4];
         ByteBuffer floatBuffer = ByteBuffer.wrap(floatBytes);
@@ -517,7 +515,7 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             }
         }
     }
-    
+
     private void writeStructArray( OutputStream raf ) throws IOException{
         // compute field indices array offsets for structs size>1
         int fiao = 0;
@@ -544,12 +542,11 @@ public abstract class AbstractGffWriter <Fld, Strct extends Fld, Lst extends Fld
             writeIntLE( sSize, raf );
         }
     }
-    
+
     private void writeIntLE( int i, OutputStream raf ) throws IOException{
         raf.write(i & 255);
         raf.write((i >> 8) & 255);
         raf.write((i >> 16) & 255);
         raf.write((i >> 24) & 255);
     }
-    
 }

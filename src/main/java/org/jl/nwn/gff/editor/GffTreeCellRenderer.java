@@ -10,11 +10,13 @@ import java.awt.Component;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.UIDefaults;
 import javax.swing.tree.DefaultTreeCellRenderer;
+
 import org.jdesktop.swingx.treetable.TreeTableModel;
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.gff.CExoLocSubString;
@@ -22,32 +24,31 @@ import org.jl.nwn.gff.Gff;
 import org.jl.nwn.gff.GffCExoLocString;
 import org.jl.nwn.gff.GffField;
 
-
 /**
  *
  * @author
  */
 public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
-    
+
     protected JTree tree;
-    
+
     protected TreeTableModel ttm;
     protected static final UIDefaults uid = new UIDefaults();
-    
+
     protected String male, female;
-    
+
     protected Map<Byte, Icon> typeIconMap;
     protected Map<NwnLanguage, Icon> languageIconMap;
-    
+
     static {
         uid.addResourceBundle("org.jl.nwn.gff.editor.uidefaults");
     }
-    
+
     /** Creates a new instance of GffTreeCellRenderer */
     public GffTreeCellRenderer( TreeTableModel ttm ){
         super();
         this.ttm = ttm;
-        typeIconMap = new HashMap<Byte,Icon>();
+        typeIconMap = new HashMap<>();
         typeIconMap.put(Gff.STRUCT, loadIcon(uid.getString("gffstruct.icon")));
         typeIconMap.put(Gff.LIST, loadIcon(uid.getString("gfflist.icon")));
         Icon voidIcon = loadIcon(uid.getString("gffvoid.icon"));
@@ -68,8 +69,8 @@ public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
         typeIconMap.put(Gff.CEXOLOCSTRING,stringIcon);
         typeIconMap.put(Gff.CEXOSTRING,stringIcon);
         typeIconMap.put(Gff.RESREF,stringIcon);
-        
-        languageIconMap = new HashMap<NwnLanguage, Icon>();
+
+        languageIconMap = new HashMap<>();
         languageIconMap.put(NwnLanguage.ENGLISH, loadIcon(uid.getString("flag.canada")));
         languageIconMap.put(NwnLanguage.GERMAN, loadIcon(uid.getString("flag.germany")));
         languageIconMap.put(NwnLanguage.FRENCH, loadIcon(uid.getString("flag.france")));
@@ -83,7 +84,7 @@ public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
         languageIconMap.put(NwnLanguage.NWN2_TOKENID, voidIcon);
         languageIconMap.put(NwnLanguage.NWN2_6, voidIcon);
     }
-    
+
     @Override public Component getTreeCellRendererComponent(
             JTree tree,
             Object value,
@@ -130,7 +131,7 @@ public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
         validate();
         return this;
     }
-    
+
     protected Icon loadIcon( String name ){
         URL url = getClass().getResource(name);
         Icon i = null;
@@ -139,7 +140,7 @@ public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
         }
         return i;
     }
-    
+
     /*
     public static Icon getIconForType( byte type ){
         Icon i = null;
@@ -156,9 +157,8 @@ public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
         return i;
     }
     */
-    
+
     public Icon getIconForType( byte type ){
         return typeIconMap.get(type);
     }
-    
 }

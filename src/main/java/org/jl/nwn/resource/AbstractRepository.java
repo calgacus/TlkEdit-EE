@@ -5,31 +5,33 @@ package org.jl.nwn.resource;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
-import java.util.regex.Pattern;
 
 /**
  */
 public abstract class AbstractRepository implements NwnRepository{
 
+	@Override
 	public OutputStream putResource(ResourceID id)
 		throws IOException, UnsupportedOperationException {
 		throw new UnsupportedOperationException("putResource : repository is read-only");
 	}
         
+        @Override
         public InputStream getResource(String resourceName) throws IOException{
             return getResource(ResourceID.forFileName(resourceName));
         }
         
+        @Override
         public boolean contains(String resourceName){
             return contains(ResourceID.forFileName(resourceName));
         }
         
+        @Override
         public ByteBuffer getResourceAsBuffer(ResourceID id) throws IOException, UnsupportedOperationException {
             InputStream is = getResource(id);
             if ( is == null )
@@ -46,18 +48,22 @@ public abstract class AbstractRepository implements NwnRepository{
         }
         
 
+	@Override
 	public boolean isWritable() {
 		return false;
 	}
 
+	@Override
 	public long lastModified(ResourceID id) {
 		return 0;
 	}
 
+        @Override
         public Iterator<ResourceID> iterator(){
             return getResourceIDs().iterator();
         }
         
+        @Override
         public void close() throws IOException{}
         
 }

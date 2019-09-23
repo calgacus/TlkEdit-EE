@@ -17,8 +17,8 @@ import java.util.TreeSet;
  */
 public class NwnDirRepository extends AbstractRepository {
 
-	private File dir;
-	
+	private final File dir;
+
 	public NwnDirRepository( File dir ){
 		this.dir = dir;
 	}
@@ -26,11 +26,12 @@ public class NwnDirRepository extends AbstractRepository {
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.resource.NwnRepository#getResource(org.jl.nwn.resource.ResourceID)
 	 */
+	@Override
 	public InputStream getResource(ResourceID id) throws IOException {
 		File f = findFile( id );
 		return f!=null ? new FileInputStream(f) : null;
 	}
-	
+
 	/**
 	 * return the File containing the given resource. if no file with the exact name
 	 * returned by id.toFileName() is found, the method will perform a case insensitive
@@ -42,21 +43,21 @@ public class NwnDirRepository extends AbstractRepository {
 		File f = new File( dir, fName );
 		return f.isFile() ? f : findFileIgnoreCase( fName );
 	}
-	
-	private File findFileIgnoreCase( String fileName ){
-		String[] fNames = dir.list();
-		for ( int i = 0, n = fNames.length; i<n; i++ ){
-			if ( fNames[i].equalsIgnoreCase( fileName ) ){
-				File f = new File( dir, fNames[i] );
-				return f.isFile() ? f : null;
-			}
-		}
-		return null; 
+
+    private File findFileIgnoreCase(String fileName) {
+        for (final String name : dir.list()) {
+            if (name.equalsIgnoreCase(fileName)) {
+                final File f = new File(dir, name);
+                return f.isFile() ? f : null;
+            }
+        }
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.resource.NwnRepository#getResourceLocation(org.jl.nwn.resource.ResourceID)
 	 */
+	@Override
 	public File getResourceLocation(ResourceID id) {
 		return contains(id)? dir : null;//new File( dir, id.toFileName() );
 	}
@@ -64,37 +65,41 @@ public class NwnDirRepository extends AbstractRepository {
 	/* (non-Javadoc)
 	 * @see org.jl.nwn.resource.NwnRepository#contains(org.jl.nwn.resource.ResourceID)
 	 */
+	@Override
 	public boolean contains(ResourceID id) {
 		return findFile( id ) != null;
 	}
-	
+
+	@Override
 	public OutputStream putResource( ResourceID id ) throws IOException{
 		return new FileOutputStream( new File( dir, id.toFileName() ) );
-	}	
-	
-	public Set getResourceIDs(){
-		TreeSet s = new TreeSet();
-		File[] files = dir.listFiles();
-		for ( int i = 0; i < files.length; i++ )
-			if ( files[i].isFile() )
-				s.add( ResourceID.forFile( files[i] ) );
+	}
+
+	@Override
+    public Set<ResourceID> getResourceIDs() {
+        final TreeSet<ResourceID> s = new TreeSet<>();
+        for (final File file : dir.listFiles()) {
+            if (file.isFile()) {
+                s.add(ResourceID.forFile(file));
+            }
+        }
 		return Collections.unmodifiableSet( s );
 	}
 
+	@Override
 	public boolean isWritable() {
 		return dir.canWrite();
 	}
 
+	@Override
 	public long lastModified(ResourceID id) {
 		File f = findFile( id );
 		return f!=null? f.lastModified() : 0;
 	}
-        
-        public int getResourceSize( ResourceID id ){
-            File f = findFile(id);
-            return f != null ?
-                (int)f.length():
-                0;
-        }
 
+    @Override
+    public int getResourceSize(ResourceID id) {
+        final File f = findFile(id);
+        return f != null ? (int)f.length() : 0;
+    }
 }

@@ -4,8 +4,9 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.net.URI;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
@@ -22,12 +23,12 @@ public abstract class FileDropHandler extends TransferHandler{
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
-    }    
-    
+    }
+
     /** Creates a new instance of FileDropHandler */
     public FileDropHandler(){
     }
-    
+
     @Override public boolean canImport(JComponent comp, DataFlavor[] transferFlavors){
 
         for ( DataFlavor d : transferFlavors ){
@@ -37,26 +38,20 @@ public abstract class FileDropHandler extends TransferHandler{
         }
         return false;
     }
-    
+
     @Override public boolean importData(JComponent comp, Transferable t){
         //System.out.println("importData");
         try{
-            if ( t.isDataFlavorSupported(DataFlavor.javaFileListFlavor) ){
-                LinkedList<File> l = new LinkedList<File>();
-                for ( Object f : (List) t.getTransferData(DataFlavor.javaFileListFlavor) ){
-                    l.add((File)f);
-                }
-                importFiles(l);
+            if ( t.isDataFlavorSupported(DataFlavor.javaFileListFlavor) ) {
+                importFiles((List<File>) t.getTransferData(DataFlavor.javaFileListFlavor));
             }
             if ( t.isDataFlavorSupported(uriListFlavor) ){
                 String s = (String) t.getTransferData(uriListFlavor);
                 String[] uris = s.split("\n");
-                LinkedList<File> l = new LinkedList<File>();
+                final ArrayList<File> l = new ArrayList<>();
                 for ( String uri : uris ){
-                    if ( uri.length() > 1 ){
-                        //System.out.println(uri);
-                        File f = new File(new URI(uri.trim()));
-                        l.add(f);
+                    if ( uri.length() > 1 ) {
+                        l.add(new File(new URI(uri.trim())));
                     }
                 }
                 importFiles(l);
@@ -66,11 +61,11 @@ public abstract class FileDropHandler extends TransferHandler{
         }
         return false;
     }
-    
+
     abstract public void importFiles( List<File> files );
-    
+
+    @Override
     public int getSourceActions(JComponent c){
         return NONE;
     }
-    
 }

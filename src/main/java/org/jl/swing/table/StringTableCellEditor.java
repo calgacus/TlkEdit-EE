@@ -11,7 +11,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.Dimension;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.Action;
 import javax.swing.InputMap;
@@ -23,6 +23,7 @@ import javax.swing.KeyStroke;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoManager;
+
 import org.jl.swing.ActionListenerAction;
 
 /**
@@ -31,11 +32,11 @@ import org.jl.swing.ActionListenerAction;
 public class StringTableCellEditor
         extends AbstractCellEditor
         implements TableCellEditor, TextCellEditor{
-    
+
     protected UndoManager undoManager = new UndoManager();
     protected JTextArea textArea = new JTextArea();
     protected JScrollPane scroll = new JScrollPane(textArea);
-    
+
     public StringTableCellEditor(){
         textArea.setEditable(true);
         textArea.setLineWrap(true);
@@ -44,43 +45,45 @@ public class StringTableCellEditor
         scroll.setHorizontalScrollBarPolicy(
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.addFocusListener( new FocusAdapter(){
+            @Override
             public void focusGained(FocusEvent e){
                 textArea.requestFocus();
             }
         } );
         InputMap im = textArea.getInputMap( JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT );
-        
+
         Action aCancel = new ActionListenerAction(this, "cancelCellEditing", null);
         textArea.getActionMap().put( "cancel", aCancel );
         im.put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ), "cancel" );
-        
+
         Action aUndo = new ActionListenerAction(this, "undo", null);
         textArea.getActionMap().put( "undo", aUndo );
         im.put( KeyStroke.getKeyStroke( KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK ), "undo" );
-        
+
         Action aRedo = new ActionListenerAction(this, "redo", null);
         textArea.getActionMap().put( "redo", aRedo );
         im.put( KeyStroke.getKeyStroke( KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK ), "redo" );
-        
+
         Action aEndEdit = new ActionListenerAction( this, "stopCellEditing", null );
         textArea.getActionMap().put( "endEdit", aEndEdit );
         im.put( KeyStroke.getKeyStroke( KeyEvent.VK_ENTER, KeyEvent.ALT_DOWN_MASK ), "endEdit" );
     }
-    
+
     public void undo(){
         if ( undoManager.canUndo() )
             undoManager.undo();
     }
-    
+
     public void redo(){
         if ( undoManager.canRedo() )
             undoManager.redo();
     }
-    
+
     public JTextArea getTextArea(){
         return textArea;
     }
-    
+
+    @Override
     public java.awt.Component getTableCellEditorComponent(
             JTable table,
             Object value,
@@ -92,7 +95,7 @@ public class StringTableCellEditor
             textArea.getDocument().insertString(0,value.toString(),null);
         } catch (BadLocationException ex) {
             ex.printStackTrace();
-        }        
+        }
         //textArea.setText(value.toString());
         undoManager.discardAllEdits();
         /*
@@ -118,13 +121,15 @@ public class StringTableCellEditor
         scroll.scrollRectToVisible( scroll.getBounds() );
         return scroll;
     }
-    
+
+    @Override
     public Object getCellEditorValue() {
         return textArea.getText();
     }
-    
+
     // copied from DefaultCellEditor, double click to start editing
     //this is sometimes called with a null argument ?!?
+    @Override
     public boolean isCellEditable(java.util.EventObject anEvent) {
         if (anEvent instanceof MouseEvent) {
             return ((MouseEvent) anEvent).getClickCount() >= 2;
@@ -138,12 +143,14 @@ public class StringTableCellEditor
         }
         return true;
     }
-    
+
+    @Override
     public boolean stopCellEditing() {
         fireEditingStopped();
         return true;
     }
-    
+
+    @Override
     public JTextArea getTextComponent(){
         return textArea;
     }

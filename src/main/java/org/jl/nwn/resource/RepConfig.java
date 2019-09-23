@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 import org.jl.nwn.bif.BifRepository;
 import org.jl.nwn.erf.ErfFile;
 
@@ -18,17 +19,17 @@ import org.jl.nwn.erf.ErfFile;
  * creates a repository from a configuration file
  */
 public class RepConfig {
-    
+
     protected File configLocation;
     protected Properties props;
-    
+
     protected NwnRepository rep;
 
     public RepConfig(File propFile) throws IOException{
         this(new FileInputStream(propFile));
         configLocation = propFile;
     }
-    
+
     public RepConfig(InputStream is) throws IOException{
         props = new Properties();
         try{
@@ -40,15 +41,15 @@ public class RepConfig {
             } catch (IOException ioex){
                 ioex.printStackTrace();
             }
-        }        
+        }
     }
-    
+
     public NwnRepository getRepository(){
         return rep;
     }
-    
+
     public static List<NwnRepository> initRepositories(Properties props) throws IOException{
-        ArrayList<NwnRepository> reps = new ArrayList<NwnRepository>();
+        final ArrayList<NwnRepository> reps = new ArrayList<>();
         try{
             int filecount = Integer.parseInt( props.getProperty( "filecount", "0" ) );
             String basepath = props.getProperty("basedir");
@@ -97,6 +98,5 @@ public class RepConfig {
             reps.clear();
         }
         return reps;
-    }    
-
+    }
 }

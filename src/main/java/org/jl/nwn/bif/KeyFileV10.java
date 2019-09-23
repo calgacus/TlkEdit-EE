@@ -1,8 +1,8 @@
 /*
  * KeyFileV10.java
- * 
+ *
  * Created on 05.12.2007, 19:16:24
- * 
+ *
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.jl.nwn.resource.ResourceID;
 
 /**
@@ -27,7 +28,7 @@ import org.jl.nwn.resource.ResourceID;
  */
 public class KeyFileV10 extends KeyFile{
 
-        protected TreeMap<ResourceID, Integer> entryMap = new TreeMap<ResourceID, Integer>();
+        protected final TreeMap<ResourceID, Integer> entryMap = new TreeMap<>();
 
         public KeyFileV10(File key) throws IOException {
             //bifs = new java.util.Vector();
@@ -97,18 +98,19 @@ public class KeyFileV10 extends KeyFile{
             return bifID % (1 << 20);
         }
 
-        public Iterator getResourceIDs() {
+        @Override
+        public Iterator<ResourceID> getResourceIDs() {
             return entryMap.keySet().iterator();
         }
-        
+
+        @Override
         public Set<ResourceID> getResourceIDSet(){
             return Collections.unmodifiableSet(entryMap.keySet());
         }
 
+        @Override
         public BifResourceLocation findResource(String resName, short resType) {
             int bifId = lookup(resName, resType);
             return bifId == -1 ? null : new BifResourceLocation(getBifName(bifId), getBifIndex(bifId));
         }
-
-
 }

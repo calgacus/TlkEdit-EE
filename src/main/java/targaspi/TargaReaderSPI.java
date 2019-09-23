@@ -1,7 +1,8 @@
 package targaspi;
 
-import java.io.File;
-import javax.imageio.spi.IIORegistry;
+import java.io.IOException;
+
+import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
@@ -21,7 +22,7 @@ public class TargaReaderSPI extends ImageReaderSpi{
         "image/x-targa"
     };
     static String readerClassName = "targaspi.TargaReader";
-    static Class[] inputTypes = new Class[]{ ImageInputStream.class };
+    static Class<?>[] inputTypes = { ImageInputStream.class };
     static String[] writerSpiNames = null;
     static boolean supportsStandardStreamMetadataFormat = false;
     static String nativeStreamMetadataFormatName = null;
@@ -33,7 +34,7 @@ public class TargaReaderSPI extends ImageReaderSpi{
     static String nativeImageMetadataFormatClassName = null;
     static String[] extraImageMetadataFormatNames = null;
     static String[] extraImageMetadataFormatClassNames = null;
-    
+
     /** Creates a new instance of TargaReaderSPI */
     public TargaReaderSPI() {
         super(
@@ -57,20 +58,23 @@ public class TargaReaderSPI extends ImageReaderSpi{
                 extraImageMetadataFormatClassNames
                 );
     }
-    
+
+    @Override
     public String getDescription(java.util.Locale locale) {
         return "Targa Image Reader";
     }
-    
+
     TargaReader readerInstance = null;
-    
-    public javax.imageio.ImageReader createReaderInstance(Object extension) throws java.io.IOException {
+
+    @Override
+    public ImageReader createReaderInstance(Object extension) throws IOException {
         //System.out.println("createReaderInstance");
         if ( readerInstance == null )
             readerInstance = new TargaReader(this);
         return readerInstance;
     }
-    
+
+    @Override
     public boolean canDecodeInput(Object source) throws java.io.IOException {
         //System.out.println("TargaReaderSPI.canDecodeInput : " + source);
         /*
@@ -93,7 +97,7 @@ public class TargaReaderSPI extends ImageReaderSpi{
         //System.out.println("TargaReaderSPI accept");
         return true;
     }
-    
+
     @Override public void onRegistration(ServiceRegistry registry, Class<?> category){
         super.onRegistration( registry, category );
         boolean b = false;
@@ -112,8 +116,7 @@ public class TargaReaderSPI extends ImageReaderSpi{
             }
         } catch ( ClassNotFoundException cnfe ){
             //System.out.println("com.sun.imageio.plugins.wbmp.WBMPImageReaderSPI not installed");
-        }        
+        }
         //System.out.println("registered TargaReader SPI, setOrdering vs WBMP : " +b);
     }
-    
 }

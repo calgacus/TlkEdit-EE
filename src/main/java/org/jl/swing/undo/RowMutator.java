@@ -2,6 +2,7 @@ package org.jl.swing.undo;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.swing.ListSelectionModel;
 
 /**
@@ -9,25 +10,25 @@ import javax.swing.ListSelectionModel;
 public class RowMutator<RowData> extends Mutator{
     RowMutable<RowData> model;
     ListSelectionModel lsl;
-    
+
     public interface RowMutable<RowData>{
         public List<RowData> removeRows( int[] indices );
         public void insertRows( int startRow, List<RowData> rows );
     }
-    
+
     /** Creates a new instance of RowMutator */
     public RowMutator( Mutator m, RowMutable<RowData> model, ListSelectionModel lsl ){
         super(m);
         this.model = model;
         this.lsl = lsl;
     }
-    
+
     public RowMutator( RowMutable<RowData> model, ListSelectionModel lsl ){
         super();
         this.model = model;
         this.lsl = lsl;
     }
-    
+
     public class InsertRowsEdit extends ModelEdit{
         int startRow;
         List<RowData> rows;
@@ -58,9 +59,9 @@ public class RowMutator<RowData> extends Mutator{
                 else
                     lsl.addSelectionInterval(startRow, startRow + rows.size() - 1);
         }
-        
+
     }
-    
+
     public class RemoveRowsEdit extends ModelEdit{
         int[] indices;
         List<RowData> rows;
@@ -70,7 +71,7 @@ public class RowMutator<RowData> extends Mutator{
         }
         @Override public List<RowData> invoke(){
             return Collections.unmodifiableList((List<RowData>) super.invoke());
-        }        
+        }
         @Override protected List<RowData> performEdit(){
             //System.out.println("RemoveRowsEdit");
             rows = ((RowMutable<RowData>)model).removeRows(indices);
@@ -87,7 +88,7 @@ public class RowMutator<RowData> extends Mutator{
             }
         }
     }
-    
+
     public class ReplaceRowsEdit extends ModelEdit{
         int[] indices;
         List<RowData> insertRows, replacedRows;
@@ -107,36 +108,36 @@ public class RowMutator<RowData> extends Mutator{
             ((RowMutable<RowData>)model).insertRows(indices[0], replacedRows);
         }
     }
-    
+
     public List<RowData> removeRows( int[] indices ){
         return new RemoveRowsEdit("Remove Rows",indices).invoke();
     }
-    
+
     public void insertRows( int startRow, List<RowData> rows ){
         new InsertRowsEdit("Insert Rows", startRow, rows).invoke();
     }
-    
+
     public void replaceRows( int startRow, int endRow, List<RowData> replacement ){
         new ReplaceRowsEdit( "Replace Rows", startRow, endRow, replacement ).invoke();
     }
-    
+
     protected int[] makeIntIntervall(int start, int end){
         int[] r = new int[end-start+1];
         for ( int i = 0; i < r.length; i++ )
             r[i] = start+i;
         return r;
     }
-    
+
     public void setSelectionModel(ListSelectionModel lsl){
         this.lsl = lsl;
     }
-            
-    
+
+
     @Override public void compoundUndo(){
         if ( lsl != null )
             lsl.clearSelection();
     }
-    
+
     @Override public void compoundRedo(){
         if ( lsl != null )
             lsl.clearSelection();

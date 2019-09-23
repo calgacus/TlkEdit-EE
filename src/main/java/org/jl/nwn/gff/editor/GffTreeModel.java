@@ -5,7 +5,7 @@ package org.jl.nwn.gff.editor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -14,10 +14,9 @@ import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import org.jl.nwn.Version;
 
+import org.jl.nwn.Version;
 import org.jl.nwn.gff.DefaultGffReader;
-import org.jl.nwn.gff.Gff;
 import org.jl.nwn.gff.GffField;
 import org.jl.nwn.gff.GffList;
 import org.jl.nwn.gff.GffStruct;
@@ -25,11 +24,11 @@ import org.jl.nwn.gff.GffStruct;
 /**
  */
 public class GffTreeModel implements TreeModel {
-	
+
 	protected GffStruct root;
-	
-	protected List listeners = new LinkedList();
-	
+
+	protected List<TreeModelListener> listeners = new ArrayList<>();
+
 	public GffTreeModel( GffStruct s ){
 		root = s;
 	}
@@ -37,35 +36,36 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getRoot()
 	 */
-	public Object getRoot() {
+	@Override
+	public GffStruct getRoot() {
 		return root;
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getChild(java.lang.Object, int)
 	 */
-	public Object getChild(Object parent, int index) {
-		GffField f = (GffField) parent;
-		if ( f.getType() == Gff.LIST )
-			return ((GffList)f).get(index);
-		else
-			return ((GffStruct)f).getChild(index);
+	@Override
+	public GffField getChild(Object parent, int index) {
+        final GffField f = (GffField) parent;
+        if (f instanceof GffList) {
+            return ((GffList)f).get(index);
+        }
+        return f.getChild(index);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getChildCount(java.lang.Object)
 	 */
+	@Override
 	public int getChildCount(Object parent) {
-		GffField f = (GffField) parent;
-		if ( f.getType() == Gff.LIST )
-			return ((GffList)f).getSize();
-		else
-			return ((GffStruct)f).getSize();
+        final GffField f = (GffField) parent;
+        return f.getChildCount();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#isLeaf(java.lang.Object)
 	 */
+	@Override
 	public boolean isLeaf(Object node) {
 		GffField f = (GffField) node;
 		return f.isDataField();
@@ -74,6 +74,7 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#valueForPathChanged(javax.swing.tree.TreePath, java.lang.Object)
 	 */
+	@Override
 	public void valueForPathChanged(TreePath path, Object newValue) {
 		// TODO Auto-generated method stub
 	}
@@ -81,17 +82,16 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getIndexOfChild(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int getIndexOfChild(Object parent, Object child) {
-		GffField f = (GffField) parent;
-		if ( f.getType() == Gff.LIST )
-			return ((GffList)f).indexOf(child);
-		else
-			return ((GffStruct)f).indexOf(child);
+        final GffField f = (GffField) parent;
+        return f.getChildIndex((GffField)child);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#addTreeModelListener(javax.swing.event.TreeModelListener)
 	 */
+	@Override
 	public void addTreeModelListener(TreeModelListener l) {
 		listeners.add(l);
 	}
@@ -99,12 +99,13 @@ public class GffTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#removeTreeModelListener(javax.swing.event.TreeModelListener)
 	 */
+	@Override
 	public void removeTreeModelListener(TreeModelListener l) {
 		listeners.remove(l);
 	}
-	
+
 	public static void main( String[] args ) throws IOException{
-		GffStruct s = (GffStruct)(new DefaultGffReader(Version.getDefaultVersion()).load(new File("/usr/local/neverwinter/localvault/stormofblaark.bic"))).getTopLevelStruct();
+        final GffStruct s = (new DefaultGffReader(Version.getDefaultVersion()).load(new File("/usr/local/neverwinter/localvault/stormofblaark.bic"))).getTopLevelStruct();
 		TreeModel m = new GffTreeModel(s);
 		JTree tree = new JTree(m);
 		JFrame f = new JFrame("test");
@@ -113,5 +114,4 @@ public class GffTreeModel implements TreeModel {
 		f.pack();
 		f.setVisible(true);
 	}
-
 }

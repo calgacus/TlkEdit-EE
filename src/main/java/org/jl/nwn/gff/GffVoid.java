@@ -13,10 +13,12 @@ public class GffVoid extends GffField<byte[]>{
         this.data = data;
     }
     
+    @Override
     public byte[] getData() {
         return data;
     }
     
+    @Override
     public void setData(byte[] bs) {
         data = bs;
     }
@@ -37,6 +39,7 @@ public class GffVoid extends GffField<byte[]>{
         return sb.toString();
     }
     
+    @Override
     public String toString(){
         return getLabel() + " (VOID) size=" + data.length;
     }

@@ -34,11 +34,12 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.TreeSet;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -84,6 +85,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.JTextComponent;
+
 import org.dts.spell.SpellChecker;
 import org.dts.spell.dictionary.SpellDictionary;
 import org.dts.spell.swing.JSpellDialog;
@@ -92,7 +94,6 @@ import org.dts.spell.swing.RealTimeSpellChecker;
 import org.dts.spell.swing.event.UIErrorMarkerListener;
 import org.dts.spell.swing.finder.DocumentWordFinder;
 import org.dts.spell.swing.utils.SeparatorLineBorder;
-import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.PatternFilter;
@@ -104,12 +105,14 @@ import org.jl.nwn.Version;
 import org.jl.nwn.editor.SimpleFileEditorPanel;
 import org.jl.nwn.spell.Dictionaries;
 import org.jl.nwn.spell.TlkWordFinder;
-import org.jl.nwn.tlk.*;
+import org.jl.nwn.tlk.DefaultTlkReader;
+import org.jl.nwn.tlk.TlkContent;
+import org.jl.nwn.tlk.TlkEntry;
+import org.jl.nwn.tlk.TlkLookup;
 import org.jl.nwn.twoDa.cellEditors.BitFlagEditor;
 import org.jl.swing.Actions;
 import org.jl.swing.I18nUtil;
 import org.jl.swing.table.CellEditorDecorator;
-import org.jl.swing.table.StringPopupCellEditor;
 import org.jl.swing.table.StringPopupCellEditor;
 import org.jl.swing.table.TextCellEditor;
 import org.jl.swing.undo.MappedListSelectionModel;
@@ -118,18 +121,21 @@ import org.jl.swing.undo.RowMutator;
 
 public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeListener, MessageSource {
 
-    private java.util.prefs.Preferences uPrefs = java.util.prefs.Preferences.userNodeForPackage(TlkEdit.class);
+    private Preferences uPrefs = Preferences.userNodeForPackage(TlkEdit.class);
 
     private MessageSourceSupport messageSupport = new MessageSourceSupport(this);
 
+    @Override
     public void removeMessageListener(MessageListener l) {
         messageSupport.removeMessageListener(l);
     }
 
+    @Override
     public MessageListener[] getMessageListeners() {
         return messageSupport.getMessageListeners();
     }
 
+    @Override
     public void addMessageListener(MessageListener l) {
         messageSupport.addMessageListener(l);
     }
@@ -180,8 +186,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     protected TableColumn col_Flags = new TableColumn(4, 50);
     protected BitFlagEditor flagEditor;
 
-    private JToolBar toolbar;
-    private static byte[] tlkHead = {0x54, 0x4c, 0x4b, 0x20}; // "TLK "
+    private final JToolBar toolbar;
+    private static final byte[] tlkHead = {0x54, 0x4c, 0x4b, 0x20}; // "TLK "
     private static final String ERROR_DIALOG_TITLE = uid.getString("TlkEdit.error_dialog_title"); //$NON-NLS-1$
     private JMenu diffMenu = null;
     private JMenu editMenu = null;
@@ -199,7 +205,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         DocumentWordFinder finder = null;
 
         @Override
-        public java.awt.Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             Component c = super.getTableCellEditorComponent(table, value, isSelected, row, column);
             dict = Dictionaries.forLanguage(tlkContent.getLanguage());
             if (!noRealTimeSpellChecking && dict != null) {
@@ -216,6 +222,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             return c;
         }
 
+        @Override
         public boolean stopCellEditing() {
             tlkTable.setRowHeight(tlkTable.getEditingRow(), tlkTable.getRowHeight()); //default row height is 16
             stopMarkErrors();
@@ -224,6 +231,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             return true;
         }
 
+        @Override
         public void cancelCellEditing() {
             tlkTable.setRowHeight(tlkTable.getEditingRow(), tlkTable.getRowHeight()); //default row height is 16
             super.cancelCellEditing();
@@ -241,10 +249,12 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     private MouseAdapter headerPopupListener = new MouseAdapter() {
 
+        @Override
         public void mousePressed(MouseEvent e) {
             maybeShowPopup(e);
         }
 
+        @Override
         public void mouseReleased(MouseEvent e) {
             maybeShowPopup(e);
         }
@@ -257,14 +267,17 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     };
 
     // methods for SimpleFileEditor
+    @Override
     public boolean canSave() {
         return tlkFile != null;
     }
 
+    @Override
     public boolean canSaveAs() {
         return true;
     }
 
+    @Override
     public void close() {
         if (flagEditor != null) {
             flagEditor.dispose();
@@ -274,14 +287,17 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
+    @Override
     public File getFile() {
         return tlkFile;
     }
 
+    @Override
     public void save() throws IOException {
         saveAs(tlkFile, nwnVersion);
     }
 
+    @Override
     public void saveAs(File f, Version nwnVersion) throws IOException {
         tlkContent.saveAs(f, nwnVersion);
         this.nwnVersion = nwnVersion;
@@ -381,15 +397,14 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         flagEditor = new BitFlagEditor(flagStrings, new int[]{1, 2, 4});
         TableCellEditor flagEd = new CellEditorDecorator(flagEditor) {
 
+            @Override
             public Object getCellEditorValue() {
                 String s = (String) super.getCellEditorValue();
-                Byte b = null;
                 try {
-                    b = new Byte(s.indexOf('x') == -1 ? s : s.substring(2));
+                    return Byte.parseByte(s.indexOf('x') == -1 ? s : s.substring(2));
                 } catch (NumberFormatException nfe) {
-                    b = Byte.valueOf((byte) 1);
+                    return 1;
                 }
-                return b;
             }
         };
 
@@ -398,6 +413,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         KeyListener myKeyListener = new KeyAdapter() {
             String prohibited = "\\/ :*.?\"<>| "; //$NON-NLS-1$
 
+            @Override
             public void keyTyped(KeyEvent e) {
                 JTextField tf = (JTextField) e.getSource();
                 if (prohibited.indexOf(e.getKeyChar()) != -1) {
@@ -413,6 +429,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         DefaultCellEditor resRefEditor = new javax.swing.DefaultCellEditor(textResName) {
             BmuPlayer snd = null;
 
+            @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
                 if (useSound && value.toString().length() > 0) {
                     //System.out.println("try to play sound");
@@ -431,6 +448,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 return super.getTableCellEditorComponent(table, value, isSelected, row, column);
             }
 
+            @Override
             public boolean stopCellEditing() {
                 fireEditingStopped();
                 if (snd != null) {
@@ -448,6 +466,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         posField.addKeyListener(new KeyAdapter() {
             int line = 0;
 
+            @Override
             public void keyTyped(KeyEvent e) {
                 JTextField tf = (JTextField) e.getSource();
                 String s = tf.getText();
@@ -529,6 +548,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                             messageSupport.fireMessage(uid.getString("TlkEdit.applyingPattern"));
                             SwingUtilities.invokeLater(new Runnable() {
 
+                                @Override
                                 public void run() {
                                     try {
                                         filter.setPattern(p);
@@ -624,6 +644,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
         mutator.addPropertyChangeListener(new PropertyChangeListener() {
 
+            @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (evt.getPropertyName().equals("modified")) {
                     setIsModified(((Boolean) evt.getNewValue()).booleanValue());
@@ -700,6 +721,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent e) {
         if (e.getPropertyName().equals("language")) {
             selectLanguageButton((NwnLanguage) e.getNewValue());
@@ -713,12 +735,12 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         final JFileChooser fc = new JFileChooser();
         Action toggle = new AbstractAction(set_modified) {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boolean modified = false;
                 modified = ((AbstractButton) e.getSource()).getText() == set_modified;
-                int[] selection = tlkTable.getSelectedRows();
-                for (int i = 0; i < selection.length; i++) {
-                    model.setEntryModified(selection[i], modified);
+                for (final int row : tlkTable.getSelectedRows()) {
+                    model.setEntryModified(row, modified);
                 }
                 tlkTable.requestFocus();
             }
@@ -727,20 +749,19 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         Action loadDiff = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelMergeDiff")) {
 
             //$NON-NLS-1$
+            @Override
             public void actionPerformed(ActionEvent e) {
                 File f = new File(uPrefs.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
                 fc.setSelectedFile(f);
                 if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        int[] changes = tlkContent.mergeDiff(f = fc.getSelectedFile());
-                        for (int i = 0, n = changes.length; i < n; i++) {
-                            model.setEntryModified(changes[i], true);
+                        for (final int change : tlkContent.mergeDiff(f = fc.getSelectedFile())) {
+                            model.setEntryModified(change, true);
                         }
                         uPrefs.put("lastDiff", f.getAbsolutePath()); //$NON-NLS-1$
                     } catch (IOException ioex) {
                         JOptionPane.showMessageDialog(toolbar, uid.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
                         ioex.printStackTrace();
-                    } finally {
                     }
                 }
             }
@@ -749,20 +770,19 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         Action loadDtu = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelMergeDtu")) {
 
             //$NON-NLS-1$
+            @Override
             public void actionPerformed(ActionEvent e) {
                 File f = new File(uPrefs.get("lastDtu", ".")); //$NON-NLS-1$ //$NON-NLS-2$
                 fc.setSelectedFile(f);
                 if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        int[] changes = tlkContent.mergeDtu(f = fc.getSelectedFile());
-                        for (int i = 0, n = changes.length; i < n; i++) {
-                            model.setEntryModified(changes[i], true);
+                        for (final int change : tlkContent.mergeDtu(f = fc.getSelectedFile())) {
+                            model.setEntryModified(change, true);
                         }
                         uPrefs.put("lastDtu", f.getAbsolutePath()); //$NON-NLS-1$
                     } catch (IOException ioex) {
                         ioex.printStackTrace();
                         JOptionPane.showMessageDialog(toolbar, uid.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
-                    } finally {
                     }
                 }
             }
@@ -771,22 +791,23 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         final String save_diff_button = uid.getString("TlkEdit.diff_buttonLabelSaveDiff"); //$NON-NLS-1$
         Action save = new AbstractAction(save_diff_button) {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 //System.out.println( ((AbstractButton)e.getSource()).getText() );
                 File f = new File(uPrefs.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
                 fc.setSelectedFile(f);
                 if (fc.showSaveDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        TreeSet ts = new TreeSet();
+                        final TreeSet<Integer> ts = new TreeSet<>();
                         for (int i = 0, n = model.size(); i < n; i++) {
                             if (model.getEntryModified(i)) {
-                                ts.add(new Integer(i));
+                                ts.add(i);
                             }
                         }
                         int[] newDiffs = new int[ts.size()];
                         int itCount = 0;
-                        for (Iterator it = ts.iterator(); it.hasNext(); itCount++) {
-                            newDiffs[itCount] = ((Integer) it.next()).intValue();
+                        for (final Iterator<Integer> it = ts.iterator(); it.hasNext(); itCount++) {
+                            newDiffs[itCount] = it.next().intValue();
                         }
                         tlkContent.writeDiff(fc.getSelectedFile(), newDiffs);
                         uPrefs.put("lastDiff", fc.getSelectedFile().getAbsolutePath());
@@ -802,6 +823,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         Action discard = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelDiscardInfo")) {
 
             //$NON-NLS-1$
+            @Override
             public void actionPerformed(ActionEvent e) {
                 for (int i = 0, n = model.size(); i < n; i++) {
                     TlkEntry entry = (TlkEntry) model.getEditorEntry(i);
@@ -817,6 +839,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             //$NON-NLS-1$
             JDialog diffOverview = null;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (diffOverview == null) {
                     diffOverview = createDialog();
@@ -832,12 +855,13 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
                     public TableModelListener tml = new TableModelListener() {
 
+                        @Override
                         public void tableChanged(TableModelEvent e) {
                             update();
                         }
                     };
-                    JList list = new JList();
-                    DefaultListModel listModel = new DefaultListModel();
+                    final JList<Integer> list = new JList<>();
+                    final DefaultListModel<Integer> listModel = new DefaultListModel<>();
                     {
                         tlkTable.getModel().addTableModelListener(tml);
                         setTitle(uid.getString("TlkEdit.diff_overviewDialogTitle")); //$NON-NLS-1$
@@ -849,11 +873,10 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
                         list.addListSelectionListener(new ListSelectionListener() {
 
+                            @Override
                             public void valueChanged(ListSelectionEvent e) {
                                 if (!e.getValueIsAdjusting()) {
-                                    Integer r = (Integer) list.getModel().getElementAt(
-                                            list.getSelectedIndex());
-                                    //System.out.println( r );
+                                    final Integer r = list.getModel().getElementAt(list.getSelectedIndex());
                                     tlkTable.changeSelection(r.intValue(), 1, false, false);
                                 }
                             }
@@ -861,6 +884,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                         Action aUpdate = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelUpdateList")) {
 
                             //$NON-NLS-1$
+                            @Override
                             public void actionPerformed(ActionEvent e) {
                                 update();
                             }
@@ -879,11 +903,12 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                         for (int i = 0; i < model.size(); i++) {
                             TlkEntry e = model.getEditorEntry(i);
                             if (e instanceof EditorTlkEntry && ((EditorTlkEntry) e).isModified()) {
-                                listModel.addElement(new Integer(i));
+                                listModel.addElement(i);
                             }
                         }
                     }
 
+                    @Override
                     public void setVisible(boolean visibleState) {
                         pack();
                         super.setVisible(visibleState);
@@ -914,6 +939,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     Action aToggleUserTlk = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             boolean b = !model.getIsUserTlk();
             isUserTlkBM.setSelected(b);
@@ -924,6 +950,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     Action aToggleHexDisplay = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             boolean b = !model.isDisplayHex();
             //isUserTlkBM.setSelected(b);
@@ -932,6 +959,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     };
 
+    @Override
     public JMenu[] getMenus() {
         return new JMenu[]{editMenu, viewMenu, diffMenu};
     }
@@ -943,8 +971,9 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     private Action actResize = new AbstractAction(uid.getString("TlkEdit.resize_buttonLabel")) {
 
         //$NON-NLS-1$
+        @Override
         public void actionPerformed(ActionEvent e) {
-            String s = JOptionPane.showInputDialog((JComponent) e.getSource(), uid.getString("TlkEdit.resize_enterNewSize"), new Integer(model.size()));
+            String s = JOptionPane.showInputDialog((JComponent) e.getSource(), uid.getString("TlkEdit.resize_enterNewSize"), model.size());
             if (s == null) {
                 return;
             }
@@ -970,7 +999,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 //listMutator.remove(indexes);
                 rowMutator.new RemoveRowsEdit("Resize", indexes).invoke();
             } else {
-                List<TlkEntry> entries = new ArrayList<TlkEntry>(newSize - model.size());
+                final List<TlkEntry> entries = new ArrayList<>(newSize - model.size());
                 for (int i = 0; i < newSize - model.size(); i++) {
                     entries.add(new EditorTlkEntry());
                 }
@@ -982,18 +1011,21 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     protected final Action actCopy = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             transferHandler.exportToClipboard(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
         }
     };
     protected final Action actCut = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             transferHandler.exportToClipboard(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.MOVE);
         }
     };
     protected final Action actPaste = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             transferHandler.importData(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(transferHandler));
         }
@@ -1001,6 +1033,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     private final Action actToggleFlagDisplay = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             AbstractButton btn = (AbstractButton) e.getSource();
             boolean showFlags = btn.isSelected();
@@ -1018,6 +1051,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     private final Action actToggleSoundDisplay = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             AbstractButton btn = (AbstractButton) e.getSource();
             boolean showFlags = btn.isSelected();
@@ -1061,6 +1095,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     private final Action actFind = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (searchAndReplace == null) {
                 Window w = SwingUtilities.getWindowAncestor(TlkEdit.this);
@@ -1074,6 +1109,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     private final Action actFindNext = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (searchAndReplace != null && searchAndReplace.haveMatch()) {
                 searchAndReplace.doSearch();
@@ -1094,6 +1130,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
         ActionListener al = new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 cancel = true;
                 d.cancel();
@@ -1101,6 +1138,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         };
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 noRealTimeSpellChecking = false;
@@ -1157,6 +1195,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             cbCaseSensitive.setDisplayedMnemonicIndex(5);
             cbCaseSensitive.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     checker.setCaseSensitive(cbCaseSensitive.isSelected());
                 }
@@ -1181,10 +1220,12 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         return tooltip;
     }
 
+    @Override
     public JToolBar getToolbar() {
         return toolbar;
     }
 
+    @Override
     public void showToolbar(boolean b) {
         if (b) {
             add(toolbar, java.awt.BorderLayout.NORTH);
@@ -1201,6 +1242,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
 
+                    @Override
                     public void run() {
                         buildLanguageMenu(TlkEdit.this.nwnVersion);
                     }
@@ -1238,6 +1280,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
 
+        @Override
         public void exportToClipboard(final JComponent comp, Clipboard clip, int action) {
             JTable table = (JTable) comp;
             // deselect virtual last row
@@ -1253,6 +1296,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             exportDone(comp, trans, action);
         }
 
+        @Override
         protected void exportDone(JComponent source, Transferable data, int action) {
             if ((action & MOVE) != 0) {
                 String name = MessageFormat.format("Cut [{0}...{1}]", modelSelection[0], modelSelection[modelSelection.length - 1]);
@@ -1274,14 +1318,15 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             return false;
         }
 
+        @Override
         public boolean importData(JComponent comp, Transferable t) {
             JTable table = (JTable) comp;
             try {
                 if (t.isDataFlavorSupported(flavorTlkList)) {
-                    List<TlkEntry> entries = (List<TlkEntry>) t.getTransferData(flavorTlkList);
-                    List<TlkEntry> clones = new ArrayList<TlkEntry>(entries.size());
+                    final List<TlkEntry> entries = (List<TlkEntry>) t.getTransferData(flavorTlkList);
+                    final List<TlkEntry> clones = new ArrayList<>(entries.size());
                     for (TlkEntry e : entries) {
-                        clones.add((TlkEntry) e.clone());
+                        clones.add(e.clone());
                     }
                     int viewRow = table.getSelectedRow();
                     int modelRow = table.convertRowIndexToModel(viewRow);
@@ -1301,12 +1346,13 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         private Transferable makeTransferable(final int[] modelSelection) {
             final TlkEntry[] rows = new TlkEntry[modelSelection.length];
             for (int i = 0; i < modelSelection.length; i++) {
-                rows[i] = (TlkEntry) tlkContent.get(modelSelection[i]).clone();
+                rows[i] = tlkContent.get(modelSelection[i]).clone();
             }
             final boolean hex = model.isDisplayHex();
             final boolean userTlk = model.getIsUserTlk();
             return new Transferable() {
 
+                @Override
                 public Object getTransferData(DataFlavor df) {
                     //System.out.println( "getTransferData : " + df  );
                     if (df.equals(flavorTsv)) {
@@ -1316,6 +1362,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                             final PipedOutputStream pout = new PipedOutputStream(pin);
                             new Thread() {
 
+                        @Override
                                 public void run() {
                                     try {
                                         BufferedOutputStream bos = new BufferedOutputStream(pout);
@@ -1357,10 +1404,12 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                     }
                 }
 
+                @Override
                 public DataFlavor[] getTransferDataFlavors() {
                     return new DataFlavor[]{flavorTlkList, FLAVORSTRREF};
                 }
 
+                @Override
                 public boolean isDataFlavorSupported(DataFlavor df) {
                     return df.equals(flavorTlkList) || df.equals(FLAVORSTRREF);
                 }

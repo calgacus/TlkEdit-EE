@@ -1,39 +1,39 @@
 package org.jl.swing.table;
 
 import java.util.List;
+
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
+
 import org.jl.swing.undo.Mutator;
 import org.jl.swing.undo.RowMutator;
-import org.jl.swing.undo.RowMutator.InsertRowsEdit;
-import org.jl.swing.undo.RowMutator.ReplaceRowsEdit;
 import org.jl.swing.undo.TableModelMutator;
 
 public class TableMutator<RowData, ColumnData> extends TableModelMutator{
-    
+
     public interface ColumnMutable<ColumnData>{
         public ColumnData dropColumn( int index );
-        public void insertColumn(int position, String name, Class cClass, ColumnData data);
+        public void insertColumn(int position, String name, Class<?> cClass, ColumnData data);
         public void setColumnName( int index, String name );
     }
-    
+
     protected RowMutator rowMutator;
-    
+
     /** Creates a new instance of TableModelMutator */
     public TableMutator( TableModel model, ListSelectionModel lsl ){
         super(model, lsl);
         init();
     }
-    
+
     public TableMutator( Mutator m, TableModel model, ListSelectionModel lsl ){
         super(m, model, lsl);
         init();
     }
-    
+
     private void init(){
         rowMutator = new RowMutator(this,(RowMutator.RowMutable)model, lsl);
     }
-    
+
     public class SetColumnNameEdit extends ModelEdit{
         String newName, oldName;
         int pos;
@@ -53,9 +53,9 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
             ((ColumnMutable)model).setColumnName(pos, oldName);
         }
     }
-    
+
     public class DropColumnEdit extends ModelEdit{
-        Class cClass;
+        Class<?> cClass;
         String name;
         int pos;
         ColumnData data;
@@ -74,13 +74,13 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
             ((ColumnMutable)model).insertColumn(pos, name, cClass, data);
         }
     }
-    
+
     public class InsertColumnEdit extends ModelEdit{
-        Class cClass;
+        Class<?> cClass;
         String name;
         int pos;
         ColumnData data;
-        public InsertColumnEdit(String pName, int pos, String cName, Class cClass, ColumnData data){
+        public InsertColumnEdit(String pName, int pos, String cName, Class<?> cClass, ColumnData data){
             super(pName);
             this.pos = pos;
             this.name = cName;
@@ -96,17 +96,16 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
             ((ColumnMutable)model).dropColumn(pos);
         }
     }
-    
+
     public List<RowData> removeRows( int[] indices ){
         return rowMutator.removeRows(indices);
     }
-    
+
     public void insertRows( int startRow, List<RowData> rows ){
         rowMutator.insertRows(startRow, rows);
     }
-    
+
     public void replaceRows( int startRow, int endRow, List<RowData> replacement ){
         rowMutator.replaceRows( startRow, endRow, replacement );
     }
-    
 }

@@ -20,9 +20,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
+
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -59,18 +60,16 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.Caret;
-import javax.swing.text.html.HTMLDocument;
+
 import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jl.nwn.Version;
 import org.jl.nwn.editor.SimpleFileEditorPanel;
 import org.jl.nwn.tlk.editor.TlkEdit;
-import org.jl.swing.UIDefaultsX;
 import org.jl.swing.Actions;
 import org.jl.swing.I18nUtil;
 import org.jl.swing.TableSearchAndReplace;
+import org.jl.swing.UIDefaultsX;
 import org.jl.swing.table.TableMutator;
 import org.jl.swing.undo.MappedListSelectionModel;
 import org.jl.swing.undo.MyUndoManager;
@@ -218,6 +217,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
             ListSelectionListener lsl = new ListSelectionListener() {
 
+                @Override
                 public void valueChanged(ListSelectionEvent e) {
                     int c = table.getSelectedColumn();
                     if (!e.getValueIsAdjusting() && c != -1) {
@@ -244,7 +244,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             table.getColumnModel().getSelectionModel().addListSelectionListener(lsl);
         }
     }
-    
+
     public void load(File f, Version v) throws IOException {
         //putClientProperty(resources, new TreeMap());
 
@@ -254,12 +254,12 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         nwnVersion = v;
         model = new TwoDaTableModel(twoDa);
         table.setModel(model);
-        
+
         if (mutator!=null)
             mutator.removeUndoableEditListener(undoManager);
         undoManager.discardAllEdits();
-        
-        mutator = new TableMutator<String[], String[]>(model, mappedLsl);
+
+        mutator = new TableMutator<>(model, mappedLsl);
         mutator.addUndoableEditListener(undoManager);
         mutator.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -375,6 +375,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         final JTextField text = new JTextField();
         DefaultCellEditor ce = new DefaultCellEditor(text) {
 
+            @Override
             public java.awt.Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
                 java.awt.Component retValue;
                 retValue = super.getTableCellEditorComponent(table, value, isSelected, row, column);
@@ -417,6 +418,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     private void setupToolbar() {
         Action lock = new AbstractAction("lock row header") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (((JToggleButton) e.getSource()).isSelected()) {
                     lockColumns(new int[]{0, 1});
@@ -430,24 +432,28 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
         Action lock0 = new AbstractAction("") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 lockColumns(new int[]{0});
             }
         };
         Action lock1 = new AbstractAction("") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 lockColumns(new int[]{0, 1});
             }
         };
         Action unlock = new AbstractAction("display row header") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 unlockColumns();
             }
         };
         Action resize = new AbstractAction("resize columns") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 resizeColumns();
             }
@@ -495,6 +501,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
 
         Action lockLabel = new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int labelCol = model.findColumn("label");
                 if ( labelCol != -1 )
@@ -569,14 +576,17 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         return toolbar;
     }
 
+    @Override
     public JMenu[] getMenus() {
         return new JMenu[]{editMenu, viewMenu, toolsMenu};
     }
 
+    @Override
     public JToolBar getToolbar() {
         return toolbar;
     }
 
+    @Override
     public void showToolbar(boolean b) {
         if (b) {
             add(toolbar, java.awt.BorderLayout.NORTH);
@@ -631,6 +641,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             if (e.getFirstRow() == TableModelEvent.HEADER_ROW) {
                 SwingUtilities.invokeLater(new Runnable() {
 
+                    @Override
                     public void run() {
                         resizeColumns();
                     }
@@ -660,6 +671,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     protected class TwoDaSelectionListener implements ListSelectionListener {
 
+        @Override
         public void valueChanged(ListSelectionEvent lse) {
             if (!lse.getValueIsAdjusting()) {
                 updatePositition();
@@ -715,20 +727,20 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     Action aToggleUserTlk = new AbstractAction("U") {
         private int USERTLKFLAG = 1 << 24;
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int columnIndex = table.getSelectedColumn();
             if (columnIndex != -1) {
-                int[] rows = table.getSelectedRows();
                 mutator.beginUpdate();
-                for (int i = 0; i < rows.length; i++) {
+                for (final int row : table.getSelectedRows()) {
                     try {
-                        String s = model.getValueAt(rows[i], columnIndex).toString();
+                        String s = model.getValueAt(row, columnIndex).toString();
                         if (s.startsWith("0x")) {
                             int value = Integer.parseInt(s.substring(2), 16);
-                            mutator.new SetValueAtEdit("Toggle User StrRef", "0x" + Integer.toHexString(value ^ USERTLKFLAG), rows[i], columnIndex).invoke();
+                            mutator.new SetValueAtEdit("Toggle User StrRef", "0x" + Integer.toHexString(value ^ USERTLKFLAG), row, columnIndex).invoke();
                         } else {
                             int value = Integer.parseInt(s);
-                            mutator.new SetValueAtEdit("Toggle User StrRef", Integer.toString(value ^ USERTLKFLAG), rows[i], columnIndex).invoke();
+                            mutator.new SetValueAtEdit("Toggle User StrRef", Integer.toString(value ^ USERTLKFLAG), row, columnIndex).invoke();
                         }
                     } catch (NumberFormatException nfe) {
                     }
@@ -743,6 +755,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     private final Action actFind = new AbstractAction("find") {
         String title = "";
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (searchAndReplace == null) {
                 searchAndReplace = new TableSearchAndReplace((JFrame) SwingUtilities.getWindowAncestor(table), table) {
@@ -764,6 +777,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     private final Action actFindNext = new AbstractAction("find again") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (searchAndReplace != null && searchAndReplace.haveMatch()) {
                 searchAndReplace.doSearch();
@@ -778,6 +792,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     final Action actPasteRows = new AbstractAction("paste") {
 
         //{ super.setEnabled( false ); }
+        @Override
         public void actionPerformed(ActionEvent e) {
             int rowNum = table.getSelectedRow();
             int colNum = table.getSelectedColumn();
@@ -844,13 +859,14 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
      */
     final Action actCopyRows = new AbstractAction("copy") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int[] selection = table.getSelectedRows();
             if (selection.length > 0) {
-                List rowBuffer = new Vector();
+                final List<String[]> rowBuffer = new ArrayList<>();
                 String[] row;
                 String value;
-                StringBuffer sb = new StringBuffer();
+                final StringBuilder sb = new StringBuilder();
                 for (int r = 0; r < selection.length; r++) {
                     row = new String[model.getColumnCount()];
                     for (int i = 0; i < model.getColumnCount(); i++) {
@@ -865,14 +881,17 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
                 final String transfer = sb.toString();
                 Transferable trans = new Transferable() {
 
-                    public Object getTransferData(DataFlavor flavor) throws java.awt.datatransfer.UnsupportedFlavorException, IOException {
+                    @Override
+                    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
                         return transfer;
                     }
 
+                    @Override
                     public boolean isDataFlavorSupported(DataFlavor flavor) {
                         return flavor == tsvFlavor;
                     }
 
+                    @Override
                     public DataFlavor[] getTransferDataFlavors() {
                         return new DataFlavor[]{tsvFlavor, DataFlavor.stringFlavor};
                     }
@@ -885,6 +904,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     };
     final Action actRemoveSelection = new AbstractAction("remove") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             table.removeRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
             int[] selection = table.getSelectedRows();
@@ -897,6 +917,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     Action actCut = new AbstractAction("cut") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             actCopyRows.actionPerformed(e);
             actRemoveSelection.actionPerformed(e);
@@ -905,17 +926,17 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     Action actToggleAbsolute = new AbstractAction("x^!") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int column = table.getSelectedColumns()[0];
             int[] rows = table.getSelectedRows();
-            String v = "";
             mutator.beginUpdate();
-            for (int i = 0; i < rows.length; i++) {
-                v = (String) model.getValueAt(rows[i], column);
+            for (final int row : rows) {
+                final String v = (String) model.getValueAt(row, column);
                 if (v.startsWith("!")) {
-                    mutator.new SetValueAtEdit("!", v.substring(1), rows[i], column).invoke();
+                    mutator.new SetValueAtEdit("!", v.substring(1), row, column).invoke();
                 } else if (!v.startsWith("*")) {
-                    mutator.new SetValueAtEdit("!", "!" + v, rows[i], column).invoke();
+                    mutator.new SetValueAtEdit("!", "!" + v, row, column).invoke();
                 }
             }
             mutator.endUpdate();
@@ -924,6 +945,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     Action actRenumber = new AbstractAction("renumber") {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             mutator.beginUpdate();
             for (int row = 0; row < model.getRowCount() - 1; row++) {
@@ -972,6 +994,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             JPanel buttons = new JPanel(new GridLayout(1, 3));
             JButton colInsertButton = new JButton(new AbstractAction("insert column") {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (parseFields() == 0) {
                         try {
@@ -988,6 +1011,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             });
             JButton colDropButton = new JButton(new AbstractAction("drop column") {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (parseFields() == 0) {
                         try {
@@ -1002,6 +1026,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             });
             JButton colRenameButton = new JButton(new AbstractAction("rename column") {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (parseFields() == 0) {
                         if (!columnHeader.equals(model.getColumnName(columnNumber))) {
@@ -1028,6 +1053,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
             alterTableDialog.pack();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (alterTableDialog == null) {
                 init();
@@ -1038,14 +1064,14 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
 
     public static class TwoDaTableModel extends AbstractTableModel implements RowMutator.RowMutable<String[]>, TableMutator.ColumnMutable<String[]> {
 
-        private TwoDaTable twoDa;
+        private final TwoDaTable twoDa;
 
         public TwoDaTableModel(TwoDaTable t) {
             twoDa = t;
         }
 
         @Override
-        public Class getColumnClass(int c) {
+        public Class<?> getColumnClass(int c) {
             return String.class;
         }
 
@@ -1132,7 +1158,7 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
         }
 
         @Override
-        public void insertColumn(int columnNumber, String columnHeader, Class cClass, String[] values) {
+        public void insertColumn(int columnNumber, String columnHeader, Class<?> cClass, String[] values) {
             twoDa.insertColumn(columnNumber, columnHeader, values[0]);
             for (int i = 0; i < twoDa.getRowCount(); i++) {
                 twoDa.setValueAt(values[i], i, columnNumber);

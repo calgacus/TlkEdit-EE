@@ -12,13 +12,14 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.jl.nwn.Version;
 
 /**
  * Constant definitions and utility methods for GFF.
  */
 public class Gff {
-    
+
     public static final byte BYTE = 0;
     public static final byte CHAR = 1;
     public static final byte WORD = 2;
@@ -27,37 +28,35 @@ public class Gff {
     public static final byte INT = 5;
     public static final byte DWORD64 = 6;
     public static final byte INT64 = 7;
-    
+
     public static final byte FLOAT = 8;
     public static final byte DOUBLE = 9;
-    
+
     public static final byte CEXOSTRING = 10;
     public static final byte RESREF = 11;
     public static final byte CEXOLOCSTRING = 12;
-    
+
     public static final byte VOID = 13;
-    
+
     public static final byte STRUCT = 14;
     public static final byte LIST = 15;
-    
+
     public static final byte VECTOR = 17;
-    
+
     public static final int STRUCT_ID_TOPLEVEL = -1;
-    
+
     public static final int GENDER_MALE = 0;
     public static final int GENDER_FEMALE = 1;
-    
-    private static final String[] typeNames = {
+
+    public static final String[] TYPENAMES = {
         "Byte", "Char", "Word", "Short", "DWord", "Int", "DWord64", "Int64",
         "Float", "Double",
         "CExoString", "CResRef", "CExoLocString",
         "Void",
         "Struct", "List", null, "Vector"
     };
-    
-    public static final List TYPENAMES = Collections.unmodifiableList(Arrays.asList(typeNames));
-    
-    private static String[] gffFileTypes = new String[]{
+
+    private static final String[] gffFileTypes = {
         "ifo",
         "are", "git", "gic",
         "utc", "utd", "ute", "uti", "utp", "uts", "utm", "utt", "utw",
@@ -71,27 +70,27 @@ public class Gff {
         "gui",
         "ros"
     };
-    
-    public static final List GFFTYPES;
-    
+
+    public static final List<String> GFFTYPES;
+
     static {
         Arrays.sort(gffFileTypes);
         GFFTYPES = Collections.unmodifiableList(Arrays.asList(gffFileTypes));
     }
-    
-    private static BigInteger INT64_SIGNBIT1= BigInteger.ZERO.setBit( 63 );
-    
+
+    private static final BigInteger INT64_SIGNBIT1= BigInteger.ZERO.setBit( 63 );
+
     public static String getTypeName( int type ){
         if ( type > -1 && type < 18 )
-            return typeNames[type];
+            return TYPENAMES[type];
         else
             return "unknown : " + type;
     }
-    
+
     public static boolean isComplexType(int type){
         return !( type < 6 || type == 8 );
     }
-    
+
     /**
      * converts the given BigInteger value to the byte representation used in
      * binary gff files, the length of the returned array will be either 4 or 8,
@@ -159,7 +158,7 @@ public class Gff {
             }
         }
     }
-    
+
     private static void flip( byte[] b ){
         byte swap = 0;
         for ( int i = 0; i < b.length / 2; i++ ){
@@ -168,7 +167,7 @@ public class Gff {
             b[b.length-1-i] = swap;
         }
     }
-    
+
     public static BigInteger bytes2BigInt( int type, byte[] b ){
         if ( type == SHORT ){
             return new BigInteger( new byte[]{ b[1],b[0] } );
@@ -185,7 +184,7 @@ public class Gff {
         }
         throw new IllegalArgumentException("given type is not a gff decimal type : " + type );
     }
-    
+
     /**
      * tests whether the given string is a known gff file type
      * @param type a string of length 3
@@ -197,7 +196,7 @@ public class Gff {
             throw new IllegalArgumentException( "invalid type string : " + type );
         return Arrays.binarySearch( gffFileTypes, type, String.CASE_INSENSITIVE_ORDER ) > -1;
     }
-    
+
     /**
      * Encoding of CExoStrings probably depends on game version ( or maybe not )
      * @return 'UTF-8' for NWN2 and 'windows-1252' for NWN1
@@ -229,5 +228,4 @@ public class Gff {
             throw new ParseException("illegal label : " + s, 0);
     }
      */
-    
 }

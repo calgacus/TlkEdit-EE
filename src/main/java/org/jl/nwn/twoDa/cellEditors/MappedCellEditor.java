@@ -7,7 +7,6 @@
 package org.jl.nwn.twoDa.cellEditors;
 
 import java.awt.Component;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Map;
@@ -39,6 +38,7 @@ public class MappedCellEditor extends DefaultCellEditor {
 	private JComboBox comboBox;
 	
 	private Action aAbort = new AbstractAction(){
+		@Override
 		public void actionPerformed( ActionEvent e ){
 			cancelCellEditing();
 		}
@@ -72,11 +72,13 @@ public class MappedCellEditor extends DefaultCellEditor {
 		return map;
 	}
 	
+	@Override
 	public Object getCellEditorValue(){
 		Object o = invMap.get( super.getCellEditorValue() );
 		return o==null? comboBox.getSelectedItem() : o;
 	}
 	
+	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column){
 		Object o = map.get( value );
 		//comboBox.setSelectedItem( o==null? value : o );

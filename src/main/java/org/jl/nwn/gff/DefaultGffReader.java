@@ -38,6 +38,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffInteger(java.lang.String, byte, java.math.BigInteger)
          */
+    @Override
     public GffField mkInteger(String label, byte type, BigInteger value) {
         GffInteger i = new GffInteger( label, type );
         i.setData( value );
@@ -47,6 +48,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffFloat(java.lang.String, float)
          */
+    @Override
     public GffField mkFloat(String label, float value) {
         return new GffFloat( label, value );
     }
@@ -54,6 +56,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffDouble(java.lang.String, double)
          */
+    @Override
     public GffField mkDouble(String label, double value) {
         return new GffDouble( label, value );
     }
@@ -61,6 +64,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffCExoString(java.lang.String, java.lang.String)
          */
+    @Override
     public GffField mkCExoString(String label, String value) {
         return new GffCExoString( label, value );
     }
@@ -68,6 +72,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffCExoLocString(java.lang.String, int, int[], java.lang.String[])
          */
+    @Override
     public GffField mkCExoLocString(String label, int strRef, int[] stringIDs,
             String[] strings) {
         GffCExoLocString s = new GffCExoLocString( label );
@@ -80,6 +85,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffResRef(java.lang.String, java.lang.String)
          */
+    @Override
     public GffField mkCResRef(String label, String value) {
         return new GffCResRef( label, value );
     }
@@ -87,6 +93,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffStruct(java.lang.String, int)
          */
+    @Override
     public GffStruct mkStruct(String label, int structID) {
         return new GffStruct(label, structID);
     }
@@ -94,6 +101,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffList(java.lang.String)
          */
+    @Override
     public GffList mkList(String label) {
         return new GffList( label );
     }
@@ -101,6 +109,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffVoid(java.lang.String, byte[])
          */
+    @Override
     public GffField mkVoid(String label, byte[] value) {
         return new GffVoid( label, value );
     }
@@ -108,6 +117,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#listAdd(java.lang.Object, java.lang.Object)
          */
+    @Override
     public void listAdd(GffList list, GffStruct struct) {
         list.add( struct );
     }
@@ -115,6 +125,7 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#structAdd(java.lang.Object, java.lang.Object)
          */
+    @Override
     public void structAdd(GffStruct struct, GffField field) {
         struct.addChild(field);
     }
@@ -122,14 +133,17 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         /* (non-Javadoc)
          * @see org.jl.nwn.gff.AbstractGffBuilder#structSetID(java.lang.Object, int)
          */
+    @Override
     public void structSetID(GffStruct struct, int ID) {
         struct.setId(ID);
     }
     
+    @Override
     public GffContent mkGffObject(GffStruct tls, String fileType, File file){
         return new GffContent( fileType, tls );
     }
     
+    @Override
     public GffField mkVector(String label, float[] value){
         GffVector v = (GffVector) GffField.createField(Gff.VECTOR);
         v.setLabel(label);
@@ -137,10 +151,12 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         return v;
     }
     
+    @Override
     public GffContent load( File f ) throws IOException{
         return (GffContent) super.load(f);
     }
     
+    @Override
     public GffContent load( InputStream in ) throws IOException{
         return (GffContent) super.load(in);
     }

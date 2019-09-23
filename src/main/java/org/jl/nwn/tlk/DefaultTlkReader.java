@@ -13,6 +13,7 @@ public class DefaultTlkReader extends AbstractTlkReader<TlkContent>{
         super(v);
     }
     
+    @Override
     protected void createEntry(TlkContent tlk, int position,
             byte flags, String resRef, float sndLength, String string) {
         tlk.add( position,
@@ -23,6 +24,7 @@ public class DefaultTlkReader extends AbstractTlkReader<TlkContent>{
                 sndLength));
     }
     
+    @Override
     protected TlkContent createTlk(
             int size,
             NwnLanguage lang,

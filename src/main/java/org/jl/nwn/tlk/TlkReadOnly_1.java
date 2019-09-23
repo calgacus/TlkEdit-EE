@@ -11,7 +11,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.jl.nwn.NwnLanguage;
+
 /**
  * read only tlk table using a memory mapped file
  * for tlk version 1
@@ -22,16 +25,16 @@ import org.jl.nwn.NwnLanguage;
  *16 byte : string, (0-terminated ?)
  */
 public class TlkReadOnly_1 {
-    
+
     LinkedHashMap<Integer, String> cache;
     ByteBuffer index;
     ByteBuffer stringBytes;
     int size;
     NwnLanguage lang;
-    
+
     FileInputStream fis;
     FileChannel fc;
-    
+
     /** Creates a new instance of TlkReadOnly */
     public TlkReadOnly_1( File file, final int cacheSize ) throws IOException{
         fis = new FileInputStream( file );
@@ -39,13 +42,13 @@ public class TlkReadOnly_1 {
         ByteBuffer header = ByteBuffer.allocate(0x24);
         header.order( ByteOrder.LITTLE_ENDIAN );
         fc.read(header);
-        
+
         String fileHeader = new String(header.array(),0,8);
         if ( !fileHeader.startsWith("TLK") )
             throw new IOException( "Error : not a tlk file " );
         if ( !fileHeader.startsWith("TLK V1  ") )
             throw new IOException( "Error : wrong tlk file version : " + fileHeader );
-        
+
         header.position(8);
         //lang = NwnLanguage.forCode( header.getInt() );
         header.getShort(); // ???
@@ -60,14 +63,15 @@ public class TlkReadOnly_1 {
         stringBytes = fc.map( FileChannel.MapMode.READ_ONLY, stringDataOffset, fc.size() - stringDataOffset );
 
         cache = new LinkedHashMap<Integer, String>(cacheSize, 0.75f, true){
-            protected boolean removeEldestEntry(java.util.Map.Entry<Integer, String> eldest) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<Integer, String> eldest) {
                 return size() > cacheSize;
-            }            
+            }
         };
         fis.close();
         fc.close();
     }
-    
+
     public String getString( int strRef ){
 
         String s;
@@ -90,22 +94,21 @@ public class TlkReadOnly_1 {
         cache.put( strRef, s );
         return s;
     }
-    
+
     public int size(){
         return size;
     }
-    
+
     public static void main( String ... args ) throws Exception{
         if ( args.length == 0 )
             args = new String[]{"/usr/local/neverwinter/dialog.v130", "43", "42"};
         File f = new File( args[0] );
         long start = System.currentTimeMillis();
         TlkReadOnly_1 tlk = new TlkReadOnly_1( f, 1000 );
-        
+
         for ( int i = 1; i < args.length; i++ ) {
             System.out.println("tlkreadonly 107 " + tlk.getString(Integer.parseInt(args[i])));
         }
 
     }
-    
 }

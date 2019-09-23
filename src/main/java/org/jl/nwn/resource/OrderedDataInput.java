@@ -31,47 +31,57 @@ public class OrderedDataInput implements DataInput{
         return bb.order();
     }    
     
+    @Override
     public void readFully(byte[] b, int off, int len) throws IOException{
         in.readFully(b, off, len);
     }
     
+    @Override
     public void readFully(byte[] b) throws IOException{
         in.readFully(b);
     }
     
+    @Override
     public int skipBytes(int n) throws IOException{
         return in.skipBytes(n);
     }
     
+    @Override
     public int readUnsignedShort() throws IOException{
         in.readFully(bytes,0,2);
         char c = bb.getChar(0);
         return (int) c;
     }
     
+    @Override
     public boolean readBoolean() throws IOException{
         return in.readBoolean();
     }
     
+    @Override
     public byte readByte() throws IOException{
         return in.readByte();
     }
     
+    @Override
     public char readChar() throws IOException{
         in.readFully(bytes,0,2);
         return bb.getChar(0);
     }
     
+    @Override
     public double readDouble() throws IOException{
         in.readFully(bytes,0,8);
         return bb.getDouble(0);
     }
     
+    @Override
     public float readFloat() throws IOException{
         in.readFully(bytes,0,4);
         return bb.getFloat(0);
     }
     
+    @Override
     public int readInt() throws IOException{
         if ( bb.order() == ByteOrder.LITTLE_ENDIAN )
             return in.readUnsignedByte() | in.readUnsignedByte() << 8 | in.readUnsignedByte() << 16 | in.readUnsignedByte() << 24;
@@ -81,24 +91,29 @@ public class OrderedDataInput implements DataInput{
         //return bb.getInt(0);
     }
     
+    @Override
     public String readLine() throws IOException{
         return in.readLine();
     }
     
+    @Override
     public long readLong() throws IOException{
         in.readFully(bytes,0,8);
         return bb.getLong(0);
     }
     
+    @Override
     public short readShort() throws IOException{
         in.readFully(bytes,0,2);
         return bb.getShort(0);
     }
     
+    @Override
     public String readUTF() throws IOException{
         return in.readUTF();
     }
     
+    @Override
     public int readUnsignedByte() throws IOException{
         return in.readUnsignedByte();
     }

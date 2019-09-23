@@ -7,24 +7,24 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-import org.jl.nwn.resource.*; /**
- * read only representation of a key file
- */
 
+import org.jl.nwn.resource.ResourceID;
+
+/** Read only representation of a key file. */
 public abstract class KeyFile {
 
     protected File file;
 
     protected String[] bifs;
 
-    protected static byte[] HEADERV10 = new byte[]{75, 69, 89, 32, 86, 49, 32, 32};
-    protected static byte[] HEADERV11 = new byte[]{75, 69, 89, 32, 86, 49, 46, 49};
+    protected static final byte[] HEADERV10 = {75, 69, 89, 32, 86, 49, 32, 32};
+    protected static final byte[] HEADERV11 = {75, 69, 89, 32, 86, 49, 46, 49};
 
 //protected Map<ResourceID, Integer> entryMap = new TreeMap<ResourceID, Integer>();
-    public static class BifResourceLocation {
+    public static final class BifResourceLocation {
 
-        private String bifName;
-        private int bifIndex;
+        private final String bifName;
+        private final int bifIndex;
 
         protected BifResourceLocation(String bifName, int bifIndex) {
             this.bifName = bifName;
@@ -70,8 +70,8 @@ public abstract class KeyFile {
         }
     }
 
-    public abstract Iterator getResourceIDs();
-    
+    public abstract Iterator<ResourceID> getResourceIDs();
+
     public abstract Set<ResourceID> getResourceIDSet();
 
     public abstract BifResourceLocation findResource(String resName, short resType);

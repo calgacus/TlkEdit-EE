@@ -12,9 +12,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
+
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
@@ -25,67 +25,67 @@ import org.jl.nwn.Version;
 /**
  */
 public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld> {
-    
+
     private ImageInputStream in;
-    
+
     protected Version nwnVersion;
-    
-    private final List<Fld> fieldList = new ArrayList<Fld>();
-    private final List<Integer> listIndices= new LinkedList(); // indices of fields that are lists
-    private final List<Strct> structList = new ArrayList<Strct>();
-    
-    private final List<String> labelList = new ArrayList<String>();
-    
-    private HashMap<Integer, Integer> dataPointers = new HashMap<Integer, Integer>();
-    
+
+    private final List<Fld> fieldList = new ArrayList<>();
+    private final List<Integer> listIndices= new ArrayList<>(); // indices of fields that are lists
+    private final List<Strct> structList = new ArrayList<>();
+
+    private final List<String> labelList = new ArrayList<>();
+
+    private HashMap<Integer, Integer> dataPointers = new HashMap<>();
+
     // the file type string is always in upper case with length 4
     private String fileTypeString = "GFF ";
-    
+
     private int structOffset = 0;
     private int structCount = 0;
-    
+
     private int fieldOffset = 0;
     private int fieldCount = 0;
-    
+
     private int labelOffset = 0;
     private int labelCount = 0;
-    
+
     private int fieldDataOffset = 0;
     private int fieldDataCount = 0;
-    
+
     private int fieldIndicesOffset = 0;
     private int fieldIndicesCount = 0;
-    
+
     private int listIndicesOffset = 0;
     private int listIndicesCount = 0;
-    
+
     final private byte[] buf = new byte[1024]; // max length of a CExoString
-        /*
-         * readField(int) will put struct fields in this map ( key = struct array position )
-         * readStruct(int) will then use objects from this map
-         * */
-    private final TreeMap<Integer, Strct> namedStructs = new TreeMap<Integer, Strct>();
-    
+    /*
+     * readField(int) will put struct fields in this map ( key = struct array position )
+     * readStruct(int) will then use objects from this map
+     */
+    private final TreeMap<Integer, Strct> namedStructs = new TreeMap<>();
+
     /**
         @deprecated unsafe : relies on a correct default version.
     */
     public AbstractGffReader(){
         this( Version.getDefaultVersion() );
     };
-    
+
     public AbstractGffReader(Version v){
         this.nwnVersion = v;
     };
-    
+
     public Version getVersion(){
         return nwnVersion;
     }
-    
+
     public Object load(File f) throws IOException{
         in = new FileImageInputStream(f);
         return doLoad(f);
     }
-    
+
     public Object load(InputStream is) throws IOException{
             /* the jdk api doc says that FileCacheImageInputStream should be
              * preferred, but for small files MemoryCacheIIS seems to work just
@@ -97,20 +97,20 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
         //in = new FileCacheImageInputStream(is, new File(System.getProperty("java.io.tmpdir")));
         return doLoad(null);
     }
-    
+
     private Object doLoad(File file) throws IOException{
-        
+
         fieldList.clear();
         listIndices.clear();
         structList.clear();
         labelList.clear();
-        
+
         namedStructs.clear();
         dataPointers.clear();
-        
+
         in.read( buf, 0, 8 );
         fileTypeString = new String( buf, 0, 4 );
-        
+
         in.setByteOrder( ByteOrder.LITTLE_ENDIAN );
         structOffset = in.readInt();
         structCount = in.readInt();
@@ -125,13 +125,13 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
         listIndicesOffset = in.readInt();
         listIndicesCount = in.readInt();
 
-        
+
         in.seek( labelOffset );
         for ( int i = 0; i < labelCount; i++ ){
             in.read( buf, 0 , 16 );
             labelList.add( new String( buf, 0, 16 ).trim() );
         }
-        
+
         in.seek( fieldOffset );
         for ( int i = 0; i < fieldCount; i++ ){
 
@@ -154,47 +154,47 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
         fieldList.clear();
         structList.clear();
         labelList.clear();
-        
+
         namedStructs.clear();
         dataPointers.clear();
         return mkGffObject(topLevelStruct, fileTypeString, file );
     }
-    
+
     //public abstract boolean isGffList(Fld field);
-    
+
     public abstract Fld mkInteger( String label, byte type, BigInteger value );
-    
+
     public abstract Fld mkFloat( String label, float value );
-    
+
     public abstract Fld mkDouble( String label, double value );
-    
+
     public abstract Fld mkCExoString( String label, String value );
-    
+
     public abstract Fld mkCExoLocString( String label, int strRef, int[] stringIDs, String[] strings );
-    
+
     public abstract Fld mkCResRef( String label, String value );
-    
+
     public abstract Strct mkStruct( String label, int structID );
-    
+
     public abstract Lst mkList( String label );
-    
+
     public abstract Fld mkVoid( String label, byte[] value );
-    
+
     public abstract Fld mkVector( String label, float[] value );
-    
+
     public abstract void listAdd( Lst list, Strct struct );
-    
+
     public abstract void structAdd( Strct struct, Fld field );
-    
+
     public abstract void structSetID( Strct struct, int ID );
-    
+
     public abstract Object mkGffObject( Strct topLevelStruct, String gffType, File file );
-    
+
     // read field at position pos
     private void readField( int pos ) throws IOException{
         in.seek( fieldOffset + pos*12 );
         int type = in.readInt();
-        
+
         int labelIndex = in.readInt();
         String label = labelList.get( labelIndex );
 
@@ -258,7 +258,7 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
                 in.read( data );
                 // TODO
                 //fieldList.add( new GffCExoLocString( label, data ) );
-                
+
                 ByteBuffer b = ByteBuffer.wrap(data);
                 b.order(ByteOrder.LITTLE_ENDIAN);
                 int strRef = b.getInt();
@@ -307,7 +307,7 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
                 Strct struct = mkStruct( label, 0 );
 
                 fieldList.add( struct );
-                namedStructs.put( new Integer( dataPointer ), struct );
+                namedStructs.put(dataPointer, struct);
                 break;
             }
             case Gff.VOID :{
@@ -333,7 +333,7 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
             default : throw new Error( "type not supported : " + type );
         }
     }
-    
+
     private void fillList(int pos) throws IOException{
         Lst list = (Lst) fieldList.get(pos);
          in.seek( listIndicesOffset + dataPointers.get(pos).intValue() );
@@ -346,14 +346,14 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
             listAdd( list, struct );
         }
     }
-    
+
     private Strct readStruct( int structNum ) throws IOException{
 
         Strct struct = null;
         in.seek(structOffset + 12 * structNum );
         int sID = in.readInt();
         if ( namedStructs.containsKey(structNum) ){
-            struct = namedStructs.get( new Integer(structNum) );
+            struct = namedStructs.get(structNum);
             structSetID( struct, sID );
         } else struct = mkStruct( null, sID );
         int structDataPointer = in.readInt();
@@ -373,5 +373,4 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
         }
         return struct;
     }
-    
 }

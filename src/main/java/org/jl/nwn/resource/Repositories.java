@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import org.jl.nwn.bif.BifRepository;
 import org.jl.nwn.erf.ErfFile;
 
@@ -20,12 +21,10 @@ import org.jl.nwn.erf.ErfFile;
  */
 public final class Repositories {
 
-    private HashMap<Descriptor, NwnRepository> repositories;
+    private final HashMap<Descriptor, NwnRepository> repositories = new HashMap<>();
 
     /** Creates a new instance of Repositories */
-    private Repositories() {
-        repositories = new HashMap<Descriptor, NwnRepository>();
-    }
+    private Repositories() {}
 
     private static class InstanceHolder {
 
@@ -36,12 +35,12 @@ public final class Repositories {
         return InstanceHolder.instance;
     }
 
-    private class Descriptor {
+    private static final class Descriptor {
 
-        Class rClass;
-        File[] files;
+        final Class<?> rClass;
+        final File[] files;
 
-        private Descriptor(Class c, File[] files) {
+        private Descriptor(Class<?> c, File[] files) {
             this.rClass = c;
             this.files = files;
         }
@@ -159,7 +158,7 @@ public final class Repositories {
         }
     }
 
-    protected static Map<NwnRepository, File> tmpDirMap = new HashMap<NwnRepository, File>();
+    protected static Map<NwnRepository, File> tmpDirMap = new HashMap<>();
 
     public static File extractAsTempFile(NwnRepository rep, ResourceID id) throws IOException {
         File dir = tmpDirMap.get(rep);

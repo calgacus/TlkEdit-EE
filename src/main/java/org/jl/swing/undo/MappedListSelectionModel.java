@@ -1,6 +1,6 @@
 /*
  * MappedListSelectionModel.java
- * 
+ *
  * Created on 26.08.2007, 13:41:45
  */
 
@@ -8,18 +8,19 @@ package org.jl.swing.undo;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
+
 import org.jdesktop.swingx.JXTable;
 
 public abstract class MappedListSelectionModel implements ListSelectionModel{
 
     protected ListSelectionModel delegate;
-    
+
     public MappedListSelectionModel(ListSelectionModel delegate){
         this.delegate = delegate;
     }
-    
+
     abstract public int map(int i);
-    
+
     public static MappedListSelectionModel createRowModelToViewMapper(final JXTable table){
         return new MappedListSelectionModel(table.getSelectionModel()){
         @Override public int map(int i){
@@ -27,7 +28,7 @@ public abstract class MappedListSelectionModel implements ListSelectionModel{
             }
         };
     }
-    
+
     public static MappedListSelectionModel createColumnModelToViewMapper(final JXTable table){
         return new MappedListSelectionModel(table.getColumnModel().getSelectionModel()){
         @Override public int map(int i){
@@ -35,7 +36,7 @@ public abstract class MappedListSelectionModel implements ListSelectionModel{
             }
         };
     }
-    
+
     // mapped methods :
 
     @Override public void addSelectionInterval(int arg0, int arg1) {
@@ -69,9 +70,9 @@ public abstract class MappedListSelectionModel implements ListSelectionModel{
     @Override public void setSelectionInterval(int arg0, int arg1) {
         delegate.setSelectionInterval(map(arg0), map(arg1));
     }
-    
+
     // purely delegated methods :
-    
+
     @Override public void setValueIsAdjusting(boolean arg0) {
         delegate.setValueIsAdjusting(arg0);
     }
@@ -118,6 +119,5 @@ public abstract class MappedListSelectionModel implements ListSelectionModel{
 
     @Override public void addListSelectionListener(ListSelectionListener arg0) {
         delegate.addListSelectionListener(arg0);
-    }    
-    
+    }
 }

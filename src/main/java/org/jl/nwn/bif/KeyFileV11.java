@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.jl.nwn.resource.ResourceID;
 
 /**
@@ -27,7 +28,7 @@ import org.jl.nwn.resource.ResourceID;
  */
 public class KeyFileV11 extends KeyFile {
 
-    protected TreeMap<ResourceID, int[]> entryMap = new TreeMap<ResourceID, int[]>();
+    protected final TreeMap<ResourceID, int[]> entryMap = new TreeMap<>();
 
     public KeyFileV11(File key) throws IOException {
         //bifs = new java.util.Vector();
@@ -78,15 +79,18 @@ public class KeyFileV11 extends KeyFile {
         }
     }
 
-    public Iterator getResourceIDs() {
+    @Override
+    public Iterator<ResourceID> getResourceIDs() {
         return entryMap.keySet().iterator();
     }
 
+    @Override
     public Set<ResourceID> getResourceIDSet() {
         return Collections.unmodifiableSet(entryMap.keySet());
     }
 
 
+    @Override
     public BifResourceLocation findResource(String resName, short resType) {
         int[] a = entryMap.get(new ResourceID(resName, resType));
         if (a == null) {

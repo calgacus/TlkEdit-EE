@@ -12,10 +12,12 @@ package org.jl.nwn.editor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
+
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.event.MessageEvent;
 import org.jdesktop.swingx.event.MessageListener;
@@ -26,25 +28,26 @@ import org.jdesktop.swingx.event.ProgressListener;
  */
 public class StatusBar implements MessageListener, ProgressListener {
 
-    protected JProgressBar progressBar = new JProgressBar();
-    protected MessageLabel messageLabel = new MessageLabel(new JLabel(), Level.ALL, 5000);
-    protected MessageLabel heapLabel = new MessageLabel(new JLabel(), Level.ALL, Integer.MAX_VALUE);
-    protected JXStatusBar statusBar = new JXStatusBar();
-    
+    protected final JProgressBar progressBar = new JProgressBar();
+    protected final MessageLabel messageLabel = new MessageLabel(new JLabel(), Level.ALL, 5000);
+    protected final MessageLabel heapLabel = new MessageLabel(new JLabel(), Level.ALL, Integer.MAX_VALUE);
+    protected final JXStatusBar statusBar = new JXStatusBar();
+
     protected volatile int progress = 0;
-    
-    protected Timer progressUpdater = new Timer(50, new ActionListener(){
-        public void actionPerformed(ActionEvent evt){
+
+    protected final Timer progressUpdater = new Timer(50, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
             progressBar.setValue(progress);
         }
     });
 
     public static class MessageLabel implements MessageListener {
 
-        protected Level messageLevel = Level.ALL;
-        protected JLabel messageLabel;
+        protected final Level messageLevel;
+        protected final JLabel messageLabel;
 
-        protected Timer wipeTimer = new Timer(5000, new ActionListener() {
+        protected final Timer wipeTimer = new Timer(5000, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -63,6 +66,7 @@ public class StatusBar implements MessageListener, ProgressListener {
             return messageLabel;
         }
 
+        @Override
         public void message(final MessageEvent evt) {
             if (evt.getLevel().intValue() >= messageLevel.intValue()) {
                 if (!SwingUtilities.isEventDispatchThread()) {
@@ -96,20 +100,24 @@ public class StatusBar implements MessageListener, ProgressListener {
         return statusBar;
     }
 
+    @Override
     public void message(final MessageEvent evt) {
         messageLabel.message(evt);
     }
 
+    @Override
     public void progressEnded(ProgressEvent evt) {
         progressUpdater.stop();
         progressBar.setValue(0);
         progressBar.setEnabled(false);
     }
 
+    @Override
     public void progressIncremented(ProgressEvent evt){
         progress = evt.getProgress();
     }
 
+    @Override
     public void progressStarted(ProgressEvent evt) {
         progressBar.setEnabled(true);
         progress = 0;

@@ -29,6 +29,7 @@ public class VectorFormat extends Format{
         this.nf = df;
     }
 
+    @Override
     public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
         float[] v = (float[]) obj;
         toAppendTo.append("(").append(nf.format(v[0])).append(" ");
@@ -43,6 +44,7 @@ public class VectorFormat extends Format{
             pos.setIndex(++p);        
     }
 
+    @Override
     public float[] parseObject(String source, ParsePosition pos){
         float[] v = new float[3];
         System.out.println(pos);

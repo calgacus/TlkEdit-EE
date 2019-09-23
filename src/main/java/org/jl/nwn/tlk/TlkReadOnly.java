@@ -11,24 +11,26 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
+
 /**
  * read only tlk table using a memory mapped file
- *
  */
 public class TlkReadOnly {
-    
+
     LinkedHashMap<Integer, String> cache;
     ByteBuffer index;
     ByteBuffer stringBytes;
     int size;
     NwnLanguage lang;
     Version nwnVersion;
-    
+
     FileInputStream fis;
     FileChannel fc;
-    
+
     /** Creates a new instance of TlkReadOnly */
     public TlkReadOnly(
             File file,
@@ -40,14 +42,14 @@ public class TlkReadOnly {
         ByteBuffer header = ByteBuffer.allocate(20);
         header.order( ByteOrder.LITTLE_ENDIAN );
         fc.read(header);
-        
+
         String fileHeader = new String(header.array(),0,8);
         if ( !fileHeader.startsWith("TLK") )
             throw new IOException( "Error : not a tlk file " );
         if ( !fileHeader.equals("TLK V3.0") )
             throw new IOException( "Error : wrong tlk file version : "
                     + fileHeader );
-        
+
         header.position(8);
         lang = NwnLanguage.find( nwnVersion, header.getInt() );
         size = header.getInt();
@@ -65,23 +67,23 @@ public class TlkReadOnly {
                 fc.size() - stringDataStart );
 
         cache = new LinkedHashMap<Integer, String>(cacheSize, 0.75f, true){
-            protected boolean removeEldestEntry(
-                    java.util.Map.Entry<Integer, String> eldest) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<Integer, String> eldest) {
                 return size() > cacheSize;
             }
         };
         fis.close();
         fc.close();
     }
-    
+
     public TlkReadOnly( File file, final int cacheSize ) throws IOException{
         this( file, 1000, Version.getDefaultVersion() );
     }
-    
+
     public TlkReadOnly( File file ) throws IOException{
         this(file, 1000);
     }
-    
+
     public String getString( int strRef ){
 
         String s;
@@ -114,22 +116,21 @@ public class TlkReadOnly {
         }
         return s;
     }
-    
+
     public int size(){
         return size;
     }
-    
+
     public static void main( String ... args ) throws Exception{
         if ( args.length == 0 )
             args = new String[]{"/usr/local/neverwinter/dialog.v130", "43", "42"};
         File f = new File( args[0] );
         long start = System.currentTimeMillis();
         TlkReadOnly tlk = new TlkReadOnly( f, 1000, Version.getDefaultVersion() );
-        
+
         for ( int i = 1; i < args.length; i++ ) {
             System.out.println("tlkreadonly 131 " + tlk.getString(Integer.parseInt(args[i])));
         }
 
     }
-    
 }

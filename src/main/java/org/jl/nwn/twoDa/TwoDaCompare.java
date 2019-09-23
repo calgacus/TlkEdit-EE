@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -29,11 +30,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
-import org.jdesktop.swingx.decorator.AbstractHighlighter;
 import org.jdesktop.swingx.decorator.AbstractHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.decorator.Filter;
@@ -107,7 +108,7 @@ public class TwoDaCompare {
 
     public static class CompareFilter extends Filter {
 
-        protected List<Integer> rows = new ArrayList<Integer>();
+        protected List<Integer> rows = new ArrayList<>();
         protected TableModel tableB = null;
         protected boolean enabled = true;
 
@@ -194,7 +195,7 @@ public class TwoDaCompare {
         @Override
         protected void init() {
             if (rows == null) {
-                rows = new ArrayList<Integer>();
+                rows = new ArrayList<>();
             } else {
                 rows.clear();
             }

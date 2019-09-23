@@ -28,10 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import javax.swing.ButtonGroup;
-import javax.swing.SwingUtilities;
-import javax.swing.event.UndoableEditListener;
-import org.jl.nwn.editor.SimpleFileEditorPanelX;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -40,12 +36,14 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.EventObject;
 import java.util.logging.Level;
+
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.AbstractCellEditor;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -65,11 +63,13 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.UIDefaults;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -81,6 +81,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.dts.spell.SpellChecker;
 import org.dts.spell.dictionary.SpellDictionary;
 import org.dts.spell.swing.RealTimeSpellChecker;
@@ -90,10 +91,12 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.table.TableColumnExt;
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
+import org.jl.nwn.editor.SimpleFileEditorPanelX;
 import org.jl.nwn.editor.StatusBar;
 import org.jl.nwn.gff.CExoLocSubString;
 import org.jl.nwn.gff.DefaultGffReader;
 import org.jl.nwn.gff.Gff;
+import org.jl.nwn.gff.Gff2Xml;
 import org.jl.nwn.gff.GffCExoLocString;
 import org.jl.nwn.gff.GffContent;
 import org.jl.nwn.gff.GffField;
@@ -101,85 +104,84 @@ import org.jl.nwn.gff.GffList;
 import org.jl.nwn.gff.GffStruct;
 import org.jl.nwn.gff.GffVoid;
 import org.jl.nwn.resource.ResRefUtil;
+import org.jl.nwn.spell.Dictionaries;
 import org.jl.nwn.tlk.TlkLookup;
+import org.jl.swing.Actions;
+import org.jl.swing.HexEdit;
+import org.jl.swing.I18nUtil;
 import org.jl.swing.TableSearchAndReplace;
 import org.jl.swing.table.FormattedCellEditor;
-import org.jl.swing.I18nUtil;
-import org.jl.swing.HexEdit;
 import org.jl.swing.table.MappedCellEditor;
 import org.jl.swing.table.StringPopupCellEditor;
-import org.jl.text.VectorFormat;
-import org.w3c.dom.Node;
-import org.jl.nwn.gff.Gff2Xml;
-import org.jl.nwn.spell.Dictionaries;
-import org.jl.swing.Actions;
 import org.jl.swing.undo.Mutator;
 import org.jl.swing.undo.MyUndoManager;
+import org.jl.text.VectorFormat;
+import org.w3c.dom.Node;
 
 /**
  *
  * @author
  */
 public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
-    
+
     protected File gffFile = null;
     protected GffContent gff = null;
-    
+
     protected JToolBar toolbar = new JToolBar();
     protected JMenu editMenu = new JMenu();
     protected JMenu[] menus = { editMenu };
     protected GffTreeTableModel model = null;
     protected JXTreeTable treeTable = null;
     protected MyUndoManager undoManager = new MyUndoManager();
-    
+
     protected Action aPaste = null;
     protected Action aCopy = null;
     protected Action aCut = null;
-    
+
     protected Action aUndo = null;
     protected Action aRedo = null;
-    
+
     protected GffSearchAndReplace searchDialog;
     protected Action aFind = null;
     protected Action aFindAgain = null;
-    
+
     protected Action aNewListStruct = null; // Action for inserting new struct in list
     protected Action aNewNode = null; // Action for creating new field
-    
+
     protected Action[] actions;
     protected InputMap gffInputMap;
-    
+
     public static final UIDefaults uid = new UIDefaults();
-    
+
     static {
         uid.addResourceBundle("org.jl.nwn.gff.editor.uidefaults");
         uid.addResourceBundle("settings.keybindings");
     }
-    
+
     protected TransferHandler transfer = new TransferHandler(){
-        
+
         protected final String gffMime =
                 DataFlavor.javaJVMLocalObjectMimeType + ";class=org.jl.nwn.gff.GffField";
         protected final DataFlavor flavorXml = new DataFlavor("text/xml","text/xml");
         protected final DataFlavor flavorGffObject = new DataFlavor(gffMime, "gff object");
-        
+
         protected final DataFlavor[] transferFlavors = new DataFlavor[]{
             flavorGffObject, flavorXml
         };
-        
+
         protected TreePath selectionPath;
-        
+
         @Override public void exportToClipboard(final JComponent comp, Clipboard clip, int action){
             JXTreeTable tt = (JXTreeTable) comp;
             selectionPath = tt.getTreeSelectionModel().getSelectionPath();
             if ( selectionPath == null )
                 return;
-            final GffField o = (GffField)((GffField) selectionPath.getLastPathComponent()).clone();
+            final GffField o = ((GffField) selectionPath.getLastPathComponent()).clone();
             Transferable trans = makeTransferable(o);
             clip.setContents( trans, GffEditX.this );
             exportDone( comp, trans, action );
         }
-        
+
         @Override protected void exportDone(JComponent source, Transferable data, int action){
             if ( (action & MOVE) != 0 ){
                 int r = treeTable.getSelectedRow();
@@ -187,26 +189,27 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                 treeTable.getSelectionModel().setLeadSelectionIndex(Math.min(r, treeTable.getRowCount()-1));
             }
         }
-        
+
         @Override public int getSourceActions(JComponent c){
             return COPY_OR_MOVE;
         }
-        
+
         protected Transferable makeTransferable( final GffField field ){
             return new Transferable(){
+                @Override
                 public Object getTransferData( DataFlavor df ){
 
                     if ( df.equals(flavorXml) ){
                         try{
                             final PipedInputStream pin = new PipedInputStream();
                             final PipedOutputStream pout = new PipedOutputStream(pin);
-                            
+
                             Node doc = Gff2Xml.convertToXml(field);
                             final DOMSource source = new DOMSource(doc);
                             final Transformer trans = TransformerFactory.newInstance().newTransformer();
                             final StreamResult result = new StreamResult(pout);
                             trans.setOutputProperty(OutputKeys.INDENT, "yes");
-                            
+
                             //final Element e = Gff2Xml.mkElement(new DOMDocument(), field);
                             new Thread(){
                                 @Override public void run(){
@@ -217,7 +220,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                                         //new XMLWriter(bos, OutputFormat.createPrettyPrint()).write(e);
                                         bos.close();
                                         pout.close();
-                                        
+
                                     } catch ( Exception ex){
                                         ex.printStackTrace();
                                     }
@@ -240,12 +243,12 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                 }
             };
         }
-        
+
         @Override public boolean canImport(JComponent comp, DataFlavor[] transferFlavors){
             boolean b = containsGffFlavor( transferFlavors );
             return b;
         }
-        
+
         boolean containsGffFlavor( DataFlavor[] transferFlavors ){
             for ( DataFlavor flavor : transferFlavors ){
                 int i = 0;
@@ -255,7 +258,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             }
             return false;
         }
-        
+
         @Override public boolean importData(JComponent comp, Transferable t){
             TreePath selectionPath = treeTable.getTreeSelectionModel().getSelectionPath();
             if ( selectionPath == null )
@@ -275,8 +278,8 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             return false;
         }
     };
-    
-    
+
+
     public void setGffContent( GffContent c, File f ){
         model.setRoot( c.getTopLevelStruct() );
         File old = gffFile;
@@ -285,15 +288,16 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         setIsModified( false );
         undoManager.discardAllEdits();
     }
-    
+
     protected static class HexCellEditor extends AbstractCellEditor implements TableCellEditor{
         HexEdit hex = new HexEdit();
         ByteBuffer buffer;
         JLabel dummyLabel = new JLabel();
         JDialog popup = new JDialog();
         JTable table;
-        
+
         Action aOK = new AbstractAction(){
+            @Override
             public void actionPerformed(ActionEvent e){
                 stopCellEditing();
                 fireEditingStopped();
@@ -303,6 +307,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             }
         };
         Action aCancel = new AbstractAction(){
+            @Override
             public void actionPerformed(ActionEvent e){
                 cancelCellEditing();
                 table.setEnabled(true);
@@ -333,7 +338,8 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             popup.getContentPane().add(hex.sPane);
             //popup.pack();
         }
-        
+
+        @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             byte[] b = (byte[]) value;
             buffer = ByteBuffer.allocate( b.length );
@@ -345,21 +351,22 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             table.setEnabled(false);
             return dummyLabel;
         }
-        
+
+        @Override
         public Object getCellEditorValue(){
             System.out.println("getCellEditorValue");
             return buffer.array();
         }
     }
-    
+
     protected NwnLanguage defaultLanguage = null;
-    
+
     TableCellEditor subStringEd = new StringPopupCellEditor(){
         SpellChecker checker = null;
         SpellDictionary dict = null;
         RealTimeSpellChecker rtChecker = null;
         DocumentWordFinder finder = null;
-        
+
         @Override public java.awt.Component getTableCellEditorComponent(
         JTable table,
                 Object value,
@@ -386,7 +393,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             }
             return c;
         }
-        
+
         @Override public boolean stopCellEditing(){
             boolean stop = super.stopCellEditing();
             if ( stop && rtChecker != null )
@@ -399,9 +406,9 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                 rtChecker.stop();
         }
     };
-    
+
     protected final VectorFormat vectorFormat = new VectorFormat(DecimalFormat.getInstance());
-    
+
     protected TableCellEditor createValueEditor(){
         DecimalFormat bigIntFormat = new DecimalFormat(){
             // we need BigInteger instead of BigDecimal ...
@@ -430,30 +437,30 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                 return n!=null? Integer.valueOf(n.intValue()) : n;
             }
         };
-        
+
         FormattedCellEditor strRefEd = new FormattedCellEditor(
                 bigIntFormat, BigInteger.valueOf(-1), BigInteger.valueOf(TlkLookup.USERTLKOFFSET * 2 - 1) );
-        
+
         FormattedCellEditor byteEd = new FormattedCellEditor(
                 bigIntFormat, BigInteger.valueOf(0), BigInteger.valueOf(255) );
-        
+
         // TODO: see if version differences for editors can be sorted out
         FormattedCellEditor resRefEditor =
                 new FormattedCellEditor( new JFormattedTextField(
                 ResRefUtil.instance(Version.NWN2).getStringFormatter(false)) );
-        
+
         FormattedCellEditor vectorEditor =
                 new FormattedCellEditor( vectorFormat );
-        
+
         TableCellEditor stringEd = new StringPopupCellEditor();
         FormattedCellEditor charEd =
                 new FormattedCellEditor( bigIntFormat, BigInteger.valueOf(-128), BigInteger.valueOf(127) );
         TableCellEditor hexEd = new HexCellEditor();
-        
+
         bigIntFormat.setParseBigDecimal(true);
         bigIntFormat.setParseIntegerOnly(true);
         decFormat.setMaximumFractionDigits(340);
-        
+
         MappedCellEditor.KeyFunction getType = new MappedCellEditor.KeyFunction(){
             @Override public Object computeKey(Object value, int row, int col){
                 Byte b = ((GffField)treeTable.getPathForRow(row).getLastPathComponent()).getType();
@@ -461,7 +468,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                 return b;
             }
         };
-        
+
         MappedCellEditor ed = new MappedCellEditor(getType);
         ed.map(Gff.BYTE, byteEd, null);
         ed.map(Gff.CHAR, charEd, null);
@@ -477,11 +484,11 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         ed.map(null, intEditor, null);
         return ed;
     };
-    
+
     protected TableCellRenderer renderer = new DefaultTableCellRenderer(){
-        private NumberFormat intFormat = NumberFormat.getIntegerInstance();
-        private NumberFormat floatFormat = DecimalFormat.getInstance();
-        
+        private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
+        private final NumberFormat floatFormat = DecimalFormat.getInstance();
+
         @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
             GffField f = (GffField) treeTable.getPathForRow(row).getLastPathComponent();
             super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
@@ -511,7 +518,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             return this;
         }
     };
-    
+
     /** Creates a new instance of GffEditX */
     public GffEditX() {
         // setup treetable
@@ -541,16 +548,16 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         };
         model = new GffTreeTableModel(GffStruct.mkTopLevelStruct());
         model.addUndoableEditListener(undoManager);
-        
+
         treeTable.setRootVisible(true);
         treeTable.setAutoCreateColumnsFromModel(false);
         treeTable.setSurrendersFocusOnKeystroke(true);
         //model.addTreeModelListener(tml);
         treeTable.setTreeTableModel(model);
         final GffTreeCellRenderer treeRenderer = new GffTreeCellRenderer(model);
-        
+
         treeTable.addHighlighter(HighlighterFactory.createAlternateStriping());
-        
+
         // set up editor for hiearchical column
         final int[] editedRow = new int[1];
         final JFormattedTextField tfLabel = new JFormattedTextField(
@@ -562,12 +569,12 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             }
         };
         TableCellEditor labelEd = new FormattedCellEditor( tfLabel ){
-            
+
             @Override public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column){
                 editedRow[0] = row;
                 return super.getTableCellEditorComponent(table, value, isSelected, row, column);
             }
-            
+
             @Override public boolean stopCellEditing(){
                 GffField f = (GffField) treeTable.getPathForRow(editedRow[0]).getLastPathComponent();
                 if ( f.getParent() != null && f.getParent().getType() == Gff.STRUCT ){
@@ -581,7 +588,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                 }
                 return super.stopCellEditing();
             }
-            
+
             @Override public boolean isCellEditable(EventObject anEvent){
                 if ( anEvent instanceof MouseEvent )
                     return ((MouseEvent)anEvent).getClickCount() == 2;
@@ -593,7 +600,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         c0.setHeaderValue("Label");
         c0.setCellEditor(labelEd);
         c0.setEditable(true);
-        
+
         TableColumnExt c1 = new TableColumnExt( 1, 100 );
         c1.setHeaderValue("Type");
         TableColumnExt c2 = new TableColumnExt( 2 );
@@ -611,43 +618,48 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         treeTable.getSelectionModel().addListSelectionListener(rowSelectionListener);
         treeTable.getTableHeader().setReorderingAllowed(false);
         //treeTable.putClientProperty("JTable.autoStartsEdit", new Boolean(false));
-        
+
         InputMap im = treeTable.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         gffInputMap = new InputMap();
         gffInputMap.setParent(im);
         treeTable.setInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, gffInputMap);
         im = gffInputMap;
         ActionMap am = treeTable.getActionMap();
-        
+
         aCopy = new AbstractAction(){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 transfer.exportToClipboard(treeTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
             }
         };
         aCut = new AbstractAction(){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 transfer.exportToClipboard(treeTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.MOVE);
             }
         };
         aPaste = new AbstractAction(){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 transfer.importData(treeTable, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(treeTable));
             }
         };
-        
+
         final NewNodeDialog newNodeDialog = new NewNodeDialog(this, msgSup);
         aNewNode = new AbstractAction(){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 newNodeDialog.newNode();
             }
         };
         Actions.configureActionUI( aNewNode,uid,"gffedit.newNode" );
-        
+
         aNewListStruct = createAction( this, "doNewListStruct", null );
         Actions.configureActionUI( aNewListStruct,uid,"gffedit.newListStruct" );
-        
-        
+
+
         Action aExpand = new AbstractAction(){
+            @Override
             public void actionPerformed( ActionEvent e ){
                 int row = treeTable.getSelectedRow();
                 if ( row > -1 ){
@@ -660,26 +672,28 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             }
         };
         Actions.configureActionUI( aExpand,uid,"gffedit.expand" );
-        
+
         Actions.configureActionUI(aCut,uid, "gffedit.cut");
         Actions.configureActionUI(aCopy,uid, "gffedit.copy");
         Actions.configureActionUI(aPaste,uid, "gffedit.paste");
-        
+
         aUndo = undoManager.getUndoAction();
         aRedo = undoManager.getRedoAction();
-        
+
         Actions.configureActionUI(aUndo,uid, "undo");
         Actions.configureActionUI(aRedo,uid, "redo");
-        
+
         PropertyChangeListener pcl = new PropertyChangeListener() {
+            @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ( evt.getPropertyName().equals(Mutator.PROP_MODIFIED) )
                     setIsModified((Boolean)evt.getNewValue());
             }
         };
         model.getMutator().addPropertyChangeListener(pcl);
-        
+
         aFind = new AbstractAction(){
+            @Override
             public void actionPerformed(ActionEvent e){
                 if ( searchDialog == null ){
                     searchDialog = new GffSearchAndReplace(
@@ -693,32 +707,31 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         };
         Actions.configureActionUI(aFind,uid, "find");
         aFindAgain = new AbstractAction(){
+            @Override
             public void actionPerformed(ActionEvent e){
                 searchDialog.doSearch();
                 treeTable.requestFocusInWindow();
             }
         };
         Actions.configureActionUI(aFindAgain,uid, "findNext");
-        
+
         actions = new Action[]{
             aFind, aFindAgain, aRedo, aUndo, aCut, aCopy, aPaste,
             aNewNode, aNewListStruct, aExpand
         };
-        
+
         ActionMap amTop = getActionMap();
-        
-        for ( Action a : actions ){
-            im.put((KeyStroke)a.getValue( a.ACCELERATOR_KEY ), a.getValue( a.ACTION_COMMAND_KEY ));
-            am.put(a.getValue( a.ACTION_COMMAND_KEY ), a );
-        }
-        
-        for ( Action a : actions ){
-            amTop.put(a.getValue( a.ACTION_COMMAND_KEY ), a );
+
+        for (final Action a : actions) {
+            final Object cmdKey = a.getValue(a.ACTION_COMMAND_KEY);
+            im.put((KeyStroke)a.getValue( a.ACCELERATOR_KEY ), cmdKey);
+            am.put(cmdKey, a);
+            amTop.put(cmdKey, a);
         }
         amTop.put( DefaultEditorKit.copyAction, aCopy );
         amTop.put( DefaultEditorKit.cutAction, aCut );
         amTop.put( DefaultEditorKit.pasteAction, aPaste );
-        
+
         toolbar.add(aCut);
         toolbar.add(aCopy);
         toolbar.add(aPaste);
@@ -730,13 +743,13 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         toolbar.add(aNewListStruct);
         toolbar.add( Box.createHorizontalGlue() );
         toolbar.setFloatable(false);
-        
+
         for ( Object o : toolbar.getComponents() ){
             if ( o instanceof AbstractButton )
                 if ( ((AbstractButton)o).getIcon() != null )
                     ((AbstractButton)o).setMnemonic(KeyEvent.VK_UNDEFINED);
         }
-        
+
         // menu for selecting default spell checker language ...
         JMenu spellCheckLanguage = new JMenu();
         I18nUtil.setText(spellCheckLanguage, "Spell Checking &Language");
@@ -746,6 +759,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         final ButtonGroup langBg = new ButtonGroup();
         langBg.add( miNoDefault );
         ActionListener al = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 defaultLanguage = (NwnLanguage)
                 ((JMenuItem)e.getSource()).getClientProperty(lPropKey);
@@ -764,7 +778,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             spellCheckLanguage.add(mi);
         }
         spellCheckLanguage.setIcon(Actions.getEmptyIcon());
-        
+
         I18nUtil.setText( editMenu, "&Edit" );
         editMenu.add( aCut );
         editMenu.add( aCopy );
@@ -779,7 +793,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         editMenu.addSeparator();
         editMenu.add( aUndo );
         editMenu.add( aRedo );
-        
+
         setLayout(new BorderLayout());
         JScrollPane scrollPane = new JScrollPane(treeTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add( scrollPane, BorderLayout.CENTER );
@@ -789,17 +803,19 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         c2.setPreferredWidth(400);
         add( toolbar, BorderLayout.NORTH );
     }
-    
+
     static protected AbstractAction createAction( final Object target, final String action, final String eventPropertyName ){
         return new AbstractAction(){
             Action delegate = EventHandler.create(Action.class, target, action, eventPropertyName, "actionPerformed");
+            @Override
             public void actionPerformed( ActionEvent e ){
                 delegate.actionPerformed(e);
             }
         };
     }
-    
+
     protected ListSelectionListener rowSelectionListener = new ListSelectionListener(){
+        @Override
         public void valueChanged( ListSelectionEvent e ){
             if ( !e.getValueIsAdjusting() ){
                 int row = treeTable.getSelectionModel().getMinSelectionIndex();
@@ -817,7 +833,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             }
         }
     };
-    
+
     protected void disableGffInputMap(){
         if ( treeTable.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
         == gffInputMap ){
@@ -826,7 +842,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                     );
         }
     }
-    
+
     /**
      *retrieve selected field, may be null
      */
@@ -836,12 +852,12 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         else
             return null;
     }
-    
+
 // gui stuff for entering a list index
     final SpinnerNumberModel indexModel = new SpinnerNumberModel();
     JOptionPane indexOptions = createIndexOptionPane();
     JDialog indexDialog = indexOptions.createDialog( treeTable, "insert into list" );
-    
+
     protected boolean doInsert( GffField newField, TreePath insPath ){
         GffStruct struct = null;
         GffField insertAt = (GffField)insPath.getLastPathComponent();
@@ -873,7 +889,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                     indexDialog.setVisible( true );
                     indexDialog.dispose();
                     if ( indexOptions.getValue() == "OK" ){
-                        model.insert( insPath, (GffStruct) newField.clone(), ((Number)indexModel.getValue()).intValue() );
+                        model.insert(insPath, newField.clone(), ((Number)indexModel.getValue()).intValue() );
                         return true;
                     }
                 }
@@ -886,13 +902,13 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             } else {
                 TreePath insertionPath = (insertAt!=struct)?model.makePath(struct):insPath;
                 int insertionIndex = (insertAt!=struct)?struct.indexOf(insertAt):struct.getSize();
-                model.insert(insertionPath, (GffField) newField.clone(), insertionIndex);
+                model.insert(insertionPath, newField.clone(), insertionIndex);
                 return true;
             }
         }
         return false;
     }
-    
+
     protected JOptionPane createIndexOptionPane(){
         if ( indexOptions == null ){
             JSpinner indexSpinner = new JSpinner( indexModel );
@@ -909,7 +925,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         }
         return indexOptions;
     }
-    
+
     /**
      * insert a new struct into list at selected position
      */
@@ -936,20 +952,22 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             }
         }
     }
-    
+
 // only method of interface ClipboardOwner
+    @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents){
         // aPaste.setEnabled( transfer.canImport(this, clipboard.getAvailableDataFlavors() ) );
     }
-    
+
     public static boolean accept( File f ){
         String extension = f.getName().substring(f.getName().lastIndexOf(".")+1);
         return (Gff.isKnownGffFileType(extension));
     }
-    
+
     protected Action aCheckSpelling = new AbstractAction(){
         GffSpellChecker checker;
-        
+
+        @Override
         public void actionPerformed(ActionEvent e) {
             if ( checker == null )
                 checker = new GffSpellChecker(
@@ -959,7 +977,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             checker.performChecking();
         }
     };
-    
+
     protected class GffSearchAndReplace extends TableSearchAndReplace{
         public GffSearchAndReplace( JFrame owner, JXTreeTable table ){
             super(owner, table);
@@ -975,9 +993,9 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                 } else
                     return s;
             }
-            
+
         }
-        
+
         @Override public String modelObject2String(Object value, int row, int col) {
 
             String retValue;
@@ -1004,11 +1022,11 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
             return super.nextCell();
         }
     }
-    
+
     public void addUndoableEditListener( UndoableEditListener l ){
         model.addUndoableEditListener( l );
     }
-    
+
     public void setFileVersion(Version nwnVersion){
         this.nwnVersion = nwnVersion;
     }
@@ -1016,7 +1034,7 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
     public static void main(String ... args){
         JFrame f = new JFrame("GffEditX test");
         StatusBar sb = new StatusBar();
-        
+
         f.getContentPane().add(sb.getStatusBar(), BorderLayout.SOUTH);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GffEditX ed = new GffEditX();
@@ -1028,16 +1046,18 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         f.pack();
         f.setVisible(true);
     }
-    
+
 // -----------------------------------------------------------
-    
+
+    @Override
     public void saveAs(java.io.File f, Version nwnVersion) throws java.io.IOException {
         gff.write(f, nwnVersion);
         this.nwnVersion = nwnVersion;
         gffFile = f;
         model.mutator.stateSaved();
     }
-    
+
+    @Override
     public boolean load(java.io.File file, Version nwnVersion){
         try{
             DefaultGffReader gffBuilder = new DefaultGffReader(nwnVersion);
@@ -1056,39 +1076,45 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
         }
         return false;
     }
-    
+
+    @Override
     public void showToolbar(boolean b) {
         if ( true )
             add( toolbar, BorderLayout.NORTH );
         else remove( toolbar );
         validate();
     }
-    
+
+    @Override
     public java.io.File getFile() {
         return gffFile;
     }
-    
+
+    @Override
     public void save() throws java.io.IOException {
         this.saveAs(gffFile, nwnVersion);
     }
-    
+
+    @Override
     public javax.swing.JToolBar getToolbar() {
         return toolbar;
     }
-    
+
+    @Override
     public void close() {
     }
-    
+
     @Override public javax.swing.JMenu[] getMenus() {
         return menus;
     }
-    
+
+    @Override
     public boolean canSaveAs() {
         return true;
     }
-    
+
+    @Override
     public boolean canSave() {
         return ( gffFile != null && gffFile.canWrite() );
     }
-    
 }

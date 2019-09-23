@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
@@ -61,6 +62,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
+
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.event.MessageEvent;
 import org.jdesktop.swingx.event.MessageSourceSupport;
@@ -78,9 +80,9 @@ import org.jl.nwn.tlk.editor.TlkLookupPanel;
 import org.jl.nwn.twoDa.TwoDaEdit;
 import org.jl.nwn.twoDa.TwoDaTlkLookupLSListener;
 import org.jl.swing.Actions;
+import org.jl.swing.CheckBoxAction;
 import org.jl.swing.FileDropHandler;
 import org.jl.swing.I18nUtil;
-import org.jl.swing.CheckBoxAction;
 import org.jl.swing.UIDefaultsX;
 
 public class EditorFrameX extends JXFrame implements PropertyChangeListener {
@@ -108,28 +110,30 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     private GffTlkLookup gffTlkLookup = new GffTlkLookup(tlp);
 
     private JFileChooser fChooser = new JFileChooser();
-    
+
     protected class VersionSelectionFilter extends FileFilter{
         private Version v;
 
         public VersionSelectionFilter(Version v) {
             this.v = v;
-        }        
-        
+        }
+
+        @Override
         public boolean accept(File f) {
             return true;
         }
 
+        @Override
         public String getDescription() {
             return "All Files - " + v.getDisplayName();
         }
-        
+
         public Version getVersion(){
             return v;
         }
-        
+
     }
-    
+
     private static final UIDefaultsX uid = new UIDefaultsX();
 
     private StatusBar statusBar = new StatusBar();
@@ -163,6 +167,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             super("Open file...");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (tPane.getSelectedIndex() != -1) {
                 if (((SimpleFileEditor) tPane.getSelectedComponent()).getFile() != null) {
@@ -207,6 +212,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             dirChooser.setAccessory(options);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             fChooser.cancelSelection();
             final List<ResourceID> list = acc.getSelectedResources();
@@ -216,28 +222,24 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             if (dirChooser.showDialog(fChooser, "Extract to directory" ) == JFileChooser.APPROVE_OPTION) {
                 final File dir = dirChooser.getSelectedFile();
                 msgSup.fireProgressStarted(0, list.size());
-                new SwingWorker<List<File>,File>(){
-                    List<File> extractedFiles = new ArrayList<File>();
+                new SwingWorker<List<File>, File>() {
+                    final List<File> extractedFiles = new ArrayList<>();
                     @Override
                     public List<File> doInBackground() {
                         actOpen.setEnabled(false);
-                        try {
-                            msgSup.fireProgressStarted(0, list.size());
-                            for (ResourceID id : list) {
-                                try {
-                                    //File f = Repositories.extractAsTempFile(rep, id);
-                                    File rFile = new File(dir, id.getNameExt());
-                                    Repositories.extractResourceToFile(rep, id, rFile);
-                                    extractedFiles.add(rFile);
-                                    super.publish(rFile);
-                                    if (cbOpenAfterExtracting.isSelected()){
-                                        openFile(rFile, fileOpenVersion);
-                                    }
-                                } catch (IOException ioex) {
-                                    msgSup.fireMessage(id + ": " + ioex.getMessage());
+                        msgSup.fireProgressStarted(0, list.size());
+                        for (final ResourceID id : list) {
+                            try {
+                                final File rFile = new File(dir, id.getNameExt());
+                                Repositories.extractResourceToFile(rep, id, rFile);
+                                extractedFiles.add(rFile);
+                                super.publish(rFile);
+                                if (cbOpenAfterExtracting.isSelected()){
+                                    openFile(rFile, fileOpenVersion);
                                 }
+                            } catch (IOException ioex) {
+                                msgSup.fireMessage(id + ": " + ioex.getMessage());
                             }
-                        } finally {
                         }
                         return extractedFiles;
                     }
@@ -255,15 +257,16 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                         msgSup.fireProgressEnded();
                         msgSup.fireMessage("extracted " + extractedFiles.size() + " files");
                         super.done();
-                    }                    
+                    }
                 }.execute();
-                
+
             }
         }
     };
 
     private Action actQuit = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             quit();
         }
@@ -271,6 +274,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actClose = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             closePane((JComponent) tPane.getSelectedComponent(), true);
         }
@@ -278,9 +282,10 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action newTlk = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             TlkEdit ed = new TlkEdit();
-            JComboBox cbVersions = new JComboBox(Version.values());
+            final JComboBox<Version> cbVersions = new JComboBox<>(Version.values());
             int r = JOptionPane.showConfirmDialog(EditorFrameX.this, cbVersions, "Select Version", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (r!=JOptionPane.OK_OPTION)
                 return;
@@ -293,6 +298,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action newGff = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             GffEditX gff = new GffEditX();
             gff.addPropertyChangeListener(EditorFrameX.this);
@@ -303,6 +309,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action newErf = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             ErfEdit erf = new ErfEdit(Version.NWN1);
             erf.addPropertyChangeListener(EditorFrameX.this);
@@ -312,6 +319,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action newErf2 = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             ErfEdit erf = new ErfEdit(Version.NWN2);
             erf.addPropertyChangeListener(EditorFrameX.this);
@@ -321,6 +329,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actSave = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveActivePane();
         }
@@ -328,6 +337,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actSaveAs = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveActivePaneAs();
         }
@@ -335,6 +345,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actSaveAll = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             saveAll();
         }
@@ -345,14 +356,14 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             Actions.configureActionUI(this, uid, "EditorFrame.ErfOpenResource");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             ErfEdit erf = (ErfEdit) tPane.getSelectedComponent();
-            ResourceID[] ids = erf.getSelectedResources();
-            for (int i = 0; i < ids.length; i++) {
+            for (final ResourceID id : erf.getSelectedResources()) {
                 try {
-                    SimpleFileEditorPanel ed = openFile(erf.extractAsTempFile(ids[i], true), erf.getFileVersion());
+                    final SimpleFileEditorPanel ed = openFile(erf.extractAsTempFile(id, true), erf.getFileVersion());
                     if (ed != null) {
-                        ErfResourceEditor erfEd = new ErfResourceEditor(ed, erf, ids[i]);
+                        final ErfResourceEditor erfEd = new ErfResourceEditor(ed, erf, id);
                         tPane.add(erfEd.getFile().getName(), erfEd);
                     }
                 } catch (IOException ioex) {
@@ -610,12 +621,14 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         tPane = new JTabbedPane();
         Action nextTab = new AbstractAction() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 tPane.setSelectedIndex((tPane.getSelectedIndex() + 1) % tPane.getTabCount());
             }
         };
         Action prevTab = new AbstractAction() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 tPane.setSelectedIndex((tPane.getSelectedIndex() + tPane.getTabCount() - 1) % tPane.getTabCount());
             }
@@ -657,6 +670,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
          */
         tPane.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 SimpleFileEditorPanel ed = (SimpleFileEditorPanel) ((JTabbedPane) e.getSource())
                         .getSelectedComponent();
@@ -781,6 +795,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         ActionListener updateMemoryLabel = new ActionListener() {
             String msg = Messages.getString("EditorFrame.InfoLabelMemoryUsage"); //$NON-NLS-1$
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 long total = Runtime.getRuntime().totalMemory();
                 long free = Runtime.getRuntime().freeMemory();
@@ -878,7 +893,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
      * @return false if user pressed cancel option - ( return to  editor program )
      * */
     private boolean checkUnsaved() {
-        final List<SimpleFileEditor> unsaved = new ArrayList<SimpleFileEditor>();
+        final List<SimpleFileEditor> unsaved = new ArrayList<>();
         for (int i = 0; i < tPane.getTabCount(); i++) {
             if (((SimpleFileEditor) tPane.getComponentAt(i)).getIsModified()) {
                 unsaved.add((SimpleFileEditor) tPane.getComponentAt(i));
@@ -887,8 +902,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         if (unsaved.size() > 0) {
             JPanel inputValues = new JPanel(new GridLayout(0, 1));
             inputValues.add(new JLabel(MessageFormat.format(Messages.getString("EditorFrame.MsgListOfUnsavedFiles"), Integer.valueOf(unsaved.size())))); //$NON-NLS-1$
-            JCheckBox[] boxes;
-            boxes = new JCheckBox[unsaved.size()];
+            final JCheckBox[] boxes = new JCheckBox[unsaved.size()];
             for (int i = 0; i < unsaved.size(); i++) {
                 SimpleFileEditor sfe = unsaved.get(i);
                 boxes[i] = new JCheckBox(sfe.getFile() == null ? Messages.getString("EditorFrame.FileNameUnsavedFile") : sfe.getFile().getAbsolutePath(), true);
@@ -904,6 +918,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             final JOptionPane oPane = new JOptionPane(inputValues, JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION, null, optionButtons, optionButtons[0]);
             Action selectValue = new AbstractAction() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     oPane.setValue(e.getSource());
                     dialog.setVisible(false);
@@ -945,8 +960,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         EditorFrameX f = new EditorFrameX("TlkEdit"); //$NON-NLS-1$
-        for (int i = 0; i < args.length; i++) {
-            f.openFile(new File(args[i]), Version.getDefaultVersion());
+        for (final String arg : args) {
+            f.openFile(new File(arg), Version.getDefaultVersion());
         }
     }
 
@@ -954,6 +969,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         prefs.removeNode();
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SimpleFileEditorPanel.FILE_PROPERTY) || evt.getPropertyName().equals(SimpleFileEditorPanel.ISMODIFIED_PROPERTY)) {
             SimpleFileEditorPanel ed = (SimpleFileEditorPanel) evt.getSource();
@@ -969,6 +985,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action actNoTlkLookup = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             SimpleFileEditor ed = (SimpleFileEditor) tPane.getSelectedComponent();
             if (ed instanceof TlkEdit) {
@@ -983,6 +1000,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private Action useForLookup = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             SimpleFileEditor ed = (SimpleFileEditor) tPane.getSelectedComponent();
             if (ed instanceof TlkEdit) {
@@ -999,6 +1017,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     };
     private Action useForUserLookup = new AbstractAction() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             SimpleFileEditor ed = (SimpleFileEditor) tPane.getSelectedComponent();
             if (ed instanceof TlkEdit) {
@@ -1033,8 +1052,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             menuBar.removeAll();
             menuBar.add(fileMenu);
             if (menus != null) {
-                for (int i = 0; i < menus.length; i++) {
-                    menuBar.add(menus[i]);
+                for (final JMenu menu : menus) {
+                    menuBar.add(menu);
                 }
             }
             //boolean enableTlkLookup = ed instanceof GffEditX || ed instanceof TwoDaEdit;
@@ -1076,6 +1095,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             // let the window.close() listeners run before calling exit
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     System.exit(0);
                 }
@@ -1125,6 +1145,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         Actions.configureActionUI(aShowLookup, uid, "EditorFrame.showTlkLookup");
         AbstractAction aLookupAlwaysOnTop = new AbstractAction() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 //System.out.println("set always on top : " + !lookupDialog.isAlwaysOnTop());
                 lookupDialog.setAlwaysOnTop(!lookupDialog.isAlwaysOnTop());
@@ -1145,7 +1166,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     TransferHandler FileTransferHandler = new FileDropHandler() {
 
-        public void importFiles(java.util.List<File> files) {
+        @Override
+        public void importFiles(List<File> files) {
             for (File f : files) {
                 openFile(f, Version.getDefaultVersion());
             }

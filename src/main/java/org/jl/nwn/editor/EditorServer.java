@@ -16,7 +16,9 @@ import java.net.SocketAddress;
 import java.nio.channels.ClosedByInterruptException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.UIManager;
+
 import org.jl.nwn.Version;
 
 public class EditorServer {

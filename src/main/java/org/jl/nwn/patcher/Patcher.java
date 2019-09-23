@@ -1,4 +1,5 @@
 package org.jl.nwn.patcher;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,26 +53,27 @@ public class Patcher {
 			column = col;
 			target = s;
 		}
+		@Override
 		public String toString() {
 			return "column " + column + " -> " + target;
 		}
 	}
-	
+
 	// return the output dir thats used when patch in patchDir is built
 	public static File getOutputDir( File patchDir ){
 		return new File( patchDir, "out" );
 	}
-	
+
 	// return the tlk file thats written when patch in patchDir is built
 	public static File getOutputTlk( File patchDir ){
 		return new File( new File( getOutputDir( patchDir ), "tlk" ), "dialog.tlk" );
 	}
-	
+
 	// return the hak file thats written when patch in patchDir is built
 	public static File getOutputHak( File patchDir ){
 		return new File( new File( getOutputDir( patchDir ), "hak" ), patchDir.getName() + ".hak" );
 	}
-	
+
 	private static void compileScript( File script, File nwnhome, File outputdir ) throws IOException{
 		String compilerExe = "";
 		boolean use_clcompile = false;
@@ -85,7 +86,7 @@ public class Patcher {
 				use_clcompile = true;
 			}
 		else compilerExe = "nwnnsscomp";
-		
+
 		String[] exec = use_clcompile ?
 			new String[]{
 				compilerExe,
@@ -98,9 +99,9 @@ public class Patcher {
 				script.getAbsolutePath()
 			};
 		System.out.println( "exec : " + exec[0] + " " + exec[1] + " " + exec[2] );
-		
+
 		Process p = Runtime.getRuntime().exec( exec, null, outputdir );
-		
+
 		//p.waitFor();
 		InputStream is = p.getInputStream();
 		int b = 0;
@@ -115,7 +116,7 @@ public class Patcher {
 		filecopy( src, target );
 		src.delete();
 	}
-	
+
 	static void filecopy(File src, File target) throws IOException {
 		BufferedInputStream in =
 			new BufferedInputStream(new FileInputStream(src));
@@ -132,8 +133,9 @@ public class Patcher {
 	private static void delRek(File f) {
 		if (f.isDirectory()) {
 			File[] files = f.listFiles();
-			for (int i = 0; i < files.length; i++)
-				delRek(files[i]);
+            for (final File file : files) {
+                delRek(file);
+            }
 			f.delete();
 		} else if (f.isFile())
 			f.delete();
@@ -145,17 +147,16 @@ public class Patcher {
 		//char[] buffer = new char[32000];
 		//int p = 0;
 		String line = "";
-		for (int i = 0; i < input.length; i++) {
-			if (input[i].exists() && input[i].isFile()) {
-				BufferedReader in =
-					new BufferedReader(new FileReader(input[i]));
-				while ((line = in.readLine()) != null) {
-					out.write(line);
-					out.write(lineSeparator);
-				}
-				in.close();
-			}
-		}
+        for (final File file : input) {
+            if (file.exists() && file.isFile()) {
+                final BufferedReader in = new BufferedReader(new FileReader(file));
+                while ((line = in.readLine()) != null) {
+                    out.write(line);
+                    out.write(lineSeparator);
+                }
+                in.close();
+            }
+        }
 		out.close();
 	}
 
@@ -180,15 +181,15 @@ public class Patcher {
 		}
 	}
 
-	static Map readConstantDefs(File in) throws IOException {
+    static Map<String, daReference> readConstantDefs(File in) throws IOException {
 		return readConstantDefs(new BufferedReader(new FileReader(in)));
 	}
 
-	static Map readConstantDefs(BufferedReader in) throws IOException {
-		Map cdefMap = new TreeMap();
-		String line = "";
+    static Map<String, daReference> readConstantDefs(BufferedReader in) throws IOException {
+        final Map<String, daReference> cdefMap = new TreeMap<>();
+        String line;
 		while ((line = in.readLine()) != null) {
-			if (line.trim().equals(""))
+            if (line.trim().isEmpty())
 				continue;
 			String filename =
 				line.substring(0, line.indexOf(':')).trim().toLowerCase();
@@ -218,16 +219,15 @@ public class Patcher {
 		return cdefMap;
 	}
 
-	static Map readReferenceDefs(File in) throws IOException {
+    static Map<String, daReference[]> readReferenceDefs(File in) throws IOException {
 		return readReferenceDefs(new BufferedReader(new FileReader(in)));
 	}
 
-	static Map readReferenceDefs(BufferedReader in) throws IOException {
-		//BufferedReader in = new BufferedReader( new FileReader( new File( patchDir, "references.txt" ) ) );
-		Map refMap = new TreeMap();
-		String line = "";
+    static Map<String, daReference[]> readReferenceDefs(BufferedReader in) throws IOException {
+        final Map<String, daReference[]> refMap = new TreeMap<>();
+        String line;
 		while ((line = in.readLine()) != null) {
-			if (line.trim().equals(""))
+            if (line.trim().isEmpty())
 				continue;
 			String filename =
 				line.substring(0, line.indexOf(':')).trim().toLowerCase();
@@ -302,8 +302,8 @@ public class Patcher {
 		}
 		out.close();
 	}
-	
-	
+
+
 	public static void applyPatch(
 			File patchDir,
 			NwnRepository sourceRep,
@@ -313,7 +313,7 @@ public class Patcher {
 			boolean buildHak ) throws IOException {
 				 applyPatch( patchDir, sourceRep, nwnDir, tlkSourceFile, compile, buildHak, false );
 			}
-	
+
 
 	public static void applyPatch(
 		File patchDir,
@@ -329,23 +329,25 @@ public class Patcher {
 		File tlkOutDir = new File(outputDir, "tlk");
 		File tlkOutputFile = new File(tlkOutDir, "dialog.tlk");
 		// remove files in output dir
-		File[] rem = outputDir.listFiles();
-		for (int i = 0; i < rem.length; i++)
-			if (rem[i].isFile())
-				rem[i].delete();
+        for (final File file : outputDir.listFiles()) {
+            if (file.isFile()) {
+                file.delete();
+            }
+        }
 		// copy files from script dir to output dir
 		if (scriptSrcDir.exists()) {
-			File[] f = scriptSrcDir.listFiles();
-			for (int i = 0; i < f.length; i++)
-				if (f[i].isFile())
-					filecopy(f[i], new File(outputDir, f[i].getName()));
+            for (final File file : scriptSrcDir.listFiles()) {
+                if (file.isFile()) {
+                    filecopy(file, new File(outputDir, file.getName()));
+                }
+            }
 		}
-		
+
 		PrintWriter patchinfo = new PrintWriter( new FileOutputStream( new File( outputDir, "patchinfo.txt")));
-		
+
 		// read reference file ...............
-		Map refMap = readReferenceDefs(new File(patchDir, referencesFilename));
-		Map defaultRefMap =
+        final Map<String, daReference[]> refMap = readReferenceDefs(new File(patchDir, referencesFilename));
+        final Map<String, daReference[]> defaultRefMap =
 			readReferenceDefs(
 				new BufferedReader(
 					new InputStreamReader(
@@ -355,10 +357,11 @@ public class Patcher {
 		refMap.putAll(defaultRefMap);
 
 		// read constant definition file ...............
-		Map cdefMap = readConstantDefs(new File(patchDir, includedefFilename));
+        final Map<String, daReference> cdefMap = readConstantDefs(new File(patchDir, includedefFilename));
 		// read all 2da files from patch directory
 		System.out.println("reading patch 2da files : ");
 		File[] daPatchFiles = patchDir.listFiles(new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return name.toLowerCase().endsWith(".2da");
 			}
@@ -369,9 +372,9 @@ public class Patcher {
 			System.out.println(daPatchFiles[i].getName().toLowerCase());
 		}
 		//	note : daPatchFiles[i] <--> daPatchTables[i],
-		//  i.e. daPatchFiles[i].getName() is the filename for daPatchTables[i]  
+		//  i.e. daPatchFiles[i].getName() is the filename for daPatchTables[i]
 
-		// read the 2da source files  
+		// read the 2da source files
 		System.out.println("reading source 2da files : ");
 		TwoDaTable[] daSourceTables = new TwoDaTable[daPatchFiles.length];
 		for (int i = 0; i < daSourceTables.length; i++) {
@@ -404,45 +407,37 @@ public class Patcher {
 		// build map for minimum sizes of 2da files ( filling lines )
 		InputStream is =
 			ClassLoader.getSystemResourceAsStream("min2dasizes.txt");
-		Map minsizes = new TreeMap();
+        final Map<String, Integer> minsizes = new TreeMap<>();
 		BufferedReader bin = new BufferedReader(new InputStreamReader(is));
-		String aline = "";
+		String aline;
 		while ((aline = bin.readLine()) != null) {
 			System.out.print(".");
 			minsizes.put(
 				aline.substring(0, aline.indexOf(' ')).trim().toLowerCase(),
-				new Integer(
-					Integer.parseInt(
-						aline.substring(aline.indexOf(' ') + 1).trim())));
+				Integer.parseInt(aline.substring(aline.indexOf(' ') + 1).trim()));
 		}
 		System.out.println();
 
 		// create the offset map for all the files
 		// the offset is simply the number of lines in the source 2da file
-		// or the minsize entry for that file 
-		Map offsetMap = new TreeMap();
-		Integer Null = new Integer(0);
+		// or the minsize entry for that file
+        final Map<String, Integer> offsetMap = new TreeMap<>();
 		for (int i = 0; i < daSourceTables.length; i++) {
-			if (daSourceTables[i] != null) {
-				Integer min =
-					(Integer) minsizes.get(
-						daPatchFiles[i].getName().toLowerCase());
-				if (min == null)
-					min = Null;
-				if (daSourceTables[i].getRowCount() >= min.intValue())
-					offsetMap.put(
-						daPatchFiles[i].getName().toLowerCase(),
-						new Integer(daSourceTables[i].getRowCount()));
-				else
-					offsetMap.put(daPatchFiles[i].getName().toLowerCase(), min);
-			} else
-				offsetMap.put(
-					daPatchFiles[i].getName().toLowerCase(),
-					new Integer(0));
+            final String patchName = daPatchFiles[i].getName().toLowerCase();
+            if (daSourceTables[i] != null) {
+                Integer min = minsizes.get(patchName);
+                if (min == null)
+                    min = 0;
+                if (daSourceTables[i].getRowCount() >= min.intValue())
+                    offsetMap.put(patchName, daSourceTables[i].getRowCount());
+                else
+                    offsetMap.put(patchName, min);
+            } else {
+                offsetMap.put(patchName, 0);
+            }
 		}
 
 		// load and patch tlk file
-		List mainTlk = null;
 		File tlkPatchFile = new File(patchDir, tlkPatchFilename);
 		//File tlkSourceFile = new File(sourceRep, "dialog.tlk" );
 		//File tlkSourceFile = new File(nwnDir, "dialog.tlk");
@@ -478,7 +473,7 @@ public class Patcher {
 		} else {
 			System.out.println("no tlk patch found");
 		}
-		offsetMap.put("tlk", new Integer(tlkOffset + (isUserTlk? TlkLookup.USERTLKOFFSET : 0) ));
+		offsetMap.put("tlk", tlkOffset + (isUserTlk? TlkLookup.USERTLKOFFSET : 0));
 
 		//List includeScripts = new Vector();
 		String includefilename = "patchdefinitions";
@@ -505,46 +500,26 @@ public class Patcher {
 
 		// apply 2da patches, update references and write constant definitions
 		for (int i = 0; i < daPatchFiles.length; i++) {
-			Integer shift = null;
-			daReference[] refs =
-				(daReference[]) refMap.get(
-					daPatchFiles[i].getName().toLowerCase());
-			if (refs == null) {
-				System.out.println(
-					"no reference definition found for file : "
-						+ daPatchFiles[i].getName());
-			} else {
-				System.out.println(
-					"updating 2da references for patch file "
-						+ daPatchFiles[i].getName()
-						+ " ----------------------------------");
-				for (int ref = 0; ref < refs.length; ref++) {
-					shift = (Integer) offsetMap.get(refs[ref].target);
-					if (shift == null) {
-						System.out.println(
-							"no patch applied to "
-								+ refs[ref].target
-								+ ", checking for absolute references");
-						shift = new Integer(0);
-					}
-					System.out.println(
-						"updating reference from column "
-							+ refs[ref].column
-							+ " into "
-							+ refs[ref].target
-							+ " ( shift by "
-							+ shift
-							+ " )");
-					shiftReference(
-						daPatchTables[i],
-						shift.intValue(),
-						refs[ref].column,
-						true);
-				}
-			}
-			daReference cdef =
-				(daReference) cdefMap.get(
-					daPatchFiles[i].getName().toLowerCase());
+            final String patchName = daPatchFiles[i].getName();
+            final daReference[] refs = refMap.get(patchName.toLowerCase());
+            if (refs == null) {
+                System.out.println("no reference definition found for file : " + patchName);
+            } else {
+                System.out.println(
+                    "updating 2da references for patch file "
+                        + patchName
+                        + " ----------------------------------");
+                for (final daReference ref : refs) {
+                    Integer shift = offsetMap.get(ref.target);
+                    if (shift == null) {
+                        System.out.println("no patch applied to " + ref.target + ", checking for absolute references");
+                        shift = 0;
+                    }
+                    System.out.println("updating reference from column " + ref.column + " into " + ref.target + " ( shift by " + shift + " )");
+                    shiftReference(daPatchTables[i], shift.intValue(), ref.column, true);
+                }
+            }
+            final daReference cdef = cdefMap.get(patchName.toLowerCase());
 			if (cdef != null) {
 				// write constant definitions, not neccessary if joining patches
 				//File includeFile = new File(outputDir, cdef.target);
@@ -552,9 +527,7 @@ public class Patcher {
 					daPatchTables[i],
 					includeFile,
 					cdef.column,
-					((Integer) offsetMap
-						.get(daPatchFiles[i].getName().toLowerCase()))
-						.intValue(),
+                    offsetMap.get(patchName.toLowerCase()).intValue(),
 					true);
 				//includeScripts.add( cdef.target );
 			}
@@ -566,9 +539,7 @@ public class Patcher {
 				// can't set absolute line position if source unavailable
 			} else {
 				// fill up to minimum size ...
-				Integer minsize =
-					(Integer) minsizes.get(
-						daPatchFiles[i].getName().toLowerCase());
+                final Integer minsize = minsizes.get(patchName.toLowerCase());
 				if (minsize != null) {
 					if (daSourceTables[i].getRowCount() < minsize.intValue()) {
 						for (int fill = daSourceTables[i].getRowCount();
@@ -583,7 +554,7 @@ public class Patcher {
 						}
 					}
 				}
-				patchinfo.write( daPatchFiles[i].getName() + " " + (daSourceTables[i].getRowCount()) + "-" + (daSourceTables[i].getRowCount()+countNonAbsoluteLines(daPatchTables[i])-1) + lineSeparator );
+                patchinfo.write(patchName + " " + (daSourceTables[i].getRowCount()) + "-" + (daSourceTables[i].getRowCount()+countNonAbsoluteLines(daPatchTables[i])-1) + lineSeparator );
 				patch2da(daSourceTables[i], daPatchTables[i], true);
 			}
 			//racialtypes.nss needs some special treatment now ( damn ) ...........
@@ -592,10 +563,7 @@ public class Patcher {
 			 * (cannot assign values in an include file )
 			*/
 			if (false && cdef != null)
-				if (daPatchFiles[i]
-					.getName()
-					.toLowerCase()
-					.equals("racialtypes.2da")) {
+                if (patchName.toLowerCase().equals("racialtypes.2da")) {
 					int lastRace = daSourceTables[i].getRowCount();
 					String script = "";
 					boolean append = true;
@@ -604,7 +572,7 @@ public class Patcher {
 						// need to read the script and remove existing RACIAL_TYPE_ALL and
 						// RACIAL_TYPE_INVALID definitions
 						append = false;
-						StringBuffer sb = new StringBuffer();
+						final StringBuilder sb = new StringBuilder();
 						String line = "";
 						BufferedReader in =
 							new BufferedReader(new FileReader(includeFile));
@@ -651,10 +619,7 @@ public class Patcher {
 					*/
 				}
 			if (false && cdef != null) //unused !
-				if (daPatchFiles[i]
-					.getName()
-					.toLowerCase()
-					.equals("racialtypes.2da")) {
+                if (patchName.toLowerCase().equals("racialtypes.2da")) {
 					int lastRace = daSourceTables[i].getRowCount();
 					FileWriter out = new FileWriter(includeFile, true);
 					out.write(
@@ -681,7 +646,7 @@ public class Patcher {
 
 		// compile scripts ...............................................
 		if (compile) {
-			/*		
+			/*
 			FileWriter out = new FileWriter( new File( outputDir, "patchdefs.nss"), true ); //append
 			for ( int j = 0; j < includeScripts.size(); j++ )
 				out.write( "#include \"" + includeScripts.get(j) + "\"" + lineSeparator );
@@ -690,17 +655,20 @@ public class Patcher {
 			try {
 				System.out.println("trying to compile scripts ...");
 				File[] scripts = outputDir.listFiles(new FilenameFilter() {
+					@Override
 					public boolean accept(File dir, String name) {
 						return name.toLowerCase().endsWith(".nss");
 					}
 				});
-				for (int i = 0; i < scripts.length; i++) {
-					if ( scripts[i].getName().equalsIgnoreCase("nwscript.nss"))
-						continue;
-					if ( scripts[i].getName().equalsIgnoreCase("patchdefinitions.nss") )
-						continue;
-					compileScript( scripts[i], nwnDir, outputDir );
-				}
+                for (final File script : scripts) {
+                    if (script.getName().equalsIgnoreCase("nwscript.nss")) {
+                        continue;
+                    }
+                    if (script.getName().equalsIgnoreCase("patchdefinitions.nss")) {
+                        continue;
+                    }
+                    compileScript(script, nwnDir, outputDir);
+                }
 
 			} catch (Exception ex) {
 				System.out.println(
@@ -714,12 +682,12 @@ public class Patcher {
 			System.out.println("writing hak file");
 			File hakDir = new File(outputDir, "hak");
 			hakDir.mkdir();
-			List files = new Vector();
-			File[] f = outputDir.listFiles();
 			ErfFile erf = new ErfFile( new File(hakDir, patchDir.getName() + ".hak"), ErfFile.HAK, new GffCExoLocString("foo") );
-			for (int i = 0; i < f.length; i++)
-				if (f[i].isFile())
-					erf.putResource( f[i] );
+            for (final File file : outputDir.listFiles()) {
+                if (file.isFile()) {
+                    erf.putResource(file);
+                }
+            }
 			erf.write();
 			/*
 			for (int i = 0; i < f.length; i++)
@@ -740,7 +708,7 @@ public class Patcher {
 		patchinfo.close();
 		System.out.println("done");
 	}
-	
+
 	private static int countNonAbsoluteLines( TwoDaTable t ){
 		int r = 0;
 		for ( int i = 0; i < t.getRowCount(); i++ )
@@ -749,15 +717,11 @@ public class Patcher {
 		return r;
 	}
 
-	public static void joinPatches( List inputpatches, File outputDir ) throws IOException{
-		List files = inputpatches;//(List) optionMap.get("-join");
-		//System.out.println( files.size() );
-		String[] patchdirnames = new String[files.size()];
-		//( String[] )files.toArray( args );
+    public static void joinPatches(List<String> inputpatches, File outputDir) throws IOException {
+        final String[] patchdirnames = new String[inputpatches.size()];
 		// reverse order of arguments
 		for (int i = 0; i < patchdirnames.length; i++)
-			patchdirnames[i] =
-				(String) files.get((patchdirnames.length - 1) - i);
+            patchdirnames[i] = inputpatches.get(patchdirnames.length - 1 - i);
 		File[] outputdirs = new File[patchdirnames.length - 1];
 		for (int i = 0; i < outputdirs.length - 1; i++) {
 			outputdirs[i] = File.createTempFile("nwnpatch", null);
@@ -782,7 +746,7 @@ public class Patcher {
 	}
 
 	/* append patch in patchDir1 to the patch in patchDir2, write new patch to joinedDir
-	 * 
+	 *
 	 */
 	public static void joinPatches(
 		File patchDir1,
@@ -812,28 +776,31 @@ public class Patcher {
 		File scriptDirNew = new File(joinedDir, "scripts");
 		if (scriptDir1.exists()) {
 			scriptDirNew.mkdirs();
-			File[] f = scriptDir1.listFiles();
-			for (int i = 0; i < f.length; i++)
-				if (f[i].isFile())
-					filecopy(f[i], new File(scriptDirNew, f[i].getName()));
+            for (final File file : scriptDir1.listFiles()) {
+                if (file.isFile()) {
+                    filecopy(file, new File(scriptDirNew, file.getName()));
+                }
+            }
 		}
 		File scriptDir2 = new File(patchDir2, "scripts");
 		if (scriptDir2.exists()) {
 			scriptDirNew.mkdirs();
-			File[] f = scriptDir2.listFiles();
-			for (int i = 0; i < f.length; i++)
-				if (f[i].isFile())
-					filecopy(f[i], new File(scriptDirNew, f[i].getName()));
+            for (final File file : scriptDir2.listFiles()) {
+                if (file.isFile()) {
+                    filecopy(file, new File(scriptDirNew, file.getName()));
+                }
+            }
 		}
 		// copy contents of patchDir1 to joinedDir
 		System.out.println("copying patch2 2da files ...");
-		File[] f = patchDir2.listFiles();
-		for (int i = 0; i < f.length; i++)
-			if (f[i].isFile())
-				filecopy(f[i], new File(joinedDir, f[i].getName()));
+        for (final File file : patchDir2.listFiles()) {
+            if (file.isFile()) {
+                filecopy(file, new File(joinedDir, file.getName()));
+            }
+        }
 		// read reference file ...............
-		Map refMap = readReferenceDefs(new File(patchDir1, referencesFilename));
-		Map defaultRefMap =
+        final Map<String, daReference[]> refMap = readReferenceDefs(new File(patchDir1, referencesFilename));
+        Map<String, daReference[]> defaultRefMap =
 			readReferenceDefs(
 				new BufferedReader(
 					new InputStreamReader(
@@ -845,6 +812,7 @@ public class Patcher {
 		System.out.println(
 			"reading 2da files from " + patchDir1.getAbsolutePath());
 		File[] daPatchFiles = patchDir1.listFiles(new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return name.toLowerCase().endsWith(".2da");
 			}
@@ -855,9 +823,9 @@ public class Patcher {
 			System.out.println(daPatchFiles[i].getName().toLowerCase());
 		}
 		//	note : daPatchFiles[i] <--> daPatchTables[i],
-		//  i.e. daPatchFiles[i].getName() is the filename for daPatchTables[i]  
+		//  i.e. daPatchFiles[i].getName() is the filename for daPatchTables[i]
 
-		// read the 2da source files  
+		// read the 2da source files
 		System.out.println("reading 'source' 2da files : ");
 		TwoDaTable[] daSourceTables = new TwoDaTable[daPatchFiles.length];
 		for (int i = 0; i < daSourceTables.length; i++) {
@@ -870,31 +838,27 @@ public class Patcher {
 			}
 		}
 		// create the offset map for all the files
-		// ( the offset is simply the number of lines in the source 2da file ) 
-		Map offsetMap = new TreeMap();
+		// ( the offset is simply the number of lines in the source 2da file )
+        final Map<String, Integer> offsetMap = new TreeMap<>();
 		for (int i = 0; i < daSourceTables.length; i++) {
+            final String patchName = daPatchFiles[i].getName().toLowerCase();
 			if (daSourceTables[i] != null) {
 				int realLines = 0;
 				// don't count absolute lines
 				for (int r = 0; r < daSourceTables[i].getRowCount(); r++)
 					if (!daSourceTables[i].getValueAt(r, 0).startsWith("!"))
 						realLines++;
-				offsetMap.put(
-					daPatchFiles[i].getName().toLowerCase(),
-					new Integer(realLines));
-			} else
-				offsetMap.put(
-					daPatchFiles[i].getName().toLowerCase(),
-					new Integer(0));
+				offsetMap.put(patchName, realLines);
+            } else {
+                offsetMap.put(patchName, 0);
+            }
 		}
 
 		File tlkPatch1 = new File(patchDir1, tlkPatchFilename);
 		File tlkPatch2 = new File(patchDir2, tlkPatchFilename);
 		File tlkJoined = new File(joinedDir, tlkPatchFilename);
 		if (tlkPatch1.exists() && tlkPatch2.exists()) {
-			offsetMap.put(
-				"tlk",
-				new Integer(TlkTool.getTlkFileSize(tlkPatch2)));
+			offsetMap.put("tlk", TlkTool.getTlkFileSize(tlkPatch2));
 			System.out.println("concatenating patch tlk files ...");
 			TlkTool.concat(tlkPatch2, tlkPatch1, tlkJoined, TlkTool.TLKAPPEND);
 		} else {
@@ -903,7 +867,7 @@ public class Patcher {
 			if (tlkPatch2.exists())
 				filecopy(tlkPatch2, tlkJoined);
 		}
-		
+
 		// same for difs
 		File tlkDiff1 = new File(patchDir1, tlkUpdateFilename);
 		File tlkDiff2 = new File(patchDir2, tlkUpdateFilename);
@@ -913,15 +877,15 @@ public class Patcher {
 			TlkContent c = new TlkContent( NwnLanguage.ENGLISH );
 			int[] diffs1 = c.mergeDiff( tlkDiff1 );
 			int[] diffs2 = c.mergeDiff( tlkDiff2 );
-			TreeSet ts = new TreeSet();
-			for ( int i = 0; i < diffs1.length; i++ )
-				ts.add( new Integer( diffs1[i] ) );
-			for ( int i = 0; i < diffs2.length; i++ )
-				ts.add( new Integer( diffs2[i] ) );
+            final TreeSet<Integer> ts = new TreeSet<>();
+			for (final int diff : diffs1)
+				ts.add(diff);
+			for (final int diff : diffs2)
+				ts.add(diff);
 			int[] newDiffs = new int[ ts.size() ];
-			int itCount = 0; 
-			for ( Iterator it = ts.iterator(); it.hasNext(); itCount++ )
-				newDiffs[itCount] = ( (Integer) it.next() ).intValue();				
+			int itCount = 0;
+            for (final Iterator<Integer> it = ts.iterator(); it.hasNext(); itCount++ )
+                newDiffs[itCount] = it.next().intValue();
 			c.writeDiff( tlkDiffJoined, newDiffs );
 		} else {
 			if (tlkDiff1.exists())
@@ -931,40 +895,24 @@ public class Patcher {
 		}
 
 		for (int i = 0; i < daPatchFiles.length; i++) {
-			Integer shift = null;
-			daReference[] refs =
-				(daReference[]) refMap.get(
-					daPatchFiles[i].getName().toLowerCase());
-			if (refs == null){
-				System.out.println(
-					"no reference definition found for file : "
-						+ daPatchFiles[i].getName());
+            final String patchName = daPatchFiles[i].getName();
+            final daReference[] refs = refMap.get(patchName.toLowerCase());
+            if (refs == null) {
+                System.out.println("no reference definition found for file : " + patchName);
 			} else {
 				System.out.println(
 					"updating 2da references for patch file "
-						+ daPatchFiles[i].getName()
+						+ patchName
 						+ " ----------------------------------");
-				for (int ref = 0; ref < refs.length; ref++) {
-					shift = (Integer) offsetMap.get(refs[ref].target);
-					if (shift == null) {
-						System.out.println(
-							"no patch applied to " + refs[ref].target);
-						shift = new Integer(0);
-					}
-					System.out.println(
-						"updating reference from column "
-							+ refs[ref].column
-							+ " into "
-							+ refs[ref].target
-							+ " ( shift by "
-							+ shift
-							+ " )");
-					shiftReference(
-						daPatchTables[i],
-						shift.intValue(),
-						refs[ref].column,
-						false);
-				}
+                for (final daReference ref : refs) {
+                    Integer shift = offsetMap.get(ref.target);
+                    if (shift == null) {
+                        System.out.println("no patch applied to " + ref.target);
+                        shift = 0;
+                    }
+                    System.out.println("updating reference from column " + ref.column + " into " + ref.target + " ( shift by " + shift + " )");
+                    shiftReference(daPatchTables[i], shift.intValue(), ref.column, false);
+                }
 			}
 			if (daSourceTables[i] == null)
 				daSourceTables[i] = new TwoDaTable(daPatchTables[i]);
@@ -1042,7 +990,7 @@ public class Patcher {
 			joinPatches( files, new File( outpath ) );
 		}
 		if (optionMap.containsKey("-apply")) {
-			// --------------------------------------------- apply ------------------------------			
+			// --------------------------------------------- apply ------------------------------
 			String nwnpath = (String) ((List) optionMap.get("-nwn")).get(0);
 			if (nwnpath == null) {
 				System.out.println(
@@ -1154,7 +1102,7 @@ public class Patcher {
 		}
 		*/
 		/*
-				
+
 				if (args.length < 4) {
 					System.out.println("apply patch");
 					File nwndir = new File(args[0]);

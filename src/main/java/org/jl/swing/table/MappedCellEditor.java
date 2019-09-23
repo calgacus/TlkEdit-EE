@@ -1,10 +1,13 @@
 package org.jl.swing.table;
 
+import java.awt.Component;
 import java.beans.Expression;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.CellEditor;
+import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
@@ -25,16 +28,16 @@ import javax.swing.table.TableCellEditor;
  * map(Float.class, floatEditor, null)
  */
 public class MappedCellEditor extends AbstractCellEditor implements TableCellEditor{
-    
+
     public static class Projection{
         String methodName;
         Object[] args;
-        
+
         public Projection( String methodName, Object[] args ){
             this.methodName = methodName;
             this.args = args;
         }
-        
+
         public Object invoke(Object o){
             try{
                 return new Expression(o, methodName, args ).getValue();
@@ -44,16 +47,18 @@ public class MappedCellEditor extends AbstractCellEditor implements TableCellEdi
             return null;
         }
     }
-    
+
     public static final KeyFunction GETCLASS = new KeyFunction(){
+        @Override
         public Object computeKey( Object value, int row, int column ){
             return value.getClass();
         }
     };
-    
+
     public static abstract class KeyFunction{
         public static KeyFunction newKeyFunction(final Object target, final String methodName){
             return new KeyFunction(){
+                @Override
                 public Object computeKey( Object value, int row, int column ){
                     try{
                         return new Expression(target, methodName, new Object[]{value, row, column} ).getValue();
@@ -64,9 +69,10 @@ public class MappedCellEditor extends AbstractCellEditor implements TableCellEdi
                 }
             };
         }
-        
+
         public static KeyFunction newKeyFunction(final Object target, final String methodName, final Object ... args){
             return new KeyFunction(){
+                @Override
                 public Object computeKey( Object value, int row, int column ){
                     try{
                         return new Expression(target, methodName, args ).getValue();
@@ -77,29 +83,29 @@ public class MappedCellEditor extends AbstractCellEditor implements TableCellEdi
                 }
             };
         }
-        
+
         public abstract Object computeKey( Object value, int row, int column );
     }
-    
-    protected Map<Object, CellEditor> map = new HashMap<Object, CellEditor>();
-    protected Map<Object, Projection> projectionMap = new HashMap<Object, Projection>();
+
+    protected Map<Object, CellEditor> map = new HashMap<>();
+    protected Map<Object, Projection> projectionMap = new HashMap<>();
     protected KeyFunction keyFunction;
     protected CellEditor delegate;
-    
+
     /** Creates a new instance of MappedCellEditor */
     public MappedCellEditor(){
         super();
     }
-    
+
     public MappedCellEditor(KeyFunction keyFunction){
         this();
         this.keyFunction = keyFunction;
     }
-    
+
     public Object computeKey( Object value, int row, int column ){
         return keyFunction != null ? keyFunction.computeKey(value, row, column) : value;
     }
-    
+
     public void map( Object key, CellEditor editor, Projection p ){
         for ( CellEditorListener l : getCellEditorListeners() )
             editor.addCellEditorListener(l);
@@ -107,30 +113,35 @@ public class MappedCellEditor extends AbstractCellEditor implements TableCellEdi
         if ( p != null )
             projectionMap.put(key, p);
     }
-    
+
+    @Override
     public Object getCellEditorValue(){
         return delegate.getCellEditorValue();
     }
-    
+
+    @Override
     public void removeCellEditorListener(CellEditorListener l) {
         super.removeCellEditorListener(l);
         for ( CellEditor e : map.values() )
             e.removeCellEditorListener(l);
     }
-    
+
+    @Override
     public void addCellEditorListener(CellEditorListener l) {
         super.addCellEditorListener(l);
         for ( CellEditor e : map.values() )
             e.addCellEditorListener(l);
     }
-    
+
+    @Override
     public boolean stopCellEditing() {
         boolean retValue;
         retValue = delegate.stopCellEditing();
         return retValue;
     }
-    
-    public java.awt.Component getTableCellEditorComponent(javax.swing.JTable table, Object value, boolean isSelected, int row, int column){
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column){
         Object key = computeKey(value, row, column);
         delegate = map.get( key );
         Projection p = null;
@@ -143,9 +154,9 @@ public class MappedCellEditor extends AbstractCellEditor implements TableCellEdi
             value = p.invoke(value);
         return ((TableCellEditor)delegate).getTableCellEditorComponent(table, value,isSelected,row,column);
     }
-    
+
+    @Override
     public void cancelCellEditing() {
         delegate.cancelCellEditing();
     }
-    
 }

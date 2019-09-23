@@ -3,10 +3,11 @@ package org.jl.nwn.gff;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
+
 import org.jl.nwn.Version;
 
 /*
- * composite gff field representation, treats CExoLocString 
+ * composite gff field representation, treats CExoLocString
  * as node with CExoLocSubstring children
  *
  * types for value parameter in setData() and getData() are :
@@ -24,20 +25,21 @@ import org.jl.nwn.Version;
  * </dl>
  */
 public abstract class GffField<Data extends Object> implements Cloneable{
-    
+
     protected String label;
     protected byte type;
-    
+
     protected GffField parent = null;
-    
+
     public String getTypeName(){
         return Gff.getTypeName( type );
     }
-    
+
+    @Override
     public String toString(){
         return label + " (" + getTypeName() + ") " + getData();
     }
-    
+
     /**
      * Constructor for GffField.
      */
@@ -46,7 +48,7 @@ public abstract class GffField<Data extends Object> implements Cloneable{
         setLabel( label );
         this.type = type;
     }
-    
+
     /**
      * Returns the type.
      * @return byte
@@ -54,38 +56,38 @@ public abstract class GffField<Data extends Object> implements Cloneable{
     public byte getType() {
         return type;
     }
-    
+
     protected boolean isComplexType(){
         return !( type < 6 || type == 8 );
     }
-    
+
     public boolean isIntegerType(){
         return type < 8;
     }
-    
+
     public boolean isDecimalType(){
         return type == 8 || type == 9;
     }
-    
+
     /**
      * @return true if field is not a list or struct
      * */
     public boolean isDataField(){
         return ( type != Gff.STRUCT && type != Gff.LIST );
     }
-    
+
     public String getLabel(){
         return label;
     }
-    
+
     public void setLabel( String label ) {
         this.label = label.substring( 0, Math.min( label.length(), 16 ) );
     }
-    
+
     public GffField getParent(){
         return parent;
     }
-    
+
     public static GffField createField(byte type) {
         if (type < 8)
             return new GffInteger("new_" + Gff.getTypeName(type), type);
@@ -114,43 +116,44 @@ public abstract class GffField<Data extends Object> implements Cloneable{
             }
             return null;
     }
-    
-    public Object clone(){
+
+    @Override
+    public GffField clone() {
         try{
-            return super.clone();
+            return (GffField)super.clone();
         } catch ( CloneNotSupportedException cnse){
         }
         return null;
     }
-    
+
     public boolean allowsChildren(){
         return false;
     }
-    
+
     public int getChildCount(){
         return 0;
     }
-    
+
     public GffField getChild( int index ){
         throw new UnsupportedOperationException();
     }
-    
+
     public int getChildIndex( GffField f ){
         throw new UnsupportedOperationException();
     }
-    
+
     public void addChild( int index, GffField f ){
         throw new UnsupportedOperationException();
     }
-    
+
     public void removeChild( GffField f ){
         throw new UnsupportedOperationException();
     }
-    
+
     public abstract Data getData();
-    
+
     public abstract void setData( Data data );
-    
+
     /** compare 2 gff fields for testing purposes
      */
     public boolean equalsGff(GffField f){
@@ -197,12 +200,11 @@ public abstract class GffField<Data extends Object> implements Cloneable{
         }
         return true;
     }
-    
+
     public static void main( String ... args ) throws Exception{
         DefaultGffReader reader = new DefaultGffReader(Version.getDefaultVersion());
         GffContent c1 = reader.load( new File(args[0]) );
         GffContent c2 = reader.load( new FileInputStream(args[1]) );
         System.out.println( "GffField.java "+c1.getTopLevelStruct().equalsGff(c2.getTopLevelStruct()) );
     }
-    
 }

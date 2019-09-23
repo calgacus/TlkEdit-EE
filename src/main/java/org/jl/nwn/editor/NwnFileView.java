@@ -15,25 +15,23 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.filechooser.FileView;
 
 import org.jl.nwn.erf.ErfEdit;
-
 import org.jl.nwn.gff.Gff;
 import org.jl.swing.UIDefaultsX;
 
 /**
  */
-public class NwnFileView extends FileView{
-    
-    static Icon icon_folder;
-    static Icon icon_mime;
-    static Icon icon_tlk;
-    static Icon icon_2da;
-    static Icon icon_erf;
-    static Icon icon_gff;
-    static Icon icon_broken;
-    
-    static FileSystemView fsv = FileSystemView.getFileSystemView();
-    static UIDefaultsX uid = new UIDefaultsX();
-    
+public class NwnFileView extends FileView {
+    static final FileSystemView fsv = FileSystemView.getFileSystemView();
+    static final UIDefaultsX uid = new UIDefaultsX();
+
+    static final Icon icon_folder;
+    static final Icon icon_mime;
+    static final Icon icon_tlk;
+    static final Icon icon_2da;
+    static final Icon icon_erf;
+    static final Icon icon_gff;
+    static final Icon icon_broken;
+
     static{
         uid.addResourceBundle("org.jl.nwn.editor.fileview");
         icon_folder = uid.getIcon("icon_folder");
@@ -44,7 +42,7 @@ public class NwnFileView extends FileView{
         icon_gff = uid.getIcon( "icon_gff" );
         icon_broken = uid.getIcon( "icon_broken" );
     }
-    
+
     public static void setUIDefaults(){
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
         defaults.put( "FileChooser.upFolderIcon", uid.getIcon("FileChooser.upFolderIcon") );
@@ -60,7 +58,8 @@ public class NwnFileView extends FileView{
         "FileView.hardDriveIcon"
         */
     }
-    
+
+    @Override
     public Icon getIcon(File f){
         // broken symlinks do not exist
         if (!f.exists()) return icon_broken;
@@ -83,7 +82,8 @@ public class NwnFileView extends FileView{
         }
         return fsv.getSystemIcon(f);
     }
-    
+
+    @Override
     public String getTypeDescription(File f){
         if ( f.getName().length() > 4 ){
             String ext = f.getName().toLowerCase().substring( f.getName().length()-3 );
@@ -99,7 +99,7 @@ public class NwnFileView extends FileView{
         }
         return fsv.getSystemTypeDescription(f);
     }
-    
+
     public static void main(String[] args) {
     }
 }

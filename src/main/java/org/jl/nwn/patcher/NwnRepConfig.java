@@ -14,7 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -64,7 +64,7 @@ public class NwnRepConfig {
 
 	/*(forum post by sidney tang,
 	 * In order of lowest to highest priority, resources are loaded in this order:
-	 * 
+	 *
 		chitin.key, patch.key, xp1.key, xp1patch.key, xp2.key, xp2patch.key,
 		override, module temp dir (if using toolset),
 		module/savegame erf (if running game), texture pack erf, hak paks.
@@ -88,7 +88,7 @@ public class NwnRepConfig {
 	private JCheckBox useKeyfiles;
 	private JTextField keyfiles;
 	private JPanel configPanel = null;
-	
+
 	private void restore() {
 		nwnhome = new JTextField(prefs.get(PREFS_NWNHOME, ""), 40);
 		nwnhome.setEditable( false );
@@ -119,7 +119,7 @@ public class NwnRepConfig {
 				prefs.get(PREFS_BIFKEYS, "" ), //patch.key chitin.key"),
 				40);
 	}
-	
+
 	public void store(){
 		prefs.put(PREFS_NWNHOME, nwnhome.getText());
 		prefs.putBoolean(PREFS_USEHAK, useSourcehak.isSelected());
@@ -144,6 +144,7 @@ public class NwnRepConfig {
 		// nwn home textfield + selector
 		Action selectHome = new AbstractAction("select") {
 			JFileChooser fc = new JFileChooser();
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setMultiSelectionEnabled(false);
@@ -163,6 +164,7 @@ public class NwnRepConfig {
 		final JToolBar tbar = new JToolBar(JToolBar.VERTICAL );
 		tbar.setFloatable( false );
 		useSourcehak.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 				sourceHakList.setEnabled(useSourcehak.isSelected());
 				tbar.setVisible(useSourcehak.isSelected());
@@ -184,24 +186,26 @@ public class NwnRepConfig {
 					}
 				}
 			}
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fc.setMultiSelectionEnabled(true);
-				if (hakListModel.size() == 0 && getNwnHome() != null ){
+                if (hakListModel.isEmpty() && getNwnHome() != null) {
 					File defHakDir = new File( getNwnHome(), "hak" );
 					if ( defHakDir.exists() )
 						fc.setCurrentDirectory( defHakDir );
 					else
 						fc.setCurrentDirectory( getNwnHome() );
 				}
-				if (fc.showDialog(nwnhome, "add")
-					== JFileChooser.APPROVE_OPTION) {
-					for (int i = 0; i < fc.getSelectedFiles().length; i++)
-						hakListModel.addElement(fc.getSelectedFiles()[i]);
+                if (fc.showDialog(nwnhome, "add") == JFileChooser.APPROVE_OPTION) {
+                    for (final File selectedFile : fc.getSelectedFiles()) {
+                        hakListModel.addElement(selectedFile);
+                    }
 				}
 			}
 		};
 		Action up = new AbstractAction("up") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = sourceHakList.getSelectedIndex();
 				if (line > 0) {
@@ -214,6 +218,7 @@ public class NwnRepConfig {
 			}
 		};
 		Action down = new AbstractAction("down") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = sourceHakList.getSelectedIndex();
 				if (line != -1 && line < hakListModel.size() - 1) {
@@ -226,6 +231,7 @@ public class NwnRepConfig {
 			}
 		};
 		Action del = new AbstractAction("del") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int line = sourceHakList.getSelectedIndex();
 				if (line != -1) {
@@ -251,20 +257,21 @@ public class NwnRepConfig {
 		label_keyoverride.setForeground( Color.RED );
 		label_keyoverride.setText( "keyfile override" );
 		String tt_keyoverride = "<html>key files should be detected automatically -<br>if it doesn't work enter list of key file names here, highest priority first<br>e.g. 'xp1patch.key xp1.key patch.key chitin.key'";
-		label_keyoverride.setToolTipText( tt_keyoverride ); 
+		label_keyoverride.setToolTipText( tt_keyoverride );
 		keyFilePanel.add( label_keyoverride );
 		keyFilePanel.add(keyfiles);
 		keyfiles.setToolTipText( tt_keyoverride );
 
 		configPanel.add(selectNwnHomePanel);
 		configPanel.add(sourceHakPanel);
-		
+
 		JPanel overridePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		overridePanel.add( useOverride );
 		configPanel.add( overridePanel );
 		configPanel.add(keyFilePanel);
 
 		Action store = new AbstractAction("apply settings") {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				store();
 			}
@@ -274,24 +281,24 @@ public class NwnRepConfig {
 		//configPanel.setPreferredSize( new Dimension( 620, 320 ) );
 		return configPanel;
 	}
-	
+
 	public File getNwnHome(){
 		return new File( nwnhome.getText() );
 	}
-	
+
 	public void setNwnHome( File f ){
 		if ( f.isDirectory() ) nwnhome.setText( f.getAbsolutePath() );
 	}
-	
+
 	public File[] getHakList(){
 		File[] r = new File[ hakListModel.size() ];
 		hakListModel.copyInto( r );
 		return r;
 	}
-	
+
 	public NwnRepository getNwnRepository() throws IOException {
 		store();
-		Vector reps = new Vector();
+        final ArrayList<NwnRepository> reps = new ArrayList<>();
 		File nwnhome = new File(prefs.get(PREFS_NWNHOME, ""));
 		if (prefs.getBoolean(PREFS_USEHAK, false)){
 			int haknum = prefs.getInt( PREFS_HAKNUM, 0 );
@@ -320,17 +327,17 @@ public class NwnRepConfig {
 		}
 		NwnRepository r = null;
 		if (reps.size() > 0)
-			r = (NwnRepository) reps.get(0);
+            r = reps.get(0);
 		if (reps.size() > 1)
 			for (int i = 1; i < reps.size(); i++)
-				r = new NwnChainRepository(r, (NwnRepository) reps.get(i));
+                r = new NwnChainRepository(r, reps.get(i));
 		return r;
 	}
 
 	public static void main(String[] args) {
 		final NwnRepConfig c = new NwnRepConfig();
 		JFrame f = new JFrame("NWN Repository Settings");
-		f.addWindowListener( new WindowAdapter(){ public void windowClosing(WindowEvent e){
+		f.addWindowListener( new WindowAdapter(){ @Override public void windowClosing(WindowEvent e){
 			c.store();
 		} } );
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -339,4 +346,3 @@ public class NwnRepConfig {
 		f.setVisible(true);
 	}
 }
-

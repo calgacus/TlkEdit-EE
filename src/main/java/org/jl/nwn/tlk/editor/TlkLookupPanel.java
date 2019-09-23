@@ -3,6 +3,7 @@ package org.jl.nwn.tlk.editor;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -11,10 +12,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
 import org.jdesktop.swingx.event.MessageListener;
 import org.jdesktop.swingx.event.MessageSource;
 import org.jdesktop.swingx.event.MessageSourceSupport;
-import org.jl.nwn.tlk.*;
+import org.jl.nwn.tlk.TlkLookup;
 
 /**
  */
@@ -25,16 +27,17 @@ public class TlkLookupPanel extends JPanel implements MessageSource {
 
     protected MessageSourceSupport messageSupport = new MessageSourceSupport(this);
 
-    private JTextField resField = new JTextField(16);
-    private JTextArea textArea = new JTextArea();
-    private JLabel posLabel = new JLabel("0");
-    private JButton updateButton;
+    private final JTextField resField = new JTextField(16);
+    private final JTextArea textArea = new JTextArea();
+    private final JLabel posLabel = new JLabel("0");
+    private final JButton updateButton;
     private int position = -1; // displayed position
-    private Action updateModel = new AbstractAction("update tlk") {
+    private final Action updateModel = new AbstractAction("update tlk") {
         {
             setEnabled(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             TlkEdit ed = position >= TlkLookup.USERTLKOFFSET ? usertlkedit : tlkedit;
             //ed.tlkTable.getModel().setValueAt(resField.getText(), position, 1);
@@ -137,7 +140,7 @@ public class TlkLookupPanel extends JPanel implements MessageSource {
             }
         }
     }
-    
+
     protected void message(String tlkString, int position){
         messageSupport.fireMessage(MessageFormat.format("[StrRef {0}] {1}", position, tlkString));
     }
@@ -156,14 +159,17 @@ public class TlkLookupPanel extends JPanel implements MessageSource {
         setNoValue();
     }
 
+    @Override
     public void removeMessageListener(MessageListener l) {
         messageSupport.removeMessageListener(l);
     }
 
+    @Override
     public MessageListener[] getMessageListeners() {
         return messageSupport.getMessageListeners();
     }
 
+    @Override
     public void addMessageListener(MessageListener l) {
         messageSupport.addMessageListener(l);
     }

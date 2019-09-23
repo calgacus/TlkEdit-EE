@@ -11,6 +11,7 @@ package org.jl.nwn.gff;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,16 +20,16 @@ import org.w3c.dom.Node;
  * converts a GffContent or a GffField object into a dom Node object
  */
 public class Gff2Xml {
-    
+
     public Gff2Xml() {
     }
-    
+
     static Document doc = null;
-    
+
     static{
         //static Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     }
-    
+
     public static Document convertToXml( GffField field ) throws ParserConfigurationException{
         doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         doc.appendChild(doc.createProcessingInstruction("xml-stylesheet", "href='mygffstyle_v2.css' type='text/css'"));
@@ -37,7 +38,7 @@ public class Gff2Xml {
         root.setAttribute( "xsi:noNamespaceSchemaLocation", "gff.xsd" );
         return doc;
     }
-    
+
     public static Document convertToXml( GffContent c ) throws ParserConfigurationException{
         doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         doc.appendChild(doc.createProcessingInstruction("xml-stylesheet", "href='mygffstyle_v2.css' type='text/css'"));
@@ -46,7 +47,7 @@ public class Gff2Xml {
         root.setAttribute( "xsi:noNamespaceSchemaLocation", "gff.xsd" );
         return doc;
     }
-    
+
     protected static Element mkStructElement( Node el, GffStruct struct ){
         Element structElement = doc.createElement( "Struct" );
         el.appendChild(structElement);
@@ -58,7 +59,7 @@ public class Gff2Xml {
         }
         return structElement;
     }
-    
+
     protected static Element mkListElement( Node el, GffList list ){
         Element listElement = doc.createElement( "List" );
         el.appendChild(listElement);
@@ -68,8 +69,8 @@ public class Gff2Xml {
         }
         return listElement;
     }
-    
-    
+
+
     protected static Element mkFieldElement( Node el, GffField field ){
         Element fieldElement = doc.createElement( field.getTypeName() );
         el.appendChild(fieldElement);
@@ -77,7 +78,7 @@ public class Gff2Xml {
             fieldElement.setAttribute("label", field.getLabel());
         return fieldElement;
     }
-    
+
     public static Element mkElement( Node el, GffField field ){
 
         if ( field.isIntegerType() )
@@ -100,25 +101,25 @@ public class Gff2Xml {
             return mkListElement( el, (GffList) field );
         return null;
     }
-    
+
     protected static Element mkIntegerElement( Node el, GffInteger field ){
         Element e = mkFieldElement( el, field );
         e.setTextContent( field.getData().toString() );
         return e;
     }
-    
+
     protected static Element mkDecimalElement( Node el, GffField field ){
         Element e = mkFieldElement( el, field );
         e.setTextContent( field.getData().toString() );
         return e;
     }
-    
+
     protected static Element mkCExoStringElement( Node el, GffCExoString field ){
         Element e = mkFieldElement( el, field );
         e.setTextContent( field.getData() );
         return e;
     }
-    
+
     protected static Element mkCExoLocStringElement( Node el, GffCExoLocString field ){
         Element e = mkFieldElement( el, field );
         e.setAttribute( "strRef", Integer.toString( field.getStrRef() ) );
@@ -127,7 +128,7 @@ public class Gff2Xml {
         }
         return e;
     }
-    
+
     protected static Element mkCExoLocSubstringElement( Node el, CExoLocSubString field ){
         Element subElement = mkFieldElement( el, field );
         subElement.setAttribute( "language", Integer.toString( field.language.getCode() ) );
@@ -135,16 +136,16 @@ public class Gff2Xml {
         subElement.setTextContent( field.string );
         return subElement;
     }
-    
+
     protected static Element mkResRefElement( Node el, GffCResRef field ){
         Element e = mkFieldElement( el, field );
         e.setTextContent( field.getResRef() );
         return e;
     }
-    
+
     protected static Element mkVoidElement( Node el, GffVoid field ){
         Element e = mkFieldElement( el, field );
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         byte[] b = field.getData();
         for ( int i = 0; i < b.length; i++ ){
             int v = b[i] < 0 ? 256 + b[i] : b[i];
@@ -155,5 +156,4 @@ public class Gff2Xml {
         e.setTextContent( sb.toString() );
         return e;
     }
-    
 }
