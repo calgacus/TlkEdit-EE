@@ -24,19 +24,19 @@ import org.w3c.dom.NodeList;
  */
 public class MappedTableCellRenderer extends DefaultTableCellRenderer {
 
-	private Map map;
+    private Map<String, String> map;
 	public Object unknownValue = "???";
 	private Color defaultForeground = getForeground();
-	
+
 	public MappedTableCellRenderer( Map map ){
 		super();
 		this.map = map;
 	}
-	
+
 	public MappedTableCellRenderer( MappedCellEditor ed ){
 		this( ed.map );
 	}
-	
+
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
 		Object o = map.get(value);
@@ -47,7 +47,7 @@ public class MappedTableCellRenderer extends DefaultTableCellRenderer {
 		}
 		return super.getTableCellRendererComponent( table, o, isSelected, hasFocus, row, column );
 	}
-	
+
 	public MappedTableCellRenderer( Element e ){
 		super();
 		NodeList entries = e.getElementsByTagName( "entry" );

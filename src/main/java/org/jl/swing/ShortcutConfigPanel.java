@@ -37,7 +37,7 @@ public class ShortcutConfigPanel extends JPanel {
 			"TlkEdit.cut_buttonLabel",
 			"TlkEdit.paste_buttonLabel" };
 
-	TreeMap map = new TreeMap();
+    TreeMap<String, KeyStroke> map = new TreeMap<>();
 
 	JTable table = new JTable();
 
@@ -57,7 +57,7 @@ public class ShortcutConfigPanel extends JPanel {
 			if (col == 0)
 				return test[row];
 			else {
-				KeyStroke ks = (KeyStroke) map.get( test[row] );
+                final KeyStroke ks = map.get(test[row]);
 				return getKeyStrokeText(ks);
 			}
 		}
