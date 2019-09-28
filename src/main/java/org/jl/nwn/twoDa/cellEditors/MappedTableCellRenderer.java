@@ -1,9 +1,3 @@
-/*
- * Created on 16.11.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.twoDa.cellEditors;
 
 import java.awt.Color;
@@ -16,12 +10,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/**
- * @author ich
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class MappedTableCellRenderer extends DefaultTableCellRenderer {
 
     private Map<String, String> map;
@@ -60,5 +48,4 @@ public class MappedTableCellRenderer extends DefaultTableCellRenderer {
 		}
 		map = MappedCellEditor.buildMap( values, labels );
 	}
-
 }

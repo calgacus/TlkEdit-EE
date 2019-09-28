@@ -1,6 +1,3 @@
-/*
- * Created on 20.11.2004
- */
 package org.jl.nwn.gff;
 
 import java.io.File;
@@ -22,8 +19,6 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
 
-/**
- */
 public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld> {
 
     private ImageInputStream in;
@@ -69,6 +64,7 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
     /**
         @deprecated unsafe : relies on a correct default version.
     */
+    @Deprecated
     public AbstractGffReader(){
         this( Version.getDefaultVersion() );
     };

@@ -2,47 +2,47 @@ package targaspi;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
-/**
- */
-public class TargaReader extends ImageReader{
+public class TargaReader extends ImageReader {
 
     protected TargaImage image = null;
 
-    /** Creates a new instance of TargaReader */
     protected TargaReader(ImageReaderSpi originatingProvider) {
         super( originatingProvider );
     }
 
     @Override
-    public int getWidth(int imageIndex) throws java.io.IOException {
+    public int getWidth(int imageIndex) throws IOException {
         return image.getSize().width;
     }
 
     @Override
-    public java.util.Iterator<javax.imageio.ImageTypeSpecifier> getImageTypes(int imageIndex) throws java.io.IOException {
-        return Arrays.asList(new ImageTypeSpecifier[]{image.getImageTypeSpecifier()}).iterator();
+    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
+        return Arrays.asList(image.getImageTypeSpecifier()).iterator();
     }
 
     @Override
-    public javax.imageio.metadata.IIOMetadata getImageMetadata(int imageIndex) throws java.io.IOException {
+    public javax.imageio.metadata.IIOMetadata getImageMetadata(int imageIndex) throws IOException {
         return null;
     }
 
     @Override
-    public int getHeight(int imageIndex) throws java.io.IOException {
+    public int getHeight(int imageIndex) throws IOException {
         return image.getSize().height;
     }
 
     @Override
-    public java.awt.image.BufferedImage read(int imageIndex, javax.imageio.ImageReadParam param) throws java.io.IOException {
-        //System.out.println("TargaReader.read()");
+    public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         if ( getInput() instanceof ImageInputStream )
             image = new TargaImage((ImageInputStream)getInput(), false);
         else
@@ -52,21 +52,21 @@ public class TargaReader extends ImageReader{
             target.getRaster().setRect( image.getImage().getRaster() );
             return target;
         }
-        else
-            return image.getImage();
+        return image.getImage();
     }
 
     @Override
-    public int getNumImages(boolean allowSearch) throws java.io.IOException {
+    public int getNumImages(boolean allowSearch) throws IOException {
         return 1;
     }
 
     @Override
-    public javax.imageio.metadata.IIOMetadata getStreamMetadata() throws java.io.IOException {
+    public IIOMetadata getStreamMetadata() throws IOException {
         return null;
     }
 
-    @Override public void reset(){
+    @Override
+    public void reset() {
         super.reset();
         image = null;
     }

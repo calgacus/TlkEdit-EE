@@ -1,11 +1,3 @@
-/*
- * ZipRepository.java
- *
- * Created on 3. April 2007, 09:08
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
 package org.jl.nwn.resource;
 
 import java.io.File;
@@ -35,7 +27,6 @@ public class ZipRepository extends AbstractRepository{
 
     private Map<ResourceID, ZipEntry> entries = null;
 
-    /** Creates a new instance of ZipRepository */
     public ZipRepository( File zip ) throws IOException{
         this.zipFile = new ZipFile(zip);
         this.file = zip;

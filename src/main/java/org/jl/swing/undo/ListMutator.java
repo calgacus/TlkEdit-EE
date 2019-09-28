@@ -5,8 +5,6 @@ import java.util.Collection;
 
 import javax.swing.ListSelectionModel;
 
-/**
- */
 public class ListMutator<E> extends Mutator{
     protected ListMutable<E> model;
     protected ListSelectionModel lsl;
@@ -16,7 +14,6 @@ public class ListMutator<E> extends Mutator{
         public void add( int index, E element );
     }
 
-    /** Creates a new instance of ListMutator */
     public ListMutator(Mutator m, ListMutable<E> model, ListSelectionModel lsl){
         super(m);
         this.model = model;

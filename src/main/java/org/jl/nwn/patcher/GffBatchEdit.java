@@ -1,7 +1,3 @@
-/*
- * Created on 07.11.2003
- *
- */
 package org.jl.nwn.patcher;
 
 import java.io.File;

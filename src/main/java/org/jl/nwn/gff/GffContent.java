@@ -6,8 +6,6 @@ import java.util.Iterator;
 
 import org.jl.nwn.Version;
 
-/**
- */
 public class GffContent{
 
     protected GffStruct topLevelStruct = GffStruct.mkTopLevelStruct();

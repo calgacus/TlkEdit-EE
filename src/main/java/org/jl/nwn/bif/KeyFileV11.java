@@ -1,12 +1,3 @@
-/*
- * KeyFileV11.java
- *
- * Created on 05.12.2007, 19:22:24
- *
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.jl.nwn.bif;
 
 import java.io.File;
@@ -22,10 +13,6 @@ import java.util.TreeMap;
 
 import org.jl.nwn.resource.ResourceID;
 
-/**
- *
- * @author ich
- */
 public class KeyFileV11 extends KeyFile {
 
     protected final TreeMap<ResourceID, int[]> entryMap = new TreeMap<>();
@@ -59,7 +46,6 @@ public class KeyFileV11 extends KeyFile {
             mbb.position(bifNameOffset);
             mbb.get(buf, 0, bifNameLength);
             bifs[i] = new String(buf, 0, bifNameLength).replace('\\', File.separatorChar);
-            //System.out.println( bifs[i] );
         }
         mbb.position(resourceOffset);
         //int bit21 = 1 << 20;

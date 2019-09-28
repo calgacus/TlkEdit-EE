@@ -1,6 +1,3 @@
-/*
- * Created on 05.12.2003
- */
 package org.jl.nwn;
 
 import java.util.Arrays;
@@ -79,23 +76,14 @@ public class NwnLanguageOld{
         throw new Error( "Error : unsupported language, language code : " + code );
     }
 
-    /**
-     * @return
-     */
     public int getCode() {
         return code;
     }
 
-    /**
-     * @return
-     */
     public String getEncoding() {
         return encoding;
     }
 
-    /**
-     * @return
-     */
     public String getName() {
         return name;
     }
@@ -110,5 +98,4 @@ public class NwnLanguageOld{
     public int hashCode(){
         return code;
     }
-
 }

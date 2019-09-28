@@ -1,6 +1,3 @@
-/*
- * Created on 24.03.2005
- */
 package org.jl.nwn.gff.editor;
 
 import java.util.ArrayDeque;
@@ -17,8 +14,6 @@ import org.jl.nwn.gff.GffList;
 import org.jl.nwn.gff.GffStruct;
 import org.jl.swing.undo.Mutator;
 
-/**
- */
 public class GffTreeTableModel extends AbstractTreeTableModel {
 
     protected GffStruct root;
@@ -30,40 +25,25 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         this.root = root;
     }
 
-        /* (non-Javadoc)
-         * @see javax.swing.tree.TreeModel#getChild(java.lang.Object, int)
-         */
     @Override
     public Object getChild(Object parent, int index) {
         return ((GffField) parent).getChild(index);
     }
 
-        /* (non-Javadoc)
-         * @see javax.swing.tree.TreeModel#getChildCount(java.lang.Object)
-         */
     @Override
     public int getChildCount(Object parent) {
         return ((GffField) parent).getChildCount();
     }
-        /* (non-Javadoc)
-         * @see org.jdesktop.swing.treetable.TreeTableModel#getColumnCount()
-         */
     @Override
     public int getColumnCount() {
         return 3;
     }
 
-        /* (non-Javadoc)
-         * @see javax.swing.tree.TreeModel#getIndexOfChild(java.lang.Object, java.lang.Object)
-         */
     @Override
     public int getIndexOfChild(Object parent, Object child){
         return ((GffField) parent).getChildIndex((GffField)child);
     }
 
-        /* (non-Javadoc)
-         * @see javax.swing.tree.TreeModel#getRoot()
-         */
     @Override
     public GffStruct getRoot() {
         return root;
@@ -75,9 +55,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         mutator.setModified(false);
         modelSupport.fireTreeStructureChanged( makePath(root) );
     }
-        /* (non-Javadoc)
-         * @see org.jdesktop.swing.treetable.TreeTableModel#isCellEditable(java.lang.Object, int)
-         */
+
     @Override
     public boolean isCellEditable(Object node, int column) {
         GffField f = (GffField)node;
@@ -86,9 +64,6 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
                 ( column==2 && f.getType()!=Gff.LIST ) ); // cannot edit void / list has no additional data
     }
 
-        /* (non-Javadoc)
-         * @see javax.swing.tree.TreeModel#isLeaf(java.lang.Object)
-         */
     @Override
     public boolean isLeaf(Object node) {
         return !((GffField)node).allowsChildren();

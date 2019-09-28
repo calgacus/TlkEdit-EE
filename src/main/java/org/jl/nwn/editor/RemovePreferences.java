@@ -1,7 +1,3 @@
-/*
- * Created on 10.10.2003
- *
- */
 package org.jl.nwn.editor;
 
 import java.util.prefs.BackingStoreException;

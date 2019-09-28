@@ -22,7 +22,6 @@ public final class Repositories {
 
     private final HashMap<Descriptor, NwnRepository> repositories = new HashMap<>();
 
-    /** Creates a new instance of Repositories */
     private Repositories() {}
 
     private static class InstanceHolder {

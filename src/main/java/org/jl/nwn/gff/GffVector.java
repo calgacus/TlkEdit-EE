@@ -1,20 +1,9 @@
-/*
- * GffVector.java
- *
- * Created on 10. September 2006, 09:09
- */
-
 package org.jl.nwn.gff;
 
-/**
- *
- * @author ich
- */
 public class GffVector extends GffField<float[]> {
 
     private float[] data = new float[]{0,0,0};
 
-    /** Creates a new instance of GffVector */
     protected GffVector(String label) {
         super(label, Gff.VECTOR);
     }

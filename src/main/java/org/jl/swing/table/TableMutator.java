@@ -19,7 +19,6 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
 
     protected RowMutator rowMutator;
 
-    /** Creates a new instance of TableModelMutator */
     public TableMutator( TableModel model, ListSelectionModel lsl ){
         super(model, lsl);
         init();
@@ -43,7 +42,6 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
             this.newName = cName;
         }
         @Override protected Object performEdit(){
-            //System.out.println("RemoveRowsEdit");
             oldName = model.getColumnName(pos);
             ((ColumnMutable)model).setColumnName(pos, newName);
             return null;

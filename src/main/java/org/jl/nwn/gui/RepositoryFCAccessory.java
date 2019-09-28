@@ -1,12 +1,3 @@
-/*
- * RepositoryFCAccessory.java
- *
- * Created on 29.08.2007, 19:08:39
- *
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.jl.nwn.gui;
 
 import java.awt.BorderLayout;
@@ -40,10 +31,6 @@ import org.jl.nwn.resource.NwnRepository;
 import org.jl.nwn.resource.Repositories;
 import org.jl.nwn.resource.ResourceID;
 
-/**
- *
- * @author ich
- */
 public class RepositoryFCAccessory implements PropertyChangeListener {
 
     //protected RepositoryTreeView rview;

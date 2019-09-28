@@ -6,8 +6,6 @@ import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 
-/**
- */
 public class CheckBoxAction extends AbstractAction{
 
     protected class TogglePropListener implements PropertyChangeListener{
@@ -24,12 +22,6 @@ public class CheckBoxAction extends AbstractAction{
 
     public static final String SELECTED_PROPERTY = "actionselected";
     private boolean selected = false;
-
-    /**
-     * Creates a new instance of CheckBoxAction
-     */
-    public CheckBoxAction(){
-    }
 
     @Override
     public void actionPerformed( ActionEvent e ){

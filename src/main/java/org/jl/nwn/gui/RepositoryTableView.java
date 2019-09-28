@@ -1,12 +1,3 @@
-/*
- * RepositoryTableView.java
- *
- * Created on 01.09.2007, 16:46:11
- *
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.jl.nwn.gui;
 
 import java.io.File;
@@ -22,10 +13,6 @@ import org.jdesktop.swingx.decorator.PatternFilter;
 import org.jl.nwn.resource.NwnRepository;
 import org.jl.nwn.resource.ResourceID;
 
-/**
- *
- * @author ich
- */
 public class RepositoryTableView {
 
     protected JXTable table;

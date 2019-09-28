@@ -1,9 +1,3 @@
-/*
- * XmlGffBuilder.java
- *
- * Created on 11. Mai 2005, 21:09
- */
-
 package org.jl.nwn.gff;
 
 import java.io.File;
@@ -35,7 +29,6 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
 
     protected String schemaLocation = "gff.xsd";
 
-    /** Creates a new instance of XmlGffBuilder */
     public XmlGffBuilder(Version nwnVersion) throws ParserConfigurationException{
         super(nwnVersion);
         docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -176,5 +169,4 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
             trans.transform(source, result);
         }
     }
-
 }

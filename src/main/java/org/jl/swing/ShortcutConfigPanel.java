@@ -1,6 +1,3 @@
-/*
- * Created on 28.09.2004
- */
 package org.jl.swing;
 
 import java.awt.BorderLayout;
@@ -15,8 +12,6 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
 
-/**
- */
 public class ShortcutConfigPanel extends JPanel {
 
 	public ShortcutConfigPanel( String[] keys, KeyStroke[] keystrokes ){
@@ -93,5 +88,4 @@ public class ShortcutConfigPanel extends JPanel {
 		f.pack();
 		f.setVisible(true);
 	}
-
 }

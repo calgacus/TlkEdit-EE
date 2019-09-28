@@ -1,9 +1,3 @@
-/*
- * DefaultGffWriter.java
- *
- * Created on 12. Mai 2005, 12:40
- */
-
 package org.jl.nwn.gff;
 
 import java.io.File;
@@ -12,12 +6,8 @@ import java.util.ArrayList;
 
 import org.jl.nwn.Version;
 
-/**
- *
- */
 public class DefaultGffWriter extends AbstractGffWriter<GffField, GffStruct, GffList>{
 
-    /** Creates a new instance of DefaultGffWriter */
     public DefaultGffWriter() {
     }
 

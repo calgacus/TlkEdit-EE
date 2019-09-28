@@ -131,7 +131,6 @@ public class EditorServer {
             while (!isInterrupted()) {
                 logger.info("waiting...");
                 try (final Socket s = sock.accept()) {
-                    //System.out.println("accept");
                     logger.info("accept");
                     BufferedReader r = new BufferedReader(new InputStreamReader(s.getInputStream()));
                     String filename = r.readLine();

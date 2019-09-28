@@ -227,7 +227,6 @@ public class TlkContent implements Iterable<TlkEntry> {
 
             mbb.position(8);
             language = NwnLanguage.find( v, mbb.getInt() );
-            //System.out.println( "TlkContent : " + language );
             int entries = mbb.getInt();
             int stringDataStart = mbb.getInt();
 

@@ -1,6 +1,3 @@
-/*
- * Created on 20.11.2004
- */
 package org.jl.nwn.gff;
 
 import java.io.BufferedInputStream;
@@ -13,13 +10,12 @@ import java.math.BigInteger;
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
 
-/**
- */
 public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, GffList>{
 
     /**
      @deprecated unsafe : relies on correct default version
      */
+    @Deprecated
     public DefaultGffReader(){
         super();
     }
@@ -28,16 +24,10 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         super(v);
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#isGffList(java.lang.Object)
-         */
     public boolean isGffList(GffField field) {
         return field.getType() == Gff.LIST;
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffInteger(java.lang.String, byte, java.math.BigInteger)
-         */
     @Override
     public GffField mkInteger(String label, byte type, BigInteger value) {
         GffInteger i = new GffInteger( label, type );
@@ -45,33 +35,21 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         return i;
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffFloat(java.lang.String, float)
-         */
     @Override
     public GffField mkFloat(String label, float value) {
         return new GffFloat( label, value );
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffDouble(java.lang.String, double)
-         */
     @Override
     public GffField mkDouble(String label, double value) {
         return new GffDouble( label, value );
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffCExoString(java.lang.String, java.lang.String)
-         */
     @Override
     public GffField mkCExoString(String label, String value) {
         return new GffCExoString( label, value );
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffCExoLocString(java.lang.String, int, int[], java.lang.String[])
-         */
     @Override
     public GffField mkCExoLocString(String label, int strRef, int[] stringIDs,
             String[] strings) {
@@ -82,57 +60,36 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         return s;
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffResRef(java.lang.String, java.lang.String)
-         */
     @Override
     public GffField mkCResRef(String label, String value) {
         return new GffCResRef( label, value );
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffStruct(java.lang.String, int)
-         */
     @Override
     public GffStruct mkStruct(String label, int structID) {
         return new GffStruct(label, structID);
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffList(java.lang.String)
-         */
     @Override
     public GffList mkList(String label) {
         return new GffList( label );
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#mkGffVoid(java.lang.String, byte[])
-         */
     @Override
     public GffField mkVoid(String label, byte[] value) {
         return new GffVoid( label, value );
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#listAdd(java.lang.Object, java.lang.Object)
-         */
     @Override
     public void listAdd(GffList list, GffStruct struct) {
         list.add( struct );
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#structAdd(java.lang.Object, java.lang.Object)
-         */
     @Override
     public void structAdd(GffStruct struct, GffField field) {
         struct.addChild(field);
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.gff.AbstractGffBuilder#structSetID(java.lang.Object, int)
-         */
     @Override
     public void structSetID(GffStruct struct, int ID) {
         struct.setId(ID);
@@ -179,5 +136,4 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
         }
         System.out.printf("loaded %d files ( %f kb ) in %d ms\n", fileCount, totalSize/1024.0, System.currentTimeMillis()-time);
     }
-
 }

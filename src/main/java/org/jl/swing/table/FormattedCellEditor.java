@@ -77,15 +77,12 @@ public class FormattedCellEditor extends AbstractCellEditor implements TableCell
     public boolean stopCellEditing(){
         try{
             text.commitEdit();
-        } catch ( ParseException pe ){
-
-        }
+        } catch ( ParseException pe ) {}
         if ( text.isEditValid() && isValid(text.getValue())) {
-            //System.out.println(text.getValue());
             fireEditingStopped();
             return true;
-        } else
-            return false;
+        }
+        return false;
     }
 
     public void setBounds(Comparable min, Comparable max){

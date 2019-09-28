@@ -352,7 +352,6 @@ public class ResourceID implements Comparable {
     }
 
     public ResourceID(String name, short type) {
-        //System.out.println( name + " ("+type+")" );
         this.name = name;
         this.type = type;
     }

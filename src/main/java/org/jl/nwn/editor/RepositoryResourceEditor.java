@@ -1,9 +1,3 @@
-/*
- * RepositoryResourceEditor.java
- *
- * Created on 31.08.2007, 11:26:37
- */
-
 package org.jl.nwn.editor;
 
 import java.awt.BorderLayout;
@@ -35,65 +29,41 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
         add(delegate, BorderLayout.CENTER);
     }
 
-    /* (non-Javadoc)
-     * @see org.jl.nwn.editor.SimpleFileEditorPanel#addChangeListener(javax.swing.event.ChangeListener)
-     */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener cl) {
         delegate.addPropertyChangeListener(cl);
     }
 
-    /**
-     * @return
-     */
     @Override
     public boolean canSave() {
         return savedAsFile == null ? rep.isWritable() : delegate.canSave();
     }
 
-    /**
-     * @return
-     */
     @Override
     public boolean canSaveAs() {
         return delegate.canSaveAs();
     }
 
-    /**
-     *
-     */
     @Override
     public void close() {
         delegate.close();
     }
 
-    /**
-     * @return
-     */
     @Override
     public File getFile() {
         return savedAsFile == null ? new File(rep.getResourceLocation(resID) + "[" + resID.getFileName() + "]") : delegate.getFile();
     }
 
-    /* (non-Javadoc)
-     * @see org.jl.nwn.editor.SimpleFileEditorPanel#getIsModified()
-     */
     @Override
     public boolean getIsModified() {
         return delegate.getIsModified();
     }
 
-    /* (non-Javadoc)
-     * @see org.jl.nwn.editor.SimpleFileEditorPanel#removeChangeListener(javax.swing.event.ChangeListener)
-     */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener cl) {
         delegate.removePropertyChangeListener(cl);
     }
 
-    /**
-     * @throws IOException
-     */
     @Override
     public void save() throws IOException {
         delegate.save();
@@ -112,10 +82,6 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
         }
     }
 
-    /**
-     * @param f
-     * @throws IOException
-     */
     @Override
     public void saveAs(File f, Version v) throws IOException {
         delegate.saveAs(f, v);

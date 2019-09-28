@@ -1,6 +1,3 @@
-/*
- * Created on 02.01.2004
- */
 package org.jl.nwn.resource;
 
 import java.io.File;
@@ -13,8 +10,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- */
 public class NwnDirRepository extends AbstractRepository {
 
 	private final File dir;
@@ -23,9 +18,6 @@ public class NwnDirRepository extends AbstractRepository {
 		this.dir = dir;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jl.nwn.resource.NwnRepository#getResource(org.jl.nwn.resource.ResourceID)
-	 */
 	@Override
 	public InputStream getResource(ResourceID id) throws IOException {
 		File f = findFile( id );
@@ -54,17 +46,11 @@ public class NwnDirRepository extends AbstractRepository {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jl.nwn.resource.NwnRepository#getResourceLocation(org.jl.nwn.resource.ResourceID)
-	 */
 	@Override
 	public File getResourceLocation(ResourceID id) {
 		return contains(id)? dir : null;//new File( dir, id.toFileName() );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jl.nwn.resource.NwnRepository#contains(org.jl.nwn.resource.ResourceID)
-	 */
 	@Override
 	public boolean contains(ResourceID id) {
 		return findFile( id ) != null;

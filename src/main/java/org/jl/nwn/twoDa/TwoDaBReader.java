@@ -73,13 +73,11 @@ public class TwoDaBReader {
             else
                 pbis.unread(b);
         }
-        //System.out.println(headers);
         int columns = headers.size();
         headers.add(0," ");
         TwoDaTable twoDa = new TwoDaTable(headers.toArray(new String[headers.size()]));
 
         int rows = readIntLE(pbis);
-        //System.out.printf("size : %s x %s\n", rows, headers.size());
 
         final List<String> rowHeaders = new ArrayList<>();
         for ( int i = 0; i < rows; i++ )
@@ -106,7 +104,6 @@ public class TwoDaBReader {
             }
             twoDa.appendRow(row);
         }
-        //twoDa.write(System.out);
         return twoDa;
     }
 

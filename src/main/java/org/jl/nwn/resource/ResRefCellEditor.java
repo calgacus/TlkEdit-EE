@@ -6,13 +6,9 @@ import org.jl.nwn.Version;
 import org.jl.swing.table.FormattedCellEditor;
 import org.w3c.dom.Element;
 
-/**
-
- */
 public class ResRefCellEditor extends FormattedCellEditor{
     public static final String ALLOWNULL = "allowNull";
 
-    /** Creates a new instance of ResRefCellEditor */
     public ResRefCellEditor( boolean allow2DANull ){
         super(new JFormattedTextField(
                 ResRefUtil.instance(Version.getDefaultVersion())

@@ -1,9 +1,3 @@
-/*
- * Created on 29.12.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.erf;
 
 import java.io.BufferedOutputStream;
@@ -517,23 +511,17 @@ public class ErfFile extends AbstractRepository{
         return resources.get( id ) != null;
     }
 
-    /**
-     * @return
-     */
     public File getFile() {
         return file;
     }
 
-    /**
-     * @param type
-     */
     public void setType(ErfType type) {
         this.type = type;
     }
 
     /**
-     * (convenience method)
-     * Extracts all files to a directory
+     * Extracts all files to a directory.
+     *
      * @param outputDir all files are extracted to this directory
      * */
     public void extractToDir( File outputDir ) throws IOException{
@@ -548,14 +536,22 @@ public class ErfFile extends AbstractRepository{
     }
 
     /**
-     * (convenience method)
-     * Extracts a resource to a temp file. The file can optionally replace the resource in the erf so a call to <code>write()</code> will write the contents of the file to the erf file.
+     * Extracts a resource to a temp file. The file can optionally replace the
+     * resource in the erf so a call to {@link #write()} will write the contents
+     * of the file to the erf file.
+     * <p>
      * The file will be deleted on system exit.
+     *
      * @param id the ID of the resource to be extracted
-     * @param replaceWithFile if true the extracted file will replace the resource contained in the erf when the erf file is written again
-     * @return null if no resource with the given id exists, otherwise return a File object pointing to the extracted resource
-     * @see #write()
-     * */
+     * @param replaceWithFile if {@code true} the extracted file will replace
+     *        the resource contained in the erf when the erf file is written again
+     *
+     * @return {@code null} if no resource with the given id exists, otherwise
+     *         return a File object pointing to the extracted resource
+     *
+     * @throws IOException If resource can not be readed or destination file can
+     *         not be created or writed
+     */
     public File extractAsTempFile( ResourceID id, boolean replaceWithFile ) throws IOException{
         InputStream is = getResource( id );
         if ( is == null ) return null;
@@ -567,10 +563,13 @@ public class ErfFile extends AbstractRepository{
     }
 
     /**
-     * extract resource with given id to directory.
+     * Extract resource with given id to directory.
+     *
      * @param id the ID of the resource to be extracted
      * @param directory
-     * @return null if no resource with the given id exists, otherwise return a File object pointing to the extracted resource
+     *
+     * @return {@code null} if no resource with the given id exists, otherwise
+     *         return a File object pointing to the extracted resource
      * */
     public File extractToDir( ResourceID id, File directory ) throws IOException{
         InputStream is = getResource( id );
@@ -702,16 +701,10 @@ public class ErfFile extends AbstractRepository{
         return nwnVersion;
     }
 
-    /**
-     * @param string
-     */
     public void setDescription(GffCExoLocString string) {
         description = string;
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.resource.NwnRepository#getResourceLocation(org.jl.nwn.resource.ResourceID)
-         */
     @Override
     public File getResourceLocation(ResourceID id) {
         return contains(id)? file : null;
@@ -738,5 +731,4 @@ public class ErfFile extends AbstractRepository{
     throws IOException, UnsupportedOperationException {
         return put( id );
     }
-
 }

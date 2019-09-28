@@ -1,9 +1,3 @@
-/*
- * Created on 16.08.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.patcher;
 
 import java.awt.BorderLayout;
@@ -43,10 +37,10 @@ import org.jl.nwn.resource.NwnDirRepository;
 import org.jl.nwn.resource.NwnRepository;
 
 /**
- * @author ich
+ * Configuration of an NWN Repository ( typically a chain of hak packs, override
+ * dir, bif files ( indexed by .key files ), stored in Preferences.
  *
- configuration of an NWN Repository ( typically a chain of hak packs, override dir, bif files ( indexed by .key files ),
- stored in Preferences
+ * @author ich
  */
 public class NwnRepConfig {
 

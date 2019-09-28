@@ -1,6 +1,3 @@
-/*
- * TlkReadOnly.java
- */
 package org.jl.nwn.tlk;
 
 import java.io.File;
@@ -16,9 +13,6 @@ import java.util.Map;
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
 
-/**
- * read only tlk table using a memory mapped file
- */
 public class TlkReadOnly {
 
     LinkedHashMap<Integer, String> cache;
@@ -31,7 +25,6 @@ public class TlkReadOnly {
     FileInputStream fis;
     FileChannel fc;
 
-    /** Creates a new instance of TlkReadOnly */
     public TlkReadOnly(
             File file,
             final int cacheSize,
@@ -131,6 +124,5 @@ public class TlkReadOnly {
         for ( int i = 1; i < args.length; i++ ) {
             System.out.println("tlkreadonly 131 " + tlk.getString(Integer.parseInt(args[i])));
         }
-
     }
 }

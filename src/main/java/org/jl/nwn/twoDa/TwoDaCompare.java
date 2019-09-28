@@ -1,9 +1,3 @@
-/*
- * TwoDaCompare.java
- *
- * Created on 28.08.2007, 08:25:49
- */
-
 package org.jl.nwn.twoDa;
 
 import java.awt.BorderLayout;
@@ -42,9 +36,6 @@ import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jl.nwn.Version;
 
-/**
- *
- */
 public class TwoDaCompare {
 
     public static final int UNCHANGED = 0;

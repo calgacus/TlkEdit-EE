@@ -1,7 +1,6 @@
 package org.jl.nwn;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -203,6 +202,5 @@ public enum NwnLanguage{
         for (NwnLanguage l : values() ){
             System.out.printf("NwnLanguage %s : %s[%s], %s, %s:%s\n", l.name(), l.version.name(), l.getCode(), l.getName(), l.getLocale(), l.getLocale().getDisplayLanguage());
         }
-
     }
 }

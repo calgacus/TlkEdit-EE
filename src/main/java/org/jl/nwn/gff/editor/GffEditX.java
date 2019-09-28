@@ -1,9 +1,3 @@
-/*
- * GffEditX.java
- *
- * Created on 16. Mai 2005, 16:06
- */
-
 package org.jl.nwn.gff.editor;
 
 import java.awt.BorderLayout;
@@ -118,10 +112,6 @@ import org.jl.swing.undo.MyUndoManager;
 import org.jl.text.VectorFormat;
 import org.w3c.dom.Node;
 
-/**
- *
- * @author
- */
 public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
 
     protected File gffFile = null;

@@ -90,7 +90,6 @@ public abstract class AbstractTlkReader<TlkTable>{
 
         mbb.position(8);
         NwnLanguage language = NwnLanguage.find( getVersion(), mbb.getInt() );
-        //System.out.println( "TlkContent : " + language );
         int entries = mbb.getInt();
         TlkTable tlk = createTlk(entries, language, nwnVersion);
 
@@ -204,5 +203,4 @@ public abstract class AbstractTlkReader<TlkTable>{
      */
     protected abstract void createEntry( TlkTable tlk, int position,
             byte flags, String resRef, float sndLength, String string );
-
 }

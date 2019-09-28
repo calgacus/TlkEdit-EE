@@ -7,12 +7,11 @@ import org.jl.nwn.Version;
  * Creates {@link TlkContent} objects from tlk files.
  */
 public class DefaultTlkReader extends AbstractTlkReader<TlkContent>{
-    
-    /** Creates a new instance of DefaultTlkReader */
+
     public DefaultTlkReader(Version v) {
         super(v);
     }
-    
+
     @Override
     protected void createEntry(TlkContent tlk, int position,
             byte flags, String resRef, float sndLength, String string) {
@@ -23,7 +22,7 @@ public class DefaultTlkReader extends AbstractTlkReader<TlkContent>{
                 resRef==null ? "" : resRef,
                 sndLength));
     }
-    
+
     @Override
     protected TlkContent createTlk(
             int size,
@@ -31,5 +30,4 @@ public class DefaultTlkReader extends AbstractTlkReader<TlkContent>{
             Version nwnVersion) {
         return new TlkContent(lang);
     }
-    
 }

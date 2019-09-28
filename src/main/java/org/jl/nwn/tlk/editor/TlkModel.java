@@ -123,7 +123,6 @@ public class TlkModel extends AbstractTableModel
 
     @Override
     public void setValueAt(Object aValue, int row, int col) {
-        //System.out.println("TlkModel.setValueAt " + aValue);
         boolean append = false;
         Object old = getValueAt(row, col);
         if (row == tlkContent.size()) { // append
@@ -145,13 +144,12 @@ public class TlkModel extends AbstractTableModel
         if (append)
             fireTableRowsInserted(row, row);
         else if (isModified){
-            //System.out.println("fireTableRowsUpdated");
             fireTableRowsUpdated(row, row);
         }
     }
 
     public EditorTlkEntry getEditorEntry( int i ){
-        TlkEntry e = (TlkEntry) tlkContent.get(i);
+        TlkEntry e = tlkContent.get(i);
         if ( !(e instanceof EditorTlkEntry ) ){
             tlkContent.set( i, e = new EditorTlkEntry(e, false) );
         }
@@ -290,5 +288,4 @@ public class TlkModel extends AbstractTableModel
             fireTableDataChanged();
         }
     }
-
 }

@@ -22,7 +22,6 @@ public class BmuPlayer implements Runnable, AutoCloseable {
 
     private static NwnRepository br;
     private Clip c = null;
-    //private Player p = null;
 
     Object playerObject;
 
@@ -73,20 +72,12 @@ public class BmuPlayer implements Runnable, AutoCloseable {
             } catch (Exception e){
                 e.printStackTrace();
             }
-            /*
-            try {
-                p.play();
-            } catch (JavaLayerException e) {
-                e.printStackTrace();
-            }
-            */
         }
     }
 
     @Override
     public void close() {
         if ( c != null ) c.close();
-        // else if ( p!= null ) p.close();
         else if ( playerObject != null )
             try{
                 playerObject.getClass().getDeclaredMethod("close",new Class[0]).invoke(playerObject,new Object[0]);

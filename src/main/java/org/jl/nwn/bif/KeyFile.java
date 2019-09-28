@@ -64,21 +64,4 @@ public abstract class KeyFile {
     public abstract Set<ResourceID> getResourceIDSet();
 
     public abstract BifResourceLocation findResource(String resName, short resType);
-
-    public static void main(String[] args) throws Exception {
-        /*
-        KeyFile k = new KeyFile(new File(args[0]));
-        Iterator it = k.getResourceIDs();
-        String white16 = "                ";
-        String zero = "0x0000";
-        String hex = "";
-        while (it.hasNext()) {
-        ResourceID id = (ResourceID) it.next();
-        hex = Integer.toHexString(id.getType());
-        hex = zero.substring(0, 6 - hex.length()) + hex;
-        int bifID = k.lookup(id.getName(), id.getType());
-        System.out.println(id.getName() + white16.substring(id.getName().length()) + " " + ResourceID.type2extensionMap.get(new Integer(id.getType())) + " (" + hex + ")  " + k.getBifName(bifID) + " [" + (bifID % (1 << 20)) + "]");
-        }
-         */
-    }
 }

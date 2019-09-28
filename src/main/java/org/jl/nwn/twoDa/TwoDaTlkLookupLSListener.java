@@ -1,9 +1,3 @@
-/*
- * Created on 26.10.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.twoDa;
 
 import java.lang.ref.WeakReference;
@@ -14,12 +8,6 @@ import javax.swing.event.ListSelectionListener;
 
 import org.jl.nwn.tlk.editor.TlkLookupPanel;
 
-/**
- * @author ich
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class TwoDaTlkLookupLSListener implements ListSelectionListener {
 
     //private JTable table;
@@ -32,9 +20,6 @@ public class TwoDaTlkLookupLSListener implements ListSelectionListener {
         this.tlp = tlp;
     }
 
-        /* (non-Javadoc)
-         * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
-         */
     @Override
     public void valueChanged(ListSelectionEvent e){
         if ( !e.getValueIsAdjusting() ){
@@ -49,8 +34,5 @@ public class TwoDaTlkLookupLSListener implements ListSelectionListener {
                 }
             }
         }
-    }
-
-    public static void main(String[] args) {
     }
 }

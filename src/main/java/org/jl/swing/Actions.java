@@ -16,8 +16,6 @@ import javax.swing.UIManager;
 import org.jdesktop.swingx.icon.EmptyIcon;
 import org.jdesktop.swingx.util.OS;
 
-/**
- */
 public class Actions {
 
     public final static String EMPTYICONKEY = "empty_icon";
@@ -41,10 +39,8 @@ public class Actions {
             UIManager.getDefaults().put(EMPTYICONKEY, emptyIcon);
         else
             emptyIcon = i;
-        //System.out.println("Actions.init : " + emptyIcon);
     }
 
-    /** Creates a new instance of Actions */
     protected Actions() {
     }
 
@@ -52,7 +48,6 @@ public class Actions {
         Object o = uid.get( key );
         Icon icon = null;
         if ( o == null ){
-            //System.out.println(key + " : " + emptyIcon);
             return emptyIcon;
         }
         if ( o instanceof Icon )
@@ -70,7 +65,6 @@ public class Actions {
         if ( path == null )
             return null;
         URL url = Actions.class.getResource(path);
-        //System.out.println(key.toString() + ", " + url);
         Icon icon = null;
         if ( url != null ){
             icon = new ImageIcon(url);
@@ -87,12 +81,10 @@ public class Actions {
             if (key == Action.ACCELERATOR_KEY){
                 KeyStroke ks = KeyStroke.getKeyStroke(uid.getString(defKey));
                 a.putValue(key, ks);
-                //System.out.println(ks);
                 if ( IS_OSX && ks != null && (ks.getModifiers() & Event.CTRL_MASK) == Event.CTRL_MASK ){
                     KeyStroke ks2 = KeyStroke.getKeyStroke( ks.getKeyCode(),
                             ks.getModifiers() ^ Event.CTRL_MASK | SHORTCUTMASK );
                     a.putValue(key, ks2);
-                    //System.out.println("modify ... : " + ks2);
                 }
                 if ( a.getValue(Action.SHORT_DESCRIPTION) != null && a.getValue(Action.ACCELERATOR_KEY) != null )
                     a.putValue(Action.SHORT_DESCRIPTION, I18nUtil.makeKeyStrokeTooltip((String)a.getValue(Action.SHORT_DESCRIPTION), KeyStroke.getKeyStroke(uid.getString(defKey))));

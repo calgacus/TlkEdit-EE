@@ -1,12 +1,3 @@
-/*
- * CellEditorDecorator.java
- *
- * Created on 7. Oktober 2006, 14:30
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 package org.jl.swing.table;
 
 import java.awt.Component;
@@ -16,15 +7,10 @@ import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
-/**
- *
- * @author ich
- */
-public class CellEditorDecorator implements TableCellEditor{
+public class CellEditorDecorator implements TableCellEditor {
 
     private final TableCellEditor delegate;
 
-    /** Creates a new instance of CellEditorDecorator */
     public CellEditorDecorator(TableCellEditor delegate) {
         this.delegate = delegate;
     }

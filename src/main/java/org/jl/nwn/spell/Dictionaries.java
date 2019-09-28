@@ -1,6 +1,3 @@
-/*
- */
-
 package org.jl.nwn.spell;
 
 import java.io.File;
@@ -15,8 +12,6 @@ import org.dts.spell.dictionary.OpenOfficeSpellDictionary;
 import org.dts.spell.dictionary.SpellDictionary;
 import org.jl.nwn.NwnLanguage;
 
-/**
- */
 public class Dictionaries {
 
     static EnumMap<NwnLanguage, SpellDictionary> dicts = new EnumMap<>(NwnLanguage.class);

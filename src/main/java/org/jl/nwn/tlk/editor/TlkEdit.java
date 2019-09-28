@@ -683,7 +683,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             tlkFile = f;
             setFileVersion(nwnVersion);
             firePropertyChange(FILE_PROPERTY, oldValue, f);
-            //System.out.println(tlkContent.size() + " entries read");
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, uid.getString("TlkEdit.openTlkFile_errorMsgCouldNotOpen") + "\n" + ex, ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
@@ -696,7 +695,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             AbstractButton b = e.nextElement();
             if (lang.equals(b.getClientProperty(languagePropertyKey))) {
                 b.setSelected(true);
-                //System.out.println("language set to : " + lang);
             }
         }
     }
@@ -790,7 +788,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //System.out.println( ((AbstractButton)e.getSource()).getText() );
                 File f = new File(uPrefs.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
                 fc.setSelectedFile(f);
                 if (fc.showSaveDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
@@ -1284,7 +1281,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             table.getSelectionModel().removeIndexInterval(model.size(), model.size());
             modelSelection = table.getSelectedRows();
             convertToModelIndices(modelSelection);
-            //System.out.println("export ...");
             if (modelSelection.length == 0) {
                 return;
             }
@@ -1351,7 +1347,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
                 @Override
                 public Object getTransferData(DataFlavor df) {
-                    //System.out.println( "getTransferData : " + df  );
                     if (df.equals(flavorTsv)) {
                         System.out.println("tsv export ...");
                         try {

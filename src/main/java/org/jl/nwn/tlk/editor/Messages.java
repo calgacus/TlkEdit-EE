@@ -1,9 +1,3 @@
-/*
- * Created on 15.08.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.tlk.editor;
 
 import java.util.Locale;
@@ -25,16 +19,10 @@ class Messages {
 		}
 	}
 
-	/**
-	 * 
-	 */
-	private Messages() {
+    private Messages() {
 	}
-	/**
-	 * @param key
-	 * @return
-	 */
-	public static String getString(String key) {
+
+    public static String getString(String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {

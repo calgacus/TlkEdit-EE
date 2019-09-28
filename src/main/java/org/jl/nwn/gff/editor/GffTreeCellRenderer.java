@@ -1,9 +1,3 @@
-/*
- * GffTreeCellRenderer.java
- *
- * Created on 15. Mai 2005, 13:17
- */
-
 package org.jl.nwn.gff.editor;
 
 import java.awt.Component;
@@ -24,10 +18,6 @@ import org.jl.nwn.gff.Gff;
 import org.jl.nwn.gff.GffCExoLocString;
 import org.jl.nwn.gff.GffField;
 
-/**
- *
- * @author
- */
 public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
 
     protected JTree tree;
@@ -44,7 +34,6 @@ public class GffTreeCellRenderer extends DefaultTreeCellRenderer{
         uid.addResourceBundle("org.jl.nwn.gff.editor.uidefaults");
     }
 
-    /** Creates a new instance of GffTreeCellRenderer */
     public GffTreeCellRenderer( TreeTableModel ttm ){
         super();
         this.ttm = ttm;

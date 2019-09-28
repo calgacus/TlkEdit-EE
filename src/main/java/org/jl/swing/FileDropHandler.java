@@ -25,14 +25,9 @@ public abstract class FileDropHandler extends TransferHandler{
         }
     }
 
-    /** Creates a new instance of FileDropHandler */
-    public FileDropHandler(){
-    }
-
     @Override public boolean canImport(JComponent comp, DataFlavor[] transferFlavors){
 
         for ( DataFlavor d : transferFlavors ){
-            //System.out.println(d);
             if ( d.equals(DataFlavor.javaFileListFlavor) || d.equals(uriListFlavor) )
                 return true;
         }
@@ -40,7 +35,6 @@ public abstract class FileDropHandler extends TransferHandler{
     }
 
     @Override public boolean importData(JComponent comp, Transferable t){
-        //System.out.println("importData");
         try{
             if ( t.isDataFlavorSupported(DataFlavor.javaFileListFlavor) ) {
                 importFiles((List<File>) t.getTransferData(DataFlavor.javaFileListFlavor));

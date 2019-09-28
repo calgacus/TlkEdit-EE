@@ -1,9 +1,3 @@
-/*
- * Created on 16.11.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.twoDa.cellEditors;
 
 import java.awt.Component;
@@ -25,12 +19,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * @author ich
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class MappedCellEditor extends DefaultCellEditor {
 
     protected Map<String, String> map;
@@ -103,8 +91,5 @@ public class MappedCellEditor extends DefaultCellEditor {
 		}
 		setup( values, labels );
 		comboBox.setEditable( editable );
-	}
-
-	public static void main(String[] args) {
 	}
 }

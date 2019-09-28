@@ -1,9 +1,3 @@
-/*
- * EditorFrameX.java
- *
- * Created on 15. Mai 2005, 19:06
- */
-
 package org.jl.nwn.editor;
 
 import java.awt.BorderLayout;
@@ -504,7 +498,6 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             toolbars.remove(((SimpleFileEditorPanel) c).getToolbar());
         }
         //c.removePropertyChangeListener(this);
-        //System.out.println( tPane.getTabCount() );
         updateTitle();
         return true;
     }
@@ -529,7 +522,6 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private void saveActivePane() {
         JComponent c = (JComponent) tPane.getSelectedComponent();
-        //System.out.println( c );
         try {
             ((SimpleFileEditor) c).save();
             updateTitle();
@@ -543,7 +535,6 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     private void saveActivePaneAs() {
         JComponent c = (JComponent) tPane.getSelectedComponent();
         SimpleFileEditor ed = (SimpleFileEditor) c;
-        //System.out.println( c );
         File f = ed.getFile();
         if (f != null) {
             fChooser.setSelectedFile(f);

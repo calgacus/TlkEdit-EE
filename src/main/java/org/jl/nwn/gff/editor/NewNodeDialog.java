@@ -46,7 +46,6 @@ class NewNodeDialog {
     final JComboBox<NwnLanguage> cbLang = new JComboBox<>(NwnLanguage.LANGUAGES);
     final JComboBox<String> cbGender = new JComboBox<>(new String[]{ "masculine / neutral", "feminine" });
 
-    /** Creates a new instance of NewNodeDialog */
     public NewNodeDialog( GffEditX gffEd, MessageSourceSupport msgSup ){
         this.gffEd = gffEd;
         this.model = gffEd.model;

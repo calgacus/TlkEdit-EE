@@ -1,9 +1,3 @@
-/*
- * Created on 18.07.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.twoDa.cellEditors;
 
 import java.awt.AWTKeyStroke;
@@ -154,9 +148,6 @@ public class BitFlagEditor
         //dialog.setAlwaysOnTop(true);
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
-     */
     @Override
     public Component getTableCellEditorComponent(
             JTable table,
@@ -200,7 +191,6 @@ public class BitFlagEditor
         dialog.getContentPane().removeAll();
         dialog.setVisible(false);
         dialog.dispose();
-        //System.out.println("BitFlagEditor : disposing dialog");
     }
 
     private String hex(int i) {
@@ -249,7 +239,6 @@ public class BitFlagEditor
     public void dispose(){
         if ( dialog != null )
             dialog.dispose();
-        //System.out.println("BitFlagEditor.dispose()");
     }
 
     @Override protected void finalize() throws Throwable{

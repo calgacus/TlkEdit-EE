@@ -1,12 +1,3 @@
-/*
- * VectorFormat.java
- *
- * Created on 10. September 2006, 11:50
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 package org.jl.text;
 
 import java.text.DecimalFormat;
@@ -16,15 +7,10 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 
-/**
- *
- * @author ich
- */
-public class VectorFormat extends Format{
-    
+public class VectorFormat extends Format {
+
     protected NumberFormat nf;
-    
-    /** Creates a new instance of VectorFormat */
+
     public VectorFormat(NumberFormat df) {
         this.nf = df;
     }
@@ -37,11 +23,11 @@ public class VectorFormat extends Format{
         toAppendTo.append(nf.format(v[2])).append(")");
         return toAppendTo;
     }
-    
+
     private static void skipWhitespace(String s, ParsePosition pos){
         int p = pos.getIndex();
         while ( Character.isWhitespace(s.charAt(p)) )
-            pos.setIndex(++p);        
+            pos.setIndex(++p);
     }
 
     @Override
@@ -50,7 +36,6 @@ public class VectorFormat extends Format{
         System.out.println(pos);
         source = source.trim();
         if ( source.charAt(pos.getIndex()) == '(' ){
-            //while ( Character.isWhitespace(source.charAt(p))) )
             pos.setIndex(pos.getIndex()+1);
             try {
                 skipWhitespace(source, pos);
@@ -61,7 +46,6 @@ public class VectorFormat extends Format{
                 v[2] = nf.parse(source, pos).floatValue();
                 skipWhitespace(source, pos);
             } catch ( NullPointerException npe ) {
-                //System.out.println("npe");
                 return null;
             }
             if ( source.charAt(pos.getIndex()) == ')' ){
@@ -69,15 +53,15 @@ public class VectorFormat extends Format{
                 return v;
             }
             else
-                return null;            
+                return null;
         }
         else
             return null;
     }
-    
+
     public static void main(String ... args) throws ParseException{
         VectorFormat vf = new VectorFormat(new DecimalFormat());
         System.out.println(vf.format(vf.parseObject("(1,4 3,14 23,1)")));
     }
-    
+
 }

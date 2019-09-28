@@ -3,12 +3,10 @@ package org.jl.swing.undo;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 
-/**
- */
 public class TableModelMutator extends Mutator{
     protected TableModel model;
     protected ListSelectionModel lsl;
-    
+
     public class SetValueAtEdit extends ModelEdit{
         int row, col;
         Object oldValue, newValue;
@@ -41,38 +39,36 @@ public class TableModelMutator extends Mutator{
                     lsl.addSelectionInterval(row, row);
             }
         }
-        
+
         @Override public boolean isSignificant(){
             return (oldValue != null && !oldValue.equals(newValue))
             || (oldValue == null && newValue != null);
         }
     }
-    
-    /** Creates a new instance of TableModelMutator */
+
     public TableModelMutator( TableModel model, ListSelectionModel lsl ){
         super();
         this.model = model;
         this.lsl = lsl;
     }
-    
+
     public TableModelMutator( Mutator m, TableModel model, ListSelectionModel lsl ){
         super(m);
         this.model = model;
         this.lsl = lsl;
     }
-    
+
     public void setValueAt(Object value, int row, int column){
         new SetValueAtEdit("Edit Cell", value, row, column).invoke();
     }
-    
+
     @Override public void compoundUndo(){
         if ( lsl != null )
             lsl.clearSelection();
     }
-    
+
     @Override public void compoundRedo(){
         if ( lsl != null )
             lsl.clearSelection();
     }
-    
 }
