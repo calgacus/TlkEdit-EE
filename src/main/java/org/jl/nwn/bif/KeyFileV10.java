@@ -12,6 +12,11 @@ import java.util.TreeMap;
 
 import org.jl.nwn.resource.ResourceID;
 
+/**
+ * Key file of version 1.0, used by "Neverwinter Nights".
+ *
+ * @author ich
+ */
 public class KeyFileV10 extends KeyFile {
 
     protected final TreeMap<ResourceID, Integer> entryMap = new TreeMap<>();
@@ -27,20 +32,19 @@ public class KeyFileV10 extends KeyFile {
     }
 
     private void init1(MappedByteBuffer mbb) throws IOException {
-        mbb.position(8);
-        byte[] buf = new byte[100]; // should be large enough for a single bif file name
-        int bifEntries = mbb.getInt();
-        int resourceCount = mbb.getInt();
-        int bifOffset = mbb.getInt();
-        int resourceOffset = mbb.getInt();
+        mbb.position(8);// Skip "KEY V1.0"
+        final byte[] buf = new byte[100]; // should be large enough for a single bif file name
+        final int bifEntries = mbb.getInt();
+        final int resourceCount = mbb.getInt();
+        final int bifOffset = mbb.getInt();
+        final int resourceOffset = mbb.getInt();
 
-        //mbb.position( bifOffset );
         bifs = new String[bifEntries];
         for (int i = 0; i < bifEntries; i++) {
             mbb.position(bifOffset + i * 12);
-            int bifSize = mbb.getInt();
-            int bifNameOffset = mbb.getInt();
-            int bifNameLength = mbb.getShort();
+            final int bifSize = mbb.getInt();
+            final int bifNameOffset = mbb.getInt();
+            final int bifNameLength = mbb.getShort();
             mbb.position(bifNameOffset);
             mbb.get(buf, 0, bifNameLength);
             // seems that bifNameLength includes the terminating \0
@@ -49,7 +53,7 @@ public class KeyFileV10 extends KeyFile {
         mbb.position(resourceOffset);
         for (int i = 0; i < resourceCount; i++) {
             mbb.get(buf, 0, 16);
-            String resName = (new String(buf, 0, 16)).trim();
+            final String resName = new String(buf, 0, 16).trim();
             entryMap.put(new ResourceID(resName, mbb.getShort()), mbb.getInt());
         }
     }

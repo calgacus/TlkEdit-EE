@@ -10,14 +10,15 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import java.util.Arrays;
 
 import org.jl.nwn.resource.RafInputStream;
 
 /** Read only representation of a bif file. */
 abstract class BifFile implements Closeable {
-    protected static final byte[] header10 = {66, 73, 70, 70, 86, 49, 32, 32};
-    protected static final byte[] header11 = {66, 73, 70, 70, 86, 49, 46, 49};
+    protected static final byte[] HEADER_V10 = {66, 73, 70, 70, 86, 49, 32, 32};
+    protected static final byte[] HEADER_V11 = {66, 73, 70, 70, 86, 49, 46, 49};
 
     protected RandomAccessFile raf;
     protected File file;
@@ -48,14 +49,13 @@ abstract class BifFile implements Closeable {
         try (final FileInputStream in = new FileInputStream(file)) {
             in.read(header);
         }
-        if (Arrays.equals(header, header10)) {
+        if (Arrays.equals(header, HEADER_V10)) {
             return new BifFile10(file);
         }
-        if (Arrays.equals(header, header11)) {
+        if (Arrays.equals(header, HEADER_V11)) {
             return new BifFile11(file);
         }
-        System.err.println("fnord");
-        return null;
+        throw new IllegalArgumentException("Unsupported BIFF header: " + new String(header, US_ASCII));
     }
 
     public abstract InputStream getEntry(int idx) throws IOException;

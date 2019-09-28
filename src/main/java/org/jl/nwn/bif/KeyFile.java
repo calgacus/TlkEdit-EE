@@ -3,6 +3,7 @@ package org.jl.nwn.bif;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -15,10 +16,9 @@ public abstract class KeyFile {
 
     protected String[] bifs;
 
-    protected static final byte[] HEADERV10 = {75, 69, 89, 32, 86, 49, 32, 32};
-    protected static final byte[] HEADERV11 = {75, 69, 89, 32, 86, 49, 46, 49};
+    protected static final byte[] HEADER_V10 = {75, 69, 89, 32, 86, 49, 32, 32};
+    protected static final byte[] HEADER_V11 = {75, 69, 89, 32, 86, 49, 46, 49};
 
-//protected Map<ResourceID, Integer> entryMap = new TreeMap<ResourceID, Integer>();
     public static final class BifResourceLocation {
 
         private final String bifName;
@@ -51,11 +51,13 @@ public abstract class KeyFile {
         try (final FileInputStream in = new FileInputStream(file)) {
             in.read(header);
         }
-        if (Arrays.equals(HEADERV11, header)) {
-            return new KeyFileV11(file);
-        } else {
+        if (Arrays.equals(HEADER_V10, header)) {
             return new KeyFileV10(file);
         }
+        if (Arrays.equals(HEADER_V11, header)) {
+            return new KeyFileV11(file);
+        }
+        throw new IllegalArgumentException("Unsupported KEY header: " + new String(header, US_ASCII));
     }
 
     /**
