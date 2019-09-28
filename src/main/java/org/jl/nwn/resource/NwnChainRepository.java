@@ -115,11 +115,12 @@ public class NwnChainRepository extends AbstractRepository {
         for (NwnRepository r : repositories){
             try {
                 r.close();
-            } catch (IOException ioex){
-                if (firstException == null)
+            } catch (IOException ioex) {
+                if (firstException == null) {
                     firstException = ioex;
-                else
-                    ioex.printStackTrace();
+                } else {
+                    firstException.addSuppressed(ioex);
+                }
             }
         }
         if (firstException != null)
