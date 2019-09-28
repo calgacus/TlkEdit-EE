@@ -40,7 +40,6 @@ public class EditorServer {
     private static int serverPort = 4712;
 
     public static void main(String[] args) throws Exception {
-        //System.out.println(UIManager.getCrossPlatformLookAndFeelClassName());
         try {
             if (System.getProperty("swing.defaultlaf") == null) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -63,9 +62,9 @@ public class EditorServer {
                 try {
                     //SocketAddress addr = new InetSocketAddress("localhost", registryPort);
                     SocketAddress addr = new InetSocketAddress(InetAddress.getByAddress("localhost", new byte[]{127, 0, 0, 1}), serverPort);
-                    Socket sock = new Socket();
-                    sock.bind(addr);
-                    sock.close();
+                    try (final Socket sock = new Socket()) {
+                        sock.bind(addr);
+                    }
                     SocketServer socketServer = new SocketServer(serverPort, new EditorFrameX());
                     socketServer.start();
                     serverAvailable = true;
@@ -100,20 +99,11 @@ public class EditorServer {
     }
 
     private static void send(int port, String s) throws IOException {
-        Socket socket = new Socket();
-        try {
+        try (final Socket socket = new Socket()) {
             socket.connect(new InetSocketAddress(InetAddress.getByAddress("localhost", new byte[]{127, 0, 0, 1}), port));
             PrintStream out = new PrintStream(socket.getOutputStream(), true);
             out.println(s);
             System.out.println(s);
-        } finally {
-            try {
-                if (!socket.isClosed()) {
-                    socket.close();
-                }
-            } catch (IOException ioex) {
-                logger.log(Level.INFO, "", ioex);
-            }
         }
     }
 
@@ -139,11 +129,8 @@ public class EditorServer {
         @Override
         public void run() {
             while (!isInterrupted()) {
-                Socket s = null;
-                try {
-                    //System.out.println("waiting...");
-                    logger.info("waiting...");
-                    s = sock.accept();
+                logger.info("waiting...");
+                try (final Socket s = sock.accept()) {
                     //System.out.println("accept");
                     logger.info("accept");
                     BufferedReader r = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -151,22 +138,12 @@ public class EditorServer {
                     logger.info(filename);
                     File f = new File(filename);
                     ed.openFile(f, Version.getDefaultVersion());
-                    //System.out.println(filename);
-                    s.close();
                 } catch (ClosedByInterruptException cbie) {
                     logger.log(Level.INFO, "", cbie);
                     break;
                 } catch (IOException ioex) {
                     logger.log(Level.INFO, "", ioex);
                 } catch (Exception e) {
-                } finally {
-                    if (s != null && !s.isClosed()) {
-                        try {
-                            s.close();
-                        } catch (IOException ioex) {
-                            logger.log(Level.INFO, "", ioex);
-                        }
-                    }
                 }
             }
         }

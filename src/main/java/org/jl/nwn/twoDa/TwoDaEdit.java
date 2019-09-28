@@ -146,15 +146,15 @@ public class TwoDaEdit extends SimpleFileEditorPanel {
     }
 
     public static boolean accept(File f) {
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new FileReader(f));
-            String line = "";
+        try (final BufferedReader in = new BufferedReader(new FileReader(f))) {
+            String line;
             // skip empty lines
-            while ((line = in.readLine()).trim().length() == 0) {
+            while ((line = in.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    return line.regionMatches(true, 0, "2DA", 0, 3);
+                }
             }
-            in.close();
-            return line.trim().toLowerCase().startsWith("2da");
         } catch (IOException ioex) {
         }
         return false;

@@ -31,19 +31,12 @@ public class KeyFileV10 extends KeyFile{
         protected final TreeMap<ResourceID, Integer> entryMap = new TreeMap<>();
 
         public KeyFileV10(File key) throws IOException {
-            //bifs = new java.util.Vector();
-            FileInputStream in = null;
-            try {
+            try (final FileInputStream in = new FileInputStream(key)) {
                 file = key;
-                in = new FileInputStream(key);
                 FileChannel fc = in.getChannel();
                 MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
                 mbb.order(ByteOrder.LITTLE_ENDIAN);
                 init1(mbb);
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
             }
         }
 

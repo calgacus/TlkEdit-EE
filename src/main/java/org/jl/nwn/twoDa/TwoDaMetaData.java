@@ -7,7 +7,6 @@
 package org.jl.nwn.twoDa;
 
 import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.HashMap;
@@ -76,11 +75,9 @@ public class TwoDaMetaData{
     }
 
     private static TwoDaMetaData readMetaData( URL url ){
-        Document doc = null;
         TwoDaMetaData data = new TwoDaMetaData();
-        try{
-            InputStream is = new BufferedInputStream( url.openStream() );
-            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse( is );
+        try (final BufferedInputStream is = new BufferedInputStream( url.openStream() )) {
+            final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse( is );
             NodeList helpfileElements = doc.getElementsByTagName( "helpfile" );
             if ( helpfileElements.getLength() > 0 ){
                 String loc = helpfileElements.item(0).getAttributes().getNamedItem( "location" ).getNodeValue();

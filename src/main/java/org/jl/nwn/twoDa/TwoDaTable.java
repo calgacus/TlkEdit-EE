@@ -68,45 +68,45 @@ public class TwoDaTable {
             this.columnHeaders = t.columnHeaders;
             this.columnWidth = t.columnWidth;
             this.rows = t.rows;
-        } else{ // regular ASCII
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader in = new BufferedReader(isr);
-            // skip empty lines
-            while ((line = in.readLine()).trim().equals(""));
-            // read default value
-            if ( line.toLowerCase().startsWith("default:") ){
-                defaultString = line.substring( line.indexOf(':')+1 ).trim();
-                System.out.println( "DEFAULT: " + defaultString );
+        } else {// regular ASCII
+            try (final InputStreamReader isr = new InputStreamReader(is);
+                 final BufferedReader in = new BufferedReader(isr)
+            ) {
                 // skip empty lines
-                while ((line = in.readLine()).trim().length() == 0);
-            }
-                /* String.split version :
-                 - split at whitespaces
-                 - note that leading whitespace is returned as 1 empty string ( header
-                   for 1st column )
-                 - no good for String constants using whitespace ( like "hello world" ),
-                 */
-            columnHeaders = line.split("\\s+");
-
-            columnWidth = new int[this.columnHeaders.length];
-            while ((line = in.readLine()) != null) {
-                if (line.trim().length() == 0)
-                    continue;
-                String[] row = split2daLine(line);
-                if ( row.length != columnHeaders.length ){
-                    String lineMsg = line.length()>20?
-                        line.substring(0,30) + "(...)":
-                        line;
-                    StringBuilder errorMsg = new StringBuilder("Broken 2DA file : ");
-                    errorMsg.append("found ").append(row.length).append(" fields (expected ");
-                    errorMsg.append(columnHeaders.length).append(") on line \"");
-                    errorMsg.append(lineMsg).append("\"");
-                    throw new IOException(errorMsg.toString());
+                while ((line = in.readLine()) != null && line.trim().isEmpty());
+                // read default value
+                if ( line.toLowerCase().startsWith("default:") ){
+                    defaultString = line.substring( line.indexOf(':')+1 ).trim();
+                    System.out.println( "DEFAULT: " + defaultString );
+                    // skip empty lines
+                    while ((line = in.readLine()) != null && line.trim().isEmpty());
                 }
-                rows.add(row);
+                /* String.split version :
+                   - split at whitespaces
+                   - note that leading whitespace is returned as 1 empty string ( header
+                     for 1st column )
+                   - no good for String constants using whitespace ( like "hello world" ),
+                */
+                columnHeaders = line.split("\\s+");
+
+                columnWidth = new int[this.columnHeaders.length];
+                while ((line = in.readLine()) != null) {
+                    if (line.trim().length() == 0)
+                        continue;
+                    String[] row = split2daLine(line);
+                    if ( row.length != columnHeaders.length ){
+                        String lineMsg = line.length()>20?
+                            line.substring(0,30) + "(...)":
+                            line;
+                        StringBuilder errorMsg = new StringBuilder("Broken 2DA file : ");
+                        errorMsg.append("found ").append(row.length).append(" fields (expected ");
+                        errorMsg.append(columnHeaders.length).append(") on line \"");
+                        errorMsg.append(lineMsg).append("\"");
+                        throw new IOException(errorMsg.toString());
+                    }
+                    rows.add(row);
+                }
             }
-            in.close();
-            isr.close();
         }
         is.close();
         updateColumnWidth();
@@ -168,7 +168,7 @@ public class TwoDaTable {
         if (column < 0 || column > columnHeaders.length - 1)
             throw new IllegalArgumentException(
                     "no such column : column number " + column);
-        if (name.indexOf(" ") != -1)
+        if (name.contains(" "))
             throw new IllegalArgumentException("column name must not contain spaces");
         else
             columnHeaders[column] = name;
@@ -273,57 +273,53 @@ public class TwoDaTable {
 
 
     public void writeToFile(File f) throws IOException {
-        FileOutputStream fos = null;
-        try{
-            write( fos = new FileOutputStream(f) );
+        try (final FileOutputStream fos = new FileOutputStream(f)) {
+            write(fos);
             this.file = f;
-        } finally{
-            if ( fos != null )
-                fos.close();
         }
     }
 
     public void write( OutputStream os ) throws IOException{
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os) );
-        //updateColumnWidth();
-        out.write("2DA V2.0\r\n");
-        if ( defaultString != null )
-            out.write("DEFAULT: " + defaultString);
-        out.write("\r\n");
+        try (final BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os))) {
+            //updateColumnWidth();
+            out.write("2DA V2.0\r\n");
+            if ( defaultString != null )
+                out.write("DEFAULT: " + defaultString);
+            out.write("\r\n");
 
-        int maxCWidth = 0;
-        for ( int i = 0; i < columnWidth.length; i++ )
-            maxCWidth = Math.max( maxCWidth, columnWidth[i] );
-        char[] spaces = new char[maxCWidth+1];
-        Arrays.fill( spaces, ' ' );
-        String white = new String(spaces);
+            int maxCWidth = 0;
+            for ( int i = 0; i < columnWidth.length; i++ )
+                maxCWidth = Math.max( maxCWidth, columnWidth[i] );
+            char[] spaces = new char[maxCWidth+1];
+            Arrays.fill( spaces, ' ' );
+            String white = new String(spaces);
 
-        // write header
-        for (int i = 0; i < columnHeaders.length; i++) {
-            String s = columnHeaders[i];
-            out.write(s);
-            if ( TWODA_TSV )
-                out.write("\t");
-            else{
-                int fill = columnWidth[i] - s.length();
-                if (fill > 0)
-                    out.write(white, 0, fill);
-            }
-        }
-        out.write("\r\n");
-        // write entries
-        for (final String[] row : rows) {
-            for (int j = 0; j < row.length; j++) {
-                out.write(row[j]);
+            // write header
+            for (int i = 0; i < columnHeaders.length; i++) {
+                String s = columnHeaders[i];
+                out.write(s);
                 if ( TWODA_TSV )
                     out.write("\t");
-                else
-                    out.write(white, 0, columnWidth[j] - row[j].length());
+                else{
+                    int fill = columnWidth[i] - s.length();
+                    if (fill > 0)
+                        out.write(white, 0, fill);
+                }
             }
-            out.write("\r\n"); //out.newLine();
+            out.write("\r\n");
+            // write entries
+            for (final String[] row : rows) {
+                for (int j = 0; j < row.length; j++) {
+                    out.write(row[j]);
+                    if ( TWODA_TSV )
+                        out.write("\t");
+                    else
+                        out.write(white, 0, columnWidth[j] - row[j].length());
+                }
+                out.write("\r\n"); //out.newLine();
+            }
+            out.flush();
         }
-        out.flush();
-        out.close();
     }
 
     /**

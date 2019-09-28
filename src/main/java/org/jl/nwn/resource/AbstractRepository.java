@@ -20,33 +20,34 @@ public abstract class AbstractRepository implements NwnRepository{
 		throws IOException, UnsupportedOperationException {
 		throw new UnsupportedOperationException("putResource : repository is read-only");
 	}
-        
+
         @Override
         public InputStream getResource(String resourceName) throws IOException{
             return getResource(ResourceID.forFileName(resourceName));
         }
-        
+
         @Override
         public boolean contains(String resourceName){
             return contains(ResourceID.forFileName(resourceName));
         }
-        
-        @Override
-        public ByteBuffer getResourceAsBuffer(ResourceID id) throws IOException, UnsupportedOperationException {
-            InputStream is = getResource(id);
+
+    @Override
+    public ByteBuffer getResourceAsBuffer(ResourceID id) throws IOException, UnsupportedOperationException {
+        try (final InputStream is = getResource(id)) {
             if ( is == null )
                 return null;
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BufferedInputStream bis = new BufferedInputStream(is);
-            byte[] buf = new byte[4000];
-            int i;
-            while ( (i = bis.read(buf)) != -1 )
-                baos.write(buf, 0, i);
-            bis.close();
-            is.close();
-            return ByteBuffer.wrap(baos.toByteArray());
+            try (final BufferedInputStream bis = new BufferedInputStream(is);
+                 final ByteArrayOutputStream baos = new ByteArrayOutputStream()
+            ) {
+                final byte[] buf = new byte[32000];
+                int len;
+                while ( (len = bis.read(buf)) != -1 ) {
+                    baos.write(buf, 0, len);
+                }
+                return ByteBuffer.wrap(baos.toByteArray());
+            }
         }
-        
+    }
 
 	@Override
 	public boolean isWritable() {
@@ -62,8 +63,8 @@ public abstract class AbstractRepository implements NwnRepository{
         public Iterator<ResourceID> iterator(){
             return getResourceIDs().iterator();
         }
-        
+
         @Override
         public void close() throws IOException{}
-        
+
 }

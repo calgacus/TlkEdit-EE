@@ -11,7 +11,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.swing.JMenu;
@@ -101,43 +100,15 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
         if (savedAsFile == null) {
             return;
         }
-        File f = delegate.getFile();
-        byte[] buffer = new byte[32000];
-        InputStream is = null;
-        OutputStream os = null;
-        IOException e = null;
-        try {
-            is = new FileInputStream(f);
-            os = rep.putResource(resID);
-            int l = 0;
-            while ((l = is.read(buffer)) != -1) {
-                os.write(buffer, 0, l);
+        try (final FileInputStream is = new FileInputStream(delegate.getFile());
+             final OutputStream os = rep.putResource(resID)
+        ) {
+            final byte[] buffer = new byte[32000];
+            int len;
+            while ((len = is.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
             }
             os.flush();
-        } catch (IOException ioex) {
-            e = ioex;
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException ioex) {
-                if (e != null) {
-                    e = ioex;
-                }
-            }
-            try {
-                if (os != null) {
-                    os.close();
-                }
-            } catch (IOException ioex) {
-                if (e != null) {
-                    e = ioex;
-                }
-            }
-            if (e != null) {
-                throw e;
-            }
         }
     }
 

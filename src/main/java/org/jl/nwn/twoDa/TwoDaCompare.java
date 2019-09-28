@@ -278,7 +278,6 @@ public class TwoDaCompare {
                             setComparedModel(tableB);
                         } catch (IOException ioex) {
                             JOptionPane.showMessageDialog(panel, ioex);
-                        } finally {
                         }
                     }
                 }

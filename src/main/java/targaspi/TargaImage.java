@@ -67,16 +67,11 @@ public class TargaImage {
     }
 
     public TargaImage(File srcFile, boolean autoFlip) throws IOException {
-        InputStream is = new FileInputStream(srcFile);
-        BufferedInputStream bis = new BufferedInputStream(is);
-        DataInputStream dis = new DataInputStream(bis);
-        try {
+        try (final InputStream is = new FileInputStream(srcFile);
+             final BufferedInputStream bis = new BufferedInputStream(is);
+             final DataInputStream dis = new DataInputStream(bis)
+        ) {
             open(dis, autoFlip);
-        } catch (IOException e) {
-            dis.close();
-            bis.close();
-            is.close();
-            throw e;
         }
     }
 
@@ -89,11 +84,8 @@ public class TargaImage {
     }
 
     public TargaImage(InputStream is, boolean autoFlip) throws IOException{
-        DataInputStream dis = new DataInputStream(is);
-        try{
+        try (final DataInputStream dis = new DataInputStream(is)) {
             open(dis, autoFlip);
-        } finally {
-            is.close();
         }
     }
 

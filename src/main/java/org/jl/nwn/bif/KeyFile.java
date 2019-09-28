@@ -3,7 +3,6 @@ package org.jl.nwn.bif;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
@@ -49,24 +48,14 @@ public abstract class KeyFile {
     }
 
     public static KeyFile open(File file) throws IOException {
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
-            byte[] buf = new byte[8];
-            in.read(buf);
-            if (Arrays.equals(HEADERV11, buf)) {
-                return new KeyFileV11(file);
-            } else {
-                return new KeyFileV10(file);
-            }
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ioex) {
-                    System.err.println(ioex);
-                }
-            }
+        final byte[] header = new byte[8];
+        try (final FileInputStream in = new FileInputStream(file)) {
+            in.read(header);
+        }
+        if (Arrays.equals(HEADERV11, header)) {
+            return new KeyFileV11(file);
+        } else {
+            return new KeyFileV10(file);
         }
     }
 

@@ -24,12 +24,12 @@ public class Dictionaries {
     static Properties props = new Properties();
 
     static{
-        try{
-            InputStream is = Dictionaries.class.getClassLoader().getResourceAsStream(
-                    "dict/dictionaries.properties");
+        try (final InputStream is = Dictionaries.class.getClassLoader().getResourceAsStream(
+            "dict/dictionaries.properties"
+        )) {
             if ( is != null ) {
                 props.load(is);
-                System.out.println("Dictionaries.java   found props  " );
+                System.out.println("Spell checker dictionaries list loaded from dict/dictionaries.properties" );
             }
         } catch (IOException ioex){
             ioex.printStackTrace();

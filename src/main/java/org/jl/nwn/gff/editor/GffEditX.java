@@ -214,11 +214,11 @@ public class GffEditX extends SimpleFileEditorPanelX implements ClipboardOwner {
                             new Thread(){
                                 @Override public void run(){
                                     try{
-                                        BufferedOutputStream bos = new BufferedOutputStream(pout);
-                                        StreamResult result = new StreamResult(bos);
-                                        trans.transform(source, result);
-                                        //new XMLWriter(bos, OutputFormat.createPrettyPrint()).write(e);
-                                        bos.close();
+                                        try (final BufferedOutputStream bos = new BufferedOutputStream(pout)) {
+                                            StreamResult result = new StreamResult(bos);
+                                            trans.transform(source, result);
+                                            //new XMLWriter(bos, OutputFormat.createPrettyPrint()).write(e);
+                                        }
                                         pout.close();
 
                                     } catch ( Exception ex){

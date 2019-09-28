@@ -306,20 +306,17 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     }
 
     public static boolean accept(File f) {
-        byte[] test = new byte[4];
-        try {
-            InputStream in = new FileInputStream(f);
+        final byte[] test = new byte[4];
+        try (final InputStream in = new FileInputStream(f)) {
             in.read(test);
-            in.close();
-            for (int i = 0; i < test.length; i++) {
-                if (test[i] != tlkHead[i]) {
-                    return false;
-                }
-            }
-            return true;
         } catch (IOException ioex) {
         }
-        return false;
+        for (int i = 0; i < test.length; i++) {
+            if (test[i] != tlkHead[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public TlkEdit() {
@@ -1361,24 +1358,23 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                             final PipedInputStream pin = new PipedInputStream();
                             final PipedOutputStream pout = new PipedOutputStream(pin);
                             new Thread() {
-
-                        @Override
+                                @Override
                                 public void run() {
                                     try {
-                                        BufferedOutputStream bos = new BufferedOutputStream(pout);
-                                        PrintWriter p = new PrintWriter(bos);
-                                        for (TlkEntry e : rows) {
-                                            p.write("\"");
-                                            p.write(e.getString().replaceAll("\t", "\\t"));
-                                            p.write("\"\t");
-                                            p.print(e.getSoundResRef());
-                                            p.print("\t");
-                                            p.print(e.getSoundLength());
-                                            p.write("\n");
+                                        try (final BufferedOutputStream bos = new BufferedOutputStream(pout);
+                                             final PrintWriter p = new PrintWriter(bos)
+                                        ) {
+                                            for (final TlkEntry e : rows) {
+                                                p.write("\"");
+                                                p.write(e.getString().replaceAll("\t", "\\t"));
+                                                p.write("\"\t");
+                                                p.print(e.getSoundResRef());
+                                                p.print("\t");
+                                                p.print(e.getSoundLength());
+                                                p.write("\n");
+                                            }
+                                            //new XMLWriter(bos, OutputFormat.createPrettyPrint()).write(e);
                                         }
-                                        //new XMLWriter(bos, OutputFormat.createPrettyPrint()).write(e);
-                                        p.close();
-                                        bos.close();
                                         pout.close();
                                     } catch (Exception ex) {
                                         ex.printStackTrace();

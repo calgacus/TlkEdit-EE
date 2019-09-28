@@ -55,26 +55,24 @@ public class TlkTool{
 
 	// returns number of entries in tlk file
 	public static int getTlkFileSize( File file ) throws IOException{
-		RandomAccessFile raf = new RandomAccessFile( file, "r" );
-		raf.seek( 0x0c );
-		int entries = readIntLE( raf );
-		raf.close();
-		return entries;
+        try (final RandomAccessFile raf = new RandomAccessFile( file, "r" )) {
+            raf.seek( 0x0c );
+            return readIntLE( raf );
+        }
 	}
 
 	public static int getTlkFileLanguage( File file ) throws IOException{
-		RandomAccessFile raf = new RandomAccessFile( file, "r" );
-		raf.seek( 0x08 );
-		int language = raf.readByte();
-		raf.close();
-		return language;
+        try (final RandomAccessFile raf = new RandomAccessFile( file, "r" )) {
+            raf.seek( 0x08 );
+            return raf.readByte();
+        }
 	}
 
 	public static void setTlkFileLanguage( File file, int lang ) throws IOException{
-		RandomAccessFile raf = new RandomAccessFile( file, "rw" );
-		raf.seek( 0x08 );
-		raf.write( lang );
-		raf.close();
+        try (final RandomAccessFile raf = new RandomAccessFile( file, "rw" )) {
+            raf.seek( 0x08 );
+            raf.write( lang );
+        }
 	}
 
 

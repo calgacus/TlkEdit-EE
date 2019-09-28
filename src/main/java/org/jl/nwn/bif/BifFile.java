@@ -43,26 +43,18 @@ abstract class BifFile {
     }
 
     public static BifFile openBifFile(File file) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        BifFile bif = null;
-        try {
-            byte[] header = new byte[8];
+        final byte[] header = new byte[8];
+        try (final FileInputStream in = new FileInputStream(file)) {
             in.read(header);
-            in.close();
-            if (Arrays.equals(header, header10)) {
-                bif = new BifFile10(file);
-            }
-            else if (Arrays.equals(header, header11)) {
-                bif = new BifFile11(file);
-            }
-            else
-                System.err.println("fnord");
-        } finally {
-            if (in != null) {
-                in.close();
-            }
         }
-        return bif;
+        if (Arrays.equals(header, header10)) {
+            return new BifFile10(file);
+        }
+        if (Arrays.equals(header, header11)) {
+            return new BifFile11(file);
+        }
+        System.err.println("fnord");
+        return null;
     }
 
     public abstract InputStream getEntry(int idx) throws IOException;
@@ -74,12 +66,12 @@ abstract class BifFile {
     public abstract MappedByteBuffer getEntryAsBuffer(int idx) throws IOException;
 
     public void transferEntryToFile(int entryIndex, File file) throws IOException {
-        FileOutputStream fos = new FileOutputStream(file);
-        FileChannel c = fos.getChannel();
-        transferEntryToChannel(entryIndex, c);
-        c.force(true);
-        c.close();
-        fos.close();
+        try (final FileOutputStream fos = new FileOutputStream(file);
+             final FileChannel c = fos.getChannel()
+        ) {
+            transferEntryToChannel(entryIndex, c);
+            c.force(true);
+        }
     }
 
     public static final class BifFile10 extends BifFile {

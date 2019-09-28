@@ -49,16 +49,10 @@ public abstract class AbstractTlkReader<TlkTable>{
      * Convenience method for {@link #load(InputStream, ProgressMonitor)}.
      */
     public TlkTable load( File tlkFile, ProgressMonitor pm ) throws IOException{
-        FileInputStream fis = null;
-        BufferedInputStream bis = null;
-        try{
-            fis = new FileInputStream( tlkFile );
-            bis = new BufferedInputStream(fis);
+        try (final FileInputStream fis = new FileInputStream( tlkFile );
+             final BufferedInputStream bis = new BufferedInputStream(fis)
+        ) {
             return load(bis, pm);
-        }
-        finally{
-            if ( bis != null ) bis.close();
-            if ( fis != null ) fis.close();
         }
     }
 

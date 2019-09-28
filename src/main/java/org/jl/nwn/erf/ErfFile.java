@@ -279,11 +279,12 @@ public class ErfFile extends AbstractRepository{
             if ( o instanceof ResourceListEntry ){
                 ResourceListEntry rle = (ResourceListEntry) o;
                 return raf.getChannel().map( FileChannel.MapMode.READ_ONLY, rle.offset, rle.size );
-            } else if ( o instanceof File ){
-                RandomAccessFile r = new RandomAccessFile((File)o, "r");
-                MappedByteBuffer mbb = r.getChannel().map( FileChannel.MapMode.READ_ONLY, 0, r.length() );
-                r.close();
-                return mbb;
+            }
+            if ( o instanceof File ){
+                try (final RandomAccessFile r = new RandomAccessFile((File)o, "r")) {
+                    // MappedByteBuffer will be valid even after close file, that created it
+                    return r.getChannel().map( FileChannel.MapMode.READ_ONLY, 0, r.length() );
+                }
             }
             /*
             else if ( o instanceof InputStream )
@@ -359,81 +360,79 @@ public class ErfFile extends AbstractRepository{
         File tmpErf = File.createTempFile( TMPFILEPREFIX + file.getName(), "" );
         byte[] buf = new byte[32000];
         try{
-            RandomAccessFile out = new RandomAccessFile( tmpErf, "rw" );
-            out.write( fileType.getBytes() );
-            out.write( version.getBytes() );
-            writeIntLE( out, languageCount );
-            writeIntLE( out, localizedStringSize );
-            writeIntLE( out, entryCount );
-            writeIntLE( out, offsetToLocalizedString );
-            writeIntLE( out, offsetToKeyList );
-            writeIntLE( out, offsetToResourceList );
-            Calendar rightNow = Calendar.getInstance();
-            writeIntLE( out, rightNow.get( Calendar.YEAR ) - 1900 );
-            writeIntLE( out, rightNow.get( Calendar.DAY_OF_YEAR ) );
-            writeIntLE( out, descriptionStrRef );
-            out.write( buf,0,116 ); // should be all 0
+            try (final RandomAccessFile out = new RandomAccessFile( tmpErf, "rw" )) {
+                out.write( fileType.getBytes() );
+                out.write( version.getBytes() );
+                writeIntLE( out, languageCount );
+                writeIntLE( out, localizedStringSize );
+                writeIntLE( out, entryCount );
+                writeIntLE( out, offsetToLocalizedString );
+                writeIntLE( out, offsetToKeyList );
+                writeIntLE( out, offsetToResourceList );
+                Calendar rightNow = Calendar.getInstance();
+                writeIntLE( out, rightNow.get( Calendar.YEAR ) - 1900 );
+                writeIntLE( out, rightNow.get( Calendar.DAY_OF_YEAR ) );
+                writeIntLE( out, descriptionStrRef );
+                out.write( buf,0,116 ); // should be all 0
 
-            // write localized strings
-            out.write( locStringData, 12, locStringData.length -12 );
+                // write localized strings
+                out.write( locStringData, 12, locStringData.length -12 );
 
-            int offsetToResourceData = offsetToResourceList + (entryCount*8);
-            int resIdCounter = 0;
-            int offset = offsetToResourceData;
-            byte[] zero = new byte[resrefsize];
-            for (final ResourceID id : resources.keySet()) {
-                // write key list entry
-                out.seek( offsetToKeyList + (resIdCounter*(resrefsize+8)) );
-                //String name = id.getName();
-                byte[] nameBytes = id.getName().getBytes("ASCII");
-                int nameLength = Math.min(
-                        nameBytes.length,
-                        resrefsize);
-                out.write( nameBytes, 0, nameLength );
-                out.write( zero,0,resrefsize-nameLength );
-                writeIntLE( out, resIdCounter );
-                out.write(id.getType() & 255);
-                out.write((id.getType() >> 8) & 255);
-                out.write( zero,0,2 );
+                int offsetToResourceData = offsetToResourceList + (entryCount*8);
+                int resIdCounter = 0;
+                int offset = offsetToResourceData;
+                byte[] zero = new byte[resrefsize];
+                for (final ResourceID id : resources.keySet()) {
+                    // write key list entry
+                    out.seek( offsetToKeyList + (resIdCounter*(resrefsize+8)) );
 
-                //write resource data
-                int resourceSize = 0;
-                out.seek(offset);
-                InputStream is = getResource( id );
-                int len = 0;
-                while ( (len=is.read(buf))!=-1 ){
-                    resourceSize += len;
-                    out.write( buf,0,len );
+                    byte[] nameBytes = id.getName().getBytes("ASCII");
+                    int nameLength = Math.min(
+                            nameBytes.length,
+                            resrefsize);
+                    out.write( nameBytes, 0, nameLength );
+                    out.write( zero,0,resrefsize-nameLength );
+                    writeIntLE( out, resIdCounter );
+                    out.write(id.getType() & 255);
+                    out.write((id.getType() >> 8) & 255);
+                    out.write( zero,0,2 );
+
+                    //write resource data
+                    int resourceSize = 0;
+                    out.seek(offset);
+                    try (final InputStream is = getResource( id )) {
+                        int len = 0;
+                        while ( (len=is.read(buf))!=-1 ){
+                            resourceSize += len;
+                            out.write( buf,0,len );
+                        }
+                    }
+
+                    //write resource list entry
+                    out.seek( offsetToResourceList + (8*resIdCounter) );
+                    writeIntLE( out, offset );
+                    writeIntLE( out, resourceSize );
+
+                    // update resource map
+                    // this should not interfere with the iterator, as all ids are already in the key set
+                    if ( !isFileResource(id) )
+                        resources.put( id, new ResourceListEntry(offset, resourceSize) );
+
+                    offset+=resourceSize;
+                    resIdCounter++;
                 }
-                is.close();
-
-                //write resource list entry
-                out.seek( offsetToResourceList + (8*resIdCounter) );
-                writeIntLE( out, offset );
-                writeIntLE( out, resourceSize );
-
-                // update resource map
-                // this should not interfere with the iterator, as all ids are already in the key set
-                if ( !isFileResource(id) )
-                    resources.put( id, new ResourceListEntry(offset, resourceSize) );
-
-                offset+=resourceSize;
-                resIdCounter++;
             }
 
             // copy temp file
-            out.close();
             if ( raf!=null ) raf.close();
-            FileInputStream is = new FileInputStream( tmpErf );
-            FileOutputStream fos = new FileOutputStream( file );
-            FileChannel rc = is.getChannel();
-            FileChannel wc = fos.getChannel();
-            wc.transferFrom( rc, 0, rc.size() );
-            wc.close();
-            fos.flush();
-            fos.close();
-            rc.close();
-            is.close();
+            try (final FileInputStream is = new FileInputStream( tmpErf );
+                 final FileOutputStream fos = new FileOutputStream( file );
+                 final FileChannel rc = is.getChannel();
+                 final FileChannel wc = fos.getChannel()
+            ) {
+                wc.transferFrom( rc, 0, rc.size() );
+                fos.flush();
+            }
             raf = new RandomAccessFile( file, "r" );
         } finally {
             tmpErf.delete();
@@ -587,14 +586,14 @@ public class ErfFile extends AbstractRepository{
      * writes stream to file & close stream
      * */
     private static synchronized void writeStreamToFile( InputStream is, File file ) throws IOException{
-        FileOutputStream fos = new FileOutputStream( file );
-        BufferedOutputStream os = new BufferedOutputStream( fos );
-        int len = 0;
-        while ( (len=is.read(streamBuffer))!=-1 )
-            os.write( streamBuffer,0,len );
-        os.flush();
-        os.close();
-        fos.close();
+        try (final FileOutputStream fos = new FileOutputStream( file );
+             final BufferedOutputStream os = new BufferedOutputStream( fos )
+        ) {
+            int len;
+            while ( (len=is.read(streamBuffer))!=-1 )
+                os.write( streamBuffer,0,len );
+            os.flush();
+        }
         is.close();
     }
 
