@@ -72,7 +72,7 @@ public class RepositoryResourceEditor extends SimpleFileEditorPanel {
      */
     @Override
     public File getFile() {
-        return savedAsFile == null ? new File(rep.getResourceLocation(resID) + "[" + resID.toFileName() + "]") : delegate.getFile();
+        return savedAsFile == null ? new File(rep.getResourceLocation(resID) + "[" + resID.getFileName() + "]") : delegate.getFile();
     }
 
     /* (non-Javadoc)

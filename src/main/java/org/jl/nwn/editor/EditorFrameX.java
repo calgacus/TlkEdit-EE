@@ -230,7 +230,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                         msgSup.fireProgressStarted(0, list.size());
                         for (final ResourceID id : list) {
                             try {
-                                final File rFile = new File(dir, id.getNameExt());
+                                final File rFile = new File(dir, id.getFileName());
                                 Repositories.extractResourceToFile(rep, id, rFile);
                                 extractedFiles.add(rFile);
                                 super.publish(rFile);

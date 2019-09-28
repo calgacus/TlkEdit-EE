@@ -39,7 +39,7 @@ public class NwnDirRepository extends AbstractRepository {
 	 * @return File object pointing to the resource identified by id or null if no such file is found
 	 * */
 	private File findFile( ResourceID id ){
-		String fName = id.toFileName();
+        final String fName = id.getFileName();
 		File f = new File( dir, fName );
 		return f.isFile() ? f : findFileIgnoreCase( fName );
 	}
@@ -72,7 +72,7 @@ public class NwnDirRepository extends AbstractRepository {
 
 	@Override
 	public OutputStream putResource( ResourceID id ) throws IOException{
-		return new FileOutputStream( new File( dir, id.toFileName() ) );
+        return new FileOutputStream( new File( dir, id.getFileName() ) );
 	}
 
 	@Override

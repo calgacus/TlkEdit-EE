@@ -384,14 +384,7 @@ public class ResourceID implements Comparable {
      * */
     @Override
     public String toString() {
-        return getName() + "." + ResourceID.getExtensionForType(getType());
-    }
-
-    /**
-     * @return filename for this resource ID
-     * */
-    public String toFileName() {
-        return toString();
+        return getFileName();
     }
 
     public static ResourceID forFile(File file) {
@@ -443,10 +436,12 @@ public class ResourceID implements Comparable {
     }
 
     /**
-     * @return resource file name ( name + extension )
+     * Retrieve full filename (name and extension) for this resource.
+     *
+     * @return filename for this resource ID
      */
-    public String getNameExt() {
-        return name + "." + getExtensionForType(type);
+    public String getFileName() {
+        return name + "." + getExtension();
     }
 
     private void setType(short type) {

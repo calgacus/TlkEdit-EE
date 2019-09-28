@@ -500,7 +500,7 @@ public class ErfFile extends AbstractRepository{
      * rewrites this erf file
      * */
     public OutputStream put( ResourceID id ) throws IOException{
-        File f = File.createTempFile( TMPFILEPREFIX, id.toFileName() );
+        final File f = File.createTempFile( TMPFILEPREFIX, id.getFileName() );
         f.deleteOnExit();
         putResource( id, f );
         return new FileOutputStream( f ){
@@ -542,7 +542,7 @@ public class ErfFile extends AbstractRepository{
         for (final ResourceID id : getResourceIDs()) {
             writeStreamToFile(
                     getResource( id ),
-                    new File( outputDir, id.toFileName() )
+                    new File( outputDir, id.getFileName() )
             );
         }
     }
@@ -559,7 +559,7 @@ public class ErfFile extends AbstractRepository{
     public File extractAsTempFile( ResourceID id, boolean replaceWithFile ) throws IOException{
         InputStream is = getResource( id );
         if ( is == null ) return null;
-        File f = File.createTempFile( TMPFILEPREFIX, file.getName()+"_"+id.toFileName() );
+        final File f = File.createTempFile( TMPFILEPREFIX, file.getName()+"_"+id.getFileName() );
         f.deleteOnExit();
         writeStreamToFile( is, f );
         if ( replaceWithFile ) putResource( id, f );
@@ -576,7 +576,7 @@ public class ErfFile extends AbstractRepository{
         InputStream is = getResource( id );
         if ( is == null ) return null;
         if ( !directory.exists() ) directory.mkdirs();
-        File f = new File( directory, id.toFileName() );
+        final File f = new File( directory, id.getFileName() );
         writeStreamToFile( is, f );
         return f;
     }

@@ -123,7 +123,7 @@ public class RepositoryTableView {
             ResourceID id = resources.get(arg0);
             switch (arg1) {
             case 0:
-                return id.getNameExt();
+                return id.getFileName();
             case 1:
                 return id.getName();
             case 2:

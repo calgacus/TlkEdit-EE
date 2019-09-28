@@ -76,8 +76,8 @@ public class ErfResourceEditor extends SimpleFileEditorPanel {
 	 */
 	@Override
 	public File getFile() {
-		//return new File( erf.getFile(), resID.toFileName() );
-		return new File( erf.getFile().getName()+"["+resID.toFileName()+"]" );
+        //return new File( erf.getFile(), resID.getFileName() );
+        return new File( erf.getFile().getName()+"["+resID.getFileName()+"]" );
 		//return delegate.getFile();
 	}
 

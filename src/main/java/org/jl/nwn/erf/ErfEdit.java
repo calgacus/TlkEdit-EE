@@ -452,7 +452,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                                 for ( int i = 0; i < selection.length; i++ ){
                                     ResourceID id = (ResourceID) model.get(table.convertRowIndexToModel(selection[i]));
                                     pBar.setValue( i );
-                                    pBar.setString( id.toFileName() );
+                                    pBar.setString( id.getFileName() );
                                     erf.extractToDir( id, outputDir );
                                 }
                             } catch ( IOException ioex ){

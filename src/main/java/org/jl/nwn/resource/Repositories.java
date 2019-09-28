@@ -142,7 +142,7 @@ public final class Repositories {
             dir.deleteOnExit();
             tmpDirMap.put(rep, dir);
         }
-        File f = new File(dir, id.getNameExt());
+        File f = new File(dir, id.getFileName());
         if (f.exists()) {
             f = File.createTempFile(id.getName() + ".", "." + id.getExtension(), dir);
         }
