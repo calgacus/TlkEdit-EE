@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.jl.nwn.resource.ResourceID;
@@ -59,9 +58,12 @@ public abstract class KeyFile {
         }
     }
 
-    public abstract Iterator<ResourceID> getResourceIDs();
-
-    public abstract Set<ResourceID> getResourceIDSet();
+    /**
+     * Get set of resource pointers that is known by this index file.
+     *
+     * @return Unmodifiable set of resources in this index
+     */
+    public abstract Set<ResourceID> getResources();
 
     public abstract BifResourceLocation findResource(String resName, short resType);
 }

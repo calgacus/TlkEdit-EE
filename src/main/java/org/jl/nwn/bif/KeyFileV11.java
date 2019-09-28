@@ -7,7 +7,6 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -59,12 +58,7 @@ public class KeyFileV11 extends KeyFile {
     }
 
     @Override
-    public Iterator<ResourceID> getResourceIDs() {
-        return entryMap.keySet().iterator();
-    }
-
-    @Override
-    public Set<ResourceID> getResourceIDSet() {
+    public Set<ResourceID> getResources() {
         return Collections.unmodifiableSet(entryMap.keySet());
     }
 

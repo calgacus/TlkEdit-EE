@@ -165,7 +165,7 @@ public class BifRepository extends AbstractRepository{
         if ( resources == null ){
             resources = new TreeSet<>();
             for (final KeyFile key : keyFiles) {
-                resources.addAll(key.getResourceIDSet());
+                resources.addAll(key.getResources());
             }
         }
         return Collections.unmodifiableSet( resources );
