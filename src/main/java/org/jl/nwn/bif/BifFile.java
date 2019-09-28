@@ -75,6 +75,12 @@ abstract class BifFile implements Closeable {
         }
     }
 
+    protected void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Resource index out of bounds [0; " + size + ") : " + index);
+        }
+    }
+
     public static final class BifFile10 extends BifFile {
 
         public static final int BIFINDEXENTRYSIZE = 16;
@@ -85,9 +91,7 @@ abstract class BifFile implements Closeable {
 
         @Override
         public InputStream getEntry(int idx) throws IOException {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int offset = readIntLE(raf);
@@ -99,9 +103,7 @@ abstract class BifFile implements Closeable {
 
         @Override
         public int getEntrySize(int idx) {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             try {
                 raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE + 8);
                 return readIntLE(raf);
@@ -114,9 +116,7 @@ abstract class BifFile implements Closeable {
 
         @Override
         public void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException {
-            if ((entryIndex < 0) | (entryIndex >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + entryIndex);
-            }
+            checkIndex(entryIndex);
             raf.seek(variableResourceOffset + entryIndex * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int offset = readIntLE(raf);
@@ -127,9 +127,7 @@ abstract class BifFile implements Closeable {
 
         @Override
         public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int offset = readIntLE(raf);
@@ -149,9 +147,7 @@ abstract class BifFile implements Closeable {
 
         @Override
         public InputStream getEntry(int idx) throws IOException {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int whatever = readIntLE(raf);
@@ -166,9 +162,7 @@ abstract class BifFile implements Closeable {
 
         @Override
         public int getEntrySize(int idx) {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             try {
                 raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE + 12);
                 return readIntLE(raf);
@@ -181,9 +175,7 @@ abstract class BifFile implements Closeable {
 
         @Override
         public void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException {
-            if ((entryIndex < 0) | (entryIndex >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + entryIndex);
-            }
+            checkIndex(entryIndex);
             raf.seek(variableResourceOffset + entryIndex * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int whatever = readIntLE(raf);
@@ -198,9 +190,7 @@ abstract class BifFile implements Closeable {
 
         @Override
         public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int whatever = readIntLE(raf);
