@@ -18,7 +18,7 @@ import org.jl.nwn.patcher.PatcherGUI;
 import org.jl.nwn.resource.NwnRepository;
 import org.jl.nwn.resource.ResourceID;
 
-public class BmuPlayer implements Runnable {
+public class BmuPlayer implements Runnable, AutoCloseable {
 
     private static NwnRepository br;
     private Clip c = null;
@@ -83,7 +83,8 @@ public class BmuPlayer implements Runnable {
         }
     }
 
-    public void close(){
+    @Override
+    public void close() {
         if ( c != null ) c.close();
         // else if ( p!= null ) p.close();
         else if ( playerObject != null )
@@ -104,6 +105,5 @@ public class BmuPlayer implements Runnable {
             System.exit(0);
         }
         new Thread(new BmuPlayer(args[0], br)).start();
-
     }
 }

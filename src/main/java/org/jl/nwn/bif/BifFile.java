@@ -1,5 +1,6 @@
 package org.jl.nwn.bif;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import org.jl.nwn.resource.RafInputStream;
 
 /** Read only representation of a bif file. */
-abstract class BifFile {
+abstract class BifFile implements Closeable {
     protected static final byte[] header10 = {66, 73, 70, 70, 86, 49, 32, 32};
     protected static final byte[] header11 = {66, 73, 70, 70, 86, 49, 46, 49};
 
@@ -217,6 +218,7 @@ abstract class BifFile {
         return raf.readUnsignedByte() | (raf.readUnsignedByte() << 8) | (raf.readUnsignedByte() << 16) | (raf.readUnsignedByte() << 24);
     }
 
+    @Override
     public void close() throws IOException {
         fc.close();
         raf.close();

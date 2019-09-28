@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.jl.nwn.Version;
 
-public interface SimpleFileEditor {
+public interface SimpleFileEditor extends AutoCloseable {
 	public boolean getIsModified();
 
 	/** @return {@code true} if save is supported and can be called. */
@@ -18,6 +18,7 @@ public interface SimpleFileEditor {
 
 	public void saveAs( File f, Version nwnVersion )  throws IOException;
 
+    @Override
 	public void close();
 
 	public File getFile();
