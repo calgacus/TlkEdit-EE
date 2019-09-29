@@ -39,8 +39,6 @@ import javax.swing.JToolBar;
 import org.jl.nwn.resource.AbstractRepository;
 import org.jl.nwn.resource.ResourceID;
 
-/**
- */
 public class BifRepository extends AbstractRepository{
     private KeyFile[] keyFiles;
     private File baseDir;
@@ -167,7 +165,7 @@ public class BifRepository extends AbstractRepository{
         if ( resources == null ){
             resources = new TreeSet<>();
             for (final KeyFile key : keyFiles) {
-                resources.addAll(key.getResourceIDSet());
+                resources.addAll(key.getResources());
             }
         }
         return Collections.unmodifiableSet( resources );
@@ -370,9 +368,6 @@ public class BifRepository extends AbstractRepository{
         fos.close();
     }
  */
-        /* (non-Javadoc)
-         * @see org.jl.nwn.resource.NwnRepository#contains(org.jl.nwn.resource.ResourceID)
-         */
     @Override
     public boolean contains(ResourceID id) {
         for (final KeyFile key : keyFiles) {

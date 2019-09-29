@@ -1,6 +1,3 @@
-/*
- * Created on 30.12.2003
- */
 package org.jl.nwn.erf;
 
 import java.awt.BorderLayout;
@@ -64,8 +61,6 @@ import org.jl.swing.I18nUtil;
 import org.jl.swing.UIDefaultsX;
 import org.jl.swing.table.FormattedCellEditor;
 
-/**
- */
 public class ErfEdit extends SimpleFileEditorPanel{
 
     private ErfFile erf;
@@ -452,7 +447,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                                 for ( int i = 0; i < selection.length; i++ ){
                                     ResourceID id = (ResourceID) model.get(table.convertRowIndexToModel(selection[i]));
                                     pBar.setValue( i );
-                                    pBar.setString( id.toFileName() );
+                                    pBar.setString( id.getFileName() );
                                     erf.extractToDir( id, outputDir );
                                 }
                             } catch ( IOException ioex ){
@@ -552,10 +547,6 @@ public class ErfEdit extends SimpleFileEditorPanel{
         return erf.extractAsTempFile(id, replaceWithFile);
     }
 
-    /**
-     * @param id
-     * @param file
-     */
     public void putResource(ResourceID id, File file) {
         erf.putResource(id, file);
     }
@@ -580,5 +571,4 @@ public class ErfEdit extends SimpleFileEditorPanel{
         else
             remove( toolbar );
     }
-
 }

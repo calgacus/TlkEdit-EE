@@ -1,9 +1,3 @@
-/*
- * AbstractGffWriter.java
- *
- * Created on 12. Mai 2005, 11:11
- */
-
 package org.jl.nwn.gff;
 
 import java.io.BufferedOutputStream;
@@ -24,9 +18,6 @@ import java.util.Queue;
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
 
-/**
- *
- */
 public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld> {
 
     protected List<Fld> fields = new ArrayList<>();
@@ -105,7 +96,6 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
     }
 
     /**
-     * @throws IOException
      * @throws IllegalArgumentException if length of gffType != 4, or any argument is null
      */
     public void write( Strct topLevelStruct, String gffType, File file ) throws IOException, IllegalArgumentException{
@@ -113,12 +103,12 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
             throw new IllegalArgumentException( "no null arguments allowed" );
         if ( gffType.length() != 4 )
             throw new IllegalArgumentException( "gff type string must have length 4 : \'" + gffType + "\'" );
-        FileOutputStream fos = new FileOutputStream(file);
-        BufferedOutputStream bos = new BufferedOutputStream( fos );
-        write( topLevelStruct, gffType, bos );
-        bos.flush();
-        bos.close();
-        fos.close();
+        try (final FileOutputStream fos = new FileOutputStream(file);
+             final BufferedOutputStream bos = new BufferedOutputStream( fos )
+        ) {
+            write( topLevelStruct, gffType, bos );
+            bos.flush();
+        }
     }
 
     public void write( Strct topLevelStruct, String gffType, OutputStream out ) throws IOException{

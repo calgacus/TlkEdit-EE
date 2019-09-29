@@ -1,9 +1,3 @@
-/*
- * Created on 24.03.2004
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.editor;
 
 import java.io.File;
@@ -18,8 +12,6 @@ import org.jl.nwn.erf.ErfEdit;
 import org.jl.nwn.gff.Gff;
 import org.jl.swing.UIDefaultsX;
 
-/**
- */
 public class NwnFileView extends FileView {
     static final FileSystemView fsv = FileSystemView.getFileSystemView();
     static final UIDefaultsX uid = new UIDefaultsX();
@@ -98,8 +90,5 @@ public class NwnFileView extends FileView {
                 return "NWN Encapsulated Resource File";
         }
         return fsv.getSystemTypeDescription(f);
-    }
-
-    public static void main(String[] args) {
     }
 }

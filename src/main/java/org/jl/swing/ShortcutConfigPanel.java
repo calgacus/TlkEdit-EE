@@ -1,6 +1,3 @@
-/*
- * Created on 28.09.2004
- */
 package org.jl.swing;
 
 import java.awt.BorderLayout;
@@ -15,8 +12,6 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
 
-/**
- */
 public class ShortcutConfigPanel extends JPanel {
 
 	public ShortcutConfigPanel( String[] keys, KeyStroke[] keystrokes ){
@@ -37,7 +32,7 @@ public class ShortcutConfigPanel extends JPanel {
 			"TlkEdit.cut_buttonLabel",
 			"TlkEdit.paste_buttonLabel" };
 
-	TreeMap map = new TreeMap();
+    TreeMap<String, KeyStroke> map = new TreeMap<>();
 
 	JTable table = new JTable();
 
@@ -57,7 +52,7 @@ public class ShortcutConfigPanel extends JPanel {
 			if (col == 0)
 				return test[row];
 			else {
-				KeyStroke ks = (KeyStroke) map.get( test[row] );
+                final KeyStroke ks = map.get(test[row]);
 				return getKeyStrokeText(ks);
 			}
 		}
@@ -93,5 +88,4 @@ public class ShortcutConfigPanel extends JPanel {
 		f.pack();
 		f.setVisible(true);
 	}
-
 }

@@ -1,6 +1,3 @@
-/*
- * Created on 13.03.2005
- */
 package org.jl.swing;
 
 import java.awt.Component;
@@ -10,8 +7,6 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.Icon;
 
-/**
- */
 public class ScaledIcon implements Icon {
 	private final int x;
 	private final int y;
@@ -27,9 +22,6 @@ public class ScaledIcon implements Icon {
 		scaleY = ((double)y)/((double)icon.getIconHeight());
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
-	 */
 	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 		Graphics2D g2 = (Graphics2D) g;
@@ -40,17 +32,11 @@ public class ScaledIcon implements Icon {
 		g2.setTransform(t);
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.Icon#getIconWidth()
-	 */
 	@Override
 	public int getIconWidth() {
 		return x;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.Icon#getIconHeight()
-	 */
 	@Override
 	public int getIconHeight() {
 		return y;

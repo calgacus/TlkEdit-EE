@@ -3,9 +3,8 @@ package org.jl.nwn.bif;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.jl.nwn.resource.ResourceID;
@@ -17,10 +16,9 @@ public abstract class KeyFile {
 
     protected String[] bifs;
 
-    protected static final byte[] HEADERV10 = {75, 69, 89, 32, 86, 49, 32, 32};
-    protected static final byte[] HEADERV11 = {75, 69, 89, 32, 86, 49, 46, 49};
+    protected static final byte[] HEADER_V10 = {75, 69, 89, 32, 86, 49, 32, 32};
+    protected static final byte[] HEADER_V11 = {75, 69, 89, 32, 86, 49, 46, 49};
 
-//protected Map<ResourceID, Integer> entryMap = new TreeMap<ResourceID, Integer>();
     public static final class BifResourceLocation {
 
         private final String bifName;
@@ -49,47 +47,25 @@ public abstract class KeyFile {
     }
 
     public static KeyFile open(File file) throws IOException {
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
-            byte[] buf = new byte[8];
-            in.read(buf);
-            if (Arrays.equals(HEADERV11, buf)) {
-                return new KeyFileV11(file);
-            } else {
-                return new KeyFileV10(file);
-            }
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ioex) {
-                    System.err.println(ioex);
-                }
-            }
+        final byte[] header = new byte[8];
+        try (final FileInputStream in = new FileInputStream(file)) {
+            in.read(header);
         }
+        if (Arrays.equals(HEADER_V10, header)) {
+            return new KeyFileV10(file);
+        }
+        if (Arrays.equals(HEADER_V11, header)) {
+            return new KeyFileV11(file);
+        }
+        throw new IllegalArgumentException("Unsupported KEY header: " + new String(header, US_ASCII));
     }
 
-    public abstract Iterator<ResourceID> getResourceIDs();
-
-    public abstract Set<ResourceID> getResourceIDSet();
+    /**
+     * Get set of resource pointers that is known by this index file.
+     *
+     * @return Unmodifiable set of resources in this index
+     */
+    public abstract Set<ResourceID> getResources();
 
     public abstract BifResourceLocation findResource(String resName, short resType);
-
-    public static void main(String[] args) throws Exception {
-        /*
-        KeyFile k = new KeyFile(new File(args[0]));
-        Iterator it = k.getResourceIDs();
-        String white16 = "                ";
-        String zero = "0x0000";
-        String hex = "";
-        while (it.hasNext()) {
-        ResourceID id = (ResourceID) it.next();
-        hex = Integer.toHexString(id.getType());
-        hex = zero.substring(0, 6 - hex.length()) + hex;
-        int bifID = k.lookup(id.getName(), id.getType());
-        System.out.println(id.getName() + white16.substring(id.getName().length()) + " " + ResourceID.type2extensionMap.get(new Integer(id.getType())) + " (" + hex + ")  " + k.getBifName(bifID) + " [" + (bifID % (1 << 20)) + "]");
-        }
-         */
-    }
 }

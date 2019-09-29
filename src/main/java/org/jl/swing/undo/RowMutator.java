@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.swing.ListSelectionModel;
 
-/**
- */
 public class RowMutator<RowData> extends Mutator{
     RowMutable<RowData> model;
     ListSelectionModel lsl;
@@ -16,7 +14,6 @@ public class RowMutator<RowData> extends Mutator{
         public void insertRows( int startRow, List<RowData> rows );
     }
 
-    /** Creates a new instance of RowMutator */
     public RowMutator( Mutator m, RowMutable<RowData> model, ListSelectionModel lsl ){
         super(m);
         this.model = model;

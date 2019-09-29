@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,6 @@ public final class Repositories {
 
     private final HashMap<Descriptor, NwnRepository> repositories = new HashMap<>();
 
-    /** Creates a new instance of Repositories */
     private Repositories() {}
 
     private static class InstanceHolder {
@@ -100,21 +98,11 @@ public final class Repositories {
         Descriptor d = new Descriptor(NwnChainRepository.class, new File[]{propertiesFile});
         NwnRepository r = repositories.get(d);
         if (r == null) {
-            InputStream is = null;
-            try {
+            try (final FileInputStream is = new FileInputStream(propertiesFile)) {
                 Properties p = new Properties();
-                is = new FileInputStream(propertiesFile);
                 p.load(is);
                 r = new NwnChainRepository(p);
                 repositories.put(d, r);
-            } finally {
-                try {
-                    if (is != null) {
-                        is.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }
         return (NwnChainRepository) r;
@@ -127,33 +115,17 @@ public final class Repositories {
 
     public static void extractResourceToFile(NwnRepository rep, ResourceID id, File f) throws IOException {
         System.out.println(f);
-        InputStream is = rep.getResource(id);
-        if (is == null) {
-            return;
-        }
-        OutputStream os = null;
-        try {
-            byte[] buffer = new byte[32000];
-            os = new FileOutputStream(f);
-            int l = 0;
-            while ((l = is.read(buffer)) != -1) {
-                os.write(buffer, 0, l);
+        try (final InputStream is = rep.getResource(id)) {
+            if (is == null) {
+                return;
             }
-            os.flush();
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
+            try (final FileOutputStream os = new FileOutputStream(f)) {
+                final byte[] buffer = new byte[32000];
+                int len;
+                while ((len = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, len);
                 }
-            } catch (IOException ioex) {
-                ioex.printStackTrace();
-            }
-            try {
-                if (os != null) {
-                    os.close();
-                }
-            } catch (IOException ioex) {
-                ioex.printStackTrace();
+                os.flush();
             }
         }
     }
@@ -169,7 +141,7 @@ public final class Repositories {
             dir.deleteOnExit();
             tmpDirMap.put(rep, dir);
         }
-        File f = new File(dir, id.getNameExt());
+        File f = new File(dir, id.getFileName());
         if (f.exists()) {
             f = File.createTempFile(id.getName() + ".", "." + id.getExtension(), dir);
         }

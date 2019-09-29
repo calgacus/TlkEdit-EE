@@ -1,6 +1,3 @@
-/*
- * Created on 17.04.2004
- */
 package org.jl.swing;
 
 import java.awt.Color;
@@ -93,9 +90,6 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
 
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.swingutil.SearchAndReplaceDialog#selectText(int, int)
-         */
     @Override
     protected void selectText(int start, int end) {
         table.scrollRectToVisible( table.getCellRect( row, col, true ) );
@@ -125,9 +119,6 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
         }
     };
     */
-        /* (non-Javadoc)
-         * @see org.jl.swingutil.SearchAndReplaceDialog#getString()
-         */
     @Override
     public String getString() {
         if ( table.getEditingColumn() == col && table.getEditingRow() == row )
@@ -162,9 +153,6 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
             return null;
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.swingutil.SearchAndReplaceDialog#updateString(java.lang.String)
-         */
     @Override
     public void updateString(String s){
         if ( table.getEditingRow() == row && table.getEditingColumn() == col){
@@ -261,6 +249,5 @@ public class TableSearchAndReplace extends SearchAndReplaceDialog {
             super.init();
             return false;
         }
-
     }
 }

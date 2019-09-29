@@ -1,12 +1,3 @@
-/*
- * JHexEdit.java
- *
- * Created on 9. November 2005, 11:22
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 package org.jl.swing;
 
 import java.awt.BorderLayout;
@@ -54,16 +45,6 @@ public class HexEdit extends JPanel{
                     sb.append( Character.isWhitespace(c)? ' ' : font.canDisplay(c)? c : ' ' );
                 }
                 return sb.toString();
-                /*
-                String s;
-                try {
-                    s = new String(bytes16, 0, len, "ASCII");
-                    return s;
-                } catch (UnsupportedEncodingException ex) {
-                    ex.printStackTrace();
-                }
-                return null;
-                 */
             }
             if ( bufferPos >= buffer.capacity() )
                 return null;
@@ -124,7 +105,6 @@ public class HexEdit extends JPanel{
         }
     };
 
-    /** Creates a new instance of HexEdit */
     public HexEdit() {
         table = new JTable();
         table.setModel(model);

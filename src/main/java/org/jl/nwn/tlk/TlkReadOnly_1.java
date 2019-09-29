@@ -1,6 +1,3 @@
-/*
- * TlkReadOnly.java
- */
 package org.jl.nwn.tlk;
 
 import java.io.File;
@@ -35,7 +32,6 @@ public class TlkReadOnly_1 {
     FileInputStream fis;
     FileChannel fc;
 
-    /** Creates a new instance of TlkReadOnly */
     public TlkReadOnly_1( File file, final int cacheSize ) throws IOException{
         fis = new FileInputStream( file );
         fc = fis.getChannel();
@@ -109,6 +105,5 @@ public class TlkReadOnly_1 {
         for ( int i = 1; i < args.length; i++ ) {
             System.out.println("tlkreadonly 107 " + tlk.getString(Integer.parseInt(args[i])));
         }
-
     }
 }

@@ -1,9 +1,3 @@
-/*
- * Created on 29.12.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.erf;
 
 import java.io.BufferedOutputStream;
@@ -279,11 +273,12 @@ public class ErfFile extends AbstractRepository{
             if ( o instanceof ResourceListEntry ){
                 ResourceListEntry rle = (ResourceListEntry) o;
                 return raf.getChannel().map( FileChannel.MapMode.READ_ONLY, rle.offset, rle.size );
-            } else if ( o instanceof File ){
-                RandomAccessFile r = new RandomAccessFile((File)o, "r");
-                MappedByteBuffer mbb = r.getChannel().map( FileChannel.MapMode.READ_ONLY, 0, r.length() );
-                r.close();
-                return mbb;
+            }
+            if ( o instanceof File ){
+                try (final RandomAccessFile r = new RandomAccessFile((File)o, "r")) {
+                    // MappedByteBuffer will be valid even after close file, that created it
+                    return r.getChannel().map( FileChannel.MapMode.READ_ONLY, 0, r.length() );
+                }
             }
             /*
             else if ( o instanceof InputStream )
@@ -359,81 +354,79 @@ public class ErfFile extends AbstractRepository{
         File tmpErf = File.createTempFile( TMPFILEPREFIX + file.getName(), "" );
         byte[] buf = new byte[32000];
         try{
-            RandomAccessFile out = new RandomAccessFile( tmpErf, "rw" );
-            out.write( fileType.getBytes() );
-            out.write( version.getBytes() );
-            writeIntLE( out, languageCount );
-            writeIntLE( out, localizedStringSize );
-            writeIntLE( out, entryCount );
-            writeIntLE( out, offsetToLocalizedString );
-            writeIntLE( out, offsetToKeyList );
-            writeIntLE( out, offsetToResourceList );
-            Calendar rightNow = Calendar.getInstance();
-            writeIntLE( out, rightNow.get( Calendar.YEAR ) - 1900 );
-            writeIntLE( out, rightNow.get( Calendar.DAY_OF_YEAR ) );
-            writeIntLE( out, descriptionStrRef );
-            out.write( buf,0,116 ); // should be all 0
+            try (final RandomAccessFile out = new RandomAccessFile( tmpErf, "rw" )) {
+                out.write( fileType.getBytes() );
+                out.write( version.getBytes() );
+                writeIntLE( out, languageCount );
+                writeIntLE( out, localizedStringSize );
+                writeIntLE( out, entryCount );
+                writeIntLE( out, offsetToLocalizedString );
+                writeIntLE( out, offsetToKeyList );
+                writeIntLE( out, offsetToResourceList );
+                Calendar rightNow = Calendar.getInstance();
+                writeIntLE( out, rightNow.get( Calendar.YEAR ) - 1900 );
+                writeIntLE( out, rightNow.get( Calendar.DAY_OF_YEAR ) );
+                writeIntLE( out, descriptionStrRef );
+                out.write( buf,0,116 ); // should be all 0
 
-            // write localized strings
-            out.write( locStringData, 12, locStringData.length -12 );
+                // write localized strings
+                out.write( locStringData, 12, locStringData.length -12 );
 
-            int offsetToResourceData = offsetToResourceList + (entryCount*8);
-            int resIdCounter = 0;
-            int offset = offsetToResourceData;
-            byte[] zero = new byte[resrefsize];
-            for (final ResourceID id : resources.keySet()) {
-                // write key list entry
-                out.seek( offsetToKeyList + (resIdCounter*(resrefsize+8)) );
-                //String name = id.getName();
-                byte[] nameBytes = id.getName().getBytes("ASCII");
-                int nameLength = Math.min(
-                        nameBytes.length,
-                        resrefsize);
-                out.write( nameBytes, 0, nameLength );
-                out.write( zero,0,resrefsize-nameLength );
-                writeIntLE( out, resIdCounter );
-                out.write(id.getType() & 255);
-                out.write((id.getType() >> 8) & 255);
-                out.write( zero,0,2 );
+                int offsetToResourceData = offsetToResourceList + (entryCount*8);
+                int resIdCounter = 0;
+                int offset = offsetToResourceData;
+                byte[] zero = new byte[resrefsize];
+                for (final ResourceID id : resources.keySet()) {
+                    // write key list entry
+                    out.seek( offsetToKeyList + (resIdCounter*(resrefsize+8)) );
 
-                //write resource data
-                int resourceSize = 0;
-                out.seek(offset);
-                InputStream is = getResource( id );
-                int len = 0;
-                while ( (len=is.read(buf))!=-1 ){
-                    resourceSize += len;
-                    out.write( buf,0,len );
+                    byte[] nameBytes = id.getName().getBytes("ASCII");
+                    int nameLength = Math.min(
+                            nameBytes.length,
+                            resrefsize);
+                    out.write( nameBytes, 0, nameLength );
+                    out.write( zero,0,resrefsize-nameLength );
+                    writeIntLE( out, resIdCounter );
+                    out.write(id.getType() & 255);
+                    out.write((id.getType() >> 8) & 255);
+                    out.write( zero,0,2 );
+
+                    //write resource data
+                    int resourceSize = 0;
+                    out.seek(offset);
+                    try (final InputStream is = getResource( id )) {
+                        int len = 0;
+                        while ( (len=is.read(buf))!=-1 ){
+                            resourceSize += len;
+                            out.write( buf,0,len );
+                        }
+                    }
+
+                    //write resource list entry
+                    out.seek( offsetToResourceList + (8*resIdCounter) );
+                    writeIntLE( out, offset );
+                    writeIntLE( out, resourceSize );
+
+                    // update resource map
+                    // this should not interfere with the iterator, as all ids are already in the key set
+                    if ( !isFileResource(id) )
+                        resources.put( id, new ResourceListEntry(offset, resourceSize) );
+
+                    offset+=resourceSize;
+                    resIdCounter++;
                 }
-                is.close();
-
-                //write resource list entry
-                out.seek( offsetToResourceList + (8*resIdCounter) );
-                writeIntLE( out, offset );
-                writeIntLE( out, resourceSize );
-
-                // update resource map
-                // this should not interfere with the iterator, as all ids are already in the key set
-                if ( !isFileResource(id) )
-                    resources.put( id, new ResourceListEntry(offset, resourceSize) );
-
-                offset+=resourceSize;
-                resIdCounter++;
             }
 
             // copy temp file
-            out.close();
             if ( raf!=null ) raf.close();
-            FileInputStream is = new FileInputStream( tmpErf );
-            FileOutputStream fos = new FileOutputStream( file );
-            FileChannel rc = is.getChannel();
-            FileChannel wc = fos.getChannel();
-            wc.transferFrom( rc, 0, rc.size() );
-            wc.close();
-            fos.flush();
-            fos.close();
-            rc.close();
-            is.close();
+            try (final FileInputStream is = new FileInputStream( tmpErf );
+                 final FileOutputStream fos = new FileOutputStream( file );
+                 final FileChannel rc = is.getChannel();
+                 final FileChannel wc = fos.getChannel()
+            ) {
+                wc.transferFrom( rc, 0, rc.size() );
+                fos.flush();
+            }
             raf = new RandomAccessFile( file, "r" );
         } finally {
             tmpErf.delete();
@@ -501,7 +494,7 @@ public class ErfFile extends AbstractRepository{
      * rewrites this erf file
      * */
     public OutputStream put( ResourceID id ) throws IOException{
-        File f = File.createTempFile( TMPFILEPREFIX, id.toFileName() );
+        final File f = File.createTempFile( TMPFILEPREFIX, id.getFileName() );
         f.deleteOnExit();
         putResource( id, f );
         return new FileOutputStream( f ){
@@ -518,23 +511,17 @@ public class ErfFile extends AbstractRepository{
         return resources.get( id ) != null;
     }
 
-    /**
-     * @return
-     */
     public File getFile() {
         return file;
     }
 
-    /**
-     * @param type
-     */
     public void setType(ErfType type) {
         this.type = type;
     }
 
     /**
-     * (convenience method)
-     * Extracts all files to a directory
+     * Extracts all files to a directory.
+     *
      * @param outputDir all files are extracted to this directory
      * */
     public void extractToDir( File outputDir ) throws IOException{
@@ -543,24 +530,32 @@ public class ErfFile extends AbstractRepository{
         for (final ResourceID id : getResourceIDs()) {
             writeStreamToFile(
                     getResource( id ),
-                    new File( outputDir, id.toFileName() )
+                    new File( outputDir, id.getFileName() )
             );
         }
     }
 
     /**
-     * (convenience method)
-     * Extracts a resource to a temp file. The file can optionally replace the resource in the erf so a call to <code>write()</code> will write the contents of the file to the erf file.
+     * Extracts a resource to a temp file. The file can optionally replace the
+     * resource in the erf so a call to {@link #write()} will write the contents
+     * of the file to the erf file.
+     * <p>
      * The file will be deleted on system exit.
+     *
      * @param id the ID of the resource to be extracted
-     * @param replaceWithFile if true the extracted file will replace the resource contained in the erf when the erf file is written again
-     * @return null if no resource with the given id exists, otherwise return a File object pointing to the extracted resource
-     * @see #write()
-     * */
+     * @param replaceWithFile if {@code true} the extracted file will replace
+     *        the resource contained in the erf when the erf file is written again
+     *
+     * @return {@code null} if no resource with the given id exists, otherwise
+     *         return a File object pointing to the extracted resource
+     *
+     * @throws IOException If resource can not be readed or destination file can
+     *         not be created or writed
+     */
     public File extractAsTempFile( ResourceID id, boolean replaceWithFile ) throws IOException{
         InputStream is = getResource( id );
         if ( is == null ) return null;
-        File f = File.createTempFile( TMPFILEPREFIX, file.getName()+"_"+id.toFileName() );
+        final File f = File.createTempFile( TMPFILEPREFIX, file.getName()+"_"+id.getFileName() );
         f.deleteOnExit();
         writeStreamToFile( is, f );
         if ( replaceWithFile ) putResource( id, f );
@@ -568,16 +563,19 @@ public class ErfFile extends AbstractRepository{
     }
 
     /**
-     * extract resource with given id to directory.
+     * Extract resource with given id to directory.
+     *
      * @param id the ID of the resource to be extracted
      * @param directory
-     * @return null if no resource with the given id exists, otherwise return a File object pointing to the extracted resource
+     *
+     * @return {@code null} if no resource with the given id exists, otherwise
+     *         return a File object pointing to the extracted resource
      * */
     public File extractToDir( ResourceID id, File directory ) throws IOException{
         InputStream is = getResource( id );
         if ( is == null ) return null;
         if ( !directory.exists() ) directory.mkdirs();
-        File f = new File( directory, id.toFileName() );
+        final File f = new File( directory, id.getFileName() );
         writeStreamToFile( is, f );
         return f;
     }
@@ -587,14 +585,14 @@ public class ErfFile extends AbstractRepository{
      * writes stream to file & close stream
      * */
     private static synchronized void writeStreamToFile( InputStream is, File file ) throws IOException{
-        FileOutputStream fos = new FileOutputStream( file );
-        BufferedOutputStream os = new BufferedOutputStream( fos );
-        int len = 0;
-        while ( (len=is.read(streamBuffer))!=-1 )
-            os.write( streamBuffer,0,len );
-        os.flush();
-        os.close();
-        fos.close();
+        try (final FileOutputStream fos = new FileOutputStream( file );
+             final BufferedOutputStream os = new BufferedOutputStream( fos )
+        ) {
+            int len;
+            while ( (len=is.read(streamBuffer))!=-1 )
+                os.write( streamBuffer,0,len );
+            os.flush();
+        }
         is.close();
     }
 
@@ -703,16 +701,10 @@ public class ErfFile extends AbstractRepository{
         return nwnVersion;
     }
 
-    /**
-     * @param string
-     */
     public void setDescription(GffCExoLocString string) {
         description = string;
     }
 
-        /* (non-Javadoc)
-         * @see org.jl.nwn.resource.NwnRepository#getResourceLocation(org.jl.nwn.resource.ResourceID)
-         */
     @Override
     public File getResourceLocation(ResourceID id) {
         return contains(id)? file : null;
@@ -739,5 +731,4 @@ public class ErfFile extends AbstractRepository{
     throws IOException, UnsupportedOperationException {
         return put( id );
     }
-
 }

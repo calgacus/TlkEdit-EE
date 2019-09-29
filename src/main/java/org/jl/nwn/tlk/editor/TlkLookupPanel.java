@@ -18,8 +18,6 @@ import org.jdesktop.swingx.event.MessageSource;
 import org.jdesktop.swingx.event.MessageSourceSupport;
 import org.jl.nwn.tlk.TlkLookup;
 
-/**
- */
 public class TlkLookupPanel extends JPanel implements MessageSource {
 
     private TlkEdit tlkedit = null;

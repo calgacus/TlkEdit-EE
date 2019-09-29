@@ -1,9 +1,3 @@
-/*
- * Handler.java
- *
- * Created on 18. Januar 2006, 13:44
- */
-
 package org.jl.nwn.erf;
 
 import java.io.File;

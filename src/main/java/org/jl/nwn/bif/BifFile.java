@@ -1,5 +1,6 @@
 package org.jl.nwn.bif;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,14 +10,15 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import java.util.Arrays;
 
 import org.jl.nwn.resource.RafInputStream;
 
 /** Read only representation of a bif file. */
-abstract class BifFile {
-    protected static final byte[] header10 = {66, 73, 70, 70, 86, 49, 32, 32};
-    protected static final byte[] header11 = {66, 73, 70, 70, 86, 49, 46, 49};
+abstract class BifFile implements Closeable {
+    protected static final byte[] HEADER_V10 = {66, 73, 70, 70, 86, 49, 32, 32};
+    protected static final byte[] HEADER_V11 = {66, 73, 70, 70, 86, 49, 46, 49};
 
     protected RandomAccessFile raf;
     protected File file;
@@ -43,26 +45,17 @@ abstract class BifFile {
     }
 
     public static BifFile openBifFile(File file) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        BifFile bif = null;
-        try {
-            byte[] header = new byte[8];
+        final byte[] header = new byte[8];
+        try (final FileInputStream in = new FileInputStream(file)) {
             in.read(header);
-            in.close();
-            if (Arrays.equals(header, header10)) {
-                bif = new BifFile10(file);
-            }
-            else if (Arrays.equals(header, header11)) {
-                bif = new BifFile11(file);
-            }
-            else
-                System.err.println("fnord");
-        } finally {
-            if (in != null) {
-                in.close();
-            }
         }
-        return bif;
+        if (Arrays.equals(header, HEADER_V10)) {
+            return new BifFile10(file);
+        }
+        if (Arrays.equals(header, HEADER_V11)) {
+            return new BifFile11(file);
+        }
+        throw new IllegalArgumentException("Unsupported BIFF header: " + new String(header, US_ASCII));
     }
 
     public abstract InputStream getEntry(int idx) throws IOException;
@@ -74,12 +67,18 @@ abstract class BifFile {
     public abstract MappedByteBuffer getEntryAsBuffer(int idx) throws IOException;
 
     public void transferEntryToFile(int entryIndex, File file) throws IOException {
-        FileOutputStream fos = new FileOutputStream(file);
-        FileChannel c = fos.getChannel();
-        transferEntryToChannel(entryIndex, c);
-        c.force(true);
-        c.close();
-        fos.close();
+        try (final FileOutputStream fos = new FileOutputStream(file);
+             final FileChannel c = fos.getChannel()
+        ) {
+            transferEntryToChannel(entryIndex, c);
+            c.force(true);
+        }
+    }
+
+    protected void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Resource index out of bounds [0; " + size + ") : " + index);
+        }
     }
 
     public static final class BifFile10 extends BifFile {
@@ -92,9 +91,7 @@ abstract class BifFile {
 
         @Override
         public InputStream getEntry(int idx) throws IOException {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int offset = readIntLE(raf);
@@ -106,9 +103,7 @@ abstract class BifFile {
 
         @Override
         public int getEntrySize(int idx) {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             try {
                 raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE + 8);
                 return readIntLE(raf);
@@ -121,9 +116,7 @@ abstract class BifFile {
 
         @Override
         public void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException {
-            if ((entryIndex < 0) | (entryIndex >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + entryIndex);
-            }
+            checkIndex(entryIndex);
             raf.seek(variableResourceOffset + entryIndex * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int offset = readIntLE(raf);
@@ -134,9 +127,7 @@ abstract class BifFile {
 
         @Override
         public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int offset = readIntLE(raf);
@@ -156,9 +147,7 @@ abstract class BifFile {
 
         @Override
         public InputStream getEntry(int idx) throws IOException {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int whatever = readIntLE(raf);
@@ -173,9 +162,7 @@ abstract class BifFile {
 
         @Override
         public int getEntrySize(int idx) {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             try {
                 raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE + 12);
                 return readIntLE(raf);
@@ -188,9 +175,7 @@ abstract class BifFile {
 
         @Override
         public void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException {
-            if ((entryIndex < 0) | (entryIndex >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + entryIndex);
-            }
+            checkIndex(entryIndex);
             raf.seek(variableResourceOffset + entryIndex * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int whatever = readIntLE(raf);
@@ -205,9 +190,7 @@ abstract class BifFile {
 
         @Override
         public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
-            if ((idx < 0) | (idx >= size)) {
-                throw new IndexOutOfBoundsException("Resource index out of bounds : " + idx);
-            }
+            checkIndex(idx);
             raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
             int keyfileID = readIntLE(raf);
             int whatever = readIntLE(raf);
@@ -225,6 +208,7 @@ abstract class BifFile {
         return raf.readUnsignedByte() | (raf.readUnsignedByte() << 8) | (raf.readUnsignedByte() << 16) | (raf.readUnsignedByte() << 24);
     }
 
+    @Override
     public void close() throws IOException {
         fc.close();
         raf.close();

@@ -1,9 +1,3 @@
-/*
- * MappedListSelectionModel.java
- *
- * Created on 26.08.2007, 13:41:45
- */
-
 package org.jl.swing.undo;
 
 import javax.swing.ListSelectionModel;

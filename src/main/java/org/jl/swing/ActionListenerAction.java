@@ -14,7 +14,6 @@ public class ActionListenerAction extends AbstractAction{
 
     protected ActionListener al;
 
-    /** Creates a new instance of ActionListenerAction */
     public ActionListenerAction( ActionListener al ) {
         super();
         this.al = al;

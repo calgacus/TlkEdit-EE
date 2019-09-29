@@ -1,14 +1,9 @@
-/*
- * Created on 03.04.2004
- */
 package org.jl.nwn.tlk.editor;
 
 import javax.swing.JFrame;
 
 import org.jl.swing.TableSearchAndReplace;
 
-/**
- */
 class TlkSearchDialog extends TableSearchAndReplace {
     private final TlkEdit edit;
 

@@ -1,9 +1,3 @@
-/*
- * Created on 02.01.2004
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.resource;
 
 import java.io.File;
@@ -121,11 +115,12 @@ public class NwnChainRepository extends AbstractRepository {
         for (NwnRepository r : repositories){
             try {
                 r.close();
-            } catch (IOException ioex){
-                if (firstException == null)
+            } catch (IOException ioex) {
+                if (firstException == null) {
                     firstException = ioex;
-                else
-                    ioex.printStackTrace();
+                } else {
+                    firstException.addSuppressed(ioex);
+                }
             }
         }
         if (firstException != null)

@@ -40,9 +40,6 @@ public abstract class GffField<Data extends Object> implements Cloneable{
         return label + " (" + getTypeName() + ") " + getData();
     }
 
-    /**
-     * Constructor for GffField.
-     */
     protected GffField( String label, byte type ){
         //this.label = label;
         setLabel( label );

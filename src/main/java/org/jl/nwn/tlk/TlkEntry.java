@@ -1,6 +1,3 @@
-/*
- * Created on 31.05.2004
- */
 package org.jl.nwn.tlk;
 
 import java.io.DataInput;
@@ -8,8 +5,6 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/**
- */
 public class TlkEntry implements Cloneable{
 
 	public static final byte TEXT_PRESENT = 1;
@@ -122,17 +117,12 @@ public class TlkEntry implements Cloneable{
 
 	// basically code for custom serialization
 	// screw this ! no i18n support ( encoding / charset )
-	public void writeEntry( DataOutput out )
-		 throws IOException{
-			//System.out.println("x");
-			out.writeByte( getFlags() ); //flags
-			out.writeFloat( getSoundLength() ); //soundLength
-			out.writeByte( getSoundResRef().length() ); // sndResRef size
-			out.write( getSoundResRef().getBytes() );
-			out.writeInt( getString().length() );
-			out.write( getString().getBytes() );
-			//out.flush();
-		 }
-
-
+	public void writeEntry(DataOutput out) throws IOException {
+        out.writeByte( getFlags() ); //flags
+        out.writeFloat( getSoundLength() ); //soundLength
+        out.writeByte( getSoundResRef().length() ); // sndResRef size
+        out.write( getSoundResRef().getBytes() );
+        out.writeInt( getString().length() );
+        out.write( getString().getBytes() );
+    }
 }

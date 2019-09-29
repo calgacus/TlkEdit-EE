@@ -1,7 +1,3 @@
-/*
- * Created on 28.03.2004
- *
- */
 package org.jl.swing;
 
 import java.awt.BorderLayout;
@@ -48,49 +44,49 @@ import javax.swing.event.DocumentListener;
  * Dialog for searching/replacing text in a JTextComponent.
  */
 public abstract class SearchAndReplaceDialog extends JDialog{
-    
+
     //protected SimpleMatcher matcher;
     protected Matcher matcher;
     protected Pattern searchPattern;
-    
+
     protected JLabel statusLabel = new JLabel("[]");
     // the string on which the matcher operates
     private String string = null;
-    
+
     // true if the matcher etc. should be initialized again
     protected boolean invalidState = true;
     private StringBuffer sb = new StringBuffer();
-    
+
     // first search operation will call matcher.find( searchStartPos )
     protected int searchStartPos = 0;
     protected boolean firstSearch = false;
-    
+
     protected int selectionStart;
     protected int selectionEnd;
-    
+
     // used to keep track of the difference between text with&without replacements
     protected int deltaReplacement = 0;
-    
+
     protected JCheckBox cbRegExp = new JCheckBox( "regular expression", false );
     protected JCheckBox cbIgnoreCase = new JCheckBox( "ignore case", true );
     protected JCheckBox cbIncrementalSearch = new JCheckBox( "incremental search", true );
-    
+
     protected JTextField tfSearchString = new JTextField(40);
     protected JTextField tfReplaceString = new JTextField(40);
-    
+
     protected ButtonGroup bgSearchIn = new ButtonGroup();
     protected JRadioButton rbSearchSelection = new JRadioButton( "selection", false );
     protected JRadioButton rbSearchAll = new JRadioButton( "whole file", true );
     protected Box boxSelSettings = new Box( BoxLayout.Y_AXIS );
-    
+
     protected JPanel bottomPanel;
-    
+
     protected JCheckBox cbKeepDialog = new JCheckBox( "keep dialog", false );
-    
+
     protected JButton btnSearch;
     protected JButton btnReplace;
     protected JButton btnReplaceAll;
-    
+
     Action aSearch = new AbstractAction(){
         @Override
         public void actionPerformed( ActionEvent e ){
@@ -101,7 +97,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             //btnSearch.requestFocusInWindow();
         }
     };
-    
+
     Action aReplace = new AbstractAction(){
         @Override
         public void actionPerformed( ActionEvent e ){
@@ -113,7 +109,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             }
         }
     };
-    
+
     Action aReplaceAll = new AbstractAction(){
         @Override
         public void actionPerformed( ActionEvent e ){
@@ -122,13 +118,13 @@ public abstract class SearchAndReplaceDialog extends JDialog{
                 setVisible(false);
         }
     };
-    
+
     // initializer
     {
         bgSearchIn.add( rbSearchAll );
         bgSearchIn.add( rbSearchSelection );
     }
-    
+
     public SearchAndReplaceDialog( JFrame owner ){
         super(owner);
         //setModal(true);
@@ -140,13 +136,13 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         };
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ), "hide" );
         getRootPane().getActionMap().put( "hide", aHide );
-        
+
         setDefaultCloseOperation( HIDE_ON_CLOSE );
         setTitle( "Search And Replace" );
         Box boxMain = new Box( BoxLayout.Y_AXIS );
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add( boxMain, BorderLayout.CENTER );
-        
+
         Box boxInputFields = new Box( BoxLayout.Y_AXIS );
         JLabel fLabel = new JLabel();
         I18nUtil.setText( fLabel, "&Find" );
@@ -158,7 +154,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         rLabel.setLabelFor( tfReplaceString );
         boxInputFields.add( rLabel );
         boxInputFields.add( tfReplaceString );
-        
+
         //Box boxActionButtons = new Box( BoxLayout.Y_AXIS );
         JPanel boxActionButtons = new JPanel(new GridLayout(0,1,0,5));
         btnSearch = new JButton(aSearch);
@@ -167,28 +163,28 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         boxActionButtons.add( btnSearch );
         boxActionButtons.add( btnReplace = new JButton(aReplace) );
         boxActionButtons.add( btnReplaceAll = new JButton(aReplaceAll) );
-        
+
         JPanel topPanel = new JPanel();
         topPanel.add( boxInputFields );
         topPanel.add( boxActionButtons );
-        
+
         Box boxSettings = new Box( BoxLayout.Y_AXIS );
         //boxSettings.add( new JLabel( "settings : ") );
         boxSettings.setAlignmentY(Box.TOP_ALIGNMENT);
         boxSettings.setBorder( new TitledBorder("Options") );
         boxSettings.add( cbRegExp );
         boxSettings.add( cbIgnoreCase );
-        
+
         //boxSelSettings.add( new JLabel("search in : ") );
         boxSelSettings.setAlignmentY(Box.TOP_ALIGNMENT);
         boxSelSettings.setBorder( new TitledBorder("Scope") );
         boxSelSettings.add( rbSearchAll );
         boxSelSettings.add( rbSearchSelection );
-        
+
         bottomPanel = new JPanel( new FlowLayout(FlowLayout.LEADING) );
         bottomPanel.add( boxSelSettings );
         bottomPanel.add( boxSettings );
-        
+
         rbSearchSelection.addChangeListener( new ChangeListener(){
             @Override
             public void stateChanged( ChangeEvent e ){
@@ -196,10 +192,10 @@ public abstract class SearchAndReplaceDialog extends JDialog{
                 btnReplace.setEnabled( !rbSearchSelection.isSelected() );
             }
         } );
-        
+
         boxMain.add( topPanel );
         boxMain.add( bottomPanel );
-        
+
         ChangeListener cl = new ChangeListener(){
             @Override
             public void stateChanged( ChangeEvent e ){
@@ -209,7 +205,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         };
         cbIgnoreCase.addChangeListener(cl);
         cbRegExp.addChangeListener(cl);
-        
+
         KeyListener kl = new KeyAdapter(){
             @Override
             public void keyPressed( KeyEvent e ){
@@ -218,7 +214,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             }
         };
         tfReplaceString.addKeyListener(kl);
-        
+
         DocumentListener dl = new DocumentListener(){
             @Override
             public void changedUpdate( DocumentEvent de ){}
@@ -237,13 +233,13 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             }
         };
         tfSearchString.getDocument().addDocumentListener(dl);
-        
+
         //bottomPanel.add( cbKeepDialog );
         JPanel bottom = new JPanel( new FlowLayout(FlowLayout.LEFT) );
         bottom.add( cbKeepDialog );
         bottom.add( cbIncrementalSearch );
         boxMain.add( bottom );
-        
+
         // setup hot keys & tooltips
         I18nUtil.setText( cbRegExp, "Regular E&xpression" );
         I18nUtil.setText( cbIgnoreCase, "Ignore &Case" );
@@ -254,12 +250,12 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         I18nUtil.setText( btnSearch, "Fi&nd" );
         I18nUtil.setText( btnReplace, "&Replace && Find" );
         I18nUtil.setText( btnReplaceAll, "Replace &All" );
-        
+
         getContentPane().add(statusLabel, BorderLayout.SOUTH);
         //pack();
         setResizable(false);
     }
-    
+
     @Override public void setVisible(boolean v){
         if ( v ){
             if ( !isDisplayable() )
@@ -271,13 +267,12 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             dispose();
         }
     }
-    
+
     public SearchAndReplaceDialog(){
         this(null);
     }
-    
+
     public void init(){
-        //System.out.println( "SnD.init()" );
         invalidState = false;
         firstSearch = true;
         sb.delete( 0, sb.length() );
@@ -290,7 +285,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             invalidState = true;
         searchStartPos = 0;
     }
-    
+
     protected Pattern newPattern(){
         int flags = 0;
         if ( cbIgnoreCase.isSelected() )
@@ -306,8 +301,8 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         }
         return p;
     }
-    
-    
+
+
     /**
      * try to replace currently used pattern with content of search text field.
      */
@@ -326,7 +321,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         else
             matcher.usePattern(searchPattern);
     }
-    
+
     /**
      * should be called by the editor/client when the value of string has changed,
      * i.e. when this object must reread the string and reinitialize the search pattern & matcher.
@@ -342,9 +337,8 @@ public abstract class SearchAndReplaceDialog extends JDialog{
                         //btnReplaceAll.setEnabled(false);
                 }
              */
-        //if (invalidState) System.out.println( "state invalid" );
     }
-    
+
     /**
      * test whether the matcher has found a match
      * */
@@ -358,7 +352,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         }
         return true;
     }
-    
+
     /**
      return a replacement string that will work with the current matcher
      */
@@ -368,14 +362,14 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             replacement = Matcher.quoteReplacement(replacement);
         return replacement;
     }
-    
+
     public final void replaceMatch(){
         matcher.appendReplacement( sb, getReplacement() );
         updateString( sb.toString() + string.substring( matcher.end() ) );
         deltaReplacement = sb.length() - matcher.end();
         //System.out.println( deltaReplacement );
     }
-    
+
     /**
      * reset matcher and replace all occurences in selection or in whole file
      * */
@@ -391,17 +385,17 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             updateString( matcher.appendTail( sb ).toString() );
         invalidState = true;
     }
-    
+
     private void selectText(){
         selectText( matcher.start() + deltaReplacement, matcher.end() + deltaReplacement );
     }
-    
+
     protected abstract void selectText( int start, int end );
-    
+
     public abstract String getString();
-    
+
     public abstract void updateString( String s );
-    
+
     public final void doSearch(){
         if ( invalidState ){
             searchPattern = newPattern();
@@ -426,7 +420,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             }
         }
     }
-    
+
     protected Runnable GrabFocus = new Runnable() {
         @Override
         public void run() {
@@ -436,7 +430,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             }
         }
     };
-    
+
     protected Runnable SetOK = new Runnable() {
         @Override
         public void run() {
@@ -444,19 +438,16 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             //System.out.println("SetOK " + invalidState);
         }
     };
-    
+
     public boolean search(){
-        //System.out.println("SearchAndReplaceDialog.search() " + invalidState);
         boolean stringFound = false;
         if ( invalidState )
             init();
-        //if ( firstSearch ) System.out.println( "start search at : " + searchStartPos );
         stringFound = firstSearch? matcher.find( searchStartPos ) : matcher.find();
         firstSearch = false;
-        //System.out.println( stringFound? "match at : "+matcher.start() : "not found" );
         return stringFound && matchIsInSelection();
     }
-    
+
     /**
      * test whether the current match is in the selection
      * @return true if the match is whithin the selection OR if there is no selection ( in that case the whole string is treated as selected ).
@@ -469,7 +460,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         else
             return true;
     }
-    
+
     public static void main(String[] args) throws IOException{
         JFrame f = new JFrame();
         f.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
@@ -501,12 +492,11 @@ public abstract class SearchAndReplaceDialog extends JDialog{
                 sar.invalidate();
             }
         } );
-        
+
         f.getContentPane().add( new JScrollPane(t) );
         f.pack();
         f.setSize( 700, 300 );
         f.setVisible(true);
         sar.setVisible(true);
     }
-    
 }

@@ -33,11 +33,6 @@ public class MyUndoManager extends UndoManager{
         redoAction.putValue(Action.NAME, getRedoPresentationName());
     }
 
-    /** Creates a new instance of MyUndoManager */
-    public MyUndoManager() {
-        super();
-    }
-
     @Override
     public void undoableEditHappened(javax.swing.event.UndoableEditEvent e) {
         super.undoableEditHappened(e);

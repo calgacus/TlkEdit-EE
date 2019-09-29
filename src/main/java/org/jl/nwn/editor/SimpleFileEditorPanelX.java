@@ -1,9 +1,3 @@
-/*
- * SimpleFileEditorPanelX.java
- *
- * Created on 15. Mai 2005, 19:30
- */
-
 package org.jl.nwn.editor;
 
 import java.io.File;

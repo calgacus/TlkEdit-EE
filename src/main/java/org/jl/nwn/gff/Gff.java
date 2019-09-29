@@ -1,9 +1,3 @@
-/*
- * Gff.java
- *
- * Created on 7. Mai 2005, 11:07
- */
-
 package org.jl.nwn.gff;
 
 import java.math.BigInteger;

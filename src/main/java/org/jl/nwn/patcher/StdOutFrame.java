@@ -1,9 +1,3 @@
-/*
- * Created on 18.08.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.patcher;
 
 import java.awt.BorderLayout;
@@ -22,12 +16,12 @@ import javax.swing.JToolBar;
 ;
 
 /**
- * @author ich
- *
  * StdOutFrame displays the standard out and standard error streams ( System.out / System.err )
  * in a JTextArea ( uses a t piece to pipe System.out/err to the usual place )
  *
- * StdOutFrame is a Singleton, use StdOutFrame.getInstance() to get the single instant
+ * StdOutFrame is a Singleton, use {@link StdOutFrame#getInstance()} to get the single instant.
+ *
+ * @author ich
  */
 public class StdOutFrame extends JFrame {
 

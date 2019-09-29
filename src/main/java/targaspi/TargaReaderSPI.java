@@ -7,8 +7,6 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
-/**
- */
 public class TargaReaderSPI extends ImageReaderSpi{
     static String vendorName = "foo";
     static String version = "0.1b";
@@ -35,7 +33,6 @@ public class TargaReaderSPI extends ImageReaderSpi{
     static String[] extraImageMetadataFormatNames = null;
     static String[] extraImageMetadataFormatClassNames = null;
 
-    /** Creates a new instance of TargaReaderSPI */
     public TargaReaderSPI() {
         super(
                 vendorName,
@@ -68,18 +65,15 @@ public class TargaReaderSPI extends ImageReaderSpi{
 
     @Override
     public ImageReader createReaderInstance(Object extension) throws IOException {
-        //System.out.println("createReaderInstance");
         if ( readerInstance == null )
             readerInstance = new TargaReader(this);
         return readerInstance;
     }
 
     @Override
-    public boolean canDecodeInput(Object source) throws java.io.IOException {
-        //System.out.println("TargaReaderSPI.canDecodeInput : " + source);
+    public boolean canDecodeInput(Object source) throws IOException {
         /*
         if ( source instanceof File ){
-            System.out.println("File !");
             return TargaImage.canDecode((File)source);
         }
          */
@@ -88,17 +82,15 @@ public class TargaReaderSPI extends ImageReaderSpi{
         byte[] header = new byte[8];
         is.read(header);
         is.reset();
-        //System.out.println("color map : " + header[1]);
         if ( header[1] != 0 ) // 1 for color mapped images
             return false;
-        //System.out.println("picture type : " + header[2]);
         if ( header[2] != 2 && header[2] != 10 ) // uncompressed or rle true color
             return false;
-        //System.out.println("TargaReaderSPI accept");
         return true;
     }
 
-    @Override public void onRegistration(ServiceRegistry registry, Class<?> category){
+    @Override
+    public void onRegistration(ServiceRegistry registry, Class<?> category) {
         super.onRegistration( registry, category );
         boolean b = false;
         try{
@@ -110,13 +102,8 @@ public class TargaReaderSPI extends ImageReaderSpi{
                         ImageReaderSpi.class,
                         targa,
                         wbmp );
-                //System.out.println("ImageProviderOrdering set : " + b);
-            } else{
-                //System.out.println("com.sun.imageio.plugins.wbmp.WBMPImageReaderSPI not registered");
             }
         } catch ( ClassNotFoundException cnfe ){
-            //System.out.println("com.sun.imageio.plugins.wbmp.WBMPImageReaderSPI not installed");
         }
-        //System.out.println("registered TargaReader SPI, setOrdering vs WBMP : " +b);
     }
 }

@@ -10,7 +10,6 @@ public class LittleEndianDataInputStream extends FilterInputStream implements Da
 
     private final DataInputStream dis;
 
-    /** Creates a new instance of LittleEndianDataInputStream */
     public LittleEndianDataInputStream(InputStream in) {
         super(in);
         dis = new DataInputStream(in);
@@ -70,6 +69,7 @@ public class LittleEndianDataInputStream extends FilterInputStream implements Da
      @deprecated string decoding always using default charset
      */
     @Override
+    @Deprecated
     public String readLine() throws IOException {
         return dis.readLine();
     }

@@ -1,12 +1,3 @@
-/*
- * StatusBar.java
- *
- * Created on 25.08.2007, 09:42:01
- *
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.jl.nwn.editor;
 
 import java.awt.event.ActionEvent;
@@ -24,8 +15,6 @@ import org.jdesktop.swingx.event.MessageListener;
 import org.jdesktop.swingx.event.ProgressEvent;
 import org.jdesktop.swingx.event.ProgressListener;
 
-/**
- */
 public class StatusBar implements MessageListener, ProgressListener {
 
     protected final JProgressBar progressBar = new JProgressBar();

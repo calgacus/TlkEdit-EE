@@ -21,14 +21,11 @@ import org.jl.nwn.erf.ErfFile;
 import org.jl.nwn.resource.NwnRepository;
 import org.jl.nwn.resource.ResourceID;
 
-/**
- */
 public class RepositoryTreeView {
 
     private JXTreeTable treeTable;
     private Model model = null;
 
-    /** Creates a new instance of RepositoryView */
     public RepositoryTreeView() {
         model = new Model();
         treeTable = new JXTreeTable(model);

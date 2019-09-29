@@ -16,7 +16,6 @@ import javax.swing.UIDefaults;
  * from /resources/foo.png through the classloader's getResource() method.
  */
 public class UIDefaultsX extends UIDefaults{
-    /** Creates a new instance of UIDefaultsX */
     public UIDefaultsX() {
         super();
         for (Object e : keySet())

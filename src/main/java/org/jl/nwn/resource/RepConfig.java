@@ -1,7 +1,3 @@
-/*
- * RepConfig.java
- */
-
 package org.jl.nwn.resource;
 
 import java.io.File;

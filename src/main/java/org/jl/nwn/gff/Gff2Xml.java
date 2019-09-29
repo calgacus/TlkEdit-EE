@@ -1,12 +1,3 @@
-/*
- * Gff2Xml.java
- *
- * Created on 14. November 2005, 20:31
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 package org.jl.nwn.gff;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,14 +12,9 @@ import org.w3c.dom.Node;
  */
 public class Gff2Xml {
 
-    public Gff2Xml() {
-    }
+    private Gff2Xml() {}
 
     static Document doc = null;
-
-    static{
-        //static Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-    }
 
     public static Document convertToXml( GffField field ) throws ParserConfigurationException{
         doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();

@@ -1,9 +1,3 @@
-/*
- * Created on 16.11.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.jl.nwn.twoDa.cellEditors;
 
 import java.awt.Color;
@@ -16,27 +10,21 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/**
- * @author ich
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class MappedTableCellRenderer extends DefaultTableCellRenderer {
 
-	private Map map;
+    private Map<String, String> map;
 	public Object unknownValue = "???";
 	private Color defaultForeground = getForeground();
-	
+
 	public MappedTableCellRenderer( Map map ){
 		super();
 		this.map = map;
 	}
-	
+
 	public MappedTableCellRenderer( MappedCellEditor ed ){
 		this( ed.map );
 	}
-	
+
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
 		Object o = map.get(value);
@@ -47,7 +35,7 @@ public class MappedTableCellRenderer extends DefaultTableCellRenderer {
 		}
 		return super.getTableCellRendererComponent( table, o, isSelected, hasFocus, row, column );
 	}
-	
+
 	public MappedTableCellRenderer( Element e ){
 		super();
 		NodeList entries = e.getElementsByTagName( "entry" );
@@ -60,5 +48,4 @@ public class MappedTableCellRenderer extends DefaultTableCellRenderer {
 		}
 		map = MappedCellEditor.buildMap( values, labels );
 	}
-
 }

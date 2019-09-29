@@ -8,7 +8,6 @@ import org.jl.swing.undo.TableModelMutator;
 
 public class TlkModelMutator extends TableModelMutator{
 
-    /** Creates a new instance of TlkModelMutator */
     public TlkModelMutator( TlkModel model, ListSelectionModel lsl ){
         super(model, lsl);
     }

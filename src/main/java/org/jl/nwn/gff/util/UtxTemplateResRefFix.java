@@ -1,6 +1,3 @@
-/*
-        change the TemplateResRef field in UTx files to match the file name
- */
 package org.jl.nwn.gff.util;
 
 import java.io.File;
@@ -11,6 +8,7 @@ import org.jl.nwn.gff.GffCResRef;
 import org.jl.nwn.gff.GffContent;
 import org.jl.nwn.resource.ResourceID;
 
+/** Change the TemplateResRef field in UTx files to match the file name. */
 public class UtxTemplateResRefFix {
 
     public static void main(String[] args) throws Exception{

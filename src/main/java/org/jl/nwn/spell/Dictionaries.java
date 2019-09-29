@@ -1,6 +1,3 @@
-/*
- */
-
 package org.jl.nwn.spell;
 
 import java.io.File;
@@ -15,8 +12,6 @@ import org.dts.spell.dictionary.OpenOfficeSpellDictionary;
 import org.dts.spell.dictionary.SpellDictionary;
 import org.jl.nwn.NwnLanguage;
 
-/**
- */
 public class Dictionaries {
 
     static EnumMap<NwnLanguage, SpellDictionary> dicts = new EnumMap<>(NwnLanguage.class);
@@ -24,12 +19,12 @@ public class Dictionaries {
     static Properties props = new Properties();
 
     static{
-        try{
-            InputStream is = Dictionaries.class.getClassLoader().getResourceAsStream(
-                    "dict/dictionaries.properties");
+        try (final InputStream is = Dictionaries.class.getClassLoader().getResourceAsStream(
+            "dict/dictionaries.properties"
+        )) {
             if ( is != null ) {
                 props.load(is);
-                System.out.println("Dictionaries.java   found props  " );
+                System.out.println("Spell checker dictionaries list loaded from dict/dictionaries.properties" );
             }
         } catch (IOException ioex){
             ioex.printStackTrace();
