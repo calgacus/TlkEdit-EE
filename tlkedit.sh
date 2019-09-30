@@ -14,6 +14,11 @@ fi
 
 # set tlkedit.serverport=-1 to disable server socket
 
+#TlkEdit-EE-1.0-SNAPSHOT.jar
+if [ ! -f "$TLKEDIT_HOME/tlkedit.jar" ]; then
+	cp  "$TLKEDIT_HOME/target/TlkEdit-EE-1.0-SNAPSHOT.jar"  "$TLKEDIT_HOME/tlkedit.jar" 
+fi
+
 java -Xmx128M -Dswing.aatext=true \
   -Dcom.apple.macos.useScreenMenuBar=true \
   -Dtlkedit.serverport=4712 \
