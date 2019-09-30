@@ -1,87 +1,112 @@
 package org.jl.nwn;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public enum NwnLanguage{
+import org.jl.nwn.gff.GffCExoLocString;
+import org.jl.nwn.tlk.TlkContent;
 
-    ENGLISH( "English", Version.NWN1, 0, Locale.ENGLISH ),
-    FRENCH( "French", Version.NWN1, 1, Locale.FRENCH ),
-    GERMAN( "German", Version.NWN1, 2, Locale.GERMAN ),
-    ITALIAN( "Italian", Version.NWN1, 3, Locale.ITALIAN ),
-    SPANISH( "Spanish", Version.NWN1, 4, new Locale("es") ),
-    POLISH( "Polish", Version.NWN1, 5, new Locale("pl") ),
+/**
+ * Enumeration of known language codes, used by NWN 1, NWN 2 and The Witcher,
+ * and some metainformation about it.
+ *
+ * @author Mingun
+ */
+public enum NwnLanguage {
+    // Neverwinter Nights languages
+    ENGLISH  (Version.NWN1,   0, "English", Locale.ENGLISH  ),
+    FRENCH   (Version.NWN1,   1, "French" , Locale.FRENCH   ),
+    GERMAN   (Version.NWN1,   2, "German" , Locale.GERMAN   ),
+    ITALIAN  (Version.NWN1,   3, "Italian", Locale.ITALIAN  ),
+    SPANISH  (Version.NWN1,   4, "Spanish", new Locale("es")),
+    POLISH   (Version.NWN1,   5, "Polish" , new Locale("pl")),
+    KOREAN   (Version.NWN1, 128, "Korean" , Locale.KOREAN   ),
+    CHIN_TRAD(Version.NWN1, 129, "Chinese, Traditional", Locale.TRADITIONAL_CHINESE ),
+    CHIN_SIMP(Version.NWN1, 130, "Chinese, Simplified", Locale.SIMPLIFIED_CHINESE ),
+    JAPANESE (Version.NWN1, 131, "Japanese", Locale.JAPANESE),
 
-    KOREAN( "Korean", Version.NWN1, 128, Locale.KOREAN ),
-    CHIN_TRAD( "Chinese, Traditional", Version.NWN1, 129, Locale.TRADITIONAL_CHINESE ),
-    CHIN_SIMP( "Chinese, Simplified", Version.NWN1, 130, Locale.SIMPLIFIED_CHINESE ),
-    JAPANESE( "Japanese", Version.NWN1, 131, Locale.JAPANESE ),
+    // Neverwinter Nights 2 languages
+    NWN2_TOKENID    (Version.NWN2,  -1, "GffToken", Locale.ENGLISH ),
+    NWN2_ENGLISH    (Version.NWN2,   0, "English" , Locale.ENGLISH ),
+    NWN2_FRENCH     (Version.NWN2,   1, "French"  , Locale.FRENCH),
+    NWN2_GERMAN     (Version.NWN2,   2, "German"  , Locale.GERMAN ),
+    NWN2_ITALIAN    (Version.NWN2,   3, "Italian" , Locale.ITALIAN ),
+    NWN2_SPANISH    (Version.NWN2,   4, "Spanish" , new Locale("es") ),
+    NWN2_POLISH     (Version.NWN2,   5, "Polish"  , new Locale("pl") ),
+    NWN2_6          (Version.NWN2,   6, "UnknownNwn2(RU?)", new Locale("ru") ),
+    NWN2_KOREAN     (Version.NWN2, 128, "Korean"  , Locale.KOREAN ),
+    NWN2_CHIN_TRAD  (Version.NWN2, 129, "Chinese, Traditional", Locale.TRADITIONAL_CHINESE ),
+    NWN2_CHIN_SIMP  (Version.NWN2, 130, "Chinese, Simplified", Locale.SIMPLIFIED_CHINESE ),
+    NWN2_JAPANESE   (Version.NWN2, 131, "Japanese", Locale.JAPANESE ),
 
-    NWN2_TOKENID( "GffToken", Version.NWN2, -1, Locale.ENGLISH ),
-    NWN2_ENGLISH( "English", Version.NWN2, 0, Locale.ENGLISH ),
-    NWN2_FRENCH( "French", Version.NWN2, 1, Locale.FRENCH),
-    NWN2_GERMAN( "German", Version.NWN2, 2, Locale.GERMAN ),
-    NWN2_ITALIAN( "Italian", Version.NWN2, 3, Locale.ITALIAN ),
-    NWN2_SPANISH( "Spanish", Version.NWN2, 4, new Locale("es") ),
-    NWN2_POLISH( "Polish", Version.NWN2, 5, new Locale("pl") ),
-    NWN2_6( "UnknownNwn2(RU?)", Version.NWN2, 6, new Locale("ru") ),
-    NWN2_KOREAN( "Korean", Version.NWN2, 128, Locale.KOREAN ),
-    NWN2_CHIN_TRAD( "Chinese, Traditional", Version.NWN2, 129, Locale.TRADITIONAL_CHINESE ),
-    NWN2_CHIN_SIMP( "Chinese, Simplified", Version.NWN2, 130, Locale.SIMPLIFIED_CHINESE ),
-    NWN2_JAPANESE( "Japanese", Version.NWN2, 131, Locale.JAPANESE ),
+    // The Witcher languages
+    WI_DEBUG             (Version.WITCHER,  0, "Debug"    , Locale.ENGLISH ),
+    WI_ENGLISH           (Version.WITCHER,  1, "English"  , Locale.ENGLISH),
+    WI_FINALENGLISH      (Version.WITCHER,  2, "FinalEnglish", Locale.ENGLISH),
+    WI_FINALENGLISH_SHORT(Version.WITCHER,  3, "FinalEnglish_Short", Locale.ENGLISH),
+    WI_POLISH            (Version.WITCHER,  5, "Polish"   , new Locale("pl")),
+    WI_GERMAN            (Version.WITCHER, 10, "German"   , Locale.GERMAN),
+    WI_FRENCH            (Version.WITCHER, 11, "French"   , Locale.FRENCH),
+    WI_SPANISH           (Version.WITCHER, 12, "Spanish"  , new Locale("es")),
+    WI_ITALIAN           (Version.WITCHER, 13, "Italian"  , Locale.ITALIAN),
+    WI_RUSSIAN           (Version.WITCHER, 14, "Russian"  , new Locale("ru")),
+    WI_CZECH             (Version.WITCHER, 15, "Czech"    , new Locale("cs")),
+    WI_HUNGARIAN         (Version.WITCHER, 16, "Hungarian", new Locale("hu")),
+    WI_KOREAN            (Version.WITCHER, 20, "Korean"   , Locale.KOREAN ),
+    WI_CHIN_TRAD         (Version.WITCHER, 21, "Chinese, Traditional", Locale.TRADITIONAL_CHINESE),
+    WI_CHIN_SIMP         (Version.WITCHER, 22, "Chinese, Simplified", Locale.SIMPLIFIED_CHINESE );
 
-    WI_DEBUG( "Debug", Version.WITCHER, 0, Locale.ENGLISH ),
-    WI_ENGLISH( "English", Version.WITCHER, 1, Locale.ENGLISH),
-    WI_FINALENGLISH("FinalEnglish", Version.WITCHER, 2, Locale.ENGLISH),
-    WI_FINALENGLISH_SHORT("FinalEnglish_Short", Version.WITCHER, 3, Locale.ENGLISH),
-    WI_POLISH("Polish", Version.WITCHER, 5, new Locale("pl")),
-    WI_GERMAN("German", Version.WITCHER, 10, Locale.GERMAN),
-
-    WI_FRENCH("French", Version.WITCHER, 11, Locale.FRENCH),
-    WI_SPANISH("Spanish", Version.WITCHER, 12, new Locale("es")),
-    WI_ITALIAN("Italian", Version.WITCHER, 13, Locale.ITALIAN),
-    WI_RUSSIAN("Russian", Version.WITCHER, 14, new Locale("ru")),
-    WI_CZECH("Czech", Version.WITCHER, 15, new Locale("cs")),
-    WI_HUNGARIAN("Hungarian", Version.WITCHER, 16, new Locale("hu")),
-
-    WI_KOREAN("Korean", Version.WITCHER, 20, Locale.KOREAN ),
-    WI_CHIN_TRAD("Chinese, Traditional", Version.WITCHER, 21, Locale.TRADITIONAL_CHINESE),
-    WI_CHIN_SIMP("Chinese, Simplified", Version.WITCHER, 22, Locale.SIMPLIFIED_CHINESE );
-
-    private final String name;
+    /** Version of game engine, which uses that language. */
+    private final Version version;
+    /** Language code, that used by the game engine. */
     private final int code;
-    private Version version;
-    // language locale
+    /** Name for language, used in the GUI. */
+    private final String name;
+    /** Locale, used for spell checking for this language. */
     private final Locale locale;
 
-    private NwnLanguage( String name, Version v, int code, Locale locale ){
+    private NwnLanguage(Version v, int code, String name, Locale locale) {
         this.name=name;
         this.code=code;
         this.version=v;
         this.locale=locale;
     }
 
+    /** @return Name for language, used in the GUI. */
     public String getName(){
         return name;
     }
 
+    /** @return Language code, that used by the game engine. */
     public int getCode(){
         return code;
     }
 
-    public Version getVersion(){
-        return version;
-    }
-
+    /**
+     * @deprecated Some localizations (for example, Russian NWN1) use language
+     * code 0 (English) and spell checking for such TLKs must be performed with
+     * russian dictionaries. So, dictionary must not depend on the default locale
+     * for language.
+     *
+     * @return Locale, used for spell checking for this language.
+     */
+    @Deprecated
     public Locale getLocale(){
         return locale;
     }
 
+    /**
+     * Encoding, that used for reading and writing GFF {@link GffCExoLocString}
+     * fields and {@link TlkContent TLK files}. By default this encoding determined
+     * by the engine language, but it can be overrided via JVM command-line argument
+     * {@code -Dtlkedit.charsetOverride=<charset>}.
+     *
+     * @return String with name of encoding, that used for encoding/decoding
+     *         strings of that language.
+     */
     public String getEncoding(){
         return ENCODINGS.get(this);
     }
@@ -91,47 +116,59 @@ public enum NwnLanguage{
         return name;
     }
 
-    public static NwnLanguage find( Version v, int code ){
-        Set<NwnLanguage> s = null;
-        switch (v){
-            case NWN1 : s=NWN1_LANGUAGES; break;
-            case NWN2 : s=NWN2_LANGUAGES; break;
-            case WITCHER : s=WITCHER_LANGUAGES; break;
+    /**
+     * Resolves specified language code againist specified game version.
+     *
+     * @param version Game version. Different games uses different codes to encode
+     *        languages
+     * @param code Language code, used by the game engine
+     *
+     * @return Object that represents language and can be used for retrivieng
+     *         encoding and locale information
+     *
+     * @throws IllegalArgumentException If specified code in not known for the engine version
+     */
+    public static NwnLanguage find(Version version, int code) {
+        for (final NwnLanguage lang : findAll(version)) {
+            if (lang.code == code) { return lang; }
         }
-        for ( NwnLanguage l : s )
-            if ( l.getCode() == code )
-                return l;
-        String errmsg = "Error : unsupported language, language code : "
-                + code + ", Version : " + v;
-        System.err.println(errmsg);
-        throw new Error(
-                errmsg);
+        throw new IllegalArgumentException(version + ": unsupported language code " + code);
     }
 
-    public static List<NwnLanguage> findAll(Version v){
-        final List<NwnLanguage> l = new ArrayList<>();
-        for (final NwnLanguage lang : NwnLanguage.values()) {
-            if (lang.getVersion().equals(v)) {
-                l.add(lang);
-            }
+    /**
+     * Returns set of languages, that is known for the specified game engine version.
+     *
+     * @param version Game version for which need to return languages
+     *
+     * @return Unmodifiable set of all languages for the specified game version
+     */
+    public static Set<NwnLanguage> findAll(Version version) {
+        switch (version) {
+            case NWN1   : return NWN1_LANGUAGES;
+            case NWN2   : return NWN2_LANGUAGES;
+            case WITCHER: return WITCHER_LANGUAGES;
         }
-        return l;
+        throw new IllegalArgumentException("Unknown game version " + version);
     }
 
-    public static void setEncoding(NwnLanguage l, String enc){
-        ENCODINGS.put(l, enc);
-    }
+    /**
+     * Customizable mapping from engine language to Charset, used for
+     * encoding/decoding strings in GFF {@link GffCExoLocString} fields
+     * and TLK files.
+     */
+    private final static EnumMap<NwnLanguage, String> ENCODINGS;
 
-    private static EnumMap<NwnLanguage, String> ENCODINGS;
+    /** Unmodifiable collection of all languages for version = NWN1. */
+    private final static Set<NwnLanguage> NWN1_LANGUAGES = Collections.unmodifiableSet(
+            EnumSet.range(ENGLISH, JAPANESE));
 
-    public final static Set<NwnLanguage> NWN1_LANGUAGES = Collections.unmodifiableSet(
-            EnumSet.range(NwnLanguage.ENGLISH, NwnLanguage.JAPANESE));
+    /** Unmodifiable collection of all languages for version = NWN2. */
+    private final static Set<NwnLanguage> NWN2_LANGUAGES = Collections.unmodifiableSet(
+            EnumSet.range(NWN2_TOKENID, NWN2_JAPANESE));
 
-    public final static Set<NwnLanguage> NWN2_LANGUAGES = Collections.unmodifiableSet(
-            EnumSet.range(NwnLanguage.NWN2_TOKENID, NwnLanguage.NWN2_JAPANESE));
-
-    public final static Set<NwnLanguage> WITCHER_LANGUAGES = Collections.unmodifiableSet(
-            EnumSet.range(NwnLanguage.WI_DEBUG, NwnLanguage.WI_CHIN_SIMP));
+    /** Unmodifiable collection of all languages for version = WITCHER. */
+    private final static Set<NwnLanguage> WITCHER_LANGUAGES = Collections.unmodifiableSet(
+            EnumSet.range(WI_DEBUG, WI_CHIN_SIMP));
 
     public final static NwnLanguage[] LANGUAGES = NWN1_LANGUAGES.toArray(new NwnLanguage[NWN1_LANGUAGES.size()]);
 
@@ -150,46 +187,23 @@ public enum NwnLanguage{
 
         for (NwnLanguage l : NWN2_LANGUAGES )
             ENCODINGS.put( l, "UTF-8" );
-        /*
-        encodings.put( WI_DEBUG, "windows-1252" );
-        encodings.put( WI_ENGLISH, "windows-1252" );
-        encodings.put( WI_FINALENGLISH, "windows-1252" );
-        encodings.put( WI_FINALENGLISH_SHORT, "windows-1252" );
-        encodings.put( WI_POLISH, "windows-1250" );
-        encodings.put( WI_FRENCH, "windows-1252" );
-        encodings.put( WI_GERMAN, "windows-1252" );
-        encodings.put( WI_ITALIAN, "windows-1252" );
-        encodings.put( WI_SPANISH, "windows-1252" );
-        //encodings.put( WI_RUSSIAN, "windows-1250" );
-        encodings.put( WI_RUSSIAN, "UTF-8" );
-        encodings.put( WI_CZECH, "windows-1251" );
-        encodings.put( WI_HUNGARIAN, "windows-1251" );
-        //encodings.put( WI_KOREAN, "MS949" );
-        encodings.put( WI_KOREAN, "UTF-8" );
-        encodings.put( WI_CHINESETRAD, "UTF-8" );
-        //encodings.put( WI_CHINESETRAD, "MS950" );
-        //encodings.put( WI_CHINESESIMP, "MS936" );
-        encodings.put( WI_CHINESESIMP, "UTF-8" );
-        */
         // languages.2da lists different codepages, however the tlk files in the
         // game seem to use UTF-8
         for (NwnLanguage l : WITCHER_LANGUAGES )
             ENCODINGS.put( l, "UTF-8" );
 
-
-
-        String enc = null;
-        if ( ( enc = System.getProperty( "tlkedit.charsetOverride" )) != null ){
+        final String enc = System.getProperty("tlkedit.charsetOverride");
+        if (enc != null) {
             String[] values = enc.split(";");
             try{
                 for (final String value : values) {
                     final String[] triple = value.split(":");
                     final Version v = Version.valueOf(triple[0]);
-                    NwnLanguage l = find( v, Integer.parseInt(triple[1]) );
-                    String encoding = triple[2];
+                    final NwnLanguage l = find( v, Integer.parseInt(triple[1]) );
+                    final String encoding = triple[2];
                     ENCODINGS.put(l, encoding);
-                    System.out.printf("nwnlanguage.java encoding for %s (%s) set to %s\n",
-                            l.getName(), v, encoding);
+                    System.out.printf("NwnLanguage encoding for %s (%s) set to %s\n",
+                            l.name, v, encoding);
                 }
             } catch ( Throwable t ){
                 System.err.println(
@@ -199,8 +213,12 @@ public enum NwnLanguage{
             }
         }
 
-        for (NwnLanguage l : values() ){
-            System.out.printf("NwnLanguage %s : %s[%s], %s, %s:%s\n", l.name(), l.version.name(), l.getCode(), l.getName(), l.getLocale(), l.getLocale().getDisplayLanguage());
+        for (final NwnLanguage l : values()) {
+            System.out.printf("NwnLanguage %s : %s[%s], %s, %s:%s, %s\n",
+                l.name(), l.version.name(), l.code, l.name,
+                l.locale, l.locale.getDisplayLanguage(),
+                l.getEncoding()
+            );
         }
     }
 }
