@@ -15,8 +15,8 @@ fi
 # set tlkedit.serverport=-1 to disable server socket
 
 #TlkEdit-EE-1.0-SNAPSHOT.jar
-if [ ! -f "$TLKEDIT_HOME/tlkedit.jar" ]; then
-	cp  "$TLKEDIT_HOME/target/TlkEdit-EE-1.0-SNAPSHOT.jar"  "$TLKEDIT_HOME/tlkedit.jar" 
+if [ ! -f "$TLKEDIT_HOME/target/TlkEdit-EE1.0-SNAPSHOT.jar" ]; then
+	mv  "$TLKEDIT_HOME/target/TlkEdit-EE-1.0-SNAPSHOT.jar"  "$TLKEDIT_HOME/tlkedit.jar" 
 fi
 
 java -Xmx128M -Dswing.aatext=true \
