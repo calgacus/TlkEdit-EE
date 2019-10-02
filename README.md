@@ -10,8 +10,15 @@ If you want spell-check for other languages there are some extra "myspell" forma
 Download the desired ones to the /dict folder which should be in the same folder in which the tlkedit.jar file is present,
 then update ./dict/dictionaries.properties to include the needed code like the others in the same file.
 
+Run
+-----
+Install java, maven and, if on windows, git-bash
+In project root run ./tlkedit.sh
+
 Build
 -----
+Install java, maven and, if on windows, git-bash
+ 
 First, install dependencies into local maven repository. This is temporal solution until
 dependencies will be upgraded to one that exists in one of public maven repositories:
 
