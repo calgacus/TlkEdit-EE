@@ -2,6 +2,8 @@
 
 This is a continuation of the TlkEdit project found at https://neverwintervault.org/project/nwn2/other/tool/2datlkgff-editor-aka-tlkedit2
 
+Now on version 14.0
+
 Any input is welcome, I hope to be able to expand on this tool.  I do not plan to support the launch4j part that creates the *.exe 32bit-java files.
 
 My main foocus is supporting this project for NWN:EE but hopefully I will not have to break any support for the other games (NWN 1.69, NWN2, Witcher).
