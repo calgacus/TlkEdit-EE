@@ -119,6 +119,8 @@ import org.jl.swing.undo.MappedListSelectionModel;
 import org.jl.swing.undo.MyUndoManager;
 import org.jl.swing.undo.RowMutator;
 
+
+
 public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeListener, MessageSource {
 
     private Preferences uPrefs = Preferences.userNodeForPackage(TlkEdit.class);
@@ -194,6 +196,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     private JMenu langSubMenu = null;
 
     private JMenu viewMenu = null;
+ 
     private JPopupMenu headerPopup = null;
 
     protected boolean noRealTimeSpellChecking = false;
@@ -586,6 +589,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         editMenu.addSeparator();
         editMenu.add(actResize);
 
+  
+
         langSubMenu = new JMenu();
         I18nUtil.setText(langSubMenu, "&Language");
         langSubMenu.setIcon(uid.getIcon(Actions.EMPTYICONKEY));
@@ -614,6 +619,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         miToggleHex.setIcon(null);
         viewMenu.add(miToggleHex);
 
+ 
         headerPopup = new JPopupMenu();
         //headerPopup = viewMenu.getPopupMenu();
         JMenuItem pop1 = headerPopup.add(new JCheckBoxMenuItem(actToggleFlagDisplay));
@@ -955,7 +961,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     @Override
     public JMenu[] getMenus() {
-        return new JMenu[]{editMenu, viewMenu, diffMenu};
+        return new JMenu[]{editMenu, viewMenu, diffMenu };
     }
 
     public static void removePreferences() throws BackingStoreException {
@@ -1100,6 +1106,9 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             searchAndReplace.setVisible(true);
         }
     };
+
+  
+ 
 
     private final Action actFindNext = new AbstractAction() {
 

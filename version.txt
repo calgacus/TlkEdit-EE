@@ -1,3 +1,12 @@
+Release 14.0 (2019-10-02)----------------------
+    - host project on github at https://github.com/calgacus/TlkEdit-EE
+    - allow column resizing for 2DAs
+    - fix a bug which prevent some column popups in some 2DAs
+    - switch to a maven build
+    - cleaned up and modernize java code 
+    - include build steps in README
+        
+
 Release 13c (2007-07-15)-----------------------
     -updated to a recent swingx build
     -now requires Java 6

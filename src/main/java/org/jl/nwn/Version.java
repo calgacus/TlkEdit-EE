@@ -10,6 +10,7 @@ public enum Version {
     }
     
     private static Version defaultVersion = NWN1;
+    public static final String TlkeditVersion = "14.0";
     
     static{
         String defName = System.getProperty("tlkedit.defaultNwnVersion", "NWN1");
@@ -28,6 +29,10 @@ public enum Version {
     
     public String getDisplayName(){
         return displayName;
+    }
+
+    public static String getTlkeditVersion() {
+        return Version.TlkeditVersion;
     }
     
     public static Version getDefaultVersion() {

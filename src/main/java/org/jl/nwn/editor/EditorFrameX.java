@@ -79,6 +79,9 @@ import org.jl.swing.FileDropHandler;
 import org.jl.swing.I18nUtil;
 import org.jl.swing.UIDefaultsX;
 
+import java.awt.Desktop;
+ 
+
 public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private String title = Messages.getString("EditorFrame.WindowTitle"); //$NON-NLS-1$
@@ -263,6 +266,28 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             quit();
+        }
+    };
+
+    private final Action actAbout = new AbstractAction() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {      
+            try{   
+                File file = new File("./version.txt");
+                //first check if Desktop is supported by Platform or not
+                if(!Desktop.isDesktopSupported()){
+                    System.out.println("Desktop is not supported");
+                    return;
+                }  
+                Desktop desktop = Desktop.getDesktop();
+                if(file.exists()) {
+                    desktop.open(file);
+                }
+           
+            }catch (IOException ioe){
+                System.out.println("caught ioexception");
+            }
         }
     };
 
@@ -720,6 +745,11 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         I18nUtil.setText(itSaveAs, Messages.getString("EditorFrame.MenuItemSaveAs")); //$NON-NLS-1$
         JMenuItem itSaveAll = fileMenu.add(actSaveAll);
         I18nUtil.setText(itSaveAll, Messages.getString("EditorFrame.MenuItemSaveAll")); //$NON-NLS-1$
+
+        fileMenu.add(new JSeparator());
+        JMenuItem itAbout = fileMenu.add(actAbout);
+        I18nUtil.setText(itAbout,  Messages.getString("EditorFrame.MenuItemAbout") +  " "+Version.getTlkeditVersion()); //$NON-NLS-1$
+        
         fileMenu.add(new JSeparator());
         JMenuItem itQuit = fileMenu.add(actQuit);
         I18nUtil.setText(itQuit, Messages.getString("EditorFrame.MenuItemExit")); //$NON-NLS-1$
