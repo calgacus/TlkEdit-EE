@@ -19,7 +19,6 @@ public class ResRefCellEditor extends FormattedCellEditor{
     }
 
     public ResRefCellEditor( Element e ){
-        this( e.getAttribute(ALLOWNULL).length() > 0 ?
-            Boolean.parseBoolean(e.getAttribute(ALLOWNULL)) : true );
+        this(Boolean.parseBoolean(e.getAttribute(ALLOWNULL)));
     }
 }
