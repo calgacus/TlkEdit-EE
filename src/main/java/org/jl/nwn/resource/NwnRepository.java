@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.Set;
 
 /**
@@ -22,13 +21,6 @@ public interface NwnRepository extends Iterable<ResourceID>, Closeable {
      * @return InputStream for the resource with given name, null if no such resource is found
      */
     public InputStream getResource( String resourceName ) throws IOException;
-
-    /**
-     * Returns a ByteBuffer containing the resource data, or null if no such resource is found.
-     * The ByteBuffer may be direct and/or read-only depending on the NwnRepository implementation
-     * @return ByteBuffer containing resource data
-     */
-    public ByteBuffer getResourceAsBuffer( ResourceID id ) throws IOException;
 
     /**
      * @return null if the repository contains no such resource

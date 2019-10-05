@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import static java.nio.charset.StandardCharsets.US_ASCII;
@@ -76,8 +75,6 @@ abstract class BifFile implements Closeable {
     public abstract int getEntrySize(int idx);
 
     public abstract void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException;
-
-    public abstract MappedByteBuffer getEntryAsBuffer(int idx) throws IOException;
 
     public void transferEntryToFile(int entryIndex, File file) throws IOException {
         try (final FileOutputStream fos = new FileOutputStream(file);

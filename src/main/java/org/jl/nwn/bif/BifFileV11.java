@@ -3,8 +3,6 @@ package org.jl.nwn.bif;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 
 import org.jl.nwn.resource.RafInputStream;
@@ -66,20 +64,5 @@ final class BifFileV11 extends BifFile {
         int length = readIntLE(raf);
         int type = readIntLE(raf);
         fc.transferTo(offset, length, c);
-    }
-
-    @Override
-    public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
-        checkIndex(idx);
-        raf.seek(variableResourceOffset + idx * BIF_INDEX_ENTRY_SIZE);
-        int keyfileID = readIntLE(raf);
-        int whatever = readIntLE(raf);
-        if (whatever != 0) {
-            System.err.println("unknown value in biffile " + whatever);
-        }
-        int offset = readIntLE(raf);
-        int length = readIntLE(raf);
-        int type = readIntLE(raf);
-        return fc.map(FileChannel.MapMode.READ_ONLY, offset, length);
     }
 }

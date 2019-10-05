@@ -261,22 +261,6 @@ public class ErfFile extends AbstractRepository{
     }
 
     @Override
-    public MappedByteBuffer getResourceAsBuffer(ResourceID id) throws IOException {
-        Object o = resources.get( id );
-        if (o instanceof ResourceListEntry) {
-            ResourceListEntry rle = (ResourceListEntry) o;
-            return raf.getChannel().map( FileChannel.MapMode.READ_ONLY, rle.offset, rle.size );
-        }
-        if (o instanceof File) {
-            try (final RandomAccessFile r = new RandomAccessFile((File)o, "r")) {
-                // MappedByteBuffer will be valid even after close file, that created it
-                return r.getChannel().map( FileChannel.MapMode.READ_ONLY, 0, r.length() );
-            }
-        }
-        return null;
-    }
-
-    @Override
     public void close() throws IOException{
         if (raf!=null) raf.close();
     }

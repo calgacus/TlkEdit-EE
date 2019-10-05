@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -96,13 +95,6 @@ public class BifRepository extends AbstractRepository{
         final KeyFile.BifResourceLocation loc = findResourceLocation(id);
         final BifFile bif = loc == null ? null : getBifFile(loc);
         return bif == null ? null : bif.getEntry(loc.getBifIndex());
-    }
-
-    @Override
-    public MappedByteBuffer getResourceAsBuffer(ResourceID id) throws IOException {
-        final KeyFile.BifResourceLocation loc = findResourceLocation(id);
-        final BifFile bif = loc == null ? null : getBifFile(loc);
-        return bif == null ? null : bif.getEntryAsBuffer(loc.getBifIndex());
     }
 
     @Override
