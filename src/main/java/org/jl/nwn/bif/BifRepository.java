@@ -5,18 +5,14 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -40,22 +36,37 @@ import org.jl.nwn.resource.AbstractRepository;
 import org.jl.nwn.resource.ResourceID;
 
 public class BifRepository extends AbstractRepository{
-    private KeyFile[] keyFiles;
-    private File baseDir;
+    private final KeyFile[] keyFiles;
+    /** BIF file names contained in {@code .key} files are all relative to this dir. */
+    private final File baseDir;
+    /** Cache of resources from all {@code .key} files. */
     private TreeSet<ResourceID> resources;
 
+    /** Cache of loaded BIF files. */
     private final Map<String, BifFile> bifFiles = new HashMap<>();
 
-    private static final String[] defaultkeys = { "xp2patch.key", "xp2.key", "xp1patch.key", "xp1.key", "patch.key", "chitin.key" };
-    public static final List<String> DEFAULTKEYFILENAMES = Collections.unmodifiableList(Arrays.asList(defaultkeys));
+    /** Array of the known names of {@code .key} files in preference order their loadings. */
+    private static final String[] DEFAULT_KEYS = {
+        "xp3.key",
+        "xp2patch.key",
+        "xp2.key",
+        "xp1patch.key",
+        "xp1.key",
+        "patch.key",
+        "chitin.key"
+    };
 
-    public BifRepository( File baseDir, KeyFile[] keys ){
-        this.baseDir = baseDir;
-        this.keyFiles = keys;
-    }
-
-    /** @param baseDir bif file names contained in keyfiles are all relative to basedir
-     * @param keyFiles array of key file names, keyFiles[0] has highest priority
+    /**
+     * Reads the specified {@code .key}-files with the index of all resources
+     * which a game can use.
+     *
+     * @param baseDir bif file names contained in keyfiles are all relative to basedir
+     * @param keyFiles Array of key file names, {@code keyFiles[0]} has highest priority
+     *
+     * @throws IOException If one of specified {@code .key} files do not exist or
+     *         cann't be readed
+     * @throws IllegalArgumentException If one of specified {@code .key} files is
+     *         not one of supported file type
      */
     public BifRepository(File baseDir, String[] keyFiles) throws IOException {
         this.baseDir = baseDir;
@@ -66,10 +77,10 @@ public class BifRepository extends AbstractRepository{
     }
 
     public BifRepository( File baseDir ) throws IOException{
-        this( baseDir, testKeyFiles( defaultkeys, baseDir ) );
+        this(baseDir, filterExisting(baseDir, DEFAULT_KEYS));
     }
 
-    private static String[] testKeyFiles( String[] keys, File baseDir ){
+    private static String[] filterExisting(File baseDir, String[] keys) {
         final ArrayList<String> v = new ArrayList<>(keys.length);
         for (final String key : keys) {
             if (new File(baseDir, key).exists()) {
@@ -79,42 +90,45 @@ public class BifRepository extends AbstractRepository{
         return v.toArray( new String[ v.size() ] );
     }
 
-    /**
-     * returns null if resource is not found
-     */
-    public InputStream getResource(String resourceName, short type)
-    throws IOException {
-        KeyFile.BifResourceLocation loc = findResourceLocation(resourceName, type);
-        return loc == null ?
-            null :
-            getBifFile(loc.getBifName()).getEntry(loc.getBifIndex());
-    }
-
     @Override
     public InputStream getResource(ResourceID id) throws IOException {
-        return getResource(id.getName(), id.getType());
+        KeyFile.BifResourceLocation loc = findResourceLocation(id);
+        return loc == null ?
+                null :
+                getBifFile(loc.getBifName()).getEntry(loc.getBifIndex());
     }
 
     @Override
     public int getResourceSize( ResourceID id ){
-        KeyFile kf = findKeyFile( id.getName(), id.getType() );
+        final KeyFile kf = findKeyFile(id);
         if ( kf != null ){
             KeyFile.BifResourceLocation loc = kf.findResource( id.getName(), id.getType() );
             String bifName = loc.getBifName();
             BifFile bif = getBifFile( bifName );
             return bif.getEntrySize(loc.getBifIndex());
         }
-        else return 0;
+        return 0;
     }
 
-    protected KeyFile findKeyFile( String resName, short resType ){
-        for (KeyFile kf : keyFiles)
-            if ( kf.findResource(resName, resType) != null )
+    /**
+     * Search for first index {@code .key} file, that contains entry about specified
+     * resource. Returns the most priority file of a repository
+     *
+     * @param resRef Pointer to resource
+     *
+     * @return First index file that contains entry about specified resource or
+     *         {@code null}, if such file does not exist
+     */
+    private KeyFile findKeyFile(ResourceID resRef) {
+        for (KeyFile kf : keyFiles) {
+            if (kf.findResource(resRef.getName(), resRef.getType()) != null) {
                 return kf;
+            }
+        }
         return null;
     }
 
-    protected BifFile getBifFile( String bifName ){
+    private BifFile getBifFile( String bifName ){
         BifFile bif = bifFiles.get(bifName);
         if (bif == null) {
             try{
@@ -128,14 +142,14 @@ public class BifRepository extends AbstractRepository{
         return bif;
     }
 
-    protected BifFile findBifFile( String resName, short resType ){
-        KeyFile.BifResourceLocation loc = findResourceLocation(resName, resType);
+    private BifFile findBifFile(ResourceID resRef) {
+        KeyFile.BifResourceLocation loc = findResourceLocation(resRef);
         return loc == null ? null : getBifFile(loc.getBifName());
     }
 
-    protected KeyFile.BifResourceLocation findResourceLocation(String resName, short resType){
+    private KeyFile.BifResourceLocation findResourceLocation(ResourceID resRef) {
         for (final KeyFile kf : keyFiles) {
-            final KeyFile.BifResourceLocation loc = kf.findResource(resName, resType);
+            final KeyFile.BifResourceLocation loc = kf.findResource(resRef.getName(), resRef.getType());
             if ( loc != null ){
                 return loc;
             }
@@ -145,19 +159,14 @@ public class BifRepository extends AbstractRepository{
 
     @Override
     public MappedByteBuffer getResourceAsBuffer( ResourceID id ) throws IOException{
-        KeyFile.BifResourceLocation loc = findResourceLocation(id.getName(), id.getType());
+        KeyFile.BifResourceLocation loc = findResourceLocation(id);
         return loc == null ? null :  getBifFile(loc.getBifName()).getEntryAsBuffer(loc.getBifIndex());
     }
 
     @Override
     public File getResourceLocation(ResourceID id) {
-        BifFile bif = findBifFile(id.getName(), id.getType());
+        BifFile bif = findBifFile(id);
         return bif == null ? null : bif.getFile();
-    }
-
-    public String getResourceKeyFile(ResourceID id) {
-        KeyFile kf = findKeyFile(id.getName(), id.getType());
-        return kf == null ? null : kf.getFileName();
     }
 
     @Override
@@ -172,7 +181,7 @@ public class BifRepository extends AbstractRepository{
     }
 
     public boolean transferResourceToFile( ResourceID id, File file ) throws IOException{
-        KeyFile.BifResourceLocation loc = findResourceLocation(id.getName(), id.getType());
+        KeyFile.BifResourceLocation loc = findResourceLocation(id);
         if (loc == null)
             return false;
         BifFile bif = getBifFile(loc.getBifName());
@@ -181,24 +190,25 @@ public class BifRepository extends AbstractRepository{
     }
 
     public static void main(String[] args) throws Exception {
-        //System.getProperties().list( System.out );
-        String keys = System.getProperty("nwn.bifkeys");
+        final String keys = System.getProperty("nwn.bifkeys");
+        final File baseDir = new File(System.getProperty("nwn.home", "."));
         long then = System.currentTimeMillis();
-        BifRepository br = keys == null ?
-            new BifRepository(new File(System.getProperty("nwn.home"))) :
-            new BifRepository(new File(System.getProperty("nwn.home")), System.getProperty("nwn.bifkeys").split("\\s+") );
-        System.out.printf("initialized repository : %d ms\n", System.currentTimeMillis()-then);
-        if ( args.length == 1 & args[0].equals("-gui")) {
+        final BifRepository br = keys == null
+            ? new BifRepository(baseDir)
+            : new BifRepository(baseDir, keys.split("\\s+") );
+        System.out.printf("initialized repository at %s : %d ms\n", baseDir, System.currentTimeMillis()-then);
+        if ( args.length == 1 && args[0].equals("-gui")) {
             br.displayGui();
             return;
         }
-        if (args.length < 2
-                || args.length == 0
-                || !(args[0].equals("-l") | args[0].equals("-x"))) {
+        if (args.length < 2 || !(args[0].equals("-l") || args[0].equals("-x"))) {
             System.out.println(
-                    "usage : BifRepository [-x|-l] <regexp> <outputdir>\n extract / list resources matching <regexp>"+
-                    " \n\nuse GUI : BifRepository -gui");
-            System.exit(0);
+                    "usage : BifRepository [-x|-l] <regexp> <outputdir>\n"
+                  + "extract / list resources matching <regexp>\n"
+                  + "\n"
+                  + "use GUI : BifRepository -gui"
+            );
+            return;
         }
         boolean extract = args[0].equals("-x");
         File outputDir = new File(".");
@@ -207,20 +217,15 @@ public class BifRepository extends AbstractRepository{
             if (!outputDir.exists())
                 outputDir.mkdirs();
         }
-        Matcher m = Pattern.compile(args[1]).matcher("");
-        byte[] buf = new byte[50000];
-        File resourceOut = null;
-        OutputStream os = null;
-        InputStream is;
+        final Pattern pat = Pattern.compile(args[1]);
         int count = 0;
         try {
             for (final ResourceID id : br.getResourceIDs()) {
                 String s = id.toString();
-                if (m.reset(s).matches()) {
+                if (pat.matcher(s).matches()) {
                     System.out.println("BifRepository "+s);
-                    //+ " (" + br.getResourceLocation( id ) + ")" );
                     if (extract) {
-                        br.transferResourceToFile(id, new File(outputDir, id.toString()));
+                        br.transferResourceToFile(id, new File(outputDir, s));
                         count++;
                     }
                 }
@@ -230,12 +235,11 @@ public class BifRepository extends AbstractRepository{
             System.out.println(ioex);
             ioex.printStackTrace();
         }
-
     }
 
     private void displayGui() throws IOException{
-        final JFrame f = new JFrame("bifextract");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        final JFrame frame = new JFrame("bifextract");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         final DefaultListModel<ResourceID> model = new DefaultListModel<>();
         final JList<ResourceID> resourceList = new JList<>(model);
         System.out.print("retrieving resource ids ... ");
@@ -248,23 +252,22 @@ public class BifRepository extends AbstractRepository{
         Action filter = new AbstractAction("filter") {
             @Override
             public void actionPerformed(ActionEvent e){
-                Matcher m = null;
                 try {
-                    m = Pattern.compile(regexpField.getText()).matcher("");
+                    final Pattern pat = Pattern.compile(regexpField.getText());
+                    final Iterator<ResourceID> it = getResourceIDs().iterator();
+                    model.clear();
+                    while (it.hasNext()) {
+                        final ResourceID id = it.next();
+                        if (pat.matcher(id.toString()).matches()) {
+                            model.addElement(id);
+                        }
+                    }
                 } catch (PatternSyntaxException pse) {
                     JOptionPane.showMessageDialog(
-                            f,
-                            "bad expression",
-                            "foo",
+                            frame,
+                            pse.getMessage(),
+                            "Bad expression",
                             JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                final Iterator<ResourceID> it = getResourceIDs().iterator();
-                model.clear();
-                while (it.hasNext()) {
-                    final ResourceID id = it.next();
-                    if (m.reset(id.toString()).matches())
-                        model.addElement(id);
                 }
             }
         };
@@ -295,7 +298,7 @@ public class BifRepository extends AbstractRepository{
         outputControls.add( outputDir );
         outputControls.add( new JButton( selectOutputDir ) );
 
-        final JDialog infoDialog = new JDialog( f, "extracting files ...", false );
+        final JDialog infoDialog = new JDialog( frame, "extracting files ...", false );
         final JLabel fileLabel = new JLabel("abcdefghijklmn.opq");
         infoDialog.getContentPane().add( fileLabel );
         infoDialog.pack();
@@ -306,14 +309,13 @@ public class BifRepository extends AbstractRepository{
                 int[] selected = resourceList.getSelectedIndices();
                 try{
                     if ( selected.length > 0 ){
-                        f.setEnabled( false );
+                        frame.setEnabled( false );
                         infoDialog.setVisible(true);
                         File outputDirFile = new File( outputDir.getText() );
                         for (final int index : selected) {
-                            final ResourceID id = ( ResourceID ) model.get(index);
+                            final ResourceID id = model.get(index);
                             String filename = id.toString();
                             fileLabel.setText( filename );
-                            //writeFile( new File( outputDirFile, filename ), getResource( id ) );
                             transferResourceToFile(id, new File( outputDirFile, filename ));
                         }
                     }
@@ -321,14 +323,14 @@ public class BifRepository extends AbstractRepository{
                     ioex.printStackTrace();
                 } finally{
                     infoDialog.dispose();
-                    f.setEnabled( true );
+                    frame.setEnabled( true );
                 }
             }
 
             @Override
             public void actionPerformed(ActionEvent e){
-                infoDialog.setLocationRelativeTo( f );
-                f.setEnabled( false );
+                infoDialog.setLocationRelativeTo( frame );
+                frame.setEnabled( false );
                 Thread t = new Thread(){
                     @Override
                     public void run(){
@@ -348,26 +350,14 @@ public class BifRepository extends AbstractRepository{
         tbar.add( extractSelected );
         southBox.add( tbar );
 
-        f.getContentPane().setLayout( new BorderLayout() );
-        //f.getContentPane().add( new NwnRepConfig().getConfigPanel(), BorderLayout.NORTH );
-        f.getContentPane().add( new JScrollPane( resourceList ), BorderLayout.CENTER );
-        f.getContentPane().add(southBox, BorderLayout.SOUTH );
-        f.pack();
-        f.setVisible(true);
+        frame.getContentPane().setLayout( new BorderLayout() );
+        //frame.getContentPane().add( new NwnRepConfig().getConfigPanel(), BorderLayout.NORTH );
+        frame.getContentPane().add( new JScrollPane( resourceList ), BorderLayout.CENTER );
+        frame.getContentPane().add(southBox, BorderLayout.SOUTH );
+        frame.pack();
+        frame.setVisible(true);
     }
-/*
-    private static byte[] buf = new byte[ 64000 ];
-    private static void writeFile( File f, InputStream is ) throws IOException{
-        FileOutputStream fos = new FileOutputStream( f );
-        BufferedOutputStream os = new BufferedOutputStream( fos );
-        int length = 0;
-        while ( ( length = is.read( buf ) ) != -1 )
-            os.write( buf, 0, length );
-        os.flush();
-        os.close();
-        fos.close();
-    }
- */
+
     @Override
     public boolean contains(ResourceID id) {
         for (final KeyFile key : keyFiles) {
