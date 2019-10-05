@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.TreeMap;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -71,21 +70,5 @@ public class ShortcutConfigPanel extends JPanel {
 		String s = ks.getModifiers()!=0 ? KeyEvent.getKeyModifiersText(ks.getModifiers())+"-" : "";
 		s += ks.getKeyCode()!=KeyEvent.VK_UNDEFINED?KeyEvent.getKeyText(ks.getKeyCode()) : ""+ks.getKeyChar();
 		return s;
-	}
-
-	public static void main( String[] args ){
-		JFrame f = new JFrame( "test" );
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		KeyStroke[] ks = new KeyStroke[]{
-			KeyStroke.getKeyStroke( "control pressed C" ),
-			KeyStroke.getKeyStroke( "control pressed X" ),
-			KeyStroke.getKeyStroke( "control pressed V" )
-		};
-		f.getContentPane().add( new ShortcutConfigPanel( new String[]{
-				"TlkEdit.copy_buttonLabel",
-				"TlkEdit.cut_buttonLabel",
-				"TlkEdit.paste_buttonLabel" }, ks ) );
-		f.pack();
-		f.setVisible(true);
 	}
 }
