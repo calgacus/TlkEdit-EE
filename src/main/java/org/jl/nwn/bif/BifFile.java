@@ -13,19 +13,26 @@ import java.nio.channels.WritableByteChannel;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import java.util.Arrays;
 
-import org.jl.nwn.resource.RafInputStream;
-
-/** Read only representation of a bif file. */
+/**
+ * Read only representation of a bif file.
+ * <p>
+ * A BIF contains mutliple resources (files). It does not contain information
+ * about each resource's name, and therefore requires its {@link KetFile KEY file}.
+ */
 abstract class BifFile implements Closeable {
-    protected static final byte[] HEADER_V10 = {66, 73, 70, 70, 86, 49, 32, 32};
-    protected static final byte[] HEADER_V11 = {66, 73, 70, 70, 86, 49, 46, 49};
 
     protected RandomAccessFile raf;
     protected File file;
     protected FileChannel fc;
     protected byte[] header;
-    protected int size; // number of resources in this file
+    /** Number of variable resources in this file. */
+    protected int size;
+    /** Number of fixed resources in this file. Not used by any known Bioware game. */
     protected int fixedResourceCount;
+    /**
+     * Byte position of the Variable Resource Table from the beginning of this
+     * file. Currently, this value is 20.
+     */
     protected int variableResourceOffset;
 
     protected BifFile(File f) throws IOException {
@@ -44,18 +51,24 @@ abstract class BifFile implements Closeable {
         return file;
     }
 
-    public static BifFile openBifFile(File file) throws IOException {
+    public static BifFile open(File file) throws IOException {
         final byte[] header = new byte[8];
         try (final FileInputStream in = new FileInputStream(file)) {
             in.read(header);
         }
-        if (Arrays.equals(header, HEADER_V10)) {
-            return new BifFile10(file);
+        if (Arrays.equals(BifFileV10.HEADER, header)) {
+            return new BifFileV10(file);
         }
-        if (Arrays.equals(header, HEADER_V11)) {
-            return new BifFile11(file);
+        if (Arrays.equals(BifFileV11.HEADER, header)) {
+            return new BifFileV11(file);
         }
         throw new IllegalArgumentException("Unsupported BIFF header: " + new String(header, US_ASCII));
+    }
+
+    @Override
+    public void close() throws IOException {
+        fc.close();
+        raf.close();
     }
 
     public abstract InputStream getEntry(int idx) throws IOException;
@@ -81,136 +94,10 @@ abstract class BifFile implements Closeable {
         }
     }
 
-    public static final class BifFile10 extends BifFile {
-
-        public static final int BIFINDEXENTRYSIZE = 16;
-
-        public BifFile10(File file) throws IOException {
-            super(file);
-        }
-
-        @Override
-        public InputStream getEntry(int idx) throws IOException {
-            checkIndex(idx);
-            raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
-            int keyfileID = readIntLE(raf);
-            int offset = readIntLE(raf);
-            int length = readIntLE(raf);
-            int type = readIntLE(raf);
-
-            return new RafInputStream(raf, offset, offset + length);
-        }
-
-        @Override
-        public int getEntrySize(int idx) {
-            checkIndex(idx);
-            try {
-                raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE + 8);
-                return readIntLE(raf);
-            } catch (IOException ioex) {
-                System.err.println(ioex);
-                ioex.printStackTrace();
-            }
-            return 0;
-        }
-
-        @Override
-        public void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException {
-            checkIndex(entryIndex);
-            raf.seek(variableResourceOffset + entryIndex * BIFINDEXENTRYSIZE);
-            int keyfileID = readIntLE(raf);
-            int offset = readIntLE(raf);
-            int length = readIntLE(raf);
-            int type = readIntLE(raf);
-            fc.transferTo(offset, length, c);
-        }
-
-        @Override
-        public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
-            checkIndex(idx);
-            raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
-            int keyfileID = readIntLE(raf);
-            int offset = readIntLE(raf);
-            int length = readIntLE(raf);
-            int type = readIntLE(raf);
-            return fc.map(FileChannel.MapMode.READ_ONLY, offset, length);
-        }
-    }
-
-    public static final class BifFile11 extends BifFile {
-
-        public static final int BIFINDEXENTRYSIZE = 20;
-
-        public BifFile11(File file) throws IOException {
-            super(file);
-        }
-
-        @Override
-        public InputStream getEntry(int idx) throws IOException {
-            checkIndex(idx);
-            raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
-            int keyfileID = readIntLE(raf);
-            int whatever = readIntLE(raf);
-            if (whatever != 0) {
-                System.err.println("unknown value in biffile " + whatever);
-            }
-            int offset = readIntLE(raf);
-            int length = readIntLE(raf);
-            int type = readIntLE(raf);
-            return new RafInputStream(raf, offset, offset + length);
-        }
-
-        @Override
-        public int getEntrySize(int idx) {
-            checkIndex(idx);
-            try {
-                raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE + 12);
-                return readIntLE(raf);
-            } catch (IOException ioex) {
-                System.err.println(ioex);
-                ioex.printStackTrace();
-            }
-            return 0;
-        }
-
-        @Override
-        public void transferEntryToChannel(int entryIndex, WritableByteChannel c) throws IOException {
-            checkIndex(entryIndex);
-            raf.seek(variableResourceOffset + entryIndex * BIFINDEXENTRYSIZE);
-            int keyfileID = readIntLE(raf);
-            int whatever = readIntLE(raf);
-            if (whatever != 0) {
-                System.err.println("unknown value in biffile " + whatever);
-            }
-            int offset = readIntLE(raf);
-            int length = readIntLE(raf);
-            int type = readIntLE(raf);
-            fc.transferTo(offset, length, c);
-        }
-
-        @Override
-        public MappedByteBuffer getEntryAsBuffer(int idx) throws IOException {
-            checkIndex(idx);
-            raf.seek(variableResourceOffset + idx * BIFINDEXENTRYSIZE);
-            int keyfileID = readIntLE(raf);
-            int whatever = readIntLE(raf);
-            if (whatever != 0) {
-                System.err.println("unknown value in biffile " + whatever);
-            }
-            int offset = readIntLE(raf);
-            int length = readIntLE(raf);
-            int type = readIntLE(raf);
-            return fc.map(FileChannel.MapMode.READ_ONLY, offset, length);
-        }
-    }
-
     protected static int readIntLE(RandomAccessFile raf) throws IOException {
-        return raf.readUnsignedByte() | (raf.readUnsignedByte() << 8) | (raf.readUnsignedByte() << 16) | (raf.readUnsignedByte() << 24);
-    }
-
-    @Override
-    public void close() throws IOException {
-        fc.close();
-        raf.close();
+        return raf.readUnsignedByte()
+            | (raf.readUnsignedByte() << 8)
+            | (raf.readUnsignedByte() << 16)
+            | (raf.readUnsignedByte() << 24);
     }
 }

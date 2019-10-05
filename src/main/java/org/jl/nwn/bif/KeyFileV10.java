@@ -9,6 +9,7 @@ import org.jl.nwn.resource.ResourceID;
 /**
  * Key file of version 1.0, used by "Neverwinter Nights".
  *
+ * @see BifFileV10
  * @author ich
  */
 class KeyFileV10 extends KeyFile {

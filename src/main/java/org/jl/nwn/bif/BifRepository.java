@@ -170,7 +170,7 @@ public class BifRepository extends AbstractRepository{
         BifFile bif = bifFiles.get(bifName);
         if (bif == null) {
             try{
-              bif = BifFile.openBifFile(new File(baseDir, bifName));
+              bif = BifFile.open(new File(baseDir, bifName));
               bifFiles.put(bifName, bif);
             } catch ( IOException ioex ){
                 System.err.println(ioex);

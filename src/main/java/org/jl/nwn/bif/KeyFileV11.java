@@ -9,6 +9,7 @@ import org.jl.nwn.resource.ResourceID;
 /**
  * Resource index file, used by "The Witcher".
  *
+ * @see BifFileV11
  * @author ich
  */
 class KeyFileV11 extends KeyFile {
