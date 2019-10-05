@@ -90,24 +90,60 @@ public class BifRepository extends AbstractRepository{
         return v.toArray( new String[ v.size() ] );
     }
 
+    //<editor-fold defaultstate="collapsed" desc="NwnRepository">
     @Override
     public InputStream getResource(ResourceID id) throws IOException {
-        KeyFile.BifResourceLocation loc = findResourceLocation(id);
-        return loc == null ?
-                null :
-                getBifFile(loc.getBifName()).getEntry(loc.getBifIndex());
+        final KeyFile.BifResourceLocation loc = findResourceLocation(id);
+        final BifFile bif = loc == null ? null : getBifFile(loc);
+        return bif == null ? null : bif.getEntry(loc.getBifIndex());
     }
 
     @Override
-    public int getResourceSize( ResourceID id ){
-        final KeyFile kf = findKeyFile(id);
-        if ( kf != null ){
-            KeyFile.BifResourceLocation loc = kf.findResource( id.getName(), id.getType() );
-            String bifName = loc.getBifName();
-            BifFile bif = getBifFile( bifName );
-            return bif.getEntrySize(loc.getBifIndex());
+    public MappedByteBuffer getResourceAsBuffer(ResourceID id) throws IOException {
+        final KeyFile.BifResourceLocation loc = findResourceLocation(id);
+        final BifFile bif = loc == null ? null : getBifFile(loc);
+        return bif == null ? null : bif.getEntryAsBuffer(loc.getBifIndex());
+    }
+
+    @Override
+    public File getResourceLocation(ResourceID id) {
+        final KeyFile.BifResourceLocation loc = findResourceLocation(id);
+        final BifFile bif = loc == null ? null : getBifFile(loc);
+        return bif == null ? null : bif.getFile();
+    }
+
+    @Override
+    public int getResourceSize(ResourceID id) {
+        final KeyFile.BifResourceLocation loc = findResourceLocation(id);
+        final BifFile bif = loc == null ? null : getBifFile(loc);
+        return bif == null ? 0 : bif.getEntrySize(loc.getBifIndex());
+    }
+
+    @Override
+    public Set<ResourceID> getResourceIDs() {
+        if (resources == null) {
+            resources = new TreeSet<>();
+            for (final KeyFile key : keyFiles) {
+                resources.addAll(key.getResources());
+            }
         }
-        return 0;
+        return Collections.unmodifiableSet( resources );
+    }
+
+    @Override
+    public boolean contains(ResourceID id) {
+        return findResourceLocation(id) != null;
+    }
+    //</editor-fold>
+
+    public boolean transferResourceToFile(ResourceID id, File file) throws IOException {
+        final KeyFile.BifResourceLocation loc = findResourceLocation(id);
+        final BifFile bif = loc == null ? null : getBifFile(loc);
+        if (bif != null) {
+            bif.transferEntryToFile(loc.getBifIndex(), file);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -116,19 +152,21 @@ public class BifRepository extends AbstractRepository{
      *
      * @param resRef Pointer to resource
      *
-     * @return First index file that contains entry about specified resource or
-     *         {@code null}, if such file does not exist
+     * @return Location in first index file that contains entry about specified
+     *         resource or {@code null}, if such file does not exist
      */
-    private KeyFile findKeyFile(ResourceID resRef) {
-        for (KeyFile kf : keyFiles) {
-            if (kf.findResource(resRef.getName(), resRef.getType()) != null) {
-                return kf;
+    private KeyFile.BifResourceLocation findResourceLocation(ResourceID resRef) {
+        for (final KeyFile kf : keyFiles) {
+            final KeyFile.BifResourceLocation loc = kf.findResource(resRef);
+            if (loc != null) {
+                return loc;
             }
         }
         return null;
     }
 
-    private BifFile getBifFile( String bifName ){
+    private BifFile getBifFile(KeyFile.BifResourceLocation loc) {
+        final String bifName = loc.getBifName();
         BifFile bif = bifFiles.get(bifName);
         if (bif == null) {
             try{
@@ -140,53 +178,6 @@ public class BifRepository extends AbstractRepository{
             }
         }
         return bif;
-    }
-
-    private BifFile findBifFile(ResourceID resRef) {
-        KeyFile.BifResourceLocation loc = findResourceLocation(resRef);
-        return loc == null ? null : getBifFile(loc.getBifName());
-    }
-
-    private KeyFile.BifResourceLocation findResourceLocation(ResourceID resRef) {
-        for (final KeyFile kf : keyFiles) {
-            final KeyFile.BifResourceLocation loc = kf.findResource(resRef.getName(), resRef.getType());
-            if ( loc != null ){
-                return loc;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public MappedByteBuffer getResourceAsBuffer( ResourceID id ) throws IOException{
-        KeyFile.BifResourceLocation loc = findResourceLocation(id);
-        return loc == null ? null :  getBifFile(loc.getBifName()).getEntryAsBuffer(loc.getBifIndex());
-    }
-
-    @Override
-    public File getResourceLocation(ResourceID id) {
-        BifFile bif = findBifFile(id);
-        return bif == null ? null : bif.getFile();
-    }
-
-    @Override
-    public Set<ResourceID> getResourceIDs() {
-        if ( resources == null ){
-            resources = new TreeSet<>();
-            for (final KeyFile key : keyFiles) {
-                resources.addAll(key.getResources());
-            }
-        }
-        return Collections.unmodifiableSet( resources );
-    }
-
-    public boolean transferResourceToFile( ResourceID id, File file ) throws IOException{
-        KeyFile.BifResourceLocation loc = findResourceLocation(id);
-        if (loc == null)
-            return false;
-        BifFile bif = getBifFile(loc.getBifName());
-        bif.transferEntryToFile(loc.getBifIndex(), file);
-        return true;
     }
 
     public static void main(String[] args) throws Exception {
@@ -356,15 +347,5 @@ public class BifRepository extends AbstractRepository{
         frame.getContentPane().add(southBox, BorderLayout.SOUTH );
         frame.pack();
         frame.setVisible(true);
-    }
-
-    @Override
-    public boolean contains(ResourceID id) {
-        for (final KeyFile key : keyFiles) {
-            if (null != key.findResource(id.getName(), id.getType())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

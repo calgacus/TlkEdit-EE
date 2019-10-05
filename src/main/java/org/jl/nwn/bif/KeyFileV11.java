@@ -67,12 +67,12 @@ public class KeyFileV11 extends KeyFile {
     }
 
     @Override
-    public BifResourceLocation findResource(String resName, short resType) {
-        int[] a = entryMap.get(new ResourceID(resName, resType));
+    public BifResourceLocation findResource(ResourceID resRef) {
+        final int[] a = entryMap.get(resRef);
         if (a == null) {
             return null;
         }
-        int bifIndex = (a[1] & -1048576) >> 20;
+        final int bifIndex = a[1] >> 20;
         return new BifResourceLocation(bifs[bifIndex], a[0]);
     }
 }

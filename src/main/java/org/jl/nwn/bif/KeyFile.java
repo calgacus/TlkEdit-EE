@@ -14,11 +14,16 @@ public abstract class KeyFile {
 
     protected File file;
 
+    /**
+     * BIF names in platform dependent representation (i.e. with apropriate file
+     * name separator).
+     */
     protected String[] bifs;
 
     protected static final byte[] HEADER_V10 = {75, 69, 89, 32, 86, 49, 32, 32};
     protected static final byte[] HEADER_V11 = {75, 69, 89, 32, 86, 49, 46, 49};
 
+    /** Contains BIF archive name and index of file in it. */
     public static final class BifResourceLocation {
 
         private final String bifName;
@@ -36,14 +41,6 @@ public abstract class KeyFile {
         public int getBifIndex() {
             return bifIndex;
         }
-    }
-
-    public String getFileName() {
-        return file.getName();
-    }
-
-    public File getFile() {
-        return file;
     }
 
     public static KeyFile open(File file) throws IOException {
@@ -67,5 +64,5 @@ public abstract class KeyFile {
      */
     public abstract Set<ResourceID> getResources();
 
-    public abstract BifResourceLocation findResource(String resName, short resType);
+    public abstract BifResourceLocation findResource(ResourceID resRef);
 }

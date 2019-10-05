@@ -58,37 +58,20 @@ public class KeyFileV10 extends KeyFile {
         }
     }
 
-    /**
-     * @param resName resource name
-     * @param resType resource type
-     * @return BifID of the resource or -1 if no such resource is found
-     */
-    private int lookup(String resName, short resType) {
-        Integer bifID = entryMap.get(new ResourceID(resName, resType));
-        return (bifID == null) ? -1 : bifID.intValue();
-    }
-
-    /**
-     * @param bifID
-     * @return bif name in platform dependent representation ( i.e.
-     * with apropriate file name separator )
-     */
-    private String getBifName(int bifID) {
-        return bifs[bifID >> 20];
-    }
-
-    private int getBifIndex(int bifID) {
-        return bifID % (1 << 20);
-    }
-
     @Override
     public Set<ResourceID> getResources() {
         return Collections.unmodifiableSet(entryMap.keySet());
     }
 
     @Override
-    public BifResourceLocation findResource(String resName, short resType) {
-        int bifId = lookup(resName, resType);
-        return bifId == -1 ? null : new BifResourceLocation(getBifName(bifId), getBifIndex(bifId));
+    public BifResourceLocation findResource(ResourceID resRef) {
+        final Integer bifID = entryMap.get(resRef);
+        if (bifID != null) {
+            final int id = bifID.intValue();
+            final String name = bifs[id >> 20];
+            final int index = id % (1 << 20);
+            return new BifResourceLocation(name, index);
+        }
+        return null;
     }
 }
