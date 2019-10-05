@@ -604,14 +604,12 @@ public class ErfFile extends AbstractRepository{
         return ( o!=null && o instanceof File );
     }
 
-    public static byte[] getLocStringData(
-            GffCExoLocString cels, Version nwnVersion) {
+    public static byte[] getLocStringData(GffCExoLocString cels, Version nwnVersion) {
         int stringdatasize = 0;
         try {
-            for (int i = 0; i < cels.getSubstringCount(); i++)
-                stringdatasize
-                    += cels.getSubstring(i).string.getBytes(
-                        cels.getSubstring(i).language.getEncoding()).length;
+            for (final CExoLocSubString sub : cels) {
+                stringdatasize += sub.getBytes().length;
+            }
             int datasize = 12 + stringdatasize + 8 * cels.getSubstringCount();
             byte[] ret = new byte[datasize];
             ByteBuffer b = ByteBuffer.wrap(ret);
@@ -620,25 +618,21 @@ public class ErfFile extends AbstractRepository{
             b.putInt(cels.getStrRef());
             b.putInt(cels.getSubstringCount());
 
-            for (int i = 0; i < cels.getSubstringCount(); i++) {
-
+            for (final CExoLocSubString sub : cels) {
                 int languageId = 0;
                 switch (nwnVersion) {
                     case NWN1 : {
-                        languageId =
-                                (cels.getSubstring(i).language.getCode() * 2)
-                                + cels.getSubstring(i).gender;
+                        languageId = sub.language.getCode() * 2 + sub.gender;
                         break;
                     }
                     case NWN2 : {
-                        languageId = cels.getSubstring(i).language.getCode();
+                        languageId = sub.language.getCode();
                         break;
                     }
                 }
                 b.putInt( languageId );
 
-                byte[] stringBytes = cels.getSubstring(i).string.getBytes(
-                        cels.getSubstring(i).language.getEncoding());
+                final byte[] stringBytes = sub.getBytes();
                 b.putInt(stringBytes.length);
 
                 b.put( stringBytes );

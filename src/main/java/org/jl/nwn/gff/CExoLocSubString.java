@@ -1,5 +1,6 @@
 package org.jl.nwn.gff;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Comparator;
 
 import org.jl.nwn.NwnLanguage;
@@ -20,6 +21,18 @@ public class CExoLocSubString extends GffField<String> implements Cloneable {
         this.string = s;
         this.language = lang;
         this.gender = gender;
+    }
+
+    /**
+     * Returns bytes ot this substring in encoding, used for language of this string.
+     *
+     * @return Byte representation of this substring
+     *
+     * @throws UnsupportedEncodingException If encoding for this language is not
+     *         supported by JVM
+     */
+    public byte[] getBytes() throws UnsupportedEncodingException {
+        return string.getBytes(language.getEncoding());
     }
 
     @Override

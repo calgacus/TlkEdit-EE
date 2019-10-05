@@ -109,8 +109,8 @@ public class Gff2Xml {
     protected static Element mkCExoLocStringElement( Node el, GffCExoLocString field ){
         Element e = mkFieldElement( el, field );
         e.setAttribute( "strRef", Integer.toString( field.getStrRef() ) );
-        for ( int i = 0; i < field.getSubstringCount(); i++ ){
-            mkCExoLocSubstringElement( e, field.getSubstring(i) );
+        for (final CExoLocSubString sub : field) {
+            mkCExoLocSubstringElement(e, sub);
         }
         return e;
     }
