@@ -32,13 +32,15 @@ import org.jl.nwn.resource.ResRefUtil;
 import org.jl.nwn.resource.ResourceID;
 
 /**
- * this class represents an erf file.
- *
- * Differences between V1.0 and V1.1 (nwn2) :
- * 1) header version is V1.1 instead of V1.0 (duh)
- * 2) Localized strings : in V1.1 ERFs the language id is used as it is,
- *    and not as (LanguageID*2+Gender)
- * 3) resource names are 32 instead of 16 characters long
+ * This class represents an erf file.
+ * <p>
+ * Differences between V1.0 and V1.1 (nwn2):
+ * <ul>
+ * <li>header version is V1.1 instead of V1.0 (duh)</li>
+ * <li>Localized strings : in V1.1 ERFs the language id is used as it is,
+ *     and not as (LanguageID*2+Gender)</li>
+ * <li>resource names are 32 instead of 16 characters long</li>
+ * </ul>
  */
 public class ErfFile extends AbstractRepository{
 
@@ -48,12 +50,14 @@ public class ErfFile extends AbstractRepository{
     private ErfType type;
     private int buildYear;
     private int buildDay;
+    /** Map with {@link ResourceListEntry}, {@link File} or {@link InputStream} objects. */
     private final Map<ResourceID, Object> resources = new TreeMap<>();
     private Version nwnVersion;
 
     private static final String TMPFILEPREFIX = "erftmp_";
     public static final ErfType HAK = new ErfType( "HAK ", "hak" ){
-        @Override protected void initializeErf(ErfFile erf){
+        @Override
+        protected void initializeErf(ErfFile erf) {
             GffCExoLocString cels = new GffCExoLocString("");
             CExoLocSubString s = new CExoLocSubString(
                     "<HAK NAME>\n<URL>\n<DESCRIPTION>",
@@ -88,18 +92,12 @@ public class ErfFile extends AbstractRepository{
             }
             return ERF;
         }
-        public String getName() {
-            return name;
-        }
-        public String getTypeString() {
-            return typeString;
-        }
         protected void initializeErf(ErfFile erf){}
     }
 
     /**
-     * create a new erf file with the given type and description
-     * */
+     * Create a new erf file with the given type and description.
+     */
     public ErfFile( File file,
             ErfType type,
             GffCExoLocString description,
@@ -126,8 +124,8 @@ public class ErfFile extends AbstractRepository{
     }
 
     /**
-     * open given file as erf file
-     * */
+     * Open given file as erf file
+     */
     public ErfFile( File erf ) throws IOException{
         this.file = erf;
         if ( !erf.exists() )
@@ -229,14 +227,6 @@ public class ErfFile extends AbstractRepository{
         }
     }
 
-    public int getBuildDay() {
-        return buildDay;
-    }
-
-    public int getBuildYear() {
-        return buildYear;
-    }
-
     public GffCExoLocString getDescription() {
         return description;
     }
@@ -245,55 +235,45 @@ public class ErfFile extends AbstractRepository{
         return type;
     }
 
+    //<editor-fold defaultstate="collapsed" desc="NwnRepository">
     @Override
     public Set<ResourceID> getResourceIDs(){
         return Collections.unmodifiableSet( resources.keySet() );
     }
 
     /**
-     * @return null if no such resource exists in this erf
-     * */
+     * @return {@code null} if no such resource exists in this erf
+     */
     @Override
-    public InputStream getResource( ResourceID id ) throws IOException{
+    public InputStream getResource(ResourceID id) throws IOException {
         Object o = resources.get( id );
-        if ( o != null ){
-            if ( o instanceof ResourceListEntry )
-                return getStream( (ResourceListEntry) o );
-            else if ( o instanceof File )
-                return getStream( (File) o );
-            else if ( o instanceof InputStream )
-                return (InputStream) o;
+        if (o instanceof ResourceListEntry) {
+            final ResourceListEntry rle = (ResourceListEntry)o;
+            return new RafInputStream( raf, rle.offset, rle.offset + rle.size );
+        }
+        if (o instanceof File) {
+            return new FileInputStream((File)o);
+        }
+        if (o instanceof InputStream) {
+            return (InputStream) o;
         }
         return null;
     }
 
-    @Override public MappedByteBuffer getResourceAsBuffer( ResourceID id ) throws IOException{
+    @Override
+    public MappedByteBuffer getResourceAsBuffer(ResourceID id) throws IOException {
         Object o = resources.get( id );
-        if ( o != null ){
-            if ( o instanceof ResourceListEntry ){
-                ResourceListEntry rle = (ResourceListEntry) o;
-                return raf.getChannel().map( FileChannel.MapMode.READ_ONLY, rle.offset, rle.size );
+        if (o instanceof ResourceListEntry) {
+            ResourceListEntry rle = (ResourceListEntry) o;
+            return raf.getChannel().map( FileChannel.MapMode.READ_ONLY, rle.offset, rle.size );
+        }
+        if (o instanceof File) {
+            try (final RandomAccessFile r = new RandomAccessFile((File)o, "r")) {
+                // MappedByteBuffer will be valid even after close file, that created it
+                return r.getChannel().map( FileChannel.MapMode.READ_ONLY, 0, r.length() );
             }
-            if ( o instanceof File ){
-                try (final RandomAccessFile r = new RandomAccessFile((File)o, "r")) {
-                    // MappedByteBuffer will be valid even after close file, that created it
-                    return r.getChannel().map( FileChannel.MapMode.READ_ONLY, 0, r.length() );
-                }
-            }
-            /*
-            else if ( o instanceof InputStream )
-                return (InputStream) o;
-             */
         }
         return null;
-    }
-
-    private InputStream getStream( ResourceListEntry rle ) throws IOException{
-        return new RafInputStream( raf, rle.offset, rle.offset + rle.size );
-    }
-
-    private InputStream getStream( File f ) throws IOException{
-        return new FileInputStream( f );
     }
 
     @Override
@@ -301,9 +281,6 @@ public class ErfFile extends AbstractRepository{
         if (raf!=null) raf.close();
     }
 
-    /**
-     * @return size of resource, -1 if no such resource exists
-     * */
     @Override
     public int getResourceSize( ResourceID id ){
         Object o = resources.get(id);
@@ -320,15 +297,61 @@ public class ErfFile extends AbstractRepository{
     }
 
     /**
-     * write erf file.
-     * */
+     * Return an {@link OutputStream} for adding a new Resource, closing the
+     * returned OutputStream rewrites this erf file.
+     */
+    @Override
+    public OutputStream putResource(ResourceID id) throws IOException {
+        final File f = File.createTempFile( TMPFILEPREFIX, id.getFileName() );
+        f.deleteOnExit();
+        putResource( id, f );
+        return new FileOutputStream( f ){
+            @Override
+            public void close() throws IOException{
+                super.close();
+                ErfFile.this.write();
+            };
+        };
+    }
+
+    @Override
+    public boolean contains( ResourceID id ){
+        return resources.get( id ) != null;
+    }
+
+    @Override
+    public File getResourceLocation(ResourceID id) {
+        return contains(id) ? file : null;
+    }
+
+    @Override
+    public boolean isWritable() {
+        return true;
+    }
+
+    @Override
+    public long lastModified(ResourceID id) {
+        final Object o = resources.get(id);
+        if (o instanceof File) {
+            return ((File)o).lastModified();
+        }
+        if (o != null) {
+            return file.lastModified();
+        }
+        return super.lastModified(id);
+    }
+    //</editor-fold>
+
+    /**
+     * Write erf file.
+     */
     public void write() throws IOException{
         write( file );
     }
 
     /**
-     * write this erf file to a new location.
-     * */
+     * Write this erf file to a new location.
+     */
     public void write( File outputFile ) throws IOException{
         this.file=outputFile;
 
@@ -349,8 +372,6 @@ public class ErfFile extends AbstractRepository{
         int offsetToResourceList =
                 offsetToKeyList + (entryCount*(resrefsize+8)); // note : this is not the case in files created by the toolset
         int descriptionStrRef = description.getStrRef();
-        //buildYear = 0;
-        //buildDay = 0;
         File tmpErf = File.createTempFile( TMPFILEPREFIX + file.getName(), "" );
         byte[] buf = new byte[32000];
         try{
@@ -434,33 +455,34 @@ public class ErfFile extends AbstractRepository{
     }
 
     /**
-     * remove a resource from this erf
-     * @return true if the resource was removed, false if there was no such resource
-     * */
+     * Remove a resource from this erf.
+     *
+     * @return {@code true} if the resource was removed, {@code false} if there
+     *         was no such resource
+     */
     public boolean remove( ResourceID id ){
         return resources.remove( id ) != null;
     }
 
     /**
-     * adds file as resource under the given resource id, replace resource with same id
-     * */
+     * Adds file as resource under the given resource id, replace resource with same id
+     */
     public void putResource( ResourceID id, File file ){
         resources.put( id, file );
     }
 
-    private void putResource( ResourceID id, InputStream is ){
-        resources.put( id, is );
-    }
-
     /**
-     * rename a given resource.
-     * @param resourceName the new name of the resource ( without type extension ! )
-     * @return the new ResourceId for the renamed resource or null if the file doesn't contain the given resource
-     * */
-    public ResourceID renameResource( ResourceID id, String resourceName ){
+     * Rename a given resource.
+     *
+     * @param nweName the new name of the resource ( without type extension ! )
+     *
+     * @return the new ResourceID for the renamed resource or {@code null} if the
+     *         file doesn't contain the given resource
+     */
+    public ResourceID renameResource( ResourceID id, String nweName ){
         if ( !resources.containsKey( id ) )
             return null;
-        ResourceID nId = new ResourceID( resourceName, id.getType() );
+        final ResourceID nId = new ResourceID( nweName, id.getType() );
         if ( !nId.equals( id ) ){
             resources.put( nId, resources.get(id) );
             resources.remove( id );
@@ -469,46 +491,27 @@ public class ErfFile extends AbstractRepository{
     }
 
     /**
-     * adds all resource from erf to this file, if they do not already exist in this file and rewrites this erf
-     * */
+     * Adds all resource from erf to this file, if they do not already exist in
+     * this file and rewrites this erf.
+     */
     public void merge( ErfFile erf ) throws IOException{
         for (final ResourceID id : erf.resources.keySet()) {
-            if ( !resources.keySet().contains(id) )
-                putResource( id, erf.getResource( id ) );
+            if (!resources.containsKey(id)) {
+                resources.put(id, erf.getResource(id));
+            }
         }
         write();
     }
 
     /**
-     * adds a file as a resource, replace resource with same id
+     * Adds a file as a resource, replace resource with same id.
+     *
      * @return ResourceID under which the new resource was stored
-     * */
+     */
     public ResourceID putResource( File file ){
         ResourceID id = ResourceID.forFile( file );
         resources.put( id, file );
         return id;
-    }
-
-    /**
-     * return an OutputStream for adding a new Resource, closing the returned OutputStream
-     * rewrites this erf file
-     * */
-    public OutputStream put( ResourceID id ) throws IOException{
-        final File f = File.createTempFile( TMPFILEPREFIX, id.getFileName() );
-        f.deleteOnExit();
-        putResource( id, f );
-        return new FileOutputStream( f ){
-            @Override
-            public void close() throws IOException{
-                super.close();
-                ErfFile.this.write();
-            };
-        };
-    }
-
-    @Override
-    public boolean contains( ResourceID id ){
-        return resources.get( id ) != null;
     }
 
     public File getFile() {
@@ -523,15 +526,13 @@ public class ErfFile extends AbstractRepository{
      * Extracts all files to a directory.
      *
      * @param outputDir all files are extracted to this directory
-     * */
+     */
     public void extractToDir( File outputDir ) throws IOException{
         if ( !outputDir.exists() ) outputDir.mkdirs();
-        //byte[] buf = new byte[64000];
         for (final ResourceID id : getResourceIDs()) {
-            writeStreamToFile(
-                    getResource( id ),
-                    new File( outputDir, id.getFileName() )
-            );
+            try (final InputStream is = getResource(id)) {
+                writeStreamToFile(is, new File(outputDir, id.getFileName()));
+            }
         }
     }
 
@@ -553,37 +554,42 @@ public class ErfFile extends AbstractRepository{
      *         not be created or writed
      */
     public File extractAsTempFile( ResourceID id, boolean replaceWithFile ) throws IOException{
-        InputStream is = getResource( id );
-        if ( is == null ) return null;
-        final File f = File.createTempFile( TMPFILEPREFIX, file.getName()+"_"+id.getFileName() );
-        f.deleteOnExit();
-        writeStreamToFile( is, f );
-        if ( replaceWithFile ) putResource( id, f );
-        return f;
+        try (final InputStream is = getResource( id )) {
+            if (is == null) return null;
+
+            final File f = File.createTempFile( TMPFILEPREFIX, file.getName()+"_"+id.getFileName() );
+            f.deleteOnExit();
+            writeStreamToFile( is, f );
+            if ( replaceWithFile ) putResource( id, f );
+            return f;
+        }
     }
 
     /**
      * Extract resource with given id to directory.
      *
      * @param id the ID of the resource to be extracted
-     * @param directory
+     * @param directory Directory to which save extracted file. If directory do
+     *        not exists, it will be created.
      *
      * @return {@code null} if no resource with the given id exists, otherwise
      *         return a File object pointing to the extracted resource
-     * */
+     */
     public File extractToDir( ResourceID id, File directory ) throws IOException{
-        InputStream is = getResource( id );
-        if ( is == null ) return null;
-        if ( !directory.exists() ) directory.mkdirs();
-        final File f = new File( directory, id.getFileName() );
-        writeStreamToFile( is, f );
-        return f;
+        try (final InputStream is = getResource(id)) {
+            if (is == null) return null;
+
+            if ( !directory.exists() ) directory.mkdirs();
+            final File f = new File( directory, id.getFileName() );
+            writeStreamToFile( is, f );
+            return f;
+        }
     }
 
     private static final byte[] streamBuffer = new byte[64000];
     /**
-     * writes stream to file & close stream
-     * */
+     * Writes stream to file.
+     */
     private static synchronized void writeStreamToFile( InputStream is, File file ) throws IOException{
         try (final FileOutputStream fos = new FileOutputStream( file );
              final BufferedOutputStream os = new BufferedOutputStream( fos )
@@ -593,12 +599,11 @@ public class ErfFile extends AbstractRepository{
                 os.write( streamBuffer,0,len );
             os.flush();
         }
-        is.close();
     }
 
     /**
-     * @return true if resource was added with putResource( ResourceID, File )
-     * */
+     * @return {@code true} if resource was added with {@link #putResource(ResourceID, File)}
+     */
     public boolean isFileResource( ResourceID id ){
         Object o = resources.get(id);
         return ( o!=null && o instanceof File );
@@ -667,28 +672,6 @@ public class ErfFile extends AbstractRepository{
                 System.out.println("erffile.java 679 "+ id);
             }
         }
-                /*
-                extractErf( f, out );
-                ErfFile erf = new ErfFile(f);
-                erf.putResource( new ResourceID( "capture", "txt"), new File("/e/capture.txt") );
-
-                erf.write( new File("foo.mod") );
-                erf.close();
-                extractErf( new File("foo.mod"), new File("foo_out") );
-                 */
-
-        // create file test
-                /*
-                GffCExoLocString desc = new GffCExoLocString("foo");
-                desc.addSubstring( new CExoLocSubString( "hello world", NwnLanguage.ENGLISH, CExoLocSubString.GENDER_MASC ) );
-                ErfFile erf = new ErfFile( f, MOD, desc );
-                File[] files = out.listFiles();
-                for ( int i = 0; i < files.length; i++ ){
-                        if ( files[i].isFile() )
-                                erf.putResource( ResourceID.forFile( files[i] ), files[i] );
-                }
-                erf.write( erf.getFile() );
-                 */
     }
 
     public Version getVersion(){
@@ -697,32 +680,5 @@ public class ErfFile extends AbstractRepository{
 
     public void setDescription(GffCExoLocString string) {
         description = string;
-    }
-
-    @Override
-    public File getResourceLocation(ResourceID id) {
-        return contains(id)? file : null;
-    }
-
-    @Override
-    public boolean isWritable() {
-        return true;
-    }
-
-    @Override
-    public long lastModified(ResourceID id) {
-        if ( contains(id) ){
-            if ( isFileResource( id ) )
-                return ((File)resources.get(id)).lastModified();
-            else
-                return file.lastModified();
-        }
-        return super.lastModified(id);
-    }
-
-    @Override
-    public OutputStream putResource(ResourceID id)
-    throws IOException, UnsupportedOperationException {
-        return put( id );
     }
 }
