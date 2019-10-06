@@ -34,6 +34,7 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
     public int getChildCount(Object parent) {
         return ((GffField) parent).getChildCount();
     }
+
     @Override
     public int getColumnCount() {
         return 3;
@@ -69,7 +70,11 @@ public class GffTreeTableModel extends AbstractTreeTableModel {
         return !((GffField)node).allowsChildren();
     }
 
-    /** for columns 0 and 1 return label and typename strings, for column 2 return GffField object
+    /**
+     * For columns 0 and 1 return label and typename strings, for column 2 return
+     * {@link GffField} object.
+     *
+     * {@inheritDoc }
      */
     @Override
     public Object getValueAt(Object node, int column){

@@ -17,9 +17,9 @@ import javax.swing.JToolBar;
 
 /**
  * StdOutFrame displays the standard out and standard error streams ( System.out / System.err )
- * in a JTextArea ( uses a t piece to pipe System.out/err to the usual place )
+ * in a JTextArea ( uses at piece to pipe System.out/err to the usual place )
  *
- * StdOutFrame is a Singleton, use {@link StdOutFrame#getInstance()} to get the single instant.
+ * StdOutFrame is a Singleton, use {@link StdOutFrame#getInstance()} to get the single instant
  *
  * @author ich
  */

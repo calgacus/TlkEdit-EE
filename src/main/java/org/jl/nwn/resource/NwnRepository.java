@@ -13,17 +13,19 @@ import java.util.Set;
  */
 public interface NwnRepository extends Iterable<ResourceID>, Closeable {
     /**
-     * @return InputStream for the resource with given id, null if no such resource is found
+     * @return InputStream for the resource with given id, {@code null} if
+     *         if such resource is found
      */
     public InputStream getResource( ResourceID id ) throws IOException;
 
     /**
-     * @return InputStream for the resource with given name, null if no such resource is found
+     * @return InputStream for the resource with given name, {@code null} if
+     *         no such resource is found
      */
     public InputStream getResource( String resourceName ) throws IOException;
 
     /**
-     * @return null if the repository contains no such resource
+     * @return {@code null} if the repository contains no such resource
      */
     public File getResourceLocation( ResourceID id );
 
@@ -40,7 +42,8 @@ public interface NwnRepository extends Iterable<ResourceID>, Closeable {
     public long lastModified( ResourceID id );
 
     /**
-     * retrieves the size of the resource in bytes.
+     * Retrieves the size of the resource in bytes.
+     *
      * @return 0 if the resource does not exist OR the size cannot be determined
      */
     public int getResourceSize( ResourceID id );

@@ -73,9 +73,7 @@ public class TlkLookupPanel extends JPanel implements MessageSource {
         updateModel.setEnabled(false);
     }
 
-    /**
-    try to parse value as int and display strref
-     */
+    /** Try to parse value as int and display strref. */
     public void lookup(Object value) {
         try {
             int strref = Integer.parseInt(value.toString());

@@ -379,8 +379,9 @@ public class ResourceID implements Comparable {
     }
 
     /**
+     * {@inheritDoc }
      * @return filename for this resource ID
-     * */
+     */
     @Override
     public String toString() {
         return getFileName();
@@ -411,7 +412,7 @@ public class ResourceID implements Comparable {
 
     /**
      * @return the int value representing the type given by the parameter or -1 if the extension is not known
-     * */
+     */
     public static short getTypeForExtension(String extension) {
         Short type = extension2typeMap.get(extension);
         return (type == null) ? -1 : type.shortValue();

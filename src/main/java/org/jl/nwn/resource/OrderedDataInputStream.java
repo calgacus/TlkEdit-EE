@@ -33,7 +33,6 @@ public class OrderedDataInputStream extends FilterInputStream implements DataInp
         return (current==dataIn)? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN;
     }
 
-
     @Override
     public void readFully(byte[] b, int off, int len) throws IOException{
         current.readFully(b, off, len);
@@ -84,9 +83,7 @@ public class OrderedDataInputStream extends FilterInputStream implements DataInp
         return current.readInt();
     }
 
-    /**
-     @deprecated string decoding always using default charset
-     */
+    /** @deprecated string decoding always using default charset */
     @Override
     @Deprecated
     public String readLine() throws IOException{

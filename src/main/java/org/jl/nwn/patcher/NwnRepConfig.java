@@ -37,17 +37,17 @@ import org.jl.nwn.resource.NwnDirRepository;
 import org.jl.nwn.resource.NwnRepository;
 
 /**
- * Configuration of an NWN Repository ( typically a chain of hak packs, override
- * dir, bif files ( indexed by .key files ), stored in Preferences.
+ * Configuration of an NWN Repository (typically a chain of hak packs, override dir,
+ * bif files ( indexed by .key files ), stored in Preferences.
  *
  * @author ich
  */
 public class NwnRepConfig {
 
 	private static final String PREFS_USEHAK = "usesourcehak";
-	// prefix for entries in source hak list
+    /** Prefix for entries in source hak list. */
 	private static final String PREFS_HAK = "sourcehak";
-	// number of entries in source hak list
+    /** Number of entries in source hak list. */
 	private static final String PREFS_HAKNUM = "sourcehaknum";
 	private static final String PREFS_BIFKEYS = "keyfilesoverride";
 	private static final String PREFS_USEBIFS = "usekeyfiles";

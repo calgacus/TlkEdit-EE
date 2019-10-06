@@ -40,7 +40,6 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
 
     private Version nwnVersion;
 
-    /** Creates a new instance of AbstractGffWriter */
     public AbstractGffWriter(){
         this(Version.getDefaultVersion());
     }
@@ -49,15 +48,11 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
         this.nwnVersion = nwnVersion;
     }
 
-    /**
-     *retrieve field label
-     *@return field label
-     */
     protected abstract String fieldLabel( Fld field );
     /**
-     *retrieve field type
-     *@see Gff constant definitions in class Gff
-     *@return field type
+     * Retrieve field type
+     *
+     * @return one of constants from {@link Gff}
      */
     protected abstract int fieldType( Fld field );
 
@@ -83,11 +78,11 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
     protected abstract byte[] voidFieldData( Fld field );
 
     /**
-     *write CExoLocString data into given arrays.
-     *intValues[0] = strRef<br/>
-     *intValues[1] = number of substrings <br/>
-     *languages / genders / strings arrays for holding substrings,
-     *gender : 0 = neutral/masc., 1 = feminine
+     * Write CExoLocString data into given arrays.
+     * intValues[0] = strRef<br/>
+     * intValues[1] = number of substrings <br/>
+     * languages / genders / strings arrays for holding substrings,
+     * gender : 0 = neutral/masc., 1 = feminine
      */
     protected abstract void cExoLocStringData( Fld Field, int[] intValues, NwnLanguage[] languages, int[] genders, String[] strings );
 
@@ -103,11 +98,8 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
             throw new IllegalArgumentException( "no null arguments allowed" );
         if ( gffType.length() != 4 )
             throw new IllegalArgumentException( "gff type string must have length 4 : \'" + gffType + "\'" );
-        try (final FileOutputStream fos = new FileOutputStream(file);
-             final BufferedOutputStream bos = new BufferedOutputStream( fos )
-        ) {
+        try (final BufferedOutputStream bos = new BufferedOutputStream( new FileOutputStream(file) )) {
             write( topLevelStruct, gffType, bos );
-            bos.flush();
         }
     }
 
@@ -117,8 +109,6 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
         int fieldDataBlockSize = 0;
 
         try{
-            //System.out.printf("AbstractGffWriter.write(%1s)\n", file);
-
             /* do a breadth-first traversal of the gff tree to build
              lists of fields, structs, and lists.
              because of the traversal order, fields belonging to one struct will
@@ -307,7 +297,7 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
 
     }
 
-    // add label to list if neccessary, return label's index
+    /** Add label to list if neccessary, return label's index. */
     private int addLabel( String label ){
         int labelIndex = labels.indexOf(label);
         if ( labelIndex == -1 ){
@@ -455,7 +445,6 @@ public abstract class AbstractGffWriter<Fld, Strct extends Fld, Lst extends Fld>
     }
 
     private void writeListIndicesArray( OutputStream raf ) throws IOException{
-        int entries = 0;
         for ( int listNum = 0; listNum < lists.size(); listNum++ ){
             Lst list = lists.get(listNum);
             int lSize = listSize(list);

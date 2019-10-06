@@ -41,7 +41,6 @@ public abstract class GffField<Data extends Object> implements Cloneable{
     }
 
     protected GffField( String label, byte type ){
-        //this.label = label;
         setLabel( label );
         this.type = type;
     }
@@ -68,7 +67,7 @@ public abstract class GffField<Data extends Object> implements Cloneable{
 
     /**
      * @return true if field is not a list or struct
-     * */
+     */
     public boolean isDataField(){
         return ( type != Gff.STRUCT && type != Gff.LIST );
     }
