@@ -1,6 +1,5 @@
 package org.jl.nwn.erf;
 
-import java.io.BufferedOutputStream;
 import java.io.DataInput;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +14,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
@@ -400,7 +401,7 @@ public class ErfFile extends AbstractRepository{
                     int resourceSize = 0;
                     out.seek(offset);
                     try (final InputStream is = getResource( id )) {
-                        int len = 0;
+                        int len;
                         while ( (len=is.read(buf))!=-1 ){
                             resourceSize += len;
                             out.write( buf,0,len );
@@ -414,8 +415,9 @@ public class ErfFile extends AbstractRepository{
 
                     // update resource map
                     // this should not interfere with the iterator, as all ids are already in the key set
-                    if ( !isFileResource(id) )
+                    if ( !isFileResource(id) ) {
                         resources.put( id, new ResourceListEntry(offset, resourceSize) );
+                    }
 
                     offset+=resourceSize;
                     resIdCounter++;
@@ -424,14 +426,7 @@ public class ErfFile extends AbstractRepository{
 
             // copy temp file
             if ( raf!=null ) raf.close();
-            try (final FileInputStream is = new FileInputStream( tmpErf );
-                 final FileOutputStream fos = new FileOutputStream( file );
-                 final FileChannel rc = is.getChannel();
-                 final FileChannel wc = fos.getChannel()
-            ) {
-                wc.transferFrom( rc, 0, rc.size() );
-                fos.flush();
-            }
+            Files.copy(tmpErf.toPath(), file.toPath(), REPLACE_EXISTING);
             raf = new RandomAccessFile( file, "r" );
         } finally {
             tmpErf.delete();
@@ -570,19 +565,11 @@ public class ErfFile extends AbstractRepository{
         }
     }
 
-    private static final byte[] streamBuffer = new byte[64000];
     /**
      * Writes stream to file.
      */
     private static synchronized void writeStreamToFile( InputStream is, File file ) throws IOException{
-        try (final FileOutputStream fos = new FileOutputStream( file );
-             final BufferedOutputStream os = new BufferedOutputStream( fos )
-        ) {
-            int len;
-            while ( (len=is.read(streamBuffer))!=-1 )
-                os.write( streamBuffer,0,len );
-            os.flush();
-        }
+        Files.copy(is, file.toPath(), REPLACE_EXISTING);
     }
 
     /**
