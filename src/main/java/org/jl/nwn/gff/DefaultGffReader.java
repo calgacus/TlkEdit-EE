@@ -1,8 +1,6 @@
 package org.jl.nwn.gff;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -11,14 +9,6 @@ import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
 
 public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, GffList>{
-
-    /**
-     @deprecated unsafe : relies on correct default version
-     */
-    @Deprecated
-    public DefaultGffReader(){
-        super();
-    }
 
     public DefaultGffReader(Version v){
         super(v);
@@ -116,24 +106,5 @@ public class DefaultGffReader extends AbstractGffReader<GffField, GffStruct, Gff
     @Override
     public GffContent load( InputStream in ) throws IOException{
         return (GffContent) super.load(in);
-    }
-
-    public static void main( String[] args ) throws IOException{
-        AbstractGffReader reader = new DefaultGffReader();
-        long time = System.currentTimeMillis();
-        int fileCount = 0;
-        long totalSize = 0;
-        for ( String fName : args ){
-            final File f = new File(fName);
-            try (final FileInputStream fis = new FileInputStream(f);
-                 final BufferedInputStream bin = new BufferedInputStream(fis)
-            ) {
-                reader.load(bin);
-            }
-            fileCount++;
-            totalSize += f.length();
-            System.out.println("def...gffreader.java 178  "+f);
-        }
-        System.out.printf("loaded %d files ( %f kb ) in %d ms\n", fileCount, totalSize/1024.0, System.currentTimeMillis()-time);
     }
 }
