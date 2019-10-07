@@ -6,12 +6,9 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -29,9 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -325,23 +320,16 @@ public abstract class SearchAndReplaceDialog extends JDialog{
     /**
      * should be called by the editor/client when the value of string has changed,
      * i.e. when this object must reread the string and reinitialize the search pattern & matcher.
-     * */
+     */
     @Override
     public void invalidate(){
         invalidState = true;
         btnReplace.setEnabled(false);
-            /*
-                if ( !this.hasFocus() ){
-                        invalidState = true;
-                        btnReplace.setEnabled(false);
-                        //btnReplaceAll.setEnabled(false);
-                }
-             */
     }
 
     /**
      * test whether the matcher has found a match
-     * */
+     */
     public boolean haveMatch(){
         if ( matcher == null )
             return false;
@@ -353,9 +341,7 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         return true;
     }
 
-    /**
-     return a replacement string that will work with the current matcher
-     */
+    /** @return a replacement string that will work with the current matcher */
     protected String getReplacement(){
         String replacement = tfReplaceString.getText();
         if ( !cbRegExp.isSelected() )
@@ -367,12 +353,11 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         matcher.appendReplacement( sb, getReplacement() );
         updateString( sb.toString() + string.substring( matcher.end() ) );
         deltaReplacement = sb.length() - matcher.end();
-        //System.out.println( deltaReplacement );
     }
 
     /**
      * reset matcher and replace all occurences in selection or in whole file
-     * */
+     */
     public void replaceAll(){
         init();
         searchStartPos = 0;
@@ -407,10 +392,8 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             statusLabel.setForeground(Color.RED);
             statusLabel.setText("No match for : " + tfSearchString.getText());
             Toolkit.getDefaultToolkit().beep();
-            //JOptionPane.showMessageDialog( SearchAndReplaceDialog.this, "search string not found" );
         } else {
             try{
-                //System.out.println( "match at : " + matcher.start() );
                 selectText();
                 btnReplace.setEnabled(true);
                 btnReplaceAll.setEnabled(true);
@@ -435,7 +418,6 @@ public abstract class SearchAndReplaceDialog extends JDialog{
         @Override
         public void run() {
             invalidState = false;
-            //System.out.println("SetOK " + invalidState);
         }
     };
 
@@ -449,9 +431,12 @@ public abstract class SearchAndReplaceDialog extends JDialog{
     }
 
     /**
-     * test whether the current match is in the selection
-     * @return true if the match is whithin the selection OR if there is no selection ( in that case the whole string is treated as selected ).
-     * false else
+     * Test whether the current match is in the selection.
+     *
+     * @return {@code true} if the match is whithin the selection OR if there is
+     *         no selection ( in that case the whole string is treated as selected ).
+     *         {@code false} otherwise
+     *
      * @throws IllegalStateException if no match has been found or search was not called before
      * */
     protected boolean matchIsInSelection() throws IllegalStateException{
@@ -459,44 +444,5 @@ public abstract class SearchAndReplaceDialog extends JDialog{
             return matcher.start() >= selectionStart && matcher.end() < selectionEnd;
         else
             return true;
-    }
-
-    public static void main(String[] args) throws IOException{
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-        final JTextPane t = new JTextPane();
-        final SearchAndReplaceDialog sar = new SearchAndReplaceDialog(){
-            @Override
-            public String getString(){
-                return t.getText();
-            }
-            @Override
-            public void selectText( int a, int b ){
-                t.select( a, b );
-            }
-            @Override
-            public void updateString( String s ){
-                int p = t.getCaretPosition();
-                t.setText( s );
-                //t.setCaretPosition( p );
-            }
-            @Override
-            public void init(){
-                super.init();
-                super.searchStartPos = t.getCaretPosition();
-            }
-        };
-        t.addFocusListener( new FocusAdapter(){
-            @Override
-            public void focusGained(FocusEvent e){
-                sar.invalidate();
-            }
-        } );
-
-        f.getContentPane().add( new JScrollPane(t) );
-        f.pack();
-        f.setSize( 700, 300 );
-        f.setVisible(true);
-        sar.setVisible(true);
     }
 }

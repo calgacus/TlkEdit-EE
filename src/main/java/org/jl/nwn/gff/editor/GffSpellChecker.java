@@ -35,8 +35,6 @@ import org.jl.nwn.gff.GffField;
 import org.jl.nwn.gff.GffStruct;
 import org.jl.nwn.spell.Dictionaries;
 
-/**
- */
 public class GffSpellChecker {
 
     GffTreeTableModel model;
@@ -82,12 +80,9 @@ public class GffSpellChecker {
                         WordTokenizer.INSERT_CHARS) ;
             }
             model.setValueAt(sb.toString(), substring, 2);
-
         }
-
     }
 
-    /** Creates a new instance of GffSpellChecker */
     public GffSpellChecker( GffTreeTableModel model ){
         this.model = model;
     }
@@ -107,12 +102,11 @@ public class GffSpellChecker {
     }
 
     public void performChecking(){
-        GffStruct topLevel = ((GffStruct)model.getRoot());
+        final GffStruct topLevel = model.getRoot();
         Iterator<GffField> it = topLevel.getDFIterator();
         for ( GffField f = it.next(); !cancel && it.hasNext(); f = it.next() ){
             if ( f.getType() == Gff.CEXOLOCSTRING ){
                 for ( CExoLocSubString substring : (GffCExoLocString)f ){
-                    //CExoLocSubString substring = (CExoLocSubString) f;
                     if ( languageOverride != null )
                         dict = Dictionaries.forLanguage(languageOverride);
                     else

@@ -1,28 +1,18 @@
 package org.jl.nwn.tlk;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.ProgressMonitor;
 
 import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
@@ -166,211 +156,20 @@ public class TlkContent implements Iterable<TlkEntry> {
         }
     }
 
-
-    private static void writeIntLE( OutputStream out, int i)
-    throws IOException {
+    private static void writeIntLE(OutputStream out, int i) throws IOException {
         out.write(i & 255);
         out.write((i >> 8) & 255);
         out.write((i >> 16) & 255);
         out.write((i >> 24) & 255);
     }
 
-    private static void writeIntLE( DataOutput out, int i)
-    throws IOException {
-        out.write(i & 255);
-        out.write((i >> 8) & 255);
-        out.write((i >> 16) & 255);
-        out.write((i >> 24) & 255);
-    }
-
-    /* reads an int value stored in little endian byte order, starting at current file pointer */
+    /** Reads an int value stored in little endian byte order, starting at current file pointer. */
     private static int readIntLE( DataInput raf ) throws IOException {
         return raf.readUnsignedByte()
-        | (raf.readUnsignedByte() << 8)
-        | (raf.readUnsignedByte() << 16)
-        | (raf.readUnsignedByte() << 24);
+            | (raf.readUnsignedByte() << 8)
+            | (raf.readUnsignedByte() << 16)
+            | (raf.readUnsignedByte() << 24);
     }
-
-        /*
-                loads file into memory using a MappedByteBuffer
-                might also throw a number of runtime exceptions ( java.nio.BufferUnderflowException,
-                java.lang.IndexOutOfBoundsException or java.lang.IllegalArgumentException )
-                if the input file is not a tlk file.
-    private void load() throws IOException {
-        load( null );
-    }
-         */
-
-    // loads the file through an inputstream
-    private void load2( Version v, InputStream inputStream, final ProgressMonitor pm ) throws IOException{
-        long time = System.currentTimeMillis();
-        long streamSize = inputStream.available();
-
-        try (final BufferedInputStream bis = new BufferedInputStream( inputStream, 16384 )) {
-            byte[] indexEntryBytes = new byte[40];
-            ByteBuffer mbb = ByteBuffer.wrap( indexEntryBytes );
-            mbb.order( ByteOrder.LITTLE_ENDIAN );
-            bis.read( indexEntryBytes, 0, 20 );
-
-            for ( int i = 0; i < 4; i++ ){
-                if ( indexEntryBytes[i] != TLKHEADER[i] ){
-                    System.err.println("not a tlk file !");
-                    throw new IllegalArgumentException("not a tlk file !");
-                }
-            }
-            for ( int i = 0; i < 4; i++ ){
-                if ( indexEntryBytes[4+i] != TLKVERSION[i] ){
-                    System.err.println("wrong tlk version ! "+new String(indexEntryBytes,4,4) );
-                    throw new IllegalArgumentException("wrong tlk file version");
-                }
-            }
-
-            mbb.position(8);
-            language = NwnLanguage.find( v, mbb.getInt() );
-            int entries = mbb.getInt();
-            int stringDataStart = mbb.getInt();
-
-            if ( pm != null ){
-                pm.setMinimum( 0 );
-                pm.setMaximum( entries );
-                //pm.setNote("reading tlk index");
-            }
-
-            tlkEntries = new ArrayList<>( entries );
-
-            int[] stringSizes = new int[entries];
-            int maxStringSize = 0;
-
-            // reading index entries & create tlk entries
-            for ( int i = 0; i < entries; i++ ){
-                bis.read( indexEntryBytes );
-
-                TlkEntry e = new TlkEntry();
-                e.setFlags( indexEntryBytes[0] );
-                if ( indexEntryBytes[4] != 0 )
-                    e.setSoundResRef( new String( indexEntryBytes, 4, 16 ).trim() );
-                mbb.position( 32 );
-                int stringSize = mbb.getInt();
-                stringSizes[i] = stringSize;
-                maxStringSize = maxStringSize < stringSize ? stringSize :  maxStringSize;
-                e.setSoundLength( mbb.getFloat() );
-                tlkEntries.add( e );
-            }
-
-            int skip = stringDataStart - ( 0x14 + (40*entries) );
-            if ( skip != 0 ){
-                System.out.println( "unused bytes between index and string data ?!? : " + skip );
-                if ( skip > 0 )
-                    bis.skip(skip);
-            }
-
-            // read string data
-            byte[] strBuf = new byte[maxStringSize];
-
-            if ( pm != null ){
-                //pm.setNote("reading strings");
-            }
-
-            Charset charset = Charset.forName(language.getEncoding());
-            CharsetDecoder decoder = charset.newDecoder();
-            CharBuffer cbuf = CharBuffer.allocate((int)Math.ceil(maxStringSize * decoder.maxCharsPerByte()));
-            ByteBuffer bb = ByteBuffer.wrap(strBuf);
-
-            for ( int i = 0; i < entries; i++ ){
-                bis.read( strBuf, 0, stringSizes[i] );
-                bb.rewind();
-                bb.limit(stringSizes[i]);
-                cbuf.limit(cbuf.capacity());
-                decoder.reset();
-                decoder.decode(bb, cbuf, true);
-                decoder.flush(cbuf);
-                cbuf.flip();
-                get(i).setString( cbuf.toString() );
-                if ( pm!=null ){
-                    if ( pm.isCanceled() )
-                        break;
-                    pm.setProgress( i );
-                }
-            }
-            if ( pm!=null && !pm.isCanceled() )
-                pm.setProgress( pm.getMaximum() );
-            System.out.printf("loaded %d entries (%d KB) in %d ms\n", entries, streamSize/1024, System.currentTimeMillis()-time);
-        }
-        inputStream.close();
-    }
-
-    /*
-    private void load( final ProgressMonitor pm ) throws IOException {
-        tlkEntries = new Vector();
-        FileInputStream in = new FileInputStream(file);
-        FileChannel fc = in.getChannel();
-        MappedByteBuffer mbb =
-                fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-        mbb.load();
-        mbb.order(ByteOrder.LITTLE_ENDIAN);
-        mbb.position(8);
-
-        language = NwnLanguage.forCode( mbb.getInt() );
-        //System.out.println( "TlkContent : " + language );
-        int entries = mbb.getInt();
-        tlkEntries = new Vector( entries );
-        int start = mbb.getInt();
-        // System.out.println( entries + ", " + start );
-        int indexPos = 0;
-        int contentPos = 0;
-        int contentSize = 0;
-        TlkEntry entry;
-        byte type = 0;
-        String content = "";
-        String soundResRef = "";
-        float soundLength = 0;
-
-        if ( pm != null ){
-            pm.setMinimum( 0 );
-            pm.setMaximum( entries );
-        }
-
-        byte[] buf = new byte[200000];
-        for ( int count=0; count < entries; count++ ) {
-            if ( pm != null && ( count & 255 ) == 0 ) pm.setProgress( count );
-            entry = new TlkEntry();
-            indexPos = count * 40 + 0x14;
-            // get Type
-            type = mbb.get(indexPos);
-            // read resource name
-            mbb.position(indexPos + 4);
-            mbb.get(buf, 0, 16);
-            if (buf[0] != 0)
-                soundResRef = (new String(buf, 0, 16)).trim();
-            else
-                soundResRef = "";
-            // 8 byte sound stuff ( unused ), skip
-            mbb.position(indexPos + 28);
-
-            // 4 byte offset
-            contentPos = mbb.getInt();
-            // 4 byte length ( size )
-            contentSize = mbb.getInt();
-            //if ( ( contentSize == 0 ) && ( contentPos != 0 ) )
-            //    System.out.println( "offset used for 0-length entry at " + Integer.toHexString( mbb.position() - 8 ) );
-            // 4 bytes float : sound length
-            soundLength = mbb.getFloat();
-            // entry
-            mbb.position(contentPos + start);
-            mbb.get(buf, 0, contentSize);
-            content = new String(buf, 0, contentSize, language.getEncoding() );
-
-            entry = new TlkEntry( type, content, soundResRef, soundLength );
-            tlkEntries.add(entry);
-            // System.out.println( count + " : " + entry.resName + " : " + entry.content );
-        }
-        //mbb.clear();
-        if ( pm != null ) pm.close();
-        mbb = null;
-        fc.close();
-        in.close();
-    }
-     */
 
     public void writeDiff( File file, int[] selection ) throws IOException{
         try (final RandomAccessFile raf = new RandomAccessFile( file, "rw" )) {
@@ -435,30 +234,6 @@ public class TlkContent implements Iterable<TlkEntry> {
             }
             return positions;
         }
-    }
-
-    public static void main( String[] args ) throws Exception{
-        //long now = System.currentTimeMillis();
-        //TlkContent c = new TlkContent( new File(args[0]), new ProgressMonitor(null, "foo", "bar", 0, 1 ) );
-        //TlkContent c = new TlkContent( new File("/windows/e/spiele/NeverwinterNights/nwn/dialog.tlk") );
-        //TlkContent c = new TlkContent( new File(args[0]) );
-        TlkContent c = new DefaultTlkReader(Version.getDefaultVersion()).load(new File(args[0]), null);
-        c.saveAs(new File(args[0]+".foo"), Version.getDefaultVersion());
-        //TlkContent c = new TlkContent( new FileInputStream(args[0]) );
-        //long then =  System.currentTimeMillis();
-        //System.out.println( "File " + args[0] + ", " + c.size()  + " entries, loaded in " + (then-now)/1000.0f + "s" );
-                /*
-                FileInputStream is1 = new FileInputStream( new File( args[0]) );
-                FileInputStream is2 = new FileInputStream( new File( args[1]) );
-                int pos = 0;
-                int b1 = 0, b2 = 0;
-                while ( b1 != -1 && b2 != -1 ){
-                        if ( ( b1 = is1.read() ) != ( b2 = is2.read() ) ){
-                                System.out.println( Integer.toHexString( pos ) );
-                        }
-                        pos++;
-                }
-                 */
     }
 
     public NwnLanguage getLanguage() {

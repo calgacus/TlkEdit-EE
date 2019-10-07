@@ -2,7 +2,6 @@ package org.jl.nwn.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -96,15 +94,13 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
             }
 
             @Override
-            public void insertUpdate(DocumentEvent arg0) {
-                changedUpdate(arg0);
-                //throw new UnsupportedOperationException("Not supported yet.");
+            public void insertUpdate(DocumentEvent event) {
+                changedUpdate(event);
             }
 
             @Override
-            public void removeUpdate(DocumentEvent arg0) {
-                changedUpdate(arg0);
-                //throw new UnsupportedOperationException("Not supported yet.");
+            public void removeUpdate(DocumentEvent event) {
+                changedUpdate(event);
             }
 
         });
@@ -182,26 +178,5 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
                 });
             }
         }
-    }
-
-    public void resourceSelected(NwnRepository r, ResourceID id) {
-    }
-
-    public static void main(String... args) {
-        File f = new File("/media/sdb6/spiele/Neverwinter Nights 2/");
-        f = new File("/media/sdb7/Java/Netbeans/TlkEdit/distribution_files");
-        JFileChooser fc = new JFileChooser(f);
-        final RepositoryFCAccessory acc = new RepositoryFCAccessory();
-        acc.setButtonAction(new AbstractAction("print ResourceIDs") {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                System.out.println("Repo..FCA...java actionPerformed "+acc.getSelectedResources());
-            }
-        });
-        fc.setAccessory(acc.accPanel);
-        fc.addPropertyChangeListener(acc);
-        fc.validate();
-        fc.showOpenDialog(null);
     }
 }

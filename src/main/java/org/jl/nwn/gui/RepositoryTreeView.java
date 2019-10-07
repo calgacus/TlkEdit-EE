@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -23,13 +22,10 @@ import org.jl.nwn.resource.ResourceID;
 
 public class RepositoryTreeView {
 
-    private JXTreeTable treeTable;
-    private Model model = null;
+    private final Model model = new Model();
+    private final JXTreeTable treeTable = new JXTreeTable(model);
 
     public RepositoryTreeView() {
-        model = new Model();
-        treeTable = new JXTreeTable(model);
-        //treeTable = new JXTreeTable();
         treeTable.setTreeCellRenderer(new DefaultTreeRenderer(){
 
             @Override
@@ -45,13 +41,7 @@ public class RepositoryTreeView {
     }
 
     public void setRepository( NwnRepository rep ){
-        if ( model == null ){
-            model = new Model();
-            treeTable.setTreeTableModel(model);
-
-        } else
-            model.setRepository(rep);
-        //treeTable.expandRow(0);
+        model.setRepository(rep);
     }
 
     public NwnRepository getRepository(){
@@ -63,7 +53,6 @@ public class RepositoryTreeView {
     }
 
     protected static class Model extends AbstractTreeTableModel{
-        private Set<ResourceID> resources;
         private DefaultListNode<TypeNode> root;
         private NwnRepository rep;
 
@@ -110,7 +99,7 @@ public class RepositoryTreeView {
                 ResourceID id = (ResourceID) object;
                 switch (i){
                     case 0 : return id.getName();
-                    case 1 : return id.getExtensionForType(id.getType());
+                    case 1 : return ResourceID.getExtensionForType(id.getType());
                     case 2 : return rep.getResourceSize(id);
                 }
             }
@@ -177,7 +166,6 @@ public class RepositoryTreeView {
         public int getHierarchicalColumn() {
             return 0;
         }
-
     }
 
     protected static class TypeNode extends DefaultListNode<ResourceID>{
@@ -196,7 +184,8 @@ public class RepositoryTreeView {
             return new ArrayList<>(ids.subSet(from, to));
         }
 
-        @Override public int indexOf(ResourceID id){
+        @Override
+        public int indexOf(ResourceID id) {
             return Collections.binarySearch(list, id, ResourceID.TYPECOMPARATOR);
         }
     }
@@ -250,16 +239,11 @@ public class RepositoryTreeView {
 
     public static void main( String ... args ) throws Exception{
         File f = new File(args[0]);
-        NwnRepository r = null;
-        if ( f.isDirectory() )
-            r = new BifRepository( f );
-        else
-            r = new ErfFile( f );
+        final NwnRepository r = f.isDirectory() ? new BifRepository(f) : new ErfFile(f);
         RepositoryTreeView v = new RepositoryTreeView();
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JXTreeTable tt = v.getViewComponent();
-        //tt.setRootVisible(true);
         JScrollPane scroll = new JScrollPane(tt,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

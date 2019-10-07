@@ -1,19 +1,12 @@
 package org.jl.nwn.gff.editor;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import org.jl.nwn.Version;
-import org.jl.nwn.gff.DefaultGffReader;
 import org.jl.nwn.gff.GffField;
 import org.jl.nwn.gff.GffList;
 import org.jl.nwn.gff.GffStruct;
@@ -71,16 +64,5 @@ public class GffTreeModel implements TreeModel {
 	@Override
 	public void removeTreeModelListener(TreeModelListener l) {
 		listeners.remove(l);
-	}
-
-	public static void main( String[] args ) throws IOException{
-        final GffStruct s = (new DefaultGffReader(Version.getDefaultVersion()).load(new File("/usr/local/neverwinter/localvault/stormofblaark.bic"))).getTopLevelStruct();
-		TreeModel m = new GffTreeModel(s);
-		JTree tree = new JTree(m);
-		JFrame f = new JFrame("test");
-		f.getContentPane().add(new JScrollPane(tree, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.pack();
-		f.setVisible(true);
 	}
 }

@@ -40,9 +40,7 @@ public class TwoDaTable {
             columnWidth[i] = headers[i].length() + 1;
     }
 
-        /* create empty table with same columns as t
-         *
-         */
+    /** Create empty table with same columns as t. */
     public TwoDaTable(TwoDaTable t) {
         this(t.columnHeaders);
     }
@@ -186,7 +184,7 @@ public class TwoDaTable {
         return rows.size();
     }
 
-    // returns index of the column with the given name, -1 if no such column exists
+    /** Returns index of the column with the given name, -1 if no such column exists. */
     public int getColumnNumber(String cName) {
         for (int i = 0; i < columnHeaders.length; i++)
             if (cName.equalsIgnoreCase(columnHeaders[i]))
@@ -254,8 +252,10 @@ public class TwoDaTable {
         setValueAt(v, row, col);
     }
 
-    // recompute width of all columns, only used in constructor
-    // setValueAt and insertRow update column width as necessary
+    /**
+     * Recompute width of all columns, only used in constructor.
+     * setValueAt and insertRow update column width as necessary.
+    */
     protected void updateColumnWidth() {
 
         int[] maxWidth = new int[columnWidth.length];
@@ -323,8 +323,8 @@ public class TwoDaTable {
     }
 
     /**
-     * inserts a copy of the given string array at postition rowNumber
-     * */
+     * Inserts a copy of the given string array at postition rowNumber.
+     */
     public void insertRow(String[] row, int rowNumber)
     throws IllegalArgumentException {
         if (row.length != getColumnCount())
@@ -350,10 +350,9 @@ public class TwoDaTable {
         insertRow(row, rows.size());
     }
 
-    // return an empty row that can be inserted into this 2da table
+    /** @return an empty row that can be inserted into this 2da table. */
     public String[] emptyRow() {
         String[] ret = new String[columnHeaders.length];
-        //String s = "****";
         for (int i = 0; i < ret.length; i++)
             ret[i] = BLANK2DAVALUE;
         return ret;
@@ -421,10 +420,9 @@ public class TwoDaTable {
             }
         }
         columnHeaders = nHeaders;
-        String[] oldRow;
         for (int row = 0; row < rows.size(); row++) {
-            String[] newRow = new String[colCount];
-            oldRow = (String[]) rows.get(row);
+            final String[] newRow = new String[colCount];
+            final String[] oldRow = rows.get(row);
             for (int i = 0, n = 0; i < oldRow.length; i++) {
                 if (i != col) {
                     newRow[n] = oldRow[i];
@@ -464,13 +462,5 @@ public class TwoDaTable {
             if (number)
                 setValueAt(Integer.toString(startSize + i), startSize + i, 0);
         }
-    }
-
-    public static void main(String args[]) throws Exception {
-
-        final File daFile = new File(args[0]);
-        final TwoDaTable t = new TwoDaTable(daFile);
-        t.write(System.out);
-
     }
 }

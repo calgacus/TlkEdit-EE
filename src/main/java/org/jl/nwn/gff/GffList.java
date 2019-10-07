@@ -66,7 +66,7 @@ public class GffList extends GffField implements Iterable<GffStruct> {
     /**
      * does a deep copy of this list
      * @return deep copy of this GffLIst
-     * */
+     */
     @Override
     public GffList clone() {
         final GffList clone = ( GffList ) super.clone();

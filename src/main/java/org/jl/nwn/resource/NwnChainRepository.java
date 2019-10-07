@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
@@ -38,14 +37,6 @@ public class NwnChainRepository extends AbstractRepository {
         for ( int i = 0; i < repositories.length && is == null; i++ )
             is = repositories[i].getResource(id);
         return is;
-    }
-
-    @Override
-    public ByteBuffer getResourceAsBuffer(ResourceID id) throws IOException, UnsupportedOperationException {
-        ByteBuffer retValue = null;
-        for ( int i = 0; i < repositories.length && retValue == null; i++ )
-            retValue = repositories[i].getResourceAsBuffer(id);
-        return retValue;
     }
 
     @Override

@@ -1,17 +1,10 @@
 package org.jl.swing;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.Arrays;
 
 import javax.swing.DefaultCellEditor;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -136,22 +129,5 @@ public class HexEdit extends JPanel{
     public void setBuffer(ByteBuffer b){
         buffer = b;
         model.fireTableDataChanged();
-    }
-
-    public static void main(String ... args) throws IOException{
-        RandomAccessFile raf = new RandomAccessFile(args[0], "rw");
-        System.out.println(Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
-        ByteBuffer b = raf.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, raf.length());
-        HexEdit hex = new HexEdit();
-        hex.setBuffer(b);
-        JFrame f = new JFrame("test");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.getContentPane().add(hex.sPane, BorderLayout.CENTER);
-        f.pack();
-        f.setVisible(true);
-        //raf.close();
-
-        //String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-        //System.out.println(Arrays.asList(fonts));
     }
 }

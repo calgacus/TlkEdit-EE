@@ -15,24 +15,25 @@ import org.jl.nwn.resource.ResourceID;
  * URLStreamHandler for reading from "erf" URLs, valid URLs have the form
  * erf:/path/to/erffile.hak#resource.xyz i.e. the path points to the local
  * erf file and the fragment is the requested resource. The URLConnection
- * object implements only connect() and getInputStream() !
+ * object implements only {@link URLConnection#connect()} and
+ * {@link URLConnection#getInputStream()}!
  */
-public class Handler extends URLStreamHandler{
+public class Handler extends URLStreamHandler {
     @Override
-    protected java.net.URLConnection openConnection(java.net.URL u) throws java.io.IOException {
-        return new ErfURLConnection(u);
+    protected URLConnection openConnection(URL url) throws IOException {
+        return new ErfURLConnection(url);
     }
 
-    protected static class ErfURLConnection extends URLConnection{
+    protected static class ErfURLConnection extends URLConnection {
         ErfFile erf;
         ResourceID id;
 
-        protected ErfURLConnection( URL uRL ){
-            super(uRL);
+        protected ErfURLConnection(URL url) {
+            super(url);
         }
 
         @Override
-        public void connect() throws java.io.IOException {
+        public void connect() throws IOException {
             String erf = getURL().getPath();
             File erfFile = new File( erf );
             if ( !erfFile.exists() )
@@ -44,7 +45,8 @@ public class Handler extends URLStreamHandler{
             connected = true;
         }
 
-        @Override public InputStream getInputStream() throws IOException{
+        @Override
+        public InputStream getInputStream() throws IOException {
             if ( !connected )
                 connect();
             return erf.getResource(id);

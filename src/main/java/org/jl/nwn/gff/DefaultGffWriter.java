@@ -4,6 +4,7 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import org.jl.nwn.NwnLanguage;
 import org.jl.nwn.Version;
 
 public class DefaultGffWriter extends AbstractGffWriter<GffField, GffStruct, GffList>{
@@ -46,15 +47,16 @@ public class DefaultGffWriter extends AbstractGffWriter<GffField, GffStruct, Gff
     }
 
     @Override
-    protected void cExoLocStringData(GffField Field, int[] intValues, org.jl.nwn.NwnLanguage[] languages, int[] genders, String[] strings) {
+    protected void cExoLocStringData(GffField Field, int[] intValues, NwnLanguage[] languages, int[] genders, String[] strings) {
         GffCExoLocString s = (GffCExoLocString) Field;
         intValues[0] = s.getStrRef();
         intValues[1] = s.getSubstringCount();
-        for ( int i = 0; i < s.getSubstringCount(); i++ ){
-            CExoLocSubString sub = s.getSubstring(i);
+        int i = 0;
+        for (final CExoLocSubString sub : s) {
             languages[i] = sub.language;
             genders[i] = sub.gender;
             strings[i] = sub.string;
+            ++i;
         }
     }
 

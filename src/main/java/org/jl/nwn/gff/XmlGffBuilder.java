@@ -3,6 +3,7 @@ package org.jl.nwn.gff;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -20,7 +21,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * creates a dom Document object from a binary gff file/stream
+ * Creates a dom Document object from a binary gff file/stream.
  */
 public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
 
@@ -81,7 +82,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
     }
 
     @Override
-    public Document load(java.io.File file) throws IOException{
+    public Document load(File file) throws IOException {
         doc = docBuilder.newDocument();
         return (Document) super.load(file);
     }
@@ -109,7 +110,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
     }
 
     @Override
-    public Object mkGffObject(Element topLevelStruct, String gffType, java.io.File file){
+    public Object mkGffObject(Element topLevelStruct, String gffType, File file) {
         doc.appendChild(topLevelStruct);
         topLevelStruct.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance","xsi:noNamespaceSchemaLocation", schemaLocation);
         //topLevelStruct.setAttribute("file", file.getAbsolutePath());
@@ -135,7 +136,7 @@ public class XmlGffBuilder extends AbstractGffReader<Element, Element, Element>{
     }
 
     @Override
-    public Element mkInteger(String label, byte type, java.math.BigInteger value) {
+    public Element mkInteger(String label, byte type, BigInteger value) {
         Element f = doc.createElement(Gff.getTypeName(type));
         f.setAttribute("label", label);
         f.setTextContent(value.toString());

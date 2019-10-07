@@ -11,22 +11,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *Utility class for reading a TwoDaObject from a 2DA binary file ( 2DA V2.b )
+ * Utility class for reading a TwoDaObject from a 2DA binary file ( 2DA V2.b )
  *
- *<pre>
- *2DA V2.b file format :
- *"2DA V2.b" 0x0a             // 8 bytes header + 0x0a
- *({column header}0x09)*      // column header strings, each terminated by 0x09
- *0x00                        // terminates column headers
- *{row count}                 // 4-bytes unsigned integer : number of rows
- *({row header}0x09)*         // {row count} row header strings, each terminated by 0x09
- *{index block}               // index block, {row count}*{column count} 2-byte unsigned integer values
- *{data block size}           // 2-bytes unsigned integer : size of data block in bytes
- *{data block}                // list of 0-terminated strings
- *EOF
- *</pre>
- *The index block represents the 2DA table. Each entry is an offset into the data block
- *pointing to a 0-terminated string. {row count} consecutive values represent one row.
+ * <pre>
+ * 2DA V2.b file format :
+ * "2DA V2.b" 0x0a             // 8 bytes header + 0x0a
+ * ({column header}0x09)*      // column header strings, each terminated by 0x09
+ * 0x00                        // terminates column headers
+ * {row count}                 // 4-bytes unsigned integer : number of rows
+ * ({row header}0x09)*         // {row count} row header strings, each terminated by 0x09
+ * {index block}               // index block, {row count}*{column count} 2-byte unsigned integer values
+ * {data block size}           // 2-bytes unsigned integer : size of data block in bytes
+ * {data block}                // list of 0-terminated strings
+ * EOF
+ * </pre>
+ * The index block represents the 2DA table. Each entry is an offset into the data block
+ * pointing to a 0-terminated string. {row count} consecutive values represent one row.
  */
 public class TwoDaBReader {
 
@@ -51,7 +51,7 @@ public class TwoDaBReader {
     }
 
     /**
-     @param withHeader try to parse first 9 bytes as header, else assume the inputstream is already at position 9.
+     * @param withHeader try to parse first 9 bytes as header, else assume the inputstream is already at position 9.
      */
     public static TwoDaTable readTwoDaBinary( InputStream is, boolean withHeader ) throws IOException{
         PushbackInputStream pbis = new PushbackInputStream(is);

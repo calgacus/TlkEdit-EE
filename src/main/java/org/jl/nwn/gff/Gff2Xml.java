@@ -8,7 +8,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * converts a GffContent or a GffField object into a dom Node object
+ * Converts a {@link GffContent} or a {@link GffField} object into a dom
+ * {@code Node} object.
  */
 public class Gff2Xml {
 
@@ -26,12 +27,7 @@ public class Gff2Xml {
     }
 
     public static Document convertToXml( GffContent c ) throws ParserConfigurationException{
-        doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        doc.appendChild(doc.createProcessingInstruction("xml-stylesheet", "href='mygffstyle_v2.css' type='text/css'"));
-        Element root = mkElement(doc, c.getTopLevelStruct());
-        root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-        root.setAttribute( "xsi:noNamespaceSchemaLocation", "gff.xsd" );
-        return doc;
+        return convertToXml(c.getTopLevelStruct());
     }
 
     protected static Element mkStructElement( Node el, GffStruct struct ){
@@ -109,8 +105,8 @@ public class Gff2Xml {
     protected static Element mkCExoLocStringElement( Node el, GffCExoLocString field ){
         Element e = mkFieldElement( el, field );
         e.setAttribute( "strRef", Integer.toString( field.getStrRef() ) );
-        for ( int i = 0; i < field.getSubstringCount(); i++ ){
-            mkCExoLocSubstringElement( e, field.getSubstring(i) );
+        for (final CExoLocSubString sub : field) {
+            mkCExoLocSubstringElement(e, sub);
         }
         return e;
     }

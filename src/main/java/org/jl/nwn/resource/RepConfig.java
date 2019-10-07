@@ -12,7 +12,7 @@ import org.jl.nwn.bif.BifRepository;
 import org.jl.nwn.erf.ErfFile;
 
 /**
- * creates a repository from a configuration file
+ * Creates a repository from a configuration file.
  */
 public class RepConfig {
 
