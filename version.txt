@@ -1,10 +1,16 @@
+Release 14.0.1 (2019-10-06)----------------------
+    - map escape to cancel action for 2da cels (Thanks Minigun {on github})
+    - cleaned up and modernize java code (Minigun)
+		- changed way tlkedit version number is displayed (now only found in version file )
+
+
 Release 14.0 (2019-10-02)----------------------
     - host project on github at https://github.com/calgacus/TlkEdit-EE
     - allow column resizing for 2DAs
     - fix a bug which prevent some column popups in some 2DAs
-    - switch to a maven build
-    - cleaned up and modernize java code 
-    - include build steps in README
+    - switch to a maven build (Minigun)
+    - cleaned up and modernize java code (Minigun) 
+    - include build steps in README (Minigun)
         
 
 Release 13c (2007-07-15)-----------------------
