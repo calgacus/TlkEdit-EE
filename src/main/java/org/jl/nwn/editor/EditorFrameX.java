@@ -14,6 +14,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +46,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ProgressMonitor;
@@ -78,9 +84,6 @@ import org.jl.swing.CheckBoxAction;
 import org.jl.swing.FileDropHandler;
 import org.jl.swing.I18nUtil;
 import org.jl.swing.UIDefaultsX;
-
-import java.awt.Desktop;
- 
 
 public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
@@ -272,21 +275,19 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     private final Action actAbout = new AbstractAction() {
 
         @Override
-        public void actionPerformed(ActionEvent e) {      
-            try{   
-                File file = new File("./version.txt");
-                //first check if Desktop is supported by Platform or not
-                if(!Desktop.isDesktopSupported()){
-                    System.out.println("Desktop is not supported");
-                    return;
-                }  
-                Desktop desktop = Desktop.getDesktop();
-                if(file.exists()) {
-                    desktop.open(file);
+        public void actionPerformed(ActionEvent e) {
+            try {
+                final Path path = Paths.get("./CHANGELOG.md");
+                if (Files.exists(path)) {
+                    final String changelog = new String(Files.readAllBytes(path), UTF_8);
+                    //TODO: Not ideally, but something...
+                    final JDialog dlg = new JDialog(EditorFrameX.this, "About TlkEdit-EE");
+                    dlg.add(new JScrollPane(new JTextArea(changelog)));
+                    dlg.setSize(EditorFrameX.this.getSize());
+                    dlg.setVisible(true);
                 }
-           
-            }catch (IOException ioe){
-                System.out.println("caught ioexception");
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         }
     };
