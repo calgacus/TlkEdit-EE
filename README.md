@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/calgacus/TlkEdit-EE.svg?style=svg)](https://circleci.com/gh/calgacus/TlkEdit-EE)
+
 # TlkEdit-EE
 
 This is a continuation of the TlkEdit project found at https://neverwintervault.org/project/nwn2/other/tool/2datlkgff-editor-aka-tlkedit2

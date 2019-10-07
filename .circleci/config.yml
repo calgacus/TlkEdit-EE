@@ -1,0 +1,101 @@
+# Java Maven CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
+version: 2
+jobs:
+  build-java8:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/tlkedit-ee
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      # Setup local repository
+      - run: mvn install:install-file -Dfile=lib/jmyspell-1.0.0-beta1.jar -DgroupId=tlkedit -DartifactId=jmyspell -Dversion=1.0.0-beta1 -Dpackaging=jar -DlocalRepositoryPath=./lib
+      - run: mvn install:install-file -Dfile=lib/swingx.jar -DgroupId=tlkedit -DartifactId=swingx -Dversion=unknown -Dpackaging=jar -DlocalRepositoryPath=./lib
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      - run: mvn compile
+  build-java10:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/tlkedit-ee
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      # Setup local repository
+      - run: mvn install:install-file -Dfile=lib/jmyspell-1.0.0-beta1.jar -DgroupId=tlkedit -DartifactId=jmyspell -Dversion=1.0.0-beta1 -Dpackaging=jar -DlocalRepositoryPath=./lib
+      - run: mvn install:install-file -Dfile=lib/swingx.jar -DgroupId=tlkedit -DartifactId=swingx -Dversion=unknown -Dpackaging=jar -DlocalRepositoryPath=./lib
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      - run: mvn compile
+  build-java12:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/tlkedit-ee
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      # Setup local repository
+      - run: mvn install:install-file -Dfile=lib/jmyspell-1.0.0-beta1.jar -DgroupId=tlkedit -DartifactId=jmyspell -Dversion=1.0.0-beta1 -Dpackaging=jar -DlocalRepositoryPath=./lib
+      - run: mvn install:install-file -Dfile=lib/swingx.jar -DgroupId=tlkedit -DartifactId=swingx -Dversion=unknown -Dpackaging=jar -DlocalRepositoryPath=./lib
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      - run: mvn compile
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build-java8
+      - build-java10
+      - build-java12
