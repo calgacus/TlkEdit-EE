@@ -14,7 +14,7 @@ then update ./dict/dictionaries.properties to include the needed code like the o
 
 Run
 -----
-Install java, and if you want to compile from source maven and, if on windows, git-bash. 
+Install java, and if you want to compile from source maven and, if on windows, a unix style shell, eg git-bash. 
 In project root run ./tlkedit.sh or ./tlkedit2.sh for the NWN2 version.
 
 Build
