@@ -1,3 +1,8 @@
+[Release 14.0.2] (2019-10-07)
+=============================
+- added circleci build support (Thanks again Mingun)
+- changed version.txt to CHANGELOG.md
+
 [Release 14.0.1] (2019-10-06)
 =============================
 - Map escape to cancel action for 2da cels (Thanks Mingun {on github})
