@@ -750,7 +750,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         fileMenu.add(new JSeparator());
         JMenuItem itAbout = fileMenu.add(actAbout);
         I18nUtil.setText(itAbout,  Messages.getString("EditorFrame.MenuItemAbout")); //$NON-NLS-1$
-        
+        fileMenu.add(new JSeparator());
         fileMenu.add(new JSeparator());
         JMenuItem itQuit = fileMenu.add(actQuit);
         I18nUtil.setText(itQuit, Messages.getString("EditorFrame.MenuItemExit")); //$NON-NLS-1$
