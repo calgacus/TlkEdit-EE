@@ -53,12 +53,10 @@ public class RepositoryTreeView {
     }
 
     protected static class Model extends AbstractTreeTableModel{
-        private DefaultListNode<TypeNode> root;
         private NwnRepository rep;
 
         public Model(){
-            super();
-            root = new DefaultListNode<>("<Empty>", Collections.EMPTY_LIST);
+            super(new DefaultListNode<>("<Empty>", Collections.EMPTY_LIST));
         }
 
         public void clear(){
@@ -68,11 +66,6 @@ public class RepositoryTreeView {
         }
 
         public void setRepository( NwnRepository rep ){
-            this.rep = rep;
-            init();
-        }
-
-        private void init(){
             final TreeSet<ResourceID> idsByType = new TreeSet<>(ResourceID.TYPECOMPARATOR);
             idsByType.addAll(rep.getResourceIDs());
 
@@ -86,11 +79,8 @@ public class RepositoryTreeView {
                 }
             }
             root = new DefaultListNode<>( "Resources", list );
+            this.rep = rep;
             modelSupport.fireNewRoot();
-        }
-
-        public String convertValueToText(Object o){
-            return getValueAt(o, 0).toString();
         }
 
         @Override
@@ -132,10 +122,6 @@ public class RepositoryTreeView {
                 case 2 : return Integer.class;
                 default : return null;
             }
-        }
-
-        @Override public Object getRoot(){
-            return root;
         }
 
         @Override public boolean isLeaf(Object o){

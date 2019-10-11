@@ -15,26 +15,22 @@ import org.jl.nwn.resource.ResourceID;
 
 public class RepositoryTableView {
 
-    protected JXTable table;
-    protected PatternFilter filter;
-    protected NwnRepository rep;
-    protected RepositoryTableModel model;
+    private final JXTable table;
+    private final PatternFilter filter;
 
     public RepositoryTableView() {
-        model = new RepositoryTableModel();
-        table = new JXTable(model);
+        table = new JXTable(new RepositoryTableModel());
         filter = new PatternFilter();
         filter.setColumnIndex(0);
         table.setFilters(new FilterPipeline(filter));
     }
 
     public void setRepository(NwnRepository rep){
-        this.rep = rep;
-        model.setRepository(rep);
+        ((RepositoryTableModel)table.getModel()).setRepository(rep);
     }
 
     public NwnRepository getRepository(){
-        return rep;
+        return ((RepositoryTableModel)table.getModel()).repository;
     }
 
     public JXTable getViewComponent(){
@@ -64,25 +60,10 @@ public class RepositoryTableView {
         protected NwnRepository repository;
         protected List<ResourceID> resources = new ArrayList<>();
 
-        public RepositoryTableModel(){
-        }
-
-        public RepositoryTableModel( NwnRepository rep ){
-            this.repository = rep;
-            init();
-        }
-
         public void clear(){
             repository = null;
             resources = new ArrayList<>();
             fireTableDataChanged();
-        }
-
-        private void init(){
-            resources = new ArrayList<>();
-            for (ResourceID id : repository){
-                resources.add(id);
-            }
         }
 
         public ResourceID getResourceID(int index){
@@ -90,8 +71,8 @@ public class RepositoryTableView {
         }
 
         public void setRepository(NwnRepository rep){
-            this.repository = rep;
-            init();
+            repository = rep;
+            resources = new ArrayList<>(rep.getResourceIDs());
             fireTableDataChanged();
         }
 
@@ -106,70 +87,47 @@ public class RepositoryTableView {
         }
 
         @Override
-        public Object getValueAt(int arg0, int arg1) {
-            ResourceID id = resources.get(arg0);
-            switch (arg1) {
-            case 0:
-                return id.getFileName();
-            case 1:
-                return id.getName();
-            case 2:
-                return id.getType();
-            case 3:
-                return id.getExtension();
-            case 4:
-                return repository.getResourceSize(id);
-            case 5:
-                return repository.getResourceLocation(id);
-            default:
-                return "<what's this?!?>";
-            }
-        }
-
-
-
-        @Override
-        public Class<?> getColumnClass(int arg0) {
-            switch (arg0) {
-            case 0:
-                return String.class;
-            case 1:
-                return String.class;
-            case 2:
-                return Short.class;
-            case 3:
-                return String.class;
-            case 4:
-                return Long.class;
-            case 5:
-                return File.class;
-            default:
-                return String.class;
+        public Object getValueAt(int row, int column) {
+            final ResourceID id = resources.get(row);
+            switch (column) {
+            case 0: return id.getFileName();
+            case 1: return id.getName();
+            case 2: return id.getType();
+            case 3: return id.getExtension();
+            case 4: return repository.getResourceSize(id);
+            case 5: return repository.getResourceLocation(id);
+            default: return "<what's this?!?>";
             }
         }
 
         @Override
-        public String getColumnName(int arg0) {
-            switch (arg0) {
-            case 0:
-                return "Full Name";
-            case 1:
-                return "Name";
-            case 2:
-                return "Type";
-            case 3:
-                return "Extension";
-            case 4:
-                return "Size";
-            case 5:
-                return "Location";
-            default:
-                return "foo";
+        public Class<?> getColumnClass(int column) {
+            switch (column) {
+            case 0: return String.class;
+            case 1: return String.class;
+            case 2: return Short.class;
+            case 3: return String.class;
+            case 4: return Long.class;
+            case 5: return File.class;
+            default: return String.class;
             }
         }
 
         @Override
-        public boolean isCellEditable(int arg0, int arg1) {
+        public String getColumnName(int column) {
+            switch (column) {
+            case 0: return "Full Name";
+            case 1: return "Name";
+            case 2: return "Type";
+            case 3: return "Extension";
+            case 4: return "Size";
+            case 5: return "Location";
+            default: return "<unknown>";
+            }
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
             return false;
         }
     }

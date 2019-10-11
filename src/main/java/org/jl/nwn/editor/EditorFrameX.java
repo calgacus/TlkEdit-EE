@@ -198,12 +198,11 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     private Action actOpen = new OpenAction();
 
     private Action actRepositoryOpen = new AbstractAction("Extract resources") {
-        RepositoryFCAccessory acc = new RepositoryFCAccessory();
+        final RepositoryFCAccessory acc = new RepositoryFCAccessory(this);
         JFileChooser dirChooser = new JFileChooser();
         JCheckBox cbOpenAfterExtracting = new JCheckBox("Open extracted resources");
         {
-            acc.setButtonAction(this);
-            fChooser.setAccessory(acc.getAccessoryComponent());
+            fChooser.setAccessory(acc);
             fChooser.addPropertyChangeListener(acc);
             dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             dirChooser.setCurrentDirectory(fChooser.getCurrentDirectory());
@@ -218,7 +217,6 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             final List<ResourceID> list = acc.getSelectedResources();
             final NwnRepository rep = acc.getRepository();
             final Version fileOpenVersion = ((VersionSelectionFilter)fChooser.getFileFilter()).getVersion();
-            //if (dirChooser.showOpenDialog(fChooser) == JFileChooser.APPROVE_OPTION) {
             if (dirChooser.showDialog(fChooser, "Extract to directory" ) == JFileChooser.APPROVE_OPTION) {
                 final File dir = dirChooser.getSelectedFile();
                 msgSup.fireProgressStarted(0, list.size());
@@ -259,7 +257,6 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                         super.done();
                     }
                 }.execute();
-
             }
         }
     };
@@ -547,11 +544,11 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     }
 
     private void saveActivePane() {
-        JComponent c = (JComponent) tPane.getSelectedComponent();
+        final SimpleFileEditor editor = (SimpleFileEditor) tPane.getSelectedComponent();
         try {
-            ((SimpleFileEditor) c).save();
+            editor.save();
             updateTitle();
-            msgSup.fireMessage(MessageFormat.format(Messages.getString("EditorFrame.FileSavedMsg"), ((SimpleFileEditor) c).getFile()), Level.INFO);
+            msgSup.fireMessage(MessageFormat.format(Messages.getString("EditorFrame.FileSavedMsg"), editor.getFile()), Level.INFO);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgCouldNotSaveFile"), Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -559,8 +556,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     }
 
     private void saveActivePaneAs() {
-        JComponent c = (JComponent) tPane.getSelectedComponent();
-        SimpleFileEditor ed = (SimpleFileEditor) c;
+        final SimpleFileEditor ed = (SimpleFileEditor) tPane.getSelectedComponent();
         File f = ed.getFile();
         if (f != null) {
             fChooser.setSelectedFile(f);
@@ -750,7 +746,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         fileMenu.add(new JSeparator());
         JMenuItem itAbout = fileMenu.add(actAbout);
         I18nUtil.setText(itAbout,  Messages.getString("EditorFrame.MenuItemAbout")); //$NON-NLS-1$
-        
+
         fileMenu.add(new JSeparator());
         JMenuItem itQuit = fileMenu.add(actQuit);
         I18nUtil.setText(itQuit, Messages.getString("EditorFrame.MenuItemExit")); //$NON-NLS-1$
