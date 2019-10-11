@@ -3,9 +3,10 @@ package org.jl.nwn.resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,16 +117,8 @@ public final class Repositories {
     public static void extractResourceToFile(NwnRepository rep, ResourceID id, File f) throws IOException {
         System.out.println(f);
         try (final InputStream is = rep.getResource(id)) {
-            if (is == null) {
-                return;
-            }
-            try (final FileOutputStream os = new FileOutputStream(f)) {
-                final byte[] buffer = new byte[32000];
-                int len;
-                while ((len = is.read(buffer)) != -1) {
-                    os.write(buffer, 0, len);
-                }
-                os.flush();
+            if (is != null) {
+                Files.copy(is, f.toPath(), REPLACE_EXISTING);
             }
         }
     }
