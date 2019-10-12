@@ -67,7 +67,7 @@ public class NwnRepConfig {
 	private Preferences prefs = null;
     private final JTextField nwnhome;
     private final JCheckBox useSourcehak;
-    private final DefaultListModel hakListModel;
+    private final DefaultListModel<File> hakListModel;
     private final JCheckBox useOverride;
     private final JCheckBox useKeyfiles;
     private final JTextField keyfiles;
@@ -142,97 +142,7 @@ public class NwnRepConfig {
 		};
 		selectNwnHomePanel.add(new JButton(selectHome));
 
-		JPanel sourceHakPanel = new JPanel(new BorderLayout());
-		sourceHakPanel.add(useSourcehak, BorderLayout.NORTH);
-		final JList sourceHakList = new JList(hakListModel);
-		final JToolBar tbar = new JToolBar(JToolBar.VERTICAL );
-		tbar.setFloatable( false );
-		useSourcehak.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				sourceHakList.setEnabled(useSourcehak.isSelected());
-				tbar.setVisible(useSourcehak.isSelected());
-			}
-		});
-		sourceHakPanel.add(new JScrollPane(sourceHakList), BorderLayout.CENTER);
-		Action addHak = new AbstractAction("add") {
-			JFileChooser fc = new JFileChooser();
-			{
-				if (hakListModel.size() > 0)
-					fc.setCurrentDirectory((File) hakListModel.getElementAt(0));
-				else{
-					if ( getNwnHome() != null ){
-						File defHakDir = new File( getNwnHome(), "hak" );
-						if ( defHakDir.exists() )
-							fc.setCurrentDirectory( defHakDir );
-						else
-							fc.setCurrentDirectory( getNwnHome() );
-					}
-				}
-			}
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				fc.setMultiSelectionEnabled(true);
-                if (hakListModel.isEmpty() && getNwnHome() != null) {
-					File defHakDir = new File( getNwnHome(), "hak" );
-					if ( defHakDir.exists() )
-						fc.setCurrentDirectory( defHakDir );
-					else
-						fc.setCurrentDirectory( getNwnHome() );
-				}
-                if (fc.showDialog(nwnhome, "add") == JFileChooser.APPROVE_OPTION) {
-                    for (final File selectedFile : fc.getSelectedFiles()) {
-                        hakListModel.addElement(selectedFile);
-                    }
-				}
-			}
-		};
-		Action up = new AbstractAction("up") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int line = sourceHakList.getSelectedIndex();
-				if (line > 0) {
-					//Object o = model.elementAt( line );
-					hakListModel.insertElementAt(
-						hakListModel.remove(line),
-						line - 1);
-					sourceHakList.setSelectedIndex(line - 1);
-				}
-			}
-		};
-		Action down = new AbstractAction("down") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int line = sourceHakList.getSelectedIndex();
-				if (line != -1 && line < hakListModel.size() - 1) {
-					//Object o = model.elementAt( line );
-					hakListModel.insertElementAt(
-						hakListModel.remove(line),
-						line + 1);
-					sourceHakList.setSelectedIndex(line + 1);
-				}
-			}
-		};
-		Action del = new AbstractAction("del") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int line = sourceHakList.getSelectedIndex();
-				if (line != -1) {
-					hakListModel.remove(line);
-					if (hakListModel.size() > 0)
-						sourceHakList.setSelectedIndex(Math.max(line - 1, 0));
-				}
-			}
-		};
-		tbar.add( addHak );
-		tbar.add( up );
-		tbar.add( down );
-		tbar.add( del ).setToolTipText( "remove selected hak from list" );
-		sourceHakPanel.add( tbar, BorderLayout.EAST);
-		tbar.setVisible( useSourcehak.isSelected() );
-		sourceHakList.setEnabled( useSourcehak.isSelected() );
-
+        final JPanel sourceHakPanel = createHakPaksPanel(useSourcehak, hakListModel);
 		//JPanel keyFilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		Box keyFilePanel = new Box( BoxLayout.X_AXIS );
 
@@ -317,6 +227,107 @@ public class NwnRepConfig {
                 r = new NwnChainRepository(r, reps.get(i));
 		return r;
 	}
+    /**
+     * Creates panel with list of hak paks and actions to maniputale this list.
+     *
+     * @param useHaks Checkbox, that controls, whether list of hakpaks must be enabled
+     * @param haksModel Model, that contains hak paks to load
+     *
+     * @return Panel with settings
+     */
+    private JPanel createHakPaksPanel(JCheckBox useHaks, DefaultListModel<File> haksModel) {
+        final JPanel panel = new JPanel(new BorderLayout());
+        panel.add(useHaks, BorderLayout.NORTH);
+        final JList<File> list = new JList<>(haksModel);
+        final JToolBar tbar = new JToolBar(JToolBar.VERTICAL);
+        tbar.setFloatable( false );
+        useHaks.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                list.setEnabled(useHaks.isSelected());
+                tbar.setVisible(useHaks.isSelected());
+            }
+        });
+        panel.add(new JScrollPane(list), BorderLayout.CENTER);
+        Action addHak = new AbstractAction("add") {
+            JFileChooser fc = new JFileChooser();
+            {
+                if (haksModel.size() > 0)
+                    fc.setCurrentDirectory(haksModel.getElementAt(0));
+                else{
+                    if ( getNwnHome() != null ){
+                        File defHakDir = new File( getNwnHome(), "hak" );
+                        if ( defHakDir.exists() )
+                            fc.setCurrentDirectory( defHakDir );
+                        else
+                            fc.setCurrentDirectory( getNwnHome() );
+                    }
+                }
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fc.setMultiSelectionEnabled(true);
+                if (haksModel.isEmpty() && getNwnHome() != null) {
+                    File defHakDir = new File( getNwnHome(), "hak" );
+                    if ( defHakDir.exists() )
+                        fc.setCurrentDirectory( defHakDir );
+                    else
+                        fc.setCurrentDirectory( getNwnHome() );
+                }
+                if (fc.showDialog(nwnhome, "add") == JFileChooser.APPROVE_OPTION) {
+                    for (final File selectedFile : fc.getSelectedFiles()) {
+                        haksModel.addElement(selectedFile);
+                    }
+                }
+            }
+        };
+        Action up = new AbstractAction("up") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int line = list.getSelectedIndex();
+                if (line > 0) {
+                    //Object o = model.elementAt( line );
+                    haksModel.insertElementAt(
+                        haksModel.remove(line),
+                        line - 1);
+                    list.setSelectedIndex(line - 1);
+                }
+            }
+        };
+        Action down = new AbstractAction("down") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int line = list.getSelectedIndex();
+                if (line != -1 && line < haksModel.size() - 1) {
+                    //Object o = model.elementAt( line );
+                    haksModel.insertElementAt(
+                        haksModel.remove(line),
+                        line + 1);
+                    list.setSelectedIndex(line + 1);
+                }
+            }
+        };
+        Action del = new AbstractAction("del") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int line = list.getSelectedIndex();
+                if (line != -1) {
+                    haksModel.remove(line);
+                    if (haksModel.size() > 0)
+                        list.setSelectedIndex(Math.max(line - 1, 0));
+                }
+            }
+        };
+        tbar.add( addHak );
+        tbar.add( up );
+        tbar.add( down );
+        tbar.add( del ).setToolTipText( "remove selected hak from list" );
+        panel.add( tbar, BorderLayout.EAST);
+        tbar.setVisible( useHaks.isSelected() );
+        list.setEnabled( useHaks.isSelected() );
+        return panel;
+    }
 
 	public static void main(String[] args) {
 		final NwnRepConfig c = new NwnRepConfig();
