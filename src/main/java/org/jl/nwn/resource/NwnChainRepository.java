@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,21 +15,16 @@ import java.util.TreeSet;
  */
 public class NwnChainRepository extends AbstractRepository {
 
-    private NwnRepository[] repositories;
-    //private NwnRepository r2;
+    private final NwnRepository[] repositories;
 
-    public NwnChainRepository( NwnRepository ... repositories ){
+    public NwnChainRepository(NwnRepository... repositories) {
         if ( repositories == null || repositories.length == 0 )
-            throw new IllegalArgumentException("Repository list must not be empty or null : " + repositories);
+            throw new IllegalArgumentException("Repository list must not be empty or null : " + Arrays.toString(repositories));
         this.repositories = repositories;
     }
 
-    public NwnChainRepository( Properties props ) throws IOException{
-        this(RepConfig.initRepositories(props).toArray(new NwnRepository[0]));
-    }
-
-    public static NwnRepository chainRespositories( NwnRepository ... reps ){
-        return new NwnChainRepository(reps);
+    public NwnChainRepository(Collection<? extends NwnRepository> reps) {
+        this(reps.toArray(new NwnRepository[reps.size()]));
     }
 
     @Override

@@ -226,13 +226,13 @@ public class NwnRepConfig {
 					nwnhome,
 					keynames.trim().split("\\s+")));
 		}
-		NwnRepository r = null;
-		if (reps.size() > 0)
-            r = reps.get(0);
-		if (reps.size() > 1)
-			for (int i = 1; i < reps.size(); i++)
-                r = new NwnChainRepository(r, reps.get(i));
-		return r;
+        if (reps.size() > 0) {
+            return reps.get(0);
+        }
+        if (reps.size() > 1) {
+            return new NwnChainRepository(reps);
+        }
+        return null;
 	}
     /**
      * Creates panel with list of hak paks and actions to maniputale this list.

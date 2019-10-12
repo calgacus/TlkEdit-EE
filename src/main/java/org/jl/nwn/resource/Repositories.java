@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,7 +103,7 @@ public final class Repositories {
             try (final FileInputStream is = new FileInputStream(propertiesFile)) {
                 Properties p = new Properties();
                 p.load(is);
-                r = new NwnChainRepository(p);
+                r = loadRepositories(p);
                 repositories.put(d, r);
             }
         }
@@ -141,5 +142,58 @@ public final class Repositories {
         f.deleteOnExit();
         extractResourceToFile(rep, id, f);
         return f;
+    }
+
+    private static NwnChainRepository loadRepositories(Properties props) throws IOException {
+        final ArrayList<NwnRepository> reps = new ArrayList<>();
+        try {
+            final int filecount = Integer.parseInt(props.getProperty("filecount", "0"));
+            final String basepath = props.getProperty("basedir");
+            final File base = basepath == null ? null : new File(basepath);
+            for (int i = 0; i < filecount; ++i) {
+                final String filename = props.getProperty("file" + i);
+                if (filename == null) continue;
+
+                final File file = base != null
+                    ? new File(base, filename)
+                    : new File(filename);
+
+                System.out.println("adding repository : " + file);
+                if (file.exists()) {
+                    if (file.isDirectory()) {
+                        reps.add(new NwnDirRepository(file));
+                    } else
+                    if (file.getName().toLowerCase().endsWith(".zip")) {
+                        reps.add(new ZipRepository(file));
+                    } else {
+                        reps.add(new ErfFile(file));
+                    }
+                }
+            }
+            final String bifBaseDir = props.getProperty("bifbasedir");
+            if (bifBaseDir != null) {
+                File bifBase = new File(bifBaseDir);
+                if ( bifBase.exists() && bifBase.isDirectory() ){
+                    final String keyfilenames = props.getProperty("bifkeys");
+                    if (keyfilenames != null) {
+                        reps.add(new BifRepository(bifBase, keyfilenames.split("\\s+")));
+                    } else {
+                        reps.add(new BifRepository(bifBase));
+                    }
+                }
+            }
+        } catch (IOException ioex) {
+            System.out.println(ioex);
+            ioex.printStackTrace();
+            for (final NwnRepository r : reps) {
+                try {
+                    r.close();
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+            reps.clear();
+        }
+        return new NwnChainRepository(reps);
     }
 }
