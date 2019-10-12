@@ -27,8 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.jl.nwn.bif.BifRepository;
 import org.jl.nwn.erf.ErfFile;
@@ -236,20 +234,9 @@ public class NwnRepConfig {
      * @return Panel with settings
      */
     private JPanel createHakPaksPanel(JCheckBox useHaks, DefaultListModel<File> haksModel) {
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(useHaks, BorderLayout.NORTH);
         final JList<File> list = new JList<>(haksModel);
-        final JToolBar tbar = new JToolBar(JToolBar.VERTICAL);
-        tbar.setFloatable( false );
-        useHaks.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                list.setEnabled(useHaks.isSelected());
-                tbar.setVisible(useHaks.isSelected());
-            }
-        });
-        panel.add(new JScrollPane(list), BorderLayout.CENTER);
-        Action addHak = new AbstractAction("add") {
+
+        final Action addHak = new AbstractAction("Add") {
             JFileChooser fc = new JFileChooser();
             {
                 if (haksModel.size() > 0)
@@ -282,7 +269,18 @@ public class NwnRepConfig {
                 }
             }
         };
-        Action up = new AbstractAction("up") {
+        final Action del = new AbstractAction("Remove") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int line = list.getSelectedIndex();
+                if (line != -1) {
+                    haksModel.remove(line);
+                    if (haksModel.size() > 0)
+                        list.setSelectedIndex(Math.max(line - 1, 0));
+                }
+            }
+        };
+        final Action up = new AbstractAction("Up") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int line = list.getSelectedIndex();
@@ -295,7 +293,7 @@ public class NwnRepConfig {
                 }
             }
         };
-        Action down = new AbstractAction("down") {
+        final Action down = new AbstractAction("Down") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int line = list.getSelectedIndex();
@@ -308,24 +306,25 @@ public class NwnRepConfig {
                 }
             }
         };
-        Action del = new AbstractAction("del") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int line = list.getSelectedIndex();
-                if (line != -1) {
-                    haksModel.remove(line);
-                    if (haksModel.size() > 0)
-                        list.setSelectedIndex(Math.max(line - 1, 0));
-                }
-            }
-        };
-        tbar.add( addHak );
-        tbar.add( up );
-        tbar.add( down );
-        tbar.add( del ).setToolTipText( "remove selected hak from list" );
-        panel.add( tbar, BorderLayout.EAST);
-        tbar.setVisible( useHaks.isSelected() );
-        list.setEnabled( useHaks.isSelected() );
+
+        final JToolBar tbar = new JToolBar(JToolBar.VERTICAL);
+        tbar.setFloatable(false);
+        tbar.add(addHak);
+        tbar.add(del).setToolTipText("Remove selected hak from list");
+        tbar.add(up);
+        tbar.add(down);
+
+        list.setEnabled(useHaks.isSelected());
+        tbar.setVisible(useHaks.isSelected());
+        useHaks.addChangeListener(e -> {
+            list.setEnabled(useHaks.isSelected());
+            tbar.setVisible(useHaks.isSelected());
+        });
+
+        final JPanel panel = new JPanel(new BorderLayout());
+        panel.add(useHaks, BorderLayout.NORTH);
+        panel.add(new JScrollPane(list), BorderLayout.CENTER);
+        panel.add(tbar, BorderLayout.EAST);
         return panel;
     }
 
