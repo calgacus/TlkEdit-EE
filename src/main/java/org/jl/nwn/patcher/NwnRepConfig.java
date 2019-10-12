@@ -197,43 +197,42 @@ public class NwnRepConfig {
 		return r;
 	}
 
-	public NwnRepository getNwnRepository() throws IOException {
-		store();
+    /**
+     * Creates resource repository according to the config settings.
+     *
+     * @return Repository that represents configured resources or {@code null},
+     *         if no repositories was loaded
+     *
+     * @throws IOException If some error occured when reading some of configured repositories
+     */
+    public NwnRepository newRepository() throws IOException {
+        store();
         final ArrayList<NwnRepository> reps = new ArrayList<>();
-		File nwnhome = new File(prefs.get(PREFS_NWNHOME, ""));
-		if (prefs.getBoolean(PREFS_USEHAK, false)){
-			int haknum = prefs.getInt( PREFS_HAKNUM, 0 );
-			for ( int i = 0; i < haknum; i++ ){
-				reps.add(new ErfFile(new File(prefs.get(PREFS_HAK + i, ""))));
-				//System.out.println( new File(prefs.get(PREFS_HAK + i, "")));
-			}
-		}
-		if (prefs.getBoolean(PREFS_USEOVERRIDE, false))
-			reps.add(new NwnDirRepository(new File(nwnhome, "override")));
-		if (prefs.getBoolean(PREFS_USEBIFS, false)){
-			String keynames = prefs.get(PREFS_BIFKEYS, "");
-			if ( keynames.length() == 0 ){
-				reps.add( new BifRepository( nwnhome ) );
-				/*
-				for ( int i = 0; i < defaultkeys.length; i++ )
-					if ( new File( nwnhome, defaultkeys[i] ).exists() )
-						keynames += defaultkeys[i] + " ";
-				*/
-			}
-			//System.out.println( keynames );
-			else reps.add(
-				new BifRepository(
-					nwnhome,
-					keynames.trim().split("\\s+")));
-		}
-        if (reps.size() > 1) {
+        if (prefs.getBoolean(PREFS_USEHAK, false)) {
+            final int haknum = prefs.getInt(PREFS_HAKNUM, 0);
+            for (int i = 0; i < haknum; ++i) {
+                reps.add(new ErfFile(new File(prefs.get(PREFS_HAK + i, ""))));
+            }
+        }
+        final File home = getNwnHome();
+        if (prefs.getBoolean(PREFS_USEOVERRIDE, false)) {
+            reps.add(new NwnDirRepository(new File(home, "override")));
+        }
+        if (prefs.getBoolean(PREFS_USEBIFS, false)) {
+            final String keynames = prefs.get(PREFS_BIFKEYS, "");
+            if (keynames.isEmpty()) {
+                // Will use default list of key files
+                reps.add(new BifRepository(home));
+            } else {
+                reps.add(new BifRepository(home, keynames.trim().split("\\s+")));
+            }
+        }
+        final int size = reps.size();
+        if (size > 1) {
             return new NwnChainRepository(reps);
         }
-        if (reps.size() > 0) {
-            return reps.get(0);
-        }
-        return null;
-	}
+        return size > 0 ? reps.get(0) : null;
+    }
     /**
      * Creates panel with list of hak paks and actions to maniputale this list.
      *

@@ -26,7 +26,7 @@ public class BmuPlayer implements Runnable, AutoCloseable {
     public BmuPlayer(String soundname, NwnRepository rep) throws IOException {
         if (rep == null){
             if (br== null)
-                br = PatcherGUI.getNwnRepository();
+                br = PatcherGUI.newRepository();
             rep = br;
         }
 
@@ -54,11 +54,12 @@ public class BmuPlayer implements Runnable, AutoCloseable {
 
     @Override
     public void run(){
-        if ( c != null ){
+        if (c != null) {
             c.start();
-        } else if ( playerObject != null ){
-            try{
-                playerObject.getClass().getDeclaredMethod("play",new Class[0]).invoke(playerObject,new Object[0]);
+        } else
+        if (playerObject != null) {
+            try {
+                playerObject.getClass().getDeclaredMethod("play").invoke(playerObject);
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -67,12 +68,15 @@ public class BmuPlayer implements Runnable, AutoCloseable {
 
     @Override
     public void close() {
-        if ( c != null ) c.close();
-        else if ( playerObject != null )
-            try{
-                playerObject.getClass().getDeclaredMethod("close",new Class[0]).invoke(playerObject,new Object[0]);
+        if (c != null) {
+            c.close();
+        } else
+        if (playerObject != null) {
+            try {
+                playerObject.getClass().getDeclaredMethod("close").invoke(playerObject);
             } catch (Exception e){
                 e.printStackTrace();
             }
+        }
     }
 }

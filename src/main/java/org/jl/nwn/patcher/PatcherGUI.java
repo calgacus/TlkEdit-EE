@@ -344,15 +344,23 @@ public class PatcherGUI extends JFrame {
 		repConf.store();
 	}
 
-	/*returns a repository according to the values in the user preferences (must run PatcherGUI once before using this)*/
-	public static NwnRepository getNwnRepository() throws IOException {
-		return new NwnRepConfig( prefs ).getNwnRepository();
-	}
+    /**
+     * Creates new repository object according to the stored user preferences
+     * for PatcherGUI application.
+     *
+     * @return a repository according to the values in the user preferences
+     *         (must run PatcherGUI once before using this)
+     *
+     * @throws IOException If some error occured when reading some of configured repositories
+     */
+    public static NwnRepository newRepository() throws IOException {
+        return new NwnRepConfig(prefs).newRepository();
+    }
 
 	private void build() {
 		NwnRepository rep = null;
 		try{
-			rep = repConf.getNwnRepository();
+            rep = repConf.newRepository();
 		} catch ( IOException ioex ){
 			System.out.println( "Fatal Error : " + ioex );
 			popupErrorMsg( "Could not create repository : " + ioex );
