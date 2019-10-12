@@ -5,8 +5,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -40,30 +37,20 @@ import org.jl.nwn.resource.NwnRepository;
  *
  * @author ich
  */
-public class NwnRepConfig {
+public final class NwnRepConfig extends JPanel {
 
-	private static final String PREFS_USEHAK = "usesourcehak";
+    private static final String PREFS_USEHAK = "usesourcehak";
     /** Prefix for entries in source hak list. */
-	private static final String PREFS_HAK = "sourcehak";
+    private static final String PREFS_HAK = "sourcehak";
     /** Number of entries in source hak list. */
-	private static final String PREFS_HAKNUM = "sourcehaknum";
-	private static final String PREFS_BIFKEYS = "keyfilesoverride";
-	private static final String PREFS_USEBIFS = "usekeyfiles";
-	private static final String PREFS_USEOVERRIDE = "useoverride";
+    private static final String PREFS_HAKNUM = "sourcehaknum";
+    private static final String PREFS_BIFKEYS = "keyfilesoverride";
+    private static final String PREFS_USEBIFS = "usekeyfiles";
+    private static final String PREFS_USEOVERRIDE = "useoverride";
     /** Preferences key for path to the directory, that contains game. */
-	private static final String PREFS_NWNHOME = "nwnhome";
+    private static final String PREFS_NWNHOME = "nwnhome";
 
-	//private String[] defaultkeys = { "xp2patch.key", "xp2.key", "xp1patch.key", "xp1.key", "patch.key", "chitin.key" };
-
-	/*(forum post by sidney tang,
-	 * In order of lowest to highest priority, resources are loaded in this order:
-	 *
-		chitin.key, patch.key, xp1.key, xp1patch.key, xp2.key, xp2patch.key,
-		override, module temp dir (if using toolset),
-		module/savegame erf (if running game), texture pack erf, hak paks.
-	 * */
-
-	private Preferences prefs = null;
+    private Preferences prefs = null;
 
     /** Field with absolute path to the game directory. */
     private final JTextField nwnhome;
@@ -77,15 +64,28 @@ public class NwnRepConfig {
     private final DefaultListModel<File> hakListModel;
     /** Also load resources from {@code override} folder in {@link #nwnhome game directory}. */
     private final JCheckBox useOverride;
+    /**
+     * If checked, than {@code .key} files will be searched in the {@link #nwnhome}
+     * and used to locate BIF files with resources.
+     */
     private final JCheckBox useKeyfiles;
+    /**
+     * Explicit list of {@code .key} files, splitted by spaces. If empty, default
+     * list is used (mostly priority file is first):
+     * <ul>
+     * <li>xp3.key</li>
+     * <li>xp2patch.key</li>
+     * <li>xp2.key</li>
+     * <li>xp1patch.key</li>
+     * <li>xp1.key</li>
+     * <li>patch.key</li>
+     * <li>chitin.key</li>
+     * </ul>
+     */
     private final JTextField keyfiles;
-    private JPanel configPanel = null;
 
-	public NwnRepConfig() {
-		this(Preferences.userNodeForPackage(NwnRepConfig.class));
-	}
-
-	public NwnRepConfig(Preferences prefs) {
+    public NwnRepConfig(Preferences prefs) {
+        super(new GridBagLayout());
         this.prefs = prefs;
         nwnhome = new JTextField(prefs.get(PREFS_NWNHOME, ""), 40);
         nwnhome.setEditable( false );
@@ -110,23 +110,8 @@ public class NwnRepConfig {
             prefs.getBoolean(PREFS_USEBIFS, false)
         );
         keyfiles = new JTextField(prefs.get(PREFS_BIFKEYS, ""), 40);
-	}
 
-	public void store(){
-		prefs.put(PREFS_NWNHOME, nwnhome.getText());
-		prefs.putBoolean(PREFS_USEHAK, useSourcehak.isSelected());
-		prefs.putInt(PREFS_HAKNUM, hakListModel.size());
-		for (int i = 0; i < hakListModel.size(); i++)
-			prefs.put(PREFS_HAK + i, hakListModel.get(i).toString());
-		prefs.putBoolean(PREFS_USEOVERRIDE, useOverride.isSelected());
-		prefs.putBoolean(PREFS_USEBIFS, useKeyfiles.isSelected());
-		prefs.put(PREFS_BIFKEYS, keyfiles.getText().trim());
-	}
-
-	public JPanel getConfigPanel() {
-		if ( configPanel != null ) return configPanel;
-        configPanel = new JPanel(new GridBagLayout());
-        configPanel.setBorder(new TitledBorder("Repository settings"));
+        setBorder(new TitledBorder("Repository settings"));
 
         // nwn home textfield + selector
         final Action selectHome = new AbstractAction("Select") {
@@ -163,31 +148,31 @@ public class NwnRepConfig {
         //--------------------- ROW 0 ------------------------------------------
         gbc.gridx = 0;
         gbc.gridy = 0;
-        configPanel.add(new JLabel("NWN dir"), gbc);
+        add(new JLabel("NWN dir"), gbc);
 
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        configPanel.add(nwnhome, gbc);
+        add(nwnhome, gbc);
 
         gbc.gridx = 2;
         gbc.weightx = 0.0;
-        configPanel.add(new JButton(selectHome), gbc);
+        add(new JButton(selectHome), gbc);
         //--------------------- ROW 1 ------------------------------------------
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.weightx = 1.0;
         gbc.gridwidth = 3;
-        configPanel.add(useSourcehak, gbc);
+        add(useSourcehak, gbc);
         //--------------------- ROW 2-5 ----------------------------------------
         gbc.gridy++;
         gbc.gridy = setupHakPaksPanel(useSourcehak, hakListModel, (GridBagConstraints)gbc.clone());
         //--------------------- ROW 6 ------------------------------------------
         gbc.gridy++;
-        configPanel.add(useOverride, gbc);
+        add(useOverride, gbc);
         //--------------------- ROW 7 ------------------------------------------
         gbc.gridy++;
-        configPanel.add(keyFilePanel, gbc);
+        add(keyFilePanel, gbc);
 
         /*Action store = new AbstractAction("Apply settings") {
             @Override
@@ -195,27 +180,66 @@ public class NwnRepConfig {
                 store();
             }
         };
-        configPanel.add(new JButton(store), gbc);*/
-		return configPanel;
-	}
-
-	public File getNwnHome(){
-		return new File( nwnhome.getText() );
-	}
-
-	public File[] getHakList(){
-		File[] r = new File[ hakListModel.size() ];
-		hakListModel.copyInto( r );
-		return r;
+        add(new JButton(store), gbc);*/
 	}
 
     /**
+     * Saves current settings to preferences root, that was supplied in constructor.
+     */
+    public void store() {
+        prefs.put(PREFS_NWNHOME, nwnhome.getText());
+        prefs.putBoolean(PREFS_USEHAK, useSourcehak.isSelected());
+        prefs.putInt(PREFS_HAKNUM, hakListModel.size());
+        for (int i = 0; i < hakListModel.size(); i++)
+            prefs.put(PREFS_HAK + i, hakListModel.get(i).toString());
+        prefs.putBoolean(PREFS_USEOVERRIDE, useOverride.isSelected());
+        prefs.putBoolean(PREFS_USEBIFS, useKeyfiles.isSelected());
+        prefs.put(PREFS_BIFKEYS, keyfiles.getText().trim());
+    }
+
+    /**
+     * Returns path to the game folder, configured in settings.
+     *
+     * @return Path to game folder, if configured or empty path, if not
+     */
+    public File getNwnHome() { return new File(nwnhome.getText()); }
+
+    /**
+     * Gets configured list of hakpaks, even if hakpaks is unused.
+     *
+     * @return List of hakpaks, configured in settings
+     */
+    public File[] getHakList() {
+        File[] r = new File[ hakListModel.size() ];
+        hakListModel.copyInto( r );
+        return r;
+    }
+
+    /**
      * Creates resource repository according to the config settings.
+     * <p>
+     * When BIF files is used, in order of lowest to highest priority, resources
+     * are loaded in this order:
+     * <ul>
+     * <li>chitin.key</li>
+     * <li>patch.key</li>
+     * <li>xp1.key</li>
+     * <li>xp1patch.key</li>
+     * <li>xp2.key</li>
+     * <li>xp2patch.key</li>
+     * <li>xp3.key</li>
+     * <li>override</li>
+     * <li>module temp dir (if using toolset)</li>
+     * <li>module/savegame erf (if running game)</li>
+     * <li>texture pack erf</li>
+     * <li>hak paks</li>
+     * </ul>
      *
      * @return Repository that represents configured resources or {@code null},
      *         if no repositories was loaded
      *
-     * @throws IOException If some error occured when reading some of configured repositories
+     * @throws IOException If some error occured when reading some of configured
+     *         repositories
      */
     public NwnRepository newRepository() throws IOException {
         store();
@@ -343,7 +367,7 @@ public class NwnRepConfig {
         gbc.gridheight = 4;// 4 buttons
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        configPanel.add(new JScrollPane(list), gbc);
+        add(new JScrollPane(list), gbc);
 
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.gridx = 2;
@@ -354,24 +378,24 @@ public class NwnRepConfig {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         JButton btn = new JButton(add);
         btn.setToolTipText("Select new paths to hak(s) in the filesystem");
-        configPanel.add(btn, gbc);
+        add(btn, gbc);
 
         gbc.gridy++;
         btn = new JButton(del);
         btn.setToolTipText("Remove selected hak(s) from list");
-        configPanel.add(btn, gbc);
+        add(btn, gbc);
 
         gbc.gridy++;
         btn = new JButton(up);
         btn.setToolTipText("Move all selected hak(s) to one position up.\n"
                 + "The relative arrangement of the moved haks remains");
-        configPanel.add(btn, gbc);
+        add(btn, gbc);
 
         gbc.gridy++;
         btn = new JButton(down);
         btn.setToolTipText("Move all selected hak(s) to one position down.\n"
                 + "The relative arrangement of the moved haks remains");
-        configPanel.add(btn, gbc);
+        add(btn, gbc);
 
         return gbc.gridy;
     }
@@ -381,16 +405,4 @@ public class NwnRepConfig {
         hakListModel.set(index1, f2);
         hakListModel.set(index2, f1);
     }
-
-	public static void main(String[] args) {
-		final NwnRepConfig c = new NwnRepConfig();
-		JFrame f = new JFrame("NWN Repository Settings");
-		f.addWindowListener( new WindowAdapter(){ @Override public void windowClosing(WindowEvent e){
-			c.store();
-		} } );
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.getContentPane().add(c.getConfigPanel());
-		f.pack();
-		f.setVisible(true);
-	}
 }

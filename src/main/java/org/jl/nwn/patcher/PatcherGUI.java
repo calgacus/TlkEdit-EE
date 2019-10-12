@@ -279,7 +279,7 @@ public class PatcherGUI extends JFrame {
 		};
 		Box b = new Box( BoxLayout.Y_AXIS );
 
-		b.add( repConf.getConfigPanel() );
+        b.add(repConf);
 		//b.add( repackageSourcehak );
 
 		JPanel p = new JPanel();
@@ -351,7 +351,8 @@ public class PatcherGUI extends JFrame {
      * @return a repository according to the values in the user preferences
      *         (must run PatcherGUI once before using this)
      *
-     * @throws IOException If some error occured when reading some of configured repositories
+     * @throws IOException If some error occured when reading some of configured
+     *         repositories
      */
     public static NwnRepository newRepository() throws IOException {
         return new NwnRepConfig(prefs).newRepository();
