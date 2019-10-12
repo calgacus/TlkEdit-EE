@@ -65,53 +65,43 @@ public class NwnRepConfig {
 	 * */
 
 	private Preferences prefs = null;
+    private final JTextField nwnhome;
+    private final JCheckBox useSourcehak;
+    private final DefaultListModel hakListModel;
+    private final JCheckBox useOverride;
+    private final JCheckBox useKeyfiles;
+    private final JTextField keyfiles;
+    private JPanel configPanel = null;
 
 	public NwnRepConfig() {
 		this(Preferences.userNodeForPackage(NwnRepConfig.class));
 	}
 
 	public NwnRepConfig(Preferences prefs) {
-		this.prefs = prefs;
-		restore();
-	}
-
-	private JTextField nwnhome;
-	private JCheckBox useSourcehak;
-	private DefaultListModel hakListModel;
-	private JCheckBox useOverride;
-	private JCheckBox useKeyfiles;
-	private JTextField keyfiles;
-	private JPanel configPanel = null;
-
-	private void restore() {
-		nwnhome = new JTextField(prefs.get(PREFS_NWNHOME, ""), 40);
-		nwnhome.setEditable( false );
-		useSourcehak =
-			new JCheckBox(
-				"use haks",
-				prefs.getBoolean(PREFS_USEHAK, false));
-		hakListModel = new DefaultListModel();
-		int hakNum = prefs.getInt(PREFS_HAKNUM, 0);
-		for (int i = 0; i < hakNum; i++) {
-			String fname = prefs.get(PREFS_HAK + i, null);
-			if (fname != null) {
-				File f = new File(fname);
-				if (f.exists())
-					hakListModel.addElement(f);
-			}
-		}
-		useOverride =
-			new JCheckBox(
-				"use NWN override dir",
-				prefs.getBoolean(PREFS_USEOVERRIDE, false));
-		useKeyfiles =
-			new JCheckBox(
-				"use nwn bif data",
-				prefs.getBoolean(PREFS_USEBIFS, false));
-		keyfiles =
-			new JTextField(
-				prefs.get(PREFS_BIFKEYS, "" ), //patch.key chitin.key"),
-				40);
+        this.prefs = prefs;
+        nwnhome = new JTextField(prefs.get(PREFS_NWNHOME, ""), 40);
+        nwnhome.setEditable( false );
+        useSourcehak = new JCheckBox("Use haks",
+            prefs.getBoolean(PREFS_USEHAK, false)
+        );
+        hakListModel = new DefaultListModel<>();
+        final int hakNum = prefs.getInt(PREFS_HAKNUM, 0);
+        for (int i = 0; i < hakNum; i++) {
+            final String fname = prefs.get(PREFS_HAK + i, null);
+            if (fname != null) {
+                final File f = new File(fname);
+                if (f.exists()) {
+                    hakListModel.addElement(f);
+                }
+            }
+        }
+        useOverride = new JCheckBox("Use NWN override dir",
+            prefs.getBoolean(PREFS_USEOVERRIDE, false)
+        );
+        useKeyfiles = new JCheckBox("Use nwn bif data",
+            prefs.getBoolean(PREFS_USEBIFS, false)
+        );
+        keyfiles = new JTextField(prefs.get(PREFS_BIFKEYS, ""), 40);
 	}
 
 	public void store(){
