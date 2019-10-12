@@ -40,7 +40,7 @@ public final class Repositories {
         final Class<?> rClass;
         final File[] files;
 
-        private Descriptor(Class<?> c, File[] files) {
+        private Descriptor(Class<?> c, File... files) {
             this.rClass = c;
             this.files = files;
         }
@@ -56,9 +56,10 @@ public final class Repositories {
         }
     }
 
-    public BifRepository getBifRepository(File baseDir, String[] keyfiles) throws IOException {
-        File[] files = keyfiles == null ? new File[]{baseDir} : new File[1 + keyfiles.length];
+    public BifRepository getBifRepository(File baseDir, String... keyfiles) throws IOException {
+        final File[] files = keyfiles == null ? new File[]{baseDir} : new File[1 + keyfiles.length];
         if (keyfiles != null) {
+            files[0] = baseDir;
             for (int i = 0; i < keyfiles.length; i++) {
                 File key = new File(baseDir, keyfiles[i]);
                 if (!key.exists() || key.isDirectory()) {
@@ -77,7 +78,7 @@ public final class Repositories {
     }
 
     public ErfFile getErfRepository(File erf) throws IOException {
-        Descriptor d = new Descriptor(ErfFile.class, new File[]{erf});
+        final Descriptor d = new Descriptor(ErfFile.class, erf);
         NwnRepository r = repositories.get(d);
         if (r == null) {
             r = new ErfFile(erf);
@@ -87,7 +88,7 @@ public final class Repositories {
     }
 
     public ZipRepository getZipRepository(File zip) throws IOException {
-        Descriptor d = new Descriptor(ZipRepository.class, new File[]{zip});
+        final Descriptor d = new Descriptor(ZipRepository.class, zip);
         NwnRepository r = repositories.get(d);
         if (r == null) {
             r = new ZipRepository(zip);
@@ -97,7 +98,7 @@ public final class Repositories {
     }
 
     public NwnChainRepository getChainRepository(File propertiesFile) throws IOException {
-        Descriptor d = new Descriptor(NwnChainRepository.class, new File[]{propertiesFile});
+        final Descriptor d = new Descriptor(NwnChainRepository.class, propertiesFile);
         NwnRepository r = repositories.get(d);
         if (r == null) {
             try (final FileInputStream is = new FileInputStream(propertiesFile)) {
