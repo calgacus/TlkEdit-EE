@@ -63,9 +63,18 @@ public class NwnRepConfig {
 	 * */
 
 	private Preferences prefs = null;
+
+    /** Field with absolute path to the game directory. */
     private final JTextField nwnhome;
+    /** Use resources from hakpaks, listed in {@link #hakListModel}. */
     private final JCheckBox useSourcehak;
+    /**
+     * List model with hakpaks that must be loaded. Hakpaks from begin of list
+     * has more priority than from end, i.e. if the resource is present in both
+     * hakpaks, it will be taken from hakpak which in the list is higher.
+     */
     private final DefaultListModel<File> hakListModel;
+    /** Also load resources from {@code override} folder in {@link #nwnhome game directory}. */
     private final JCheckBox useOverride;
     private final JCheckBox useKeyfiles;
     private final JTextField keyfiles;
@@ -236,33 +245,24 @@ public class NwnRepConfig {
     private JPanel createHakPaksPanel(JCheckBox useHaks, DefaultListModel<File> haksModel) {
         final JList<File> list = new JList<>(haksModel);
 
-        final Action addHak = new AbstractAction("Add") {
-            JFileChooser fc = new JFileChooser();
+        final Action add = new AbstractAction("Add") {
+            private final JFileChooser fc = new JFileChooser();
             {
-                if (haksModel.size() > 0)
-                    fc.setCurrentDirectory(haksModel.getElementAt(0));
-                else{
-                    if ( getNwnHome() != null ){
-                        File defHakDir = new File( getNwnHome(), "hak" );
-                        if ( defHakDir.exists() )
-                            fc.setCurrentDirectory( defHakDir );
-                        else
-                            fc.setCurrentDirectory( getNwnHome() );
-                    }
-                }
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fc.setMultiSelectionEnabled(true);
             }
             @Override
             public void actionPerformed(ActionEvent e) {
-                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                fc.setMultiSelectionEnabled(true);
-                if (haksModel.isEmpty() && getNwnHome() != null) {
-                    File defHakDir = new File( getNwnHome(), "hak" );
-                    if ( defHakDir.exists() )
-                        fc.setCurrentDirectory( defHakDir );
-                    else
-                        fc.setCurrentDirectory( getNwnHome() );
+                if (!haksModel.isEmpty()) {
+                    fc.setCurrentDirectory(haksModel.get(0));
+                } else {
+                    final File home = getNwnHome();
+                    if (home != null) {
+                        final File defHakDir = new File(home, "hak");
+                        fc.setCurrentDirectory(defHakDir.exists() ? defHakDir : home);
+                    }
                 }
-                if (fc.showDialog(nwnhome, "add") == JFileChooser.APPROVE_OPTION) {
+                if (fc.showDialog(nwnhome, "Add") == JFileChooser.APPROVE_OPTION) {
                     for (final File selectedFile : fc.getSelectedFiles()) {
                         haksModel.addElement(selectedFile);
                     }
@@ -272,47 +272,65 @@ public class NwnRepConfig {
         final Action del = new AbstractAction("Remove") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int line = list.getSelectedIndex();
-                if (line != -1) {
-                    haksModel.remove(line);
-                    if (haksModel.size() > 0)
-                        list.setSelectedIndex(Math.max(line - 1, 0));
+                final int[] selected = list.getSelectedIndices();
+                for (int i = selected.length - 1; i >= 0; --i) {
+                    haksModel.remove(selected[i]);
                 }
             }
         };
         final Action up = new AbstractAction("Up") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int line = list.getSelectedIndex();
-                if (line > 0) {
-                    //Object o = model.elementAt( line );
-                    haksModel.insertElementAt(
-                        haksModel.remove(line),
-                        line - 1);
-                    list.setSelectedIndex(line - 1);
+                final int[] selected = list.getSelectedIndices();
+                if (selected.length != 0) {
+                    final int[] newSelection = selected.clone();
+                    for (int i = 0; i < selected.length; ++i) {
+                        final int index = selected[i];
+                        swapHaks(index - 1, index);
+                        --newSelection[i];
+                    }
+                    list.setSelectedIndices(newSelection);
                 }
             }
         };
         final Action down = new AbstractAction("Down") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int line = list.getSelectedIndex();
-                if (line != -1 && line < haksModel.size() - 1) {
-                    //Object o = model.elementAt( line );
-                    haksModel.insertElementAt(
-                        haksModel.remove(line),
-                        line + 1);
-                    list.setSelectedIndex(line + 1);
+                final int[] selected = list.getSelectedIndices();
+                if (selected.length != 0) {
+                    final int[] newSelection = selected.clone();
+                    for (int i = selected.length - 1; i >= 0; --i) {
+                        final int index = selected[i];
+                        swapHaks(index, index + 1);
+                        ++newSelection[i];
+                    }
+                    list.setSelectedIndices(newSelection);
                 }
             }
         };
 
         final JToolBar tbar = new JToolBar(JToolBar.VERTICAL);
         tbar.setFloatable(false);
-        tbar.add(addHak);
-        tbar.add(del).setToolTipText("Remove selected hak from list");
-        tbar.add(up);
-        tbar.add(down);
+        tbar.add(add).setToolTipText("Select new paths to hak(s) in the filesystem");
+        tbar.add(del).setToolTipText("Remove selected hak(s) from list");
+        tbar.add(up).setToolTipText("Move all selected hak(s) to one position up.\n"
+                + "The relative arrangement of the moved haks remains");
+        tbar.add(down).setToolTipText("Move all selected hak(s) to one position down.\n"
+                + "The relative arrangement of the moved haks remains");
+
+        list.addListSelectionListener(e -> {
+            final int[] selection = list.getSelectedIndices();
+            final boolean hasSelection = selection.length != 0;
+            // "Remove" enabled only if something is selected
+            // "Up" enabled, if minimal selected index is greater than 0
+            // "Down" enabled, if maximal selected index is less than list size
+            del.setEnabled(hasSelection);
+            up.setEnabled(hasSelection && selection[0] > 0);
+            down.setEnabled(hasSelection && selection[selection.length - 1] < haksModel.size()-1);
+        });
+        del.setEnabled(false);
+        up.setEnabled(false);
+        down.setEnabled(false);
 
         list.setEnabled(useHaks.isSelected());
         tbar.setVisible(useHaks.isSelected());
@@ -326,6 +344,12 @@ public class NwnRepConfig {
         panel.add(new JScrollPane(list), BorderLayout.CENTER);
         panel.add(tbar, BorderLayout.EAST);
         return panel;
+    }
+    private void swapHaks(int index1, int index2) {
+        final File f1 = hakListModel.get(index1);
+        final File f2 = hakListModel.get(index2);
+        hakListModel.set(index1, f2);
+        hakListModel.set(index2, f1);
     }
 
 	public static void main(String[] args) {
