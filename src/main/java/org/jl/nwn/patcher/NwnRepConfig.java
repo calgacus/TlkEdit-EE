@@ -226,11 +226,11 @@ public class NwnRepConfig {
 					nwnhome,
 					keynames.trim().split("\\s+")));
 		}
-        if (reps.size() > 0) {
-            return reps.get(0);
-        }
         if (reps.size() > 1) {
             return new NwnChainRepository(reps);
+        }
+        if (reps.size() > 0) {
+            return reps.get(0);
         }
         return null;
 	}
