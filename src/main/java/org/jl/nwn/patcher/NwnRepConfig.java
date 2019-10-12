@@ -1,8 +1,9 @@
 package org.jl.nwn.patcher;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -25,7 +26,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 import javax.swing.border.TitledBorder;
 
 import org.jl.nwn.bif.BifRepository;
@@ -50,6 +50,7 @@ public class NwnRepConfig {
 	private static final String PREFS_BIFKEYS = "keyfilesoverride";
 	private static final String PREFS_USEBIFS = "usekeyfiles";
 	private static final String PREFS_USEOVERRIDE = "useoverride";
+    /** Preferences key for path to the directory, that contains game. */
 	private static final String PREFS_NWNHOME = "nwnhome";
 
 	//private String[] defaultkeys = { "xp2patch.key", "xp2.key", "xp1patch.key", "xp1.key", "patch.key", "chitin.key" };
@@ -124,33 +125,25 @@ public class NwnRepConfig {
 
 	public JPanel getConfigPanel() {
 		if ( configPanel != null ) return configPanel;
-		configPanel = new JPanel();
-		configPanel.setLayout( new BoxLayout( configPanel, BoxLayout.Y_AXIS ) );
-		//new JPanel( new GridLayout(0, 1));
+        configPanel = new JPanel(new GridBagLayout());
+        configPanel.setBorder(new TitledBorder("Repository settings"));
 
-		Box selectNwnHomePanel = new Box( BoxLayout.X_AXIS );//new JPanel(new FlowLayout(FlowLayout.LEFT));
-		selectNwnHomePanel.add(new JLabel("NWN dir"));
+        // nwn home textfield + selector
+        final Action selectHome = new AbstractAction("Select") {
+            JFileChooser fc = new JFileChooser();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                fc.setMultiSelectionEnabled(false);
+                if (!nwnhome.getText().isEmpty()) {
+                    fc.setCurrentDirectory(new File(nwnhome.getText()));
+                }
+                if (fc.showDialog(nwnhome, "Select") == JFileChooser.APPROVE_OPTION) {
+                    nwnhome.setText(fc.getSelectedFile().getAbsolutePath());
+                }
+            }
+        };
 
-		selectNwnHomePanel.add(nwnhome);
-		// nwn home textfield + selector
-		Action selectHome = new AbstractAction("select") {
-			JFileChooser fc = new JFileChooser();
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fc.setMultiSelectionEnabled(false);
-				if (nwnhome.getText().length()>0)
-					fc.setCurrentDirectory(new File(nwnhome.getText()));
-				if (fc.showDialog(nwnhome, "select")
-					== JFileChooser.APPROVE_OPTION) {
-					nwnhome.setText(fc.getSelectedFile().getAbsolutePath());
-				}
-			}
-		};
-		selectNwnHomePanel.add(new JButton(selectHome));
-
-        final JPanel sourceHakPanel = createHakPaksPanel(useSourcehak, hakListModel);
-		//JPanel keyFilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		Box keyFilePanel = new Box( BoxLayout.X_AXIS );
 
 		keyFilePanel.add(useKeyfiles);
@@ -163,32 +156,51 @@ public class NwnRepConfig {
 		keyFilePanel.add(keyfiles);
 		keyfiles.setToolTipText( tt_keyoverride );
 
-		configPanel.add(selectNwnHomePanel);
-		configPanel.add(sourceHakPanel);
+        final GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.insets = new Insets(0, 2, 4, 2);
 
-		JPanel overridePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		overridePanel.add( useOverride );
-		configPanel.add( overridePanel );
-		configPanel.add(keyFilePanel);
+        //--------------------- ROW 0 ------------------------------------------
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        configPanel.add(new JLabel("NWN dir"), gbc);
 
-		Action store = new AbstractAction("apply settings") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				store();
-			}
-		};
-		//configPanel.add(new JButton(store));
-		configPanel.setBorder(new TitledBorder("Repository settings"));
-		//configPanel.setPreferredSize( new Dimension( 620, 320 ) );
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        configPanel.add(nwnhome, gbc);
+
+        gbc.gridx = 2;
+        gbc.weightx = 0.0;
+        configPanel.add(new JButton(selectHome), gbc);
+        //--------------------- ROW 1 ------------------------------------------
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weightx = 1.0;
+        gbc.gridwidth = 3;
+        configPanel.add(useSourcehak, gbc);
+        //--------------------- ROW 2-5 ----------------------------------------
+        gbc.gridy++;
+        gbc.gridy = setupHakPaksPanel(useSourcehak, hakListModel, (GridBagConstraints)gbc.clone());
+        //--------------------- ROW 6 ------------------------------------------
+        gbc.gridy++;
+        configPanel.add(useOverride, gbc);
+        //--------------------- ROW 7 ------------------------------------------
+        gbc.gridy++;
+        configPanel.add(keyFilePanel, gbc);
+
+        /*Action store = new AbstractAction("Apply settings") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                store();
+            }
+        };
+        configPanel.add(new JButton(store), gbc);*/
 		return configPanel;
 	}
 
 	public File getNwnHome(){
 		return new File( nwnhome.getText() );
-	}
-
-	public void setNwnHome( File f ){
-		if ( f.isDirectory() ) nwnhome.setText( f.getAbsolutePath() );
 	}
 
 	public File[] getHakList(){
@@ -239,12 +251,12 @@ public class NwnRepConfig {
      * @param useHaks Checkbox, that controls, whether list of hakpaks must be enabled
      * @param haksModel Model, that contains hak paks to load
      *
-     * @return Panel with settings
+     * @return Last used Y-index in {@link GridBagLayout}
      */
-    private JPanel createHakPaksPanel(JCheckBox useHaks, DefaultListModel<File> haksModel) {
+    private int setupHakPaksPanel(JCheckBox useHaks, DefaultListModel<File> haksModel, GridBagConstraints gbc) {
         final JList<File> list = new JList<>(haksModel);
 
-        final Action add = new AbstractAction("Add") {
+        final Action add = new AbstractAction("Add...") {
             private final JFileChooser fc = new JFileChooser();
             {
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -308,41 +320,60 @@ public class NwnRepConfig {
             }
         };
 
-        final JToolBar tbar = new JToolBar(JToolBar.VERTICAL);
-        tbar.setFloatable(false);
-        tbar.add(add).setToolTipText("Select new paths to hak(s) in the filesystem");
-        tbar.add(del).setToolTipText("Remove selected hak(s) from list");
-        tbar.add(up).setToolTipText("Move all selected hak(s) to one position up.\n"
-                + "The relative arrangement of the moved haks remains");
-        tbar.add(down).setToolTipText("Move all selected hak(s) to one position down.\n"
-                + "The relative arrangement of the moved haks remains");
-
-        list.addListSelectionListener(e -> {
+        final Runnable update = () -> {
             final int[] selection = list.getSelectedIndices();
-            final boolean hasSelection = selection.length != 0;
+            final boolean hasSelection = useHaks.isSelected() && selection.length != 0;
             // "Remove" enabled only if something is selected
             // "Up" enabled, if minimal selected index is greater than 0
             // "Down" enabled, if maximal selected index is less than list size
+            add.setEnabled(useHaks.isSelected());
             del.setEnabled(hasSelection);
             up.setEnabled(hasSelection && selection[0] > 0);
             down.setEnabled(hasSelection && selection[selection.length - 1] < haksModel.size()-1);
-        });
-        del.setEnabled(false);
-        up.setEnabled(false);
-        down.setEnabled(false);
+        };
+        list.addListSelectionListener(e -> update.run());
 
         list.setEnabled(useHaks.isSelected());
-        tbar.setVisible(useHaks.isSelected());
+        update.run();
         useHaks.addChangeListener(e -> {
             list.setEnabled(useHaks.isSelected());
-            tbar.setVisible(useHaks.isSelected());
+            update.run();
         });
+        gbc.gridwidth = 2;
+        gbc.gridheight = 4;// 4 buttons
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        configPanel.add(new JScrollPane(list), gbc);
 
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(useHaks, BorderLayout.NORTH);
-        panel.add(new JScrollPane(list), BorderLayout.CENTER);
-        panel.add(tbar, BorderLayout.EAST);
-        return panel;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JButton btn = new JButton(add);
+        btn.setToolTipText("Select new paths to hak(s) in the filesystem");
+        configPanel.add(btn, gbc);
+
+        gbc.gridy++;
+        btn = new JButton(del);
+        btn.setToolTipText("Remove selected hak(s) from list");
+        configPanel.add(btn, gbc);
+
+        gbc.gridy++;
+        btn = new JButton(up);
+        btn.setToolTipText("Move all selected hak(s) to one position up.\n"
+                + "The relative arrangement of the moved haks remains");
+        configPanel.add(btn, gbc);
+
+        gbc.gridy++;
+        btn = new JButton(down);
+        btn.setToolTipText("Move all selected hak(s) to one position down.\n"
+                + "The relative arrangement of the moved haks remains");
+        configPanel.add(btn, gbc);
+
+        return gbc.gridy;
     }
     private void swapHaks(int index1, int index2) {
         final File f1 = hakListModel.get(index1);
