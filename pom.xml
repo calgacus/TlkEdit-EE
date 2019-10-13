@@ -8,39 +8,42 @@
   <packaging>jar</packaging>
   <build>
     <plugins>
-    <plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <compilerArgs>            
+          <compilerArgs>
             <arg>-Xlint:all</arg>
           </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.1.2</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>org.jl.nwn.editor.EditorServer</mainClass>
-            </manifest>
-            <manifestEntries>
-              <!--
-                Include current working directory to class path, because it used to get
-                resources via Class.getResource that needed for working with 2DA meta.xml files
-
-                Include unknown version of swingx.jar, that located in our repository
-                just for compatibility with older version
-              -->
-              <Class-Path>lib/swingx.jar ./</Class-Path>
-            </manifestEntries>
-          </archive>
-        </configuration>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.jl.nwn.editor.EditorServer</mainClass>
+                  <manifestEntries>
+                    <!--
+                      Include current working directory to class path, because it used to get
+                      resources via Class.getResource that needed for working with 2DA meta.xml files
+                    -->
+                    <Class-Path>./</Class-Path>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -52,9 +55,10 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>tlkedit</groupId>
+      <groupId>org.swinglabs</groupId>
       <artifactId>swingx</artifactId>
-      <version>unknown</version>
+      <!-- The last version on which project compiles is 0.9.3 but last version with sources and javadoc - 0.9.2, so use it. -->
+      <version>0.9.2</version>
     </dependency>
     <dependency>
       <groupId>tlkedit</groupId>
