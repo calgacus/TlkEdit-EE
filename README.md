@@ -16,19 +16,18 @@ then update ./dict/dictionaries.properties to include the needed code like the o
 
 Run
 -----
-Install java, and if you want to compile from source maven and, if on windows, a unix style shell, eg git-bash. 
+Install java, and if you want to compile from source maven and, if on windows, a unix style shell, eg git-bash.
 In project root run ./tlkedit.sh or ./tlkedit2.sh for the NWN2 version.
 
 Build
 -----
 Install java, maven and, if on windows, git-bash
- 
+
 First, install dependencies into local maven repository. This is temporal solution until
 dependencies will be upgraded to one that exists in one of public maven repositories:
 
 ```bash
 $ mvn install:install-file -Dfile=lib/jmyspell-1.0.0-beta1.jar -DgroupId=tlkedit -DartifactId=jmyspell -Dversion=1.0.0-beta1 -Dpackaging=jar -DlocalRepositoryPath=./lib
-$ mvn install:install-file -Dfile=lib/swingx.jar -DgroupId=tlkedit -DartifactId=swingx -Dversion=unknown -Dpackaging=jar -DlocalRepositoryPath=./lib
 ```
 
 Then build project as usual:
@@ -46,7 +45,6 @@ $ mvn install
 [INFO] ------------------------------------------------------------------------
 [INFO] Building TlkEdit-EE 1.0-SNAPSHOT
 [INFO] ------------------------------------------------------------------------
-[WARNING] The POM for tlkedit:swingx:jar:unknown is missing, no dependency information available
 [WARNING] The POM for tlkedit:jmyspell:jar:1.0.0-beta1 is missing, no dependency information available
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
@@ -55,14 +53,14 @@ $ mvn install
 [INFO] Finished at: Mon Sep 30 19:08:08 YEKT 2019
 [INFO] Final Memory: 4M/123M
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal on project TlkEdit-EE: Could not resolve dependencies for project tlkedit:TlkEdit-EE:jar:1.0-SNAPSHOT: The following artifacts could not be resolved: tlkedit:swingx:jar:unknown, tlkedit:jmyspell:jar:1.0.0-beta1: Failure to find tlkedit:swingx:jar:unknown in file://D:\Projects\NWN\TlkEdit-EE/lib was cached in the local repository, resolution will not be reattempted until the update interval of local-jars has elapsed or updates are forced -> [Help 1]
+[ERROR] Failed to execute goal on project TlkEdit-EE: Could not resolve dependencies for project tlkedit:TlkEdit-EE:jar:1.0-SNAPSHOT: The following artifacts could not be resolved: tlkedit:jmyspell:jar:1.0.0-beta1: Failure to find tlkedit:jmyspell:jar:1.0.0-beta1 in file://D:\Projects\NWN\TlkEdit-EE/lib was cached in the local repository, resolution will not be reattempted until the update interval of local-jars has elapsed or updates are forced -> [Help 1]
 [ERROR]
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
 [ERROR] Re-run Maven using the -X switch to enable full debug logging.
 [ERROR]
 [ERROR] For more information about the errors and possible solutions, please read the following articles:
 [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/DependencyResolutionException
-$ 
+$
 ```
 it means, that you already tried to build project without success and maven cache
 unsuccesfull state of dependency resolution. Just add switch `-U` to maven invocation

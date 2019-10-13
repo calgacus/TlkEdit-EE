@@ -23,7 +23,6 @@ jobs:
 
       # Setup local repository
       - run: mvn install:install-file -Dfile=lib/jmyspell-1.0.0-beta1.jar -DgroupId=tlkedit -DartifactId=jmyspell -Dversion=1.0.0-beta1 -Dpackaging=jar -DlocalRepositoryPath=./lib
-      - run: mvn install:install-file -Dfile=lib/swingx.jar -DgroupId=tlkedit -DartifactId=swingx -Dversion=unknown -Dpackaging=jar -DlocalRepositoryPath=./lib
 
       - run: mvn dependency:go-offline
 
@@ -52,7 +51,6 @@ jobs:
 
       # Setup local repository
       - run: mvn install:install-file -Dfile=lib/jmyspell-1.0.0-beta1.jar -DgroupId=tlkedit -DartifactId=jmyspell -Dversion=1.0.0-beta1 -Dpackaging=jar -DlocalRepositoryPath=./lib
-      - run: mvn install:install-file -Dfile=lib/swingx.jar -DgroupId=tlkedit -DartifactId=swingx -Dversion=unknown -Dpackaging=jar -DlocalRepositoryPath=./lib
 
       - run: mvn dependency:go-offline
 
@@ -84,7 +82,6 @@ jobs:
 
       # Setup local repository
       - run: mvn install:install-file -Dfile=lib/jmyspell-1.0.0-beta1.jar -DgroupId=tlkedit -DartifactId=jmyspell -Dversion=1.0.0-beta1 -Dpackaging=jar -DlocalRepositoryPath=./lib
-      - run: mvn install:install-file -Dfile=lib/swingx.jar -DgroupId=tlkedit -DartifactId=swingx -Dversion=unknown -Dpackaging=jar -DlocalRepositoryPath=./lib
 
       - run: mvn dependency:go-offline
 
