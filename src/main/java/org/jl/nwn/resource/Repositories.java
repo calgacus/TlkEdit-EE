@@ -3,9 +3,11 @@ package org.jl.nwn.resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +40,7 @@ public final class Repositories {
         final Class<?> rClass;
         final File[] files;
 
-        private Descriptor(Class<?> c, File[] files) {
+        private Descriptor(Class<?> c, File... files) {
             this.rClass = c;
             this.files = files;
         }
@@ -54,9 +56,10 @@ public final class Repositories {
         }
     }
 
-    public BifRepository getBifRepository(File baseDir, String[] keyfiles) throws IOException {
-        File[] files = keyfiles == null ? new File[]{baseDir} : new File[1 + keyfiles.length];
+    public BifRepository getBifRepository(File baseDir, String... keyfiles) throws IOException {
+        final File[] files = keyfiles == null ? new File[]{baseDir} : new File[1 + keyfiles.length];
         if (keyfiles != null) {
+            files[0] = baseDir;
             for (int i = 0; i < keyfiles.length; i++) {
                 File key = new File(baseDir, keyfiles[i]);
                 if (!key.exists() || key.isDirectory()) {
@@ -75,7 +78,7 @@ public final class Repositories {
     }
 
     public ErfFile getErfRepository(File erf) throws IOException {
-        Descriptor d = new Descriptor(ErfFile.class, new File[]{erf});
+        final Descriptor d = new Descriptor(ErfFile.class, erf);
         NwnRepository r = repositories.get(d);
         if (r == null) {
             r = new ErfFile(erf);
@@ -85,7 +88,7 @@ public final class Repositories {
     }
 
     public ZipRepository getZipRepository(File zip) throws IOException {
-        Descriptor d = new Descriptor(ZipRepository.class, new File[]{zip});
+        final Descriptor d = new Descriptor(ZipRepository.class, zip);
         NwnRepository r = repositories.get(d);
         if (r == null) {
             r = new ZipRepository(zip);
@@ -95,13 +98,13 @@ public final class Repositories {
     }
 
     public NwnChainRepository getChainRepository(File propertiesFile) throws IOException {
-        Descriptor d = new Descriptor(NwnChainRepository.class, new File[]{propertiesFile});
+        final Descriptor d = new Descriptor(NwnChainRepository.class, propertiesFile);
         NwnRepository r = repositories.get(d);
         if (r == null) {
             try (final FileInputStream is = new FileInputStream(propertiesFile)) {
                 Properties p = new Properties();
                 p.load(is);
-                r = new NwnChainRepository(p);
+                r = loadRepositories(p);
                 repositories.put(d, r);
             }
         }
@@ -116,16 +119,8 @@ public final class Repositories {
     public static void extractResourceToFile(NwnRepository rep, ResourceID id, File f) throws IOException {
         System.out.println(f);
         try (final InputStream is = rep.getResource(id)) {
-            if (is == null) {
-                return;
-            }
-            try (final FileOutputStream os = new FileOutputStream(f)) {
-                final byte[] buffer = new byte[32000];
-                int len;
-                while ((len = is.read(buffer)) != -1) {
-                    os.write(buffer, 0, len);
-                }
-                os.flush();
+            if (is != null) {
+                Files.copy(is, f.toPath(), REPLACE_EXISTING);
             }
         }
     }
@@ -148,5 +143,58 @@ public final class Repositories {
         f.deleteOnExit();
         extractResourceToFile(rep, id, f);
         return f;
+    }
+
+    private static NwnChainRepository loadRepositories(Properties props) throws IOException {
+        final ArrayList<NwnRepository> reps = new ArrayList<>();
+        try {
+            final int filecount = Integer.parseInt(props.getProperty("filecount", "0"));
+            final String basepath = props.getProperty("basedir");
+            final File base = basepath == null ? null : new File(basepath);
+            for (int i = 0; i < filecount; ++i) {
+                final String filename = props.getProperty("file" + i);
+                if (filename == null) continue;
+
+                final File file = base != null
+                    ? new File(base, filename)
+                    : new File(filename);
+
+                System.out.println("adding repository : " + file);
+                if (file.exists()) {
+                    if (file.isDirectory()) {
+                        reps.add(new NwnDirRepository(file));
+                    } else
+                    if (file.getName().toLowerCase().endsWith(".zip")) {
+                        reps.add(new ZipRepository(file));
+                    } else {
+                        reps.add(new ErfFile(file));
+                    }
+                }
+            }
+            final String bifBaseDir = props.getProperty("bifbasedir");
+            if (bifBaseDir != null) {
+                File bifBase = new File(bifBaseDir);
+                if ( bifBase.exists() && bifBase.isDirectory() ){
+                    final String keyfilenames = props.getProperty("bifkeys");
+                    if (keyfilenames != null) {
+                        reps.add(new BifRepository(bifBase, keyfilenames.split("\\s+")));
+                    } else {
+                        reps.add(new BifRepository(bifBase));
+                    }
+                }
+            }
+        } catch (IOException ioex) {
+            System.out.println(ioex);
+            ioex.printStackTrace();
+            for (final NwnRepository r : reps) {
+                try {
+                    r.close();
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+            reps.clear();
+        }
+        return new NwnChainRepository(reps);
     }
 }

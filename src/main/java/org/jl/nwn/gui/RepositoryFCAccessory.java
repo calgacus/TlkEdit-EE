@@ -12,7 +12,6 @@ import java.util.regex.PatternSyntaxException;
 
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,48 +28,38 @@ import org.jl.nwn.resource.NwnRepository;
 import org.jl.nwn.resource.Repositories;
 import org.jl.nwn.resource.ResourceID;
 
-public class RepositoryFCAccessory implements PropertyChangeListener {
+/**
+ * Class, that shows table with contents of the ERF and MOD files in preview area
+ * of the {@link JFileChooser}. Instance of this class must be registered in JFileChooser
+ * using {@link JFileChooser#setAccessory} method and listen events from it.
+ */
+public final class RepositoryFCAccessory extends JPanel implements PropertyChangeListener {
 
-    //protected RepositoryTreeView rview;
-    protected RepositoryTableView rview;
-    protected JPanel accPanel;
-    protected JToolBar toolbar = new JToolBar();
-    protected JButton actionButton;
-    protected JScrollPane scroll;
-    protected JTextField filterField;
+    //private RepositoryTreeView rview = new RepositoryTreeView();
+    /** Table with contents of the ERF/MOD file. */
+    private RepositoryTableView rview = new RepositoryTableView();
+    /** Button, that can be used to run some action on resource in the table. */
+    private final JButton actionButton;
+    /** Field with regular expression that used to filter contents of the table. */
+    private final JTextField filterField;
 
-    public RepositoryFCAccessory() {
-        //rview = new RepositoryTreeView();
-        rview = new RepositoryTableView();
-        accPanel = new JPanel(new BorderLayout());
-        actionButton = new JButton("---");
-        actionButton.setEnabled(false);
+    public RepositoryFCAccessory(Action action) {
+        super(new BorderLayout());
         final JXTable tt = rview.getViewComponent();
         tt.getColumnExt(5).setVisible(false);
         tt.getColumnExt(2).setVisible(false);
         tt.getColumnExt(1).setVisible(false);
         tt.getColumnExt(0).setMinWidth(150);
-        scroll = new JScrollPane(tt);
         rview.getViewComponent().setColumnControlVisible(true);
-        scroll.setMinimumSize(new Dimension(200, 300));
 
-        toolbar.add(actionButton);
-        toolbar.setFloatable(false);
-        JLabel l = new JLabel("Filter : ");
+        actionButton = new JButton(action);
+
         filterField = new JTextField("", 12);
-        filterField.setEnabled(false);
-        l.setLabelFor(filterField);
-        toolbar.add(l);
-        toolbar.add(filterField);
-
         filterField.getDocument().addDocumentListener(new DocumentListener() {
-
             @Override
-            public void changedUpdate(DocumentEvent arg0) {
+            public void changedUpdate(DocumentEvent event) {
                 String s = filterField.getText();
-                System.out.println("Repo..FCA...java changedUpdate "+s);
-                //if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                if (s.length() > 0) {
+                if (!s.isEmpty()) {
                     try {
                         final Pattern p = Pattern.compile(s);
                         tt.setEnabled(false);
@@ -102,81 +91,82 @@ public class RepositoryFCAccessory implements PropertyChangeListener {
             public void removeUpdate(DocumentEvent event) {
                 changedUpdate(event);
             }
-
         });
 
-        actionButton.setVisible(false);
-        accPanel.add(scroll, BorderLayout.CENTER);
-        accPanel.add(toolbar, BorderLayout.SOUTH);
+        final JLabel filterLabel = new JLabel("Filter: ");
+        filterLabel.setLabelFor(filterField);
+
+        final JScrollPane scroll = new JScrollPane(tt);
+        scroll.setMinimumSize(new Dimension(200, 300));
+
+        final JToolBar toolbar = new JToolBar();
+        toolbar.setFloatable(false);
+        toolbar.add(actionButton);
+        toolbar.add(filterLabel);
+        toolbar.add(filterField);
+
+        add(scroll, BorderLayout.CENTER);
+        add(toolbar, BorderLayout.SOUTH);
+
+        actionButton.setEnabled(false);
+        filterField.setEnabled(false);
     }
 
+    /**
+     * Returns selected files in the repository, if in {@link JFileChooser} some
+     * file selected and it is {@link NwnRepository repository}.
+     *
+     * @return List of selected resources or empty list is no file is selected or
+     *         selected file is not repository
+     */
     public List<ResourceID> getSelectedResources() {
         return rview.getSelectedResources();
     }
 
-    public void setButtonAction(Action a) {
-        actionButton.setAction(a);
-        actionButton.setVisible(true);
-    }
-
+    /**
+     * Returns selected file as repository.
+     *
+     * @return Repository if some file is selected in {@link JFileChooser} and
+     *         it is a repository, {@code null} otherwise
+     */
     public NwnRepository getRepository() {
         return rview.getRepository();
     }
 
-    public JComponent getAccessoryComponent() {
-        return accPanel;
-    }
-
-    public JXTable getView() {
-        return rview.getViewComponent();
-    }
-
     @Override
-    public void propertyChange(PropertyChangeEvent arg0) {
-        if (arg0.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
-            final File f = (File) arg0.getNewValue();
-            if (f != null) {
-                rview.getViewComponent().setEnabled(false);
-                SwingUtilities.invokeLater(new Runnable() {
-                    boolean enable = false;
-
-                    @Override
-                    public void run() {
-                        try {
-                            if (f == null) {
-                                rview.clear();
-                            } else if (ErfEdit.accept(f)) {
-                                try {
-                                    rview.setRepository(Repositories.getInstance().getErfRepository(f));
-                                    enable = true;
-                                } catch (IOException ioex) {
-                                    ioex.printStackTrace();
-                                }
-                            } else if (f.getName().toLowerCase().endsWith(".zip")) {
-                                try {
-                                    rview.setRepository(Repositories.getInstance().getZipRepository(f));
-                                    enable = true;
-                                } catch (IOException ioex) {
-                                    ioex.printStackTrace();
-                                }
-                            } else if (f.getName().toLowerCase().endsWith(".rep")) {
-                                try {
-                                    rview.setRepository(Repositories.getInstance().getChainRepository(f));
-                                    enable = true;
-                                } catch (IOException ioex) {
-                                    ioex.printStackTrace();
-                                }
-                            } else {
-                                rview.clear();
-                            }
-                        } finally {
-                            rview.getViewComponent().setEnabled(enable);
-                            actionButton.setEnabled(enable);
-                            filterField.setEnabled(enable);
-                        }
+    public void propertyChange(final PropertyChangeEvent event) {
+        // When currently selected file in JFileChooser is changed update our table
+        if (event.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
+            rview.getViewComponent().setEnabled(false);
+            SwingUtilities.invokeLater(() -> {
+                boolean enable = false;
+                try {
+                    final File f = (File) event.getNewValue();
+                    if (f == null) {
+                        rview.clear();
+                    } else
+                    if (ErfEdit.accept(f)) {
+                        rview.setRepository(Repositories.getInstance().getErfRepository(f));
+                        enable = true;
+                    } else
+                    if (f.getName().toLowerCase().endsWith(".zip")) {
+                        rview.setRepository(Repositories.getInstance().getZipRepository(f));
+                        enable = true;
+                    } else
+                    if (f.getName().toLowerCase().endsWith(".rep")) {
+                        rview.setRepository(Repositories.getInstance().getChainRepository(f));
+                        enable = true;
+                    } else {
+                        rview.clear();
                     }
-                });
-            }
+                } catch (IOException ioex) {
+                    ioex.printStackTrace();
+                } finally {
+                    rview.getViewComponent().setEnabled(enable);
+                    actionButton.setEnabled(enable);
+                    filterField.setEnabled(enable);
+                }
+            });
         }
     }
 }
