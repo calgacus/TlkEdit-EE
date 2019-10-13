@@ -36,7 +36,7 @@ jobs:
   build-java10:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:10-jdk
 
     working_directory: ~/tlkedit-ee
 
@@ -65,7 +65,10 @@ jobs:
   build-java12:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+      # - image: circleci/openjdk:12-jdk
+      # see https://hub.docker.com/r/codeaches/openjdk
+      # see https://github.com/lottetreg/cup/pull/1
+      - image: codeaches/openjdk:12-jdk
 
     working_directory: ~/tlkedit-ee
 
