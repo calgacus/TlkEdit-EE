@@ -23,7 +23,7 @@ public class MappedCellEditor extends DefaultCellEditor {
 
     protected Map<String, String> map;
     private Map<String, String> invMap;
-    private JComboBox<?> comboBox;
+    private JComboBox<String> comboBox;
 
 	private Action aAbort = new AbstractAction(){
 		@Override
@@ -34,7 +34,7 @@ public class MappedCellEditor extends DefaultCellEditor {
 
 	public MappedCellEditor(){
         super( new JComboBox<>() );
-		comboBox = ( JComboBox ) editorComponent;
+        comboBox = ( JComboBox<String> ) editorComponent;
 		comboBox.setEditable( true );
 		comboBox.getInputMap().put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ), "cancel" );
 		comboBox.getInputMap( JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT ).put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ), "cancel" );
@@ -49,7 +49,7 @@ public class MappedCellEditor extends DefaultCellEditor {
 	private void setup( String[] values, String[] labels ){
 		map = buildMap( values, labels );
 		invMap = buildMap( labels, values );
-		comboBox.setModel( new DefaultComboBoxModel( labels ) );
+        comboBox.setModel( new DefaultComboBoxModel<>( labels ) );
 	}
 
     public static Map<String, String> buildMap(String[] values, String[] labels) {

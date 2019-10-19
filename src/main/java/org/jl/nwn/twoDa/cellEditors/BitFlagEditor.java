@@ -124,7 +124,7 @@ public class BitFlagEditor
     private void init( JTable table ){
         dialog = new JDialog((JFrame)SwingUtilities.getWindowAncestor(table));
 
-        HashSet s1 = new HashSet();
+        final HashSet<AWTKeyStroke> s1 = new HashSet<>();
         s1.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_DOWN, 0, false));
         s1.addAll(
                 dialog.getFocusTraversalKeys(
@@ -132,7 +132,7 @@ public class BitFlagEditor
         dialog.setFocusTraversalKeys(
                 KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
                 s1);
-        HashSet s2 = new HashSet();
+        final HashSet<AWTKeyStroke> s2 = new HashSet<>();
         s2.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_UP, 0, false));
         s2.addAll(
                 dialog.getFocusTraversalKeys(
@@ -157,7 +157,7 @@ public class BitFlagEditor
             int column) {
         if ( dialog == null )
             init(table);
-        this.tableRef = new WeakReference(table);
+        this.tableRef = new WeakReference<>(table);
         this.value = 0;
         try {
             String s = value.toString();

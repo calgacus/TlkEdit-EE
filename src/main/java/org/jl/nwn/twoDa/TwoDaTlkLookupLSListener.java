@@ -16,7 +16,7 @@ public class TwoDaTlkLookupLSListener implements ListSelectionListener {
 
     public TwoDaTlkLookupLSListener(TwoDaEdit ed, TlkLookupPanel tlp ){
         //this.table = ed.table;
-        this.table = new WeakReference(ed.table);
+        this.table = new WeakReference<>(ed.table);//TODO: Why weak reference is used?
         this.tlp = tlp;
     }
 

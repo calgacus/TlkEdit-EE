@@ -19,8 +19,7 @@ import org.jl.nwn.Version;
 public final class ResRefUtil{
     public final Pattern RESREFPATTERN;
 
-    private static final EnumMap<Version, ResRefUtil> map =
-            new EnumMap(Version.class);
+    private static final EnumMap<Version, ResRefUtil> map = new EnumMap<>(Version.class);
 
     static{
         map.put( Version.NWN1, new ResRefUtil(Pattern.compile("[\\w]{0,16}")) );

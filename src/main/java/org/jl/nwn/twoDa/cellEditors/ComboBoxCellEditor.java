@@ -43,6 +43,7 @@ public class ComboBoxCellEditor extends DefaultCellEditor {
             final Element entryNode = (Element) entries.item( i );
             values[i] = entryNode.getAttributes().getNamedItem( "value" ).getNodeValue();
         }
+        @SuppressWarnings("unchecked")
         final JComboBox<String> comboBox = (JComboBox<String>) super.editorComponent;
         comboBox.setModel( new DefaultComboBoxModel<>( values ) );
         comboBox.setEditable( editable );
@@ -51,6 +52,7 @@ public class ComboBoxCellEditor extends DefaultCellEditor {
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         final Component retValue = super.getTableCellEditorComponent(table, value, isSelected, row, column);
+        @SuppressWarnings("unchecked")
         final JComboBox<String> comboBox = (JComboBox<String>) super.editorComponent;
         comboBox.getEditor().selectAll();
         return retValue;

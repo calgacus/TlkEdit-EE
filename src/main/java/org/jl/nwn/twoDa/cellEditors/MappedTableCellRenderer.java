@@ -16,7 +16,7 @@ public class MappedTableCellRenderer extends DefaultTableCellRenderer {
 	public Object unknownValue = "???";
 	private Color defaultForeground = getForeground();
 
-	public MappedTableCellRenderer( Map map ){
+    public MappedTableCellRenderer(Map<String, String> map) {
 		super();
 		this.map = map;
 	}
