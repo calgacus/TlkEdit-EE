@@ -56,11 +56,11 @@ public class RepositoryTreeView {
         private NwnRepository rep;
 
         public Model(){
-            super(new DefaultListNode<>("<Empty>", Collections.EMPTY_LIST));
+            super(new DefaultListNode<>("<Empty>", Collections.emptyList()));
         }
 
         public void clear(){
-            root = new DefaultListNode<>("<Empty>", Collections.EMPTY_LIST);
+            root = new DefaultListNode<>("<Empty>", Collections.emptyList());
             rep = null;
             modelSupport.fireNewRoot();
         }

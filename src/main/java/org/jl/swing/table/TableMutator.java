@@ -5,7 +5,6 @@ import java.util.List;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 
-import org.jl.swing.undo.Mutator;
 import org.jl.swing.undo.RowMutator;
 import org.jl.swing.undo.TableModelMutator;
 
@@ -17,20 +16,11 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
         public void setColumnName( int index, String name );
     }
 
-    protected RowMutator rowMutator;
+    protected final RowMutator<RowData> rowMutator;
 
     public TableMutator( TableModel model, ListSelectionModel lsl ){
         super(model, lsl);
-        init();
-    }
-
-    public TableMutator( Mutator m, TableModel model, ListSelectionModel lsl ){
-        super(m, model, lsl);
-        init();
-    }
-
-    private void init(){
-        rowMutator = new RowMutator(this,(RowMutator.RowMutable)model, lsl);
+        rowMutator = new RowMutator<>(this, (RowMutator.RowMutable<RowData>)model, lsl);
     }
 
     public class SetColumnNameEdit extends ModelEdit{
@@ -43,12 +33,12 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
         }
         @Override protected Object performEdit(){
             oldName = model.getColumnName(pos);
-            ((ColumnMutable)model).setColumnName(pos, newName);
+            ((ColumnMutable<ColumnData>)model).setColumnName(pos, newName);
             return null;
         }
         @Override public void undo(){
             super.undo();
-            ((ColumnMutable)model).setColumnName(pos, oldName);
+            ((ColumnMutable<ColumnData>)model).setColumnName(pos, oldName);
         }
     }
 
@@ -69,7 +59,7 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
         }
         @Override public void undo(){
             super.undo();
-            ((ColumnMutable)model).insertColumn(pos, name, cClass, data);
+            ((ColumnMutable<ColumnData>)model).insertColumn(pos, name, cClass, data);
         }
     }
 
@@ -86,12 +76,12 @@ public class TableMutator<RowData, ColumnData> extends TableModelMutator{
             this.cClass = cClass;
         }
         @Override protected Object performEdit(){
-            ((ColumnMutable)model).insertColumn(pos, name, cClass, data);
+            ((ColumnMutable<ColumnData>)model).insertColumn(pos, name, cClass, data);
             return null;
         }
         @Override public void undo(){
             super.undo();
-            ((ColumnMutable)model).dropColumn(pos);
+            ((ColumnMutable<ColumnData>)model).dropColumn(pos);
         }
     }
 

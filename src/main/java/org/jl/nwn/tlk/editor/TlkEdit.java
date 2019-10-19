@@ -168,7 +168,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     private ButtonModel isUserTlkBM;
     protected MyUndoManager undoManager = new MyUndoManager();
     protected TlkModelMutator mutator;
-    protected RowMutator rowMutator;
+    protected RowMutator<TlkEntry> rowMutator;
     //protected ListMutator listMutator;
     Action aUndo;
     Action aRedo;
@@ -196,7 +196,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     private JMenu langSubMenu = null;
 
     private JMenu viewMenu = null;
- 
+
     private JPopupMenu headerPopup = null;
 
     protected boolean noRealTimeSpellChecking = false;
@@ -359,7 +359,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         model.addPropertyChangeListener(this);
         ListSelectionModel mappedLsl = MappedListSelectionModel.createRowModelToViewMapper(tlkTable);
         mutator = new TlkModelMutator(model, mappedLsl);
-        rowMutator = new RowMutator(mutator, model, mappedLsl);
+        rowMutator = new RowMutator<>(mutator, model, mappedLsl);
         mutator.addUndoableEditListener(undoManager);
 
         tlkTable.setTransferHandler(transferHandler);
@@ -589,7 +589,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         editMenu.addSeparator();
         editMenu.add(actResize);
 
-  
+
 
         langSubMenu = new JMenu();
         I18nUtil.setText(langSubMenu, "&Language");
@@ -619,7 +619,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         miToggleHex.setIcon(null);
         viewMenu.add(miToggleHex);
 
- 
+
         headerPopup = new JPopupMenu();
         //headerPopup = viewMenu.getPopupMenu();
         JMenuItem pop1 = headerPopup.add(new JCheckBoxMenuItem(actToggleFlagDisplay));
@@ -1107,8 +1107,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     };
 
-  
- 
+
+
 
     private final Action actFindNext = new AbstractAction() {
 
@@ -1218,11 +1218,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     };
 
-    private static String makeKeyStrokeTooltip(String tooltip, KeyStroke ks) {
-        tooltip = "<html>" + tooltip + "  <sub><font color=#444444 size=-1>" + KeyEvent.getKeyModifiersText(ks.getModifiers()) + "-" + KeyEvent.getKeyText(ks.getKeyCode()) + "</font></sub></html>";
-        return tooltip;
-    }
-
     @Override
     public JToolBar getToolbar() {
         return toolbar;
@@ -1231,7 +1226,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     @Override
     public void showToolbar(boolean b) {
         if (b) {
-            add(toolbar, java.awt.BorderLayout.NORTH);
+            add(toolbar, BorderLayout.NORTH);
         } else {
             remove(toolbar);
         }
@@ -1325,6 +1320,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             JTable table = (JTable) comp;
             try {
                 if (t.isDataFlavorSupported(flavorTlkList)) {
+                    @SuppressWarnings("unchecked")
                     final List<TlkEntry> entries = (List<TlkEntry>) t.getTransferData(flavorTlkList);
                     final List<TlkEntry> clones = new ArrayList<>(entries.size());
                     for (TlkEntry e : entries) {

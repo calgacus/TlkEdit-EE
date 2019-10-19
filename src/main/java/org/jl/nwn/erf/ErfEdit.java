@@ -65,7 +65,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
 
     private ErfFile erf;
 
-    private final DefaultListModel model = new DefaultListModel();
+    private final DefaultListModel<ResourceID> model = new DefaultListModel<>();
     private final JToolBar toolbar = new JToolBar();
     private final JMenuBar mbar = new JMenuBar();
     private final JMenu menuFile = new JMenu("File");
@@ -118,7 +118,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         }
         @Override
         public Object getValueAt( int row, int column ){
-            ResourceID id = (ResourceID) model.get(row);
+            final ResourceID id = model.get(row);
             switch (column){
                 case 0 : return id.getName();
                 case 1 : {
@@ -148,7 +148,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                         String name =
                                 ResRefUtil.instance(erf.getVersion())
                                 .parseString( aValue.toString() );
-                        ResourceID id = erf.renameResource( (ResourceID) model.get(rowIndex), name );
+                        ResourceID id = erf.renameResource(model.get(rowIndex), name);
                         redoList();
                         int s = model.indexOf(id);
                         tableModel.fireTableDataChanged();
@@ -197,7 +197,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                     int column){
                 setBackground( defaultColor );
                 Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
-                if ( erf.isFileResource((ResourceID)model.get(((JXTable)table).convertRowIndexToModel(row))))
+                if ( erf.isFileResource(model.get(((JXTable)table).convertRowIndexToModel(row))))
                     c.setBackground( isSelected? Color.ORANGE:Color.YELLOW );
                 setHorizontalAlignment( column==2?JLabel.TRAILING:JLabel.LEADING );
                 return c;
@@ -393,7 +393,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         public void actionPerformed( ActionEvent e ){
             int[] selection = table.getSelectedRows();
             for ( int i = selection.length-1; i>-1; i-- ){
-                ResourceID id = ( ResourceID ) model.get( table.convertRowIndexToModel(selection[i]) );
+                final ResourceID id = model.get( table.convertRowIndexToModel(selection[i]) );
                 erf.remove( id );
                 model.remove(  table.convertRowIndexToModel(selection[i]) );
                 tableModel.fireTableRowsDeleted(selection[0],selection[selection.length-1]);
@@ -445,7 +445,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                             btnOK.setEnabled( false );
                             try{
                                 for ( int i = 0; i < selection.length; i++ ){
-                                    ResourceID id = (ResourceID) model.get(table.convertRowIndexToModel(selection[i]));
+                                    final ResourceID id = model.get(table.convertRowIndexToModel(selection[i]));
                                     pBar.setValue( i );
                                     pBar.setString( id.getFileName() );
                                     erf.extractToDir( id, outputDir );
@@ -555,7 +555,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         int[] selection = table.getSelectedRows();
         ResourceID[] ids = new ResourceID[ selection.length ];
         for ( int i = 0; i < selection.length; i++ )
-            ids[i] = (ResourceID) model.get( table.convertRowIndexToModel(selection[i]) );
+            ids[i] = model.get( table.convertRowIndexToModel(selection[i]) );
         return ids;
     }
 
