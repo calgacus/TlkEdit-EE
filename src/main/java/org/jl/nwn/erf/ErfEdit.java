@@ -61,10 +61,15 @@ import org.jl.swing.I18nUtil;
 import org.jl.swing.UIDefaultsX;
 import org.jl.swing.table.FormattedCellEditor;
 
+/**
+ * Editor pane for ERF, HAK and MOD (including SAV) files. Allows to rename files
+ * in the archive, add, remove and extract files.
+ */
 public class ErfEdit extends SimpleFileEditorPanel{
 
     private ErfFile erf;
 
+    /** List of resources in the ERF archive. */
     private final DefaultListModel<ResourceID> model = new DefaultListModel<>();
     private final JToolBar toolbar = new JToolBar();
     private final JMenuBar mbar = new JMenuBar();
@@ -92,12 +97,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         }
     };
 
-    static{
-        uid.addResourceBundle("org.jl.nwn.erf.uidefaults");
-        uid.addResourceBundle("settings.keybindings");
-    }
-
-    private AbstractTableModel tableModel = new AbstractTableModel(){
+    private final AbstractTableModel tableModel = new AbstractTableModel() {
 
         @Override
         public String getColumnName(int column){
@@ -169,6 +169,160 @@ public class ErfEdit extends SimpleFileEditorPanel{
     };
     private JXTable table = new JXTable( tableModel );
 
+    private final TransferHandler fileDropHandler = new FileDropHandler() {
+        @Override
+        public void importFiles(List<File> files) {
+            for ( File f : files )
+                erf.putResource(f);
+            redoList();
+        }
+    };
+    //<editor-fold defaultstate="collapsed" desc="Actions">
+    private final Action actNew = new AbstractAction("New ERF") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            GffCExoLocString desc = new GffCExoLocString( "erf_desc" );
+            erf = new ErfFile( new File("new erf"), ErfFile.ERF, desc  );
+            redoList();
+            actSave.setEnabled(false);
+        }
+    };
+
+    private final Action actOpen = new AbstractAction("Open...") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            fChooser.setMultiSelectionEnabled(false);
+            fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
+            fChooser.setFileFilter( fFilterErf );
+            if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION )
+                try{
+                    open( fChooser.getSelectedFile() );
+                } catch ( IOException ioex ){
+                    JOptionPane.showMessageDialog( table, ioex, "error : open failed", JOptionPane.ERROR_MESSAGE );
+                }
+        }
+    };
+
+    private final Action actSave = new AbstractAction("Save") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try{
+                save();
+            } catch ( IOException ioex ){
+                JOptionPane.showMessageDialog( table, ioex, "error : save failed", JOptionPane.ERROR_MESSAGE );
+            }
+        }
+    };
+
+    private final Action actSaveAs = new AbstractAction("Save as...") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            fChooser.setMultiSelectionEnabled(false);
+            fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
+            if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION )
+                try{
+                    saveAs( fChooser.getSelectedFile(), erf.getVersion() );
+                    actSave.setEnabled( true );
+                } catch ( IOException ioex ){
+                    JOptionPane.showMessageDialog( table, ioex, "error : save failed", JOptionPane.ERROR_MESSAGE );
+                }
+        }
+    };
+
+    private final Action actAddFiles = new AbstractAction() {
+        @Override
+        public void actionPerformed( ActionEvent e ){
+            fChooser.setMultiSelectionEnabled(true);
+            fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
+            if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION ){
+                for (final File file : fChooser.getSelectedFiles()) {
+                    erf.putResource(file);
+                }
+                redoList();
+            }
+        }
+    };
+
+    private final Action actRemove = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int[] selection = table.getSelectedRows();
+            for ( int i = selection.length-1; i>-1; i-- ){
+                final ResourceID id = model.get( table.convertRowIndexToModel(selection[i]) );
+                erf.remove( id );
+                model.remove(  table.convertRowIndexToModel(selection[i]) );
+                tableModel.fireTableRowsDeleted(selection[0],selection[selection.length-1]);
+            }
+        }
+    };
+
+    /**
+     * Action for extracting files to a directory, overwrites existing files.
+     */
+    private final Action actExtractSelected = new AbstractAction() {
+        private JButton btnOK = new JButton(
+                new AbstractAction( "OK" ){
+                    @Override
+                    public void actionPerformed( ActionEvent e ){
+                        dialog.setVisible(false);
+                        dialog.dispose();
+                    }
+                }
+        );
+        private JProgressBar pBar = new JProgressBar();
+        private JDialog dialog = new JDialog(){
+            {
+                setTitle("extracting files...");
+                getContentPane().setLayout( new BorderLayout() );
+                getContentPane().add( pBar, BorderLayout.CENTER );
+                getContentPane().add( btnOK, BorderLayout.SOUTH );
+                pBar.setStringPainted(true);
+                pBar.setVisible(true);
+                //pack();
+            }
+        };
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final int[] selection = table.getSelectedRows();
+            if ( selection.length > 0 ){
+                fChooser.setMultiSelectionEnabled(false);
+                fChooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
+                if ( fChooser.showDialog( table, "extract here" ) == JFileChooser.APPROVE_OPTION ){
+                    final File outputDir = fChooser.getSelectedFile();
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            pBar.setMinimum( 0 );
+                            pBar.setMaximum( selection.length );
+                            dialog.pack();
+                            dialog.setVisible( true );
+                            dialog.setLocation( toolbar.getLocationOnScreen() );
+                            btnOK.setEnabled( false );
+                            try{
+                                for ( int i = 0; i < selection.length; i++ ){
+                                    final ResourceID id = model.get(table.convertRowIndexToModel(selection[i]));
+                                    pBar.setValue( i );
+                                    pBar.setString( id.getFileName() );
+                                    erf.extractToDir( id, outputDir );
+                                }
+                            } catch ( IOException ioex ){
+                                JOptionPane.showMessageDialog( table, ioex, "error : file extraction failed", JOptionPane.ERROR_MESSAGE );
+                            } finally{
+                                btnOK.setEnabled(true);
+                            }
+                        }
+                    }.start();
+                }
+            }
+        }
+    };
+    //</editor-fold>
+
+    static {
+        uid.addResourceBundle("org.jl.nwn.erf.uidefaults");
+        uid.addResourceBundle("settings.keybindings");
+    }
+
     {
         toolbar.setFloatable(false);
         table.getTableHeader().setReorderingAllowed(false);
@@ -197,7 +351,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                     int column){
                 setBackground( defaultColor );
                 Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
-                if ( erf.isFileResource(model.get(((JXTable)table).convertRowIndexToModel(row))))
+                if (erf.isFileResource(model.get(table.convertRowIndexToModel(row))))
                     c.setBackground( isSelected? Color.ORANGE:Color.YELLOW );
                 setHorizontalAlignment( column==2?JLabel.TRAILING:JLabel.LEADING );
                 return c;
@@ -306,177 +460,58 @@ public class ErfEdit extends SimpleFileEditorPanel{
         setFileVersion( erf.getVersion() );
     }
 
-    private void redoList(){
-        model.clear();
-        for (final ResourceID id : erf.getResourceIDs()) {
-            model.addElement(id);
-        }
-        tableModel.fireTableDataChanged();
+    //<editor-fold defaultstate="collapsed" desc="SimpleFileEditor">
+    @Override
+    public boolean canSave() { return actSave.isEnabled(); }
+    @Override
+    public boolean canSaveAs() { return true; }
+
+    @Override
+    public void save() throws IOException {
+        erf.write();
+        setIsModified(false);
     }
 
-    private Action actAddFiles = new AbstractAction(){
-        @Override
-        public void actionPerformed( ActionEvent e ){
-            fChooser.setMultiSelectionEnabled(true);
-            fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
-            if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION ){
-                for (final File file : fChooser.getSelectedFiles()) {
-                    erf.putResource(file);
-                }
-                redoList();
-            }
-        }
-    };
-
-    protected TransferHandler fileDropHandler = new FileDropHandler() {
-        @Override
-        public void importFiles(List<File> files) {
-            for ( File f : files )
-                erf.putResource(f);
-            redoList();
-        }
-    };
-
-    private Action actSave = new AbstractAction( "save" ){
-        @Override
-        public void actionPerformed( ActionEvent e ){
-            try{
-                save();
-            } catch ( IOException ioex ){
-                JOptionPane.showMessageDialog( table, ioex, "error : save failed", JOptionPane.ERROR_MESSAGE );
-            }
-        }
-    };
-
-    private Action actNew = new AbstractAction( "new erf" ){
-        @Override
-        public void actionPerformed( ActionEvent e ){
-            GffCExoLocString desc = new GffCExoLocString( "erf_desc" );
-            erf = new ErfFile( new File("new erf"), ErfFile.ERF, desc  );
-            redoList();
-            actSave.setEnabled(false);
-        }
-    };
-
-    private Action actSaveAs = new AbstractAction( "save as" ){
-        @Override
-        public void actionPerformed( ActionEvent e ){
-            fChooser.setMultiSelectionEnabled(false);
-            fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
-            if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION )
-                try{
-                    saveAs( fChooser.getSelectedFile(), erf.getVersion() );
-                    actSave.setEnabled( true );
-                } catch ( IOException ioex ){
-                    JOptionPane.showMessageDialog( table, ioex, "error : save failed", JOptionPane.ERROR_MESSAGE );
-                }
-        }
-    };
-
-    private Action actOpen = new AbstractAction( "open" ){
-        @Override
-        public void actionPerformed( ActionEvent e ){
-            fChooser.setMultiSelectionEnabled(false);
-            fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
-            fChooser.setFileFilter( fFilterErf );
-            if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION )
-                try{
-                    open( fChooser.getSelectedFile() );
-                } catch ( IOException ioex ){
-                    JOptionPane.showMessageDialog( table, ioex, "error : open failed", JOptionPane.ERROR_MESSAGE );
-                }
-        }
-    };
-
-    private Action actRemove = new AbstractAction(){
-        @Override
-        public void actionPerformed( ActionEvent e ){
-            int[] selection = table.getSelectedRows();
-            for ( int i = selection.length-1; i>-1; i-- ){
-                final ResourceID id = model.get( table.convertRowIndexToModel(selection[i]) );
-                erf.remove( id );
-                model.remove(  table.convertRowIndexToModel(selection[i]) );
-                tableModel.fireTableRowsDeleted(selection[0],selection[selection.length-1]);
-            }
-        }
-    };
-
-    /**
-     * action for extracting files to a directory, overwrites existing files
-     * */
-    private Action actExtractSelected = new AbstractAction(){
-        private JButton btnOK = new JButton(
-                new AbstractAction( "OK" ){
-            @Override
-            public void actionPerformed( ActionEvent e ){
-                dialog.setVisible(false);
-                dialog.dispose();
-            }
-        }
-        );
-        private JProgressBar pBar = new JProgressBar();
-        private JDialog dialog = new JDialog(){
-            {
-                setTitle("extracting files...");
-                getContentPane().setLayout( new BorderLayout() );
-                getContentPane().add( pBar, BorderLayout.CENTER );
-                getContentPane().add( btnOK, BorderLayout.SOUTH );
-                pBar.setStringPainted(true);
-                pBar.setVisible(true);
-                //pack();
-            }
-        };
-        @Override
-        public void actionPerformed( ActionEvent e ){
-            final int[] selection = table.getSelectedRows();
-            if ( selection.length > 0 ){
-                fChooser.setMultiSelectionEnabled(false);
-                fChooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
-                if ( fChooser.showDialog( table, "extract here" ) == JFileChooser.APPROVE_OPTION ){
-                    final File outputDir = fChooser.getSelectedFile();
-                    new Thread(){
-                @Override
-                        public void run(){
-                            pBar.setMinimum( 0 );
-                            pBar.setMaximum( selection.length );
-                            dialog.pack();
-                            dialog.setVisible( true );
-                            dialog.setLocation( toolbar.getLocationOnScreen() );
-                            btnOK.setEnabled( false );
-                            try{
-                                for ( int i = 0; i < selection.length; i++ ){
-                                    final ResourceID id = model.get(table.convertRowIndexToModel(selection[i]));
-                                    pBar.setValue( i );
-                                    pBar.setString( id.getFileName() );
-                                    erf.extractToDir( id, outputDir );
-                                }
-                            } catch ( IOException ioex ){
-                                JOptionPane.showMessageDialog( table, ioex, "error : file extraction failed", JOptionPane.ERROR_MESSAGE );
-                            } finally{
-                                btnOK.setEnabled(true);
-                            }
-                        }
-                    }.start();
-                }
-            }
-        }
-    };
-
-    // setup version dependant stuff
-    private void setFileVersion( Version v ){
-        TableCellEditor resRefEd =
-                new FormattedCellEditor(
-                new JFormattedTextField(
-                ResRefUtil.instance(erf.getVersion())
-                .getStringFormatter(false)));
-        table.getColumnModel().getColumn(0).setCellEditor( resRefEd );
+    @Override
+    public void saveAs(File f, Version nwnVersion) throws IOException {
+        erf.write(f);
+        actSave.setEnabled(true);
+        setIsModified(false);
     }
 
-    @Override public Version getFileVersion(){
-        return erf.getVersion();
+    @Override
+    public void close() {
+        try{
+            erf.close();
+        } catch ( IOException ioex ){
+            ioex.printStackTrace();
+        }
     }
 
-    public void open( File f ) throws IOException{
+    @Override
+    public File getFile() { return erf.getFile(); }
+
+    @Override
+    public Version getFileVersion() { return erf.getVersion(); }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="SimpleFileEditorPanel">
+    @Override
+    public JMenu[] getMenus() { return new JMenu[]{menuErf}; }
+
+    @Override
+    public JToolBar getToolbar() { return toolbar; }
+
+    @Override
+    public void showToolbar(boolean b) {
+        if ( b )
+            add(toolbar, BorderLayout.NORTH);
+        else
+            remove( toolbar );
+    }
+    //</editor-fold>
+
+    public void open(File f) throws IOException {
         erf = new ErfFile(f);
         cbTypeSelector.setSelectedItem( erf.getType() );
         //cbTypeSelector.setEnabled(false);
@@ -485,65 +520,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         redoList();
     }
 
-    @Override
-    public void save() throws IOException{
-        erf.write();
-        setIsModified(false);
-    }
-
-    @Override
-    public void saveAs(File f, Version nwnVersion) throws IOException{
-        erf.write(f);
-        actSave.setEnabled(true);
-        setIsModified(false);
-    }
-
-    public static void main( String[] args ) throws IOException{
-        JFrame f = new JFrame(args[0]);
-        f.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-        f.getContentPane().add( new ErfEdit( new File( args[0] ) ) );
-        f.pack();
-        f.setVisible( true );
-    }
-
-    /**
-     * @throws IOException
-     */
-    @Override
-    public void close(){
-        try{
-            erf.close();
-        } catch ( IOException ioex ){
-            ioex.printStackTrace();
-        }
-    }
-
-    public static boolean accept( File f ){
-        return f.isFile() && fFilterErf.accept(f);
-    }
-
-    @Override
-    public File getFile() {
-        return erf.getFile();
-    }
-
-    @Override
-    public boolean canSave(){
-        return actSave.isEnabled();
-    }
-
-    @Override
-    public boolean canSaveAs(){
-        return true;
-    }
-
-    @Override
-    public JMenu[] getMenus(){
-        return new JMenu[]{menuErf};
-    }
-
-    public File extractAsTempFile(ResourceID id, boolean replaceWithFile)
-    throws IOException {
+    public File extractAsTempFile(ResourceID id, boolean replaceWithFile) throws IOException {
         return erf.extractAsTempFile(id, replaceWithFile);
     }
 
@@ -559,16 +536,33 @@ public class ErfEdit extends SimpleFileEditorPanel{
         return ids;
     }
 
-    @Override
-    public JToolBar getToolbar() {
-        return toolbar;
+    private void redoList() {
+        model.clear();
+        for (final ResourceID id : erf.getResourceIDs()) {
+            model.addElement(id);
+        }
+        tableModel.fireTableDataChanged();
     }
 
-    @Override
-    public void showToolbar(boolean b) {
-        if ( b )
-            add(toolbar, java.awt.BorderLayout.NORTH);
-        else
-            remove( toolbar );
+    // setup version dependant stuff
+    private void setFileVersion(Version v) {
+        TableCellEditor resRefEd =
+                new FormattedCellEditor(
+                new JFormattedTextField(
+                ResRefUtil.instance(erf.getVersion())
+                .getStringFormatter(false)));
+        table.getColumnModel().getColumn(0).setCellEditor( resRefEd );
+    }
+
+    public static boolean accept(File f) {
+        return f.isFile() && fFilterErf.accept(f);
+    }
+
+    public static void main( String[] args ) throws IOException{
+        JFrame f = new JFrame(args[0]);
+        f.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        f.getContentPane().add( new ErfEdit( new File( args[0] ) ) );
+        f.pack();
+        f.setVisible( true );
     }
 }
