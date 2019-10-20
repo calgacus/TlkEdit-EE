@@ -67,6 +67,7 @@ import org.jl.swing.table.FormattedCellEditor;
  */
 public class ErfEdit extends SimpleFileEditorPanel{
 
+    /** Edited ERF. */
     private ErfFile erf;
 
     /** List of resources in the ERF archive. */
@@ -97,77 +98,9 @@ public class ErfEdit extends SimpleFileEditorPanel{
         }
     };
 
-    private final AbstractTableModel tableModel = new AbstractTableModel() {
-
-        @Override
-        public String getColumnName(int column){
-            switch (column){
-                case 0 : return "name";
-                case 1 : return "type";
-                default : return "size";
-            }
-        }
-
-        @Override
-        public int getColumnCount(){
-            return 3;
-        }
-        @Override
-        public int getRowCount(){
-            return model.size();
-        }
-        @Override
-        public Object getValueAt( int row, int column ){
-            final ResourceID id = model.get(row);
-            switch (column){
-                case 0 : return id.getName();
-                case 1 : {
-                    String ext = ResourceID.getExtensionForType( id.getType() );
-                    return ext == null ? toHex(id.getType()) : ext;
-                }
-                case 2 : return erf.getResourceSize( id );
-            }
-            return null;
-        }
-
-        private String toHex(short s){
-            String hex = Integer.toHexString(s);
-            return "0x0000".substring(0, 6-hex.length())+hex;
-        }
-
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex){
-            return columnIndex == 0;
-        }
-
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex){
-            if ( columnIndex == 0 ){
-                if ( !getValueAt(rowIndex, columnIndex ).equals(aValue.toString()) ){
-                    try{
-                        String name =
-                                ResRefUtil.instance(erf.getVersion())
-                                .parseString( aValue.toString() );
-                        ResourceID id = erf.renameResource(model.get(rowIndex), name);
-                        redoList();
-                        int s = model.indexOf(id);
-                        tableModel.fireTableDataChanged();
-                        table.setRowSelectionInterval(s,s);
-                    } catch (ParseException pex){
-                        // should not happen since ResRef editor is used
-                        pex.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void fireTableChanged( TableModelEvent e ){
-            super.fireTableChanged(e);
-            setIsModified(true);
-        }
-    };
-    private JXTable table = new JXTable( tableModel );
+    /** Table model with content of the ERF archive. */
+    private final ErfContentModel contentModel = new ErfContentModel();
+    private JXTable table = new JXTable(contentModel);
 
     private final TransferHandler fileDropHandler = new FileDropHandler() {
         @Override
@@ -251,7 +184,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                 final ResourceID id = model.get( table.convertRowIndexToModel(selection[i]) );
                 erf.remove( id );
                 model.remove(  table.convertRowIndexToModel(selection[i]) );
-                tableModel.fireTableRowsDeleted(selection[0],selection[selection.length-1]);
+                contentModel.fireTableRowsDeleted(selection[0],selection[selection.length-1]);
             }
         }
     };
@@ -316,6 +249,69 @@ public class ErfEdit extends SimpleFileEditorPanel{
             }
         }
     };
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Internal classes">
+    private final class ErfContentModel extends AbstractTableModel {
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0 : return "Name";
+                case 1 : return "Type";
+                default: return "Size";
+            }
+        }
+        @Override
+        public int getColumnCount() { return 3; }
+        @Override
+        public int getRowCount() { return model.size(); }
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return columnIndex == 0;
+        }
+        @Override
+        public Object getValueAt(int row, int column) {
+            final ResourceID id = model.get(row);
+            switch (column) {
+                case 0: return id.getName();
+                case 1: {
+                    final String ext = ResourceID.getExtensionForType(id.getType());
+                    return ext == null ? toHex(id.getType()) : ext;
+                }
+                case 2: return erf.getResourceSize(id);
+            }
+            return null;
+        }
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            if (columnIndex == 0) {
+                final ResourceID oldId = model.get(rowIndex);
+                if (!oldId.getName().equals(aValue)) {
+                    try {
+                        final String name = ResRefUtil.instance(erf.getVersion())
+                                                      .parseString(aValue.toString());
+                        final ResourceID id = erf.renameResource(oldId, name);
+                        redoList();
+                        final int index = model.indexOf(id);
+                        contentModel.fireTableDataChanged();
+                        table.setRowSelectionInterval(index, index);
+                    } catch (ParseException pex){
+                        // should not happen since ResRef editor is used
+                        pex.printStackTrace();
+                    }
+                }
+            }
+        }
+        @Override
+        public void fireTableChanged( TableModelEvent e ){
+            super.fireTableChanged(e);
+            setIsModified(true);
+        }
+        private String toHex(short s) {
+            String hex = Integer.toHexString(s);
+            return "0x0000".substring(0, 6-hex.length())+hex;
+        }
+    }
     //</editor-fold>
 
     static {
@@ -541,7 +537,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         for (final ResourceID id : erf.getResourceIDs()) {
             model.addElement(id);
         }
-        tableModel.fireTableDataChanged();
+        contentModel.fireTableDataChanged();
     }
 
     // setup version dependant stuff
