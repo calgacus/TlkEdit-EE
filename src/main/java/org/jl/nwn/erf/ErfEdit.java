@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -17,7 +18,6 @@ import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -69,9 +69,9 @@ public class ErfEdit extends SimpleFileEditorPanel{
 
     /** Edited ERF. */
     private ErfFile erf;
+    /** Table model with content of the ERF archive. */
+    private final ErfContentModel contentModel = new ErfContentModel();
 
-    /** List of resources in the ERF archive. */
-    private final DefaultListModel<ResourceID> model = new DefaultListModel<>();
     private final JToolBar toolbar = new JToolBar();
     private final JMenuBar mbar = new JMenuBar();
     private final JMenu menuFile = new JMenu("File");
@@ -98,8 +98,6 @@ public class ErfEdit extends SimpleFileEditorPanel{
         }
     };
 
-    /** Table model with content of the ERF archive. */
-    private final ErfContentModel contentModel = new ErfContentModel();
     private JXTable table = new JXTable(contentModel);
 
     private final TransferHandler fileDropHandler = new FileDropHandler() {
@@ -107,7 +105,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         public void importFiles(List<File> files) {
             for ( File f : files )
                 erf.putResource(f);
-            redoList();
+            contentModel.reload();
         }
     };
     //<editor-fold defaultstate="collapsed" desc="Actions">
@@ -116,7 +114,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         public void actionPerformed(ActionEvent e) {
             GffCExoLocString desc = new GffCExoLocString( "erf_desc" );
             erf = new ErfFile( new File("new erf"), ErfFile.ERF, desc  );
-            redoList();
+            contentModel.reload();
             actSave.setEnabled(false);
         }
     };
@@ -171,7 +169,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                 for (final File file : fChooser.getSelectedFiles()) {
                     erf.putResource(file);
                 }
-                redoList();
+                contentModel.reload();
             }
         }
     };
@@ -179,12 +177,9 @@ public class ErfEdit extends SimpleFileEditorPanel{
     private final Action actRemove = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            int[] selection = table.getSelectedRows();
-            for ( int i = selection.length-1; i>-1; i-- ){
-                final ResourceID id = model.get( table.convertRowIndexToModel(selection[i]) );
-                erf.remove( id );
-                model.remove(  table.convertRowIndexToModel(selection[i]) );
-                contentModel.fireTableRowsDeleted(selection[0],selection[selection.length-1]);
+            final int[] selection = table.getSelectedRows();
+            for (int i = selection.length-1; i >= 0; --i) {
+                contentModel.remove(table.convertRowIndexToModel(selection[i]));
             }
         }
     };
@@ -233,7 +228,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                             btnOK.setEnabled( false );
                             try{
                                 for ( int i = 0; i < selection.length; i++ ){
-                                    final ResourceID id = model.get(table.convertRowIndexToModel(selection[i]));
+                                    final ResourceID id = contentModel.resources.get(table.convertRowIndexToModel(selection[i]));
                                     pBar.setValue( i );
                                     pBar.setString( id.getFileName() );
                                     erf.extractToDir( id, outputDir );
@@ -253,6 +248,8 @@ public class ErfEdit extends SimpleFileEditorPanel{
 
     //<editor-fold defaultstate="collapsed" desc="Internal classes">
     private final class ErfContentModel extends AbstractTableModel {
+        /** List of resources in the ERF archive. */
+        private final ArrayList<ResourceID> resources = new ArrayList<>();
         @Override
         public String getColumnName(int column) {
             switch (column) {
@@ -264,14 +261,14 @@ public class ErfEdit extends SimpleFileEditorPanel{
         @Override
         public int getColumnCount() { return 3; }
         @Override
-        public int getRowCount() { return model.size(); }
+        public int getRowCount() { return resources.size(); }
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return columnIndex == 0;
         }
         @Override
         public Object getValueAt(int row, int column) {
-            final ResourceID id = model.get(row);
+            final ResourceID id = resources.get(row);
             switch (column) {
                 case 0: return id.getName();
                 case 1: {
@@ -285,15 +282,14 @@ public class ErfEdit extends SimpleFileEditorPanel{
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             if (columnIndex == 0) {
-                final ResourceID oldId = model.get(rowIndex);
+                final ResourceID oldId = resources.get(rowIndex);
                 if (!oldId.getName().equals(aValue)) {
                     try {
                         final String name = ResRefUtil.instance(erf.getVersion())
                                                       .parseString(aValue.toString());
                         final ResourceID id = erf.renameResource(oldId, name);
-                        redoList();
-                        final int index = model.indexOf(id);
-                        contentModel.fireTableDataChanged();
+                        reload();
+                        final int index = resources.indexOf(id);
                         table.setRowSelectionInterval(index, index);
                     } catch (ParseException pex){
                         // should not happen since ResRef editor is used
@@ -306,6 +302,18 @@ public class ErfEdit extends SimpleFileEditorPanel{
         public void fireTableChanged( TableModelEvent e ){
             super.fireTableChanged(e);
             setIsModified(true);
+        }
+
+        public void remove(int index) {
+            erf.remove(resources.remove(index));
+            fireTableRowsDeleted(index, index);
+        }
+
+        /** Reload list of resources from current ERF file. */
+        private void reload() {
+            resources.clear();
+            resources.addAll(erf.getResourceIDs());
+            fireTableDataChanged();
         }
         private String toHex(short s) {
             String hex = Integer.toHexString(s);
@@ -347,7 +355,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
                     int column){
                 setBackground( defaultColor );
                 Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
-                if (erf.isFileResource(model.get(table.convertRowIndexToModel(row))))
+                if (erf.isFileResource(contentModel.resources.get(table.convertRowIndexToModel(row))))
                     c.setBackground( isSelected? Color.ORANGE:Color.YELLOW );
                 setHorizontalAlignment( column==2?JLabel.TRAILING:JLabel.LEADING );
                 return c;
@@ -513,7 +521,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         //cbTypeSelector.setEnabled(false);
         actSave.setEnabled(true);
         descEditor.setCExoLocString( erf.getDescription() );
-        redoList();
+        contentModel.reload();
     }
 
     public File extractAsTempFile(ResourceID id, boolean replaceWithFile) throws IOException {
@@ -528,16 +536,8 @@ public class ErfEdit extends SimpleFileEditorPanel{
         int[] selection = table.getSelectedRows();
         ResourceID[] ids = new ResourceID[ selection.length ];
         for ( int i = 0; i < selection.length; i++ )
-            ids[i] = model.get( table.convertRowIndexToModel(selection[i]) );
+            ids[i] = contentModel.resources.get( table.convertRowIndexToModel(selection[i]) );
         return ids;
-    }
-
-    private void redoList() {
-        model.clear();
-        for (final ResourceID id : erf.getResourceIDs()) {
-            model.addElement(id);
-        }
-        contentModel.fireTableDataChanged();
     }
 
     // setup version dependant stuff
