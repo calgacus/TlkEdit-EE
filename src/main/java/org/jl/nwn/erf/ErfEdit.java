@@ -61,18 +61,40 @@ import org.jl.swing.table.FormattedCellEditor;
  * Editor pane for ERF, HAK and MOD (including SAV) files. Allows to rename files
  * in the archive, add, remove and extract files.
  */
-public class ErfEdit extends SimpleFileEditorPanel{
+public class ErfEdit extends SimpleFileEditorPanel {
+    private static final UIDefaultsX UID = new UIDefaultsX();
+    /**
+     * Filter, that returns {@code true} for directories and files with extensions
+     * {@code "mod"}, {@code "hak"}, {@code "sav"}, {@code "erf"} and {@code "nwm"}.
+     */
+    private static final FileFilter ERF_FILE_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            final String s = f.getName().toLowerCase();
+            return !f.isFile()
+                || s.endsWith(".mod")
+                || s.endsWith(".hak")
+                || s.endsWith(".sav")
+                || s.endsWith(".erf")
+                || s.endsWith(".nwm");
+        }
+        @Override
+        public String getDescription() {
+            return "erf files";
+        }
+    };
 
     /** Edited ERF. */
     private ErfFile erf;
     /** Table model with content of the ERF archive. */
     private final ErfContentModel contentModel = new ErfContentModel();
+    private final JXTable table = new JXTable(contentModel);
 
     private final JToolBar toolbar = new JToolBar();
     private final JMenuBar mbar = new JMenuBar();
     private final JMenu menuFile = new JMenu("File");
     private final JMenu menuErf = new JMenu();
-    private final JSplitPane sPane;
+    private final JSplitPane sPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
     private final JComboBox<ErfFile.ErfType> cbTypeSelector = new JComboBox<>(ErfFile.TYPES);
     private final CExoLocStringEditor descEditor = new CExoLocStringEditor();
@@ -80,22 +102,6 @@ public class ErfEdit extends SimpleFileEditorPanel{
     private final Box descriptionBox = new Box(BoxLayout.Y_AXIS);
 
     private final JFileChooser fChooser = new JFileChooser( new File(".") );
-
-    private static final UIDefaultsX uid = new UIDefaultsX();
-
-    private static FileFilter fFilterErf = new FileFilter(){
-        @Override
-        public boolean accept( File f ){
-            String s = f.getName().toLowerCase();
-            return ( !f.isFile() || s.endsWith(".mod") || s.endsWith(".hak") || s.endsWith(".sav") || s.endsWith(".erf") || s.endsWith(".nwm") );
-        }
-        @Override
-        public String getDescription(){
-            return "erf files";
-        }
-    };
-
-    private JXTable table = new JXTable(contentModel);
 
     //<editor-fold defaultstate="collapsed" desc="Actions">
     private final Action actNew = new AbstractAction("New ERF") {
@@ -110,7 +116,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         public void actionPerformed(ActionEvent e) {
             fChooser.setMultiSelectionEnabled(false);
             fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
-            fChooser.setFileFilter( fFilterErf );
+            fChooser.setFileFilter(ERF_FILE_FILTER);
             if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION )
                 try{
                     setErf(new ErfFile(fChooser.getSelectedFile()));
@@ -310,8 +316,8 @@ public class ErfEdit extends SimpleFileEditorPanel{
     //</editor-fold>
 
     static {
-        uid.addResourceBundle("org.jl.nwn.erf.uidefaults");
-        uid.addResourceBundle("settings.keybindings");
+        UID.addResourceBundle("org.jl.nwn.erf.uidefaults");
+        UID.addResourceBundle("settings.keybindings");
     }
 
     {
@@ -358,7 +364,6 @@ public class ErfEdit extends SimpleFileEditorPanel{
     private ErfEdit(ErfFile erf) {
         super();
         setLayout( new BorderLayout() );
-        sPane = new JSplitPane( JSplitPane.VERTICAL_SPLIT );
         sPane.setOneTouchExpandable(true);
         sPane.add( new JScrollPane( table ) );
         JLabel descLabel = new JLabel();
@@ -372,9 +377,9 @@ public class ErfEdit extends SimpleFileEditorPanel{
 
         descEditor.labelBox.setVisible(false);
 
-        Actions.configureActionUI(actAddFiles,uid,"ErfEdit.add");
-        Actions.configureActionUI(actRemove,uid,"ErfEdit.remove");
-        Actions.configureActionUI(actExtractSelected,uid,"ErfEdit.extract");
+        Actions.configureActionUI(actAddFiles, UID, "ErfEdit.add");
+        Actions.configureActionUI(actRemove, UID, "ErfEdit.remove");
+        Actions.configureActionUI(actExtractSelected, UID, "ErfEdit.extract");
         JButton addButton = toolbar.add( actAddFiles );
         JButton rmButton = toolbar.add( actRemove );
         toolbar.add( new JToolBar.Separator() );
@@ -382,7 +387,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
         addButton.setMnemonic(KeyEvent.VK_UNDEFINED);
         rmButton.setMnemonic(KeyEvent.VK_UNDEFINED);
         exButton.setMnemonic(KeyEvent.VK_UNDEFINED);
-        I18nUtil.setText(menuErf, uid.getString("ErfEdit.erfMenuTitle"));
+        I18nUtil.setText(menuErf, UID.getString("ErfEdit.erfMenuTitle"));
         menuErf.add(actAddFiles);
         menuErf.add(actRemove);
         menuErf.addSeparator();
@@ -539,7 +544,7 @@ public class ErfEdit extends SimpleFileEditorPanel{
     }
 
     public static boolean accept(File f) {
-        return f.isFile() && fFilterErf.accept(f);
+        return f.isFile() && ERF_FILE_FILTER.accept(f);
     }
 
     public static void main( String[] args ) throws IOException{
