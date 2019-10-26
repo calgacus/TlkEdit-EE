@@ -2,6 +2,7 @@ package org.jl.nwn.tlk.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -140,56 +141,38 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
      */
     private static boolean HAS_SOUND_PLAYER;
 
-    private MessageSourceSupport messageSupport = new MessageSourceSupport(this);
+    private final MessageSourceSupport messageSupport = new MessageSourceSupport(this);
 
-    static {
-        UID.addResourceBundle("org.jl.nwn.tlk.editor.MessageBundle");
-        UID.addResourceBundle("settings.keybindings");
-        try {
-            Class.forName("javazoom.jl.player.Player");
-            System.out.println("zoom player found, sound playback enabled");
-            HAS_SOUND_PLAYER = true;
-        } catch (ClassNotFoundException e1) {
-            //System.out.println( "zoom player not found, sound playback disabled" );
-            HAS_SOUND_PLAYER = false;
-        }
-    }
-
-    protected TlkContent tlkContent;
-    protected TlkModel model;
-    private ButtonModel isUserTlkBM;
-    protected MyUndoManager undoManager = new MyUndoManager();
-    protected TlkModelMutator mutator;
-    protected RowMutator<TlkEntry> rowMutator;
-    //protected ListMutator listMutator;
-    Action aUndo;
-    Action aRedo;
-    Action aPasteOver;
-
-    ButtonGroup languageButtons = new ButtonGroup();
-
+    private TlkContent tlkContent;
+    private final TlkModel model;
+    private final ButtonModel isUserTlkBM;
+    private final MyUndoManager undoManager = new MyUndoManager();
+    protected final TlkModelMutator mutator;
+    private final RowMutator<TlkEntry> rowMutator;
+    private final Action aUndo;
+    private final Action aRedo;
+    private final ButtonGroup languageButtons = new ButtonGroup();
     private File tlkFile;
 
-    protected JXTable tlkTable;
-    protected TableColumn col_StrRef = new TableColumn(0, 120);
-    protected TableColumn col_SoundResRef = new TableColumn(1, 150);
-    protected TableColumn col_String = new TableColumn(2, 500);
-    protected TableColumn col_SoundLength = new TableColumn(3, 100);
-    protected TableColumn col_Flags = new TableColumn(4, 50);
-    protected BitFlagEditor flagEditor;
+    protected final JXTable tlkTable;
+    private final TableColumn col_StrRef = new TableColumn(0, 120);
+    private final TableColumn col_SoundResRef = new TableColumn(1, 150);
+    private final TableColumn col_String = new TableColumn(2, 500);
+    private final TableColumn col_SoundLength = new TableColumn(3, 100);
+    private final TableColumn col_Flags = new TableColumn(4, 50);
+    private final BitFlagEditor flagEditor;
 
     private final JToolBar toolbar;
-    private JMenu diffMenu = null;
-    private JMenu editMenu = null;
-    private JMenu langSubMenu = null;
+    private final JMenu editMenu = new JMenu();
+    private final JMenu viewMenu = new JMenu();
+    private final JMenu diffMenu = new JMenu();
+    private final JMenu langSubMenu = new JMenu();
 
-    private JMenu viewMenu = null;
+    private final JPopupMenu headerPopup = new JPopupMenu();
 
-    private JPopupMenu headerPopup = null;
+    private boolean noRealTimeSpellChecking = false;
 
-    protected boolean noRealTimeSpellChecking = false;
-
-    protected final TextCellEditor cellEditor = new StringPopupCellEditor() {
+    private final TextCellEditor cellEditor = new StringPopupCellEditor() {
         SpellChecker checker = null;
         SpellDictionary dict = null;
         RealTimeSpellChecker rtChecker = null;
@@ -238,7 +221,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     };
 
-    private MouseAdapter headerPopupListener = new MouseAdapter() {
+    private final MouseAdapter headerPopupListener = new MouseAdapter() {
 
         @Override
         public void mousePressed(MouseEvent e) {
@@ -256,6 +239,19 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     };
+
+    static {
+        UID.addResourceBundle("org.jl.nwn.tlk.editor.MessageBundle");
+        UID.addResourceBundle("settings.keybindings");
+        try {
+            Class.forName("javazoom.jl.player.Player");
+            System.out.println("zoom player found, sound playback enabled");
+            HAS_SOUND_PLAYER = true;
+        } catch (ClassNotFoundException e1) {
+            //System.out.println( "zoom player not found, sound playback disabled" );
+            HAS_SOUND_PLAYER = false;
+        }
+    }
 
     public TlkEdit() {
         tlkTable = new JXTable() {
@@ -513,7 +509,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         toolbar.addSeparator();
         setupDiffStuff();
 
-        editMenu = new JMenu();
         I18nUtil.setText(editMenu, "&Edit");
         JMenuItem miCut = editMenu.add(actCut);
         JMenuItem miCopy = editMenu.add(actCopy);
@@ -524,15 +519,11 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         editMenu.addSeparator();
         editMenu.add(actResize);
 
-
-
-        langSubMenu = new JMenu();
         I18nUtil.setText(langSubMenu, "&Language");
         langSubMenu.setIcon(UID.getIcon(Actions.EMPTYICONKEY));
         buildLanguageMenu(getFileVersion());
         editMenu.add(langSubMenu);
 
-        viewMenu = new JMenu();
         I18nUtil.setText(viewMenu, "&View");
         JCheckBoxMenuItem miShowFlags = new JCheckBoxMenuItem(actToggleFlagDisplay);
         miShowFlags.setSelected(true);
@@ -554,9 +545,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         miToggleHex.setIcon(null);
         viewMenu.add(miToggleHex);
 
-
-        headerPopup = new JPopupMenu();
-        //headerPopup = viewMenu.getPopupMenu();
         JMenuItem pop1 = headerPopup.add(new JCheckBoxMenuItem(actToggleFlagDisplay));
         I18nUtil.setText(pop1, "Show &Flags");
         pop1.setModel(miShowFlags.getModel());
@@ -601,12 +589,12 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 }
             }
         }
-        setLayout(new java.awt.BorderLayout());
+        setLayout(new BorderLayout());
         JScrollPane sPane = new JScrollPane(tlkTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        add(sPane, java.awt.BorderLayout.CENTER);
+        add(sPane, BorderLayout.CENTER);
         showToolbar(true);
 
-        setSize(new java.awt.Dimension(800, 600));
+        setSize(new Dimension(800, 600));
         setVisible(true);
     }
 
@@ -719,7 +707,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
-    Action aToggleUserTlk = new AbstractAction() {
+    private final Action aToggleUserTlk = new AbstractAction() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -729,8 +717,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             //tlkTable.repaint();
         }
     };
-
-    Action aToggleHexDisplay = new AbstractAction() {
+    private final Action aToggleHexDisplay = new AbstractAction() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -740,7 +727,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             //tlkTable.repaint();
         }
     };
-    private Action actResize = new AbstractAction(UID.getString("TlkEdit.resize_buttonLabel")) {
+    private final Action actResize = new AbstractAction(UID.getString("TlkEdit.resize_buttonLabel")) {
 
         //$NON-NLS-1$
         @Override
@@ -780,29 +767,27 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     };
-
-    protected final Action actCopy = new AbstractAction() {
+    private final Action actCopy = new AbstractAction() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             transferHandler.exportToClipboard(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
         }
     };
-    protected final Action actCut = new AbstractAction() {
+    private final Action actCut = new AbstractAction() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             transferHandler.exportToClipboard(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.MOVE);
         }
     };
-    protected final Action actPaste = new AbstractAction() {
+    private final Action actPaste = new AbstractAction() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             transferHandler.importData(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(transferHandler));
         }
     };
-
     private final Action actToggleFlagDisplay = new AbstractAction() {
 
         @Override
@@ -820,7 +805,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     };
-
     private final Action actToggleSoundDisplay = new AbstractAction() {
 
         @Override
@@ -843,8 +827,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     };
-
-    private ActionListener langSelectAction = new ActionListener() {
+    private final ActionListener langSelectAction = new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -868,10 +851,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             searchAndReplace.setVisible(true);
         }
     };
-
-
-
-
     private final Action actFindNext = new AbstractAction() {
 
         @Override
@@ -881,8 +860,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     };
-
-    protected Action aCheckSpelling = new AbstractAction() {
+    private final Action aCheckSpelling = new AbstractAction() {
         JSpellDialog d = null;
         JSpellPanel sPanel = null;
         SpellChecker checker = null;
@@ -1000,7 +978,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     }
 
     // incomplete ... tab-separated-values doesn't seem to work
-    protected TransferHandler transferHandler = new TransferHandler() {
+    private final TransferHandler transferHandler = new TransferHandler() {
         protected final String tlkMime = DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" + List.class.getName() + "\"";
         protected final DataFlavor flavorTsv = new DataFlavor("text/tab-separated-values", "text/tab-separated-values");
         //protected final DataFlavor flavorTsv = new DataFlavor("text/tsv","text/tsv");
@@ -1348,7 +1326,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         };
 
-        diffMenu = new JMenu();
         I18nUtil.setText(diffMenu, UID.getString("TlkEdit.diff_menuLabel")); //$NON-NLS-1$
         diffMenu.setToolTipText(UID.getString("TlkEdit.diff_menuTooltip")); //$NON-NLS-1$
         diffMenu.add(toggle).setAccelerator(KeyStroke.getKeyStroke("alt M"));
