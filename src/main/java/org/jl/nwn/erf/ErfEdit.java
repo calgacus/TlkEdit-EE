@@ -28,7 +28,6 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -91,8 +90,6 @@ public class ErfEdit extends SimpleFileEditorPanel {
     private final JXTable table = new JXTable(contentModel);
 
     private final JToolBar toolbar = new JToolBar();
-    private final JMenuBar mbar = new JMenuBar();
-    private final JMenu menuFile = new JMenu("File");
     private final JMenu menuErf = new JMenu();
     private final JSplitPane sPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
@@ -100,32 +97,9 @@ public class ErfEdit extends SimpleFileEditorPanel {
     private final CExoLocStringEditor descEditor = new CExoLocStringEditor();
     /** GUI element with ERF description data. */
     private final Box descriptionBox = new Box(BoxLayout.Y_AXIS);
-
     private final JFileChooser fChooser = new JFileChooser( new File(".") );
 
     //<editor-fold defaultstate="collapsed" desc="Actions">
-    private final Action actNew = new AbstractAction("New ERF") {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            setErf(new ErfFile(ErfFile.ERF));
-        }
-    };
-
-    private final Action actOpen = new AbstractAction("Open...") {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            fChooser.setMultiSelectionEnabled(false);
-            fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
-            fChooser.setFileFilter(ERF_FILE_FILTER);
-            if ( fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION )
-                try{
-                    setErf(new ErfFile(fChooser.getSelectedFile()));
-                } catch ( IOException ioex ){
-                    JOptionPane.showMessageDialog( table, ioex, "error : open failed", JOptionPane.ERROR_MESSAGE );
-                }
-        }
-    };
-
     private final Action actSave = new AbstractAction("Save") {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -133,22 +107,6 @@ public class ErfEdit extends SimpleFileEditorPanel {
                 save();
             } catch ( IOException ioex ){
                 JOptionPane.showMessageDialog( table, ioex, "error : save failed", JOptionPane.ERROR_MESSAGE );
-            }
-        }
-    };
-
-    private final Action actSaveAs = new AbstractAction("Save as...") {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            fChooser.setMultiSelectionEnabled(false);
-            fChooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
-            if (fChooser.showOpenDialog( table ) == JFileChooser.APPROVE_OPTION) {
-                try{
-                    erf.write(fChooser.getSelectedFile());
-                    setIsModified(false);
-                } catch ( IOException ioex ){
-                    JOptionPane.showMessageDialog( table, ioex, "error : save failed", JOptionPane.ERROR_MESSAGE );
-                }
             }
         }
     };
@@ -402,13 +360,6 @@ public class ErfEdit extends SimpleFileEditorPanel {
         cbTypeSelector.setAlignmentX( JComponent.RIGHT_ALIGNMENT );
         toolbar.setAlignmentX( JComponent.LEFT_ALIGNMENT );
         toolbar.add( Box.createHorizontalGlue() );
-
-        mbar.add(menuFile);
-        mbar.setAlignmentX( JComponent.LEFT_ALIGNMENT );
-        menuFile.add( actNew );
-        menuFile.add( actOpen );
-        menuFile.add( actSave );
-        menuFile.add( actSaveAs );
 
         // need to set all keybindings explicitly, because some may already be
         // used by swing L&F ( like 'control C' for copy
