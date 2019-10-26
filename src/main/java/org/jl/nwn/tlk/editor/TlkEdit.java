@@ -242,8 +242,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mutator.new LanguageEdit("Set Language", (NwnLanguage) ((AbstractButton)e.getSource())
-                        .getClientProperty(LANG_PROP)).invoke();
+            final Object lang = ((JComponent)e.getSource()).getClientProperty(LANG_PROP);
+            mutator.new LanguageEdit("Set Language", (NwnLanguage)lang).invoke();
         }
     };
     private TlkSearchDialog searchAndReplace = null;
@@ -755,23 +755,19 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         };
         JTextField textResName = new JTextField(16);
         textResName.addKeyListener(myKeyListener);
-        DefaultCellEditor resRefEditor = new javax.swing.DefaultCellEditor(textResName) {
+        final DefaultCellEditor resRefEditor = new DefaultCellEditor(textResName) {
             BmuPlayer snd = null;
 
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
                 if (HAS_SOUND_PLAYER && value.toString().length() > 0) {
-                    //System.out.println("try to play sound");
+                    final Object soundRef = table.getModel().getValueAt(row, 1);
                     try {
-                        new Thread(snd = new BmuPlayer(tlkTable.getModel().getValueAt(row, 1).toString().toLowerCase(), null)).start();
+                        new Thread(snd = new BmuPlayer(soundRef.toString().toLowerCase(), null)).start();
                     } catch (FileNotFoundException fnfe) {
-                        System.out.println("sound resource not found : " + table.getModel().getValueAt(row, 1) + ".wav"); //$NON-NLS-1$
-                    } /*
-                    catch ( UnsupportedAudioFileException uafe ){
-                    System.out.println("unknown audio file format - no mp3 SP installed ?");
-                    } */ catch (Exception ex) {
-                        //System.out.println(ex);
-                        //ex.printStackTrace();
+                        System.out.println("sound resource not found : " + soundRef + ".wav"); //$NON-NLS-1$
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
                 return super.getTableCellEditorComponent(table, value, isSelected, row, column);
@@ -782,6 +778,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 fireEditingStopped();
                 if (snd != null) {
                     snd.close();
+                    snd = null;
                 }
                 tlkTable.requestFocus();
                 return true;
