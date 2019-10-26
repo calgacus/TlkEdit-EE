@@ -142,21 +142,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     private MessageSourceSupport messageSupport = new MessageSourceSupport(this);
 
-    @Override
-    public void removeMessageListener(MessageListener l) {
-        messageSupport.removeMessageListener(l);
-    }
-
-    @Override
-    public MessageListener[] getMessageListeners() {
-        return messageSupport.getMessageListeners();
-    }
-
-    @Override
-    public void addMessageListener(MessageListener l) {
-        messageSupport.addMessageListener(l);
-    }
-
     static {
         UID.addResourceBundle("org.jl.nwn.tlk.editor.MessageBundle");
         UID.addResourceBundle("settings.keybindings");
@@ -271,45 +256,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     };
-
-    // methods for SimpleFileEditor
-    @Override
-    public boolean canSave() {
-        return tlkFile != null;
-    }
-
-    @Override
-    public boolean canSaveAs() {
-        return true;
-    }
-
-    @Override
-    public void close() {
-        if (flagEditor != null) {
-            flagEditor.dispose();
-        }
-        if (searchAndReplace != null) {
-            searchAndReplace.dispose();
-        }
-    }
-
-    @Override
-    public File getFile() {
-        return tlkFile;
-    }
-
-    @Override
-    public void save() throws IOException {
-        saveAs(tlkFile, nwnVersion);
-    }
-
-    @Override
-    public void saveAs(File f, Version nwnVersion) throws IOException {
-        tlkContent.saveAs(f, nwnVersion);
-        this.nwnVersion = nwnVersion;
-        tlkFile = f;
-        mutator.stateSaved();
-    }
 
     public TlkEdit() {
         tlkTable = new JXTable() {
@@ -664,6 +610,85 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         setVisible(true);
     }
 
+    //<editor-fold defaultstate="collapsed" desc="SimpleFileEditor">
+    @Override
+    public boolean canSave() { return tlkFile != null; }
+
+    @Override
+    public boolean canSaveAs() { return true; }
+
+    @Override
+    public void save() throws IOException {
+        saveAs(tlkFile, nwnVersion);
+    }
+
+    @Override
+    public void saveAs(File f, Version nwnVersion) throws IOException {
+        tlkContent.saveAs(f, nwnVersion);
+        this.nwnVersion = nwnVersion;
+        tlkFile = f;
+        mutator.stateSaved();
+    }
+
+    @Override
+    public void close() {
+        if (flagEditor != null) {
+            flagEditor.dispose();
+        }
+        if (searchAndReplace != null) {
+            searchAndReplace.dispose();
+        }
+    }
+
+    @Override
+    public File getFile() { return tlkFile; }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="SimpleFileEditorPanel">
+    @Override
+    public JMenu[] getMenus() {
+        return new JMenu[]{ editMenu, viewMenu, diffMenu };
+    }
+
+    @Override
+    public void showToolbar(boolean b) {
+        if (b) {
+            add(toolbar, BorderLayout.NORTH);
+        } else {
+            remove(toolbar);
+        }
+    }
+
+    @Override
+    public JToolBar getToolbar() { return toolbar; }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="PropertyChangeListener">
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        if ("language".equals(e.getPropertyName())) {
+            selectLanguageButton((NwnLanguage) e.getNewValue());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="MessageSource">
+    @Override
+    public void addMessageListener(MessageListener l) {
+        messageSupport.addMessageListener(l);
+    }
+
+    @Override
+    public void removeMessageListener(MessageListener l) {
+        messageSupport.removeMessageListener(l);
+    }
+
+    @Override
+    public MessageListener[] getMessageListeners() {
+        return messageSupport.getMessageListeners();
+    }
+    //</editor-fold>
+
     public void load(File f, ProgressMonitor pm, Version nwnVersion) {
         try {
             tlkContent = new DefaultTlkReader(nwnVersion).load(f, pm);
@@ -694,13 +719,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent e) {
-        if (e.getPropertyName().equals("language")) {
-            selectLanguageButton((NwnLanguage) e.getNewValue());
-        }
-    }
-
     Action aToggleUserTlk = new AbstractAction() {
 
         @Override
@@ -722,12 +740,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             //tlkTable.repaint();
         }
     };
-
-    @Override
-    public JMenu[] getMenus() {
-        return new JMenu[]{editMenu, viewMenu, diffMenu };
-    }
-
     private Action actResize = new AbstractAction(UID.getString("TlkEdit.resize_buttonLabel")) {
 
         //$NON-NLS-1$
@@ -967,20 +979,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             d.getContentPane().add(p, BorderLayout.SOUTH);
         }
     };
-
-    @Override
-    public JToolBar getToolbar() {
-        return toolbar;
-    }
-
-    @Override
-    public void showToolbar(boolean b) {
-        if (b) {
-            add(toolbar, BorderLayout.NORTH);
-        } else {
-            remove(toolbar);
-        }
-    }
 
     public void setFileVersion(Version nwnVersion) {
         this.nwnVersion = nwnVersion;
