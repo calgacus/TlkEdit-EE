@@ -64,12 +64,14 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ProgressMonitor;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
@@ -1216,35 +1218,13 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     }
 
     private void setupToolbar() {
-        final JTextField posField = new JTextField(6);
+        final SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
+        final JSpinner posField = new JSpinner(spinnerModel);
         posField.setMaximumSize(posField.getPreferredSize());
-        posField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                JTextField tf = (JTextField) e.getSource();
-                String s = tf.getText();
-                if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
-                    if (s.length() > 0) {
-                        s = s.substring(0, s.length() - 1);
-                    } else {
-                        s = "0"; //$NON-NLS-1$
-                    }
-                } else if (Character.isDigit(e.getKeyChar())) {
-                    s = s + e.getKeyChar();
-                } else {
-                    e.consume();
-                }
-                int line = 0;
-                try {
-                    line = Integer.parseInt(s);
-                    if ((line & TlkLookup.USERTLKOFFSET) > 0) {
-                        line = line ^ TlkLookup.USERTLKOFFSET;
-                    }
-                } catch (NumberFormatException nfe) {
-                }
-                if (line < tlkTable.getRowCount() - 1) {
-                    tlkTable.changeSelection(line, 0, false, false);
-                }
+        posField.addChangeListener(e -> {
+            final int line = spinnerModel.getNumber().intValue();
+            if (line < tlkTable.getRowCount() - 1) {
+                tlkTable.changeSelection(line, 0, false, false);
             }
         });
         final JLabel posLabel = new JLabel("", JLabel.RIGHT); //$NON-NLS-1$
