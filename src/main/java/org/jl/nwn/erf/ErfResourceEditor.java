@@ -12,9 +12,14 @@ import org.jl.nwn.Version;
 import org.jl.nwn.editor.SimpleFileEditorPanel;
 import org.jl.nwn.resource.ResourceID;
 
+/**
+ * Panel for editor of temporary file extracted from ERF archive.
+ */
 public class ErfResourceEditor extends SimpleFileEditorPanel {
 	private final SimpleFileEditorPanel delegate;
+    /** ERF archive, from that the edited file was extracted. */
 	private final ErfEdit erf;
+    /** Pointer to resource in ERF archive. */
 	private final ResourceID resID;
 
 	public ErfResourceEditor( SimpleFileEditorPanel delegate, ErfEdit erf, ResourceID resID ){

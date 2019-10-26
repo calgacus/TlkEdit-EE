@@ -14,10 +14,15 @@ import org.jl.nwn.Version;
 import org.jl.nwn.resource.NwnRepository;
 import org.jl.nwn.resource.ResourceID;
 
+/**
+ * Panel for editor of temporary file extracted from repository archive (BIF file).
+ */
 public class RepositoryResourceEditor extends SimpleFileEditorPanel {
 
     private final SimpleFileEditorPanel delegate;
+    /** Repository, from that the edited file was extracted. */
     private final NwnRepository rep;
+    /** Pointer to resource in the repository. */
     private final ResourceID resID;
     private File savedAsFile = null;
 
