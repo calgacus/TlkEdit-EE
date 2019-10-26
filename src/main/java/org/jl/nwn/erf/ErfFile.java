@@ -433,15 +433,15 @@ public class ErfFile extends AbstractRepository{
     /**
      * Rename a given resource.
      *
-     * @param nweName the new name of the resource ( without type extension ! )
+     * @param newName the new name of the resource ( without type extension ! )
      *
      * @return the new ResourceID for the renamed resource or {@code null} if the
      *         file doesn't contain the given resource
      */
-    public ResourceID renameResource( ResourceID id, String nweName ){
+    public ResourceID renameResource(ResourceID id, String newName) {
         if ( !resources.containsKey( id ) )
             return null;
-        final ResourceID nId = new ResourceID( nweName, id.getType() );
+        final ResourceID nId = new ResourceID(newName, id.getType());
         if ( !nId.equals( id ) ){
             resources.put( nId, resources.get(id) );
             resources.remove( id );
