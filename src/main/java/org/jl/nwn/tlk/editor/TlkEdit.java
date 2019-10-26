@@ -311,16 +311,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         mutator.stateSaved();
     }
 
-    public static boolean accept(File f) {
-        try (final FileInputStream in = new FileInputStream(f)) {
-            final byte[] header = new byte[AbstractTlkReader.HEADER.length];
-            in.read(header);
-            return Arrays.equals(header, AbstractTlkReader.HEADER);
-        } catch (IOException ioex) {
-        }
-        return false;
-    }
-
     public TlkEdit() {
         tlkTable = new JXTable() {
 
@@ -963,10 +953,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         return new JMenu[]{editMenu, viewMenu, diffMenu };
     }
 
-    public static void removePreferences() throws BackingStoreException {
-        java.util.prefs.Preferences.userNodeForPackage(TlkEdit.class).removeNode();
-    }
-
     private Action actResize = new AbstractAction(UID.getString("TlkEdit.resize_buttonLabel")) {
 
         //$NON-NLS-1$
@@ -1250,16 +1236,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        JFrame f = new JFrame(args[0]);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        TlkEdit ed = new TlkEdit();
-        f.getContentPane().add(ed);
-        ed.load(new File(args[0]), null, Version.getDefaultVersion());
-        f.pack();
-        f.setVisible(true);
-    }
-
     // incomplete ... tab-separated-values doesn't seem to work
     protected TransferHandler transferHandler = new TransferHandler() {
         protected final String tlkMime = DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" + List.class.getName() + "\"";
@@ -1409,4 +1385,28 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             };
         }
     };
+
+    public static boolean accept(File f) {
+        try (final FileInputStream in = new FileInputStream(f)) {
+            final byte[] header = new byte[AbstractTlkReader.HEADER.length];
+            in.read(header);
+            return Arrays.equals(header, AbstractTlkReader.HEADER);
+        } catch (IOException ioex) {
+        }
+        return false;
+    }
+
+    public static void removePreferences() throws BackingStoreException {
+        PREFS.removeNode();
+    }
+
+    public static void main(String[] args) throws Exception {
+        JFrame f = new JFrame(args[0]);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        TlkEdit ed = new TlkEdit();
+        f.getContentPane().add(ed);
+        ed.load(new File(args[0]), null, Version.getDefaultVersion());
+        f.pack();
+        f.setVisible(true);
+    }
 }
