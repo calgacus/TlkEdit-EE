@@ -149,8 +149,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     private final MyUndoManager undoManager = new MyUndoManager();
     protected final TlkModelMutator mutator;
     private final RowMutator<TlkEntry> rowMutator;
-    private final Action aUndo;
-    private final Action aRedo;
     private final ButtonGroup languageButtons = new ButtonGroup();
     private File tlkFile;
 
@@ -239,6 +237,395 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     };
+    private final ActionListener langSelectAction = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mutator.new LanguageEdit("Set Language", (NwnLanguage) ((AbstractButton)e.getSource())
+                        .getClientProperty(LANG_PROP)).invoke();
+        }
+    };
+    private TlkSearchDialog searchAndReplace = null;
+    // incomplete ... tab-separated-values doesn't seem to work
+    private final TransferHandler transferHandler = new TransferHandler() {
+        protected final String tlkMime = DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" + List.class.getName() + "\"";
+        protected final DataFlavor flavorTsv = new DataFlavor("text/tab-separated-values", "text/tab-separated-values");
+        //protected final DataFlavor flavorTsv = new DataFlavor("text/tsv","text/tsv");
+        protected final DataFlavor flavorTlkList = new DataFlavor(tlkMime, "tlk entry list");
+
+        int[] modelSelection;
+
+        private void convertToModelIndices(int[] selection) {
+            for (int i = 0; i < selection.length; i++) {
+                selection[i] = tlkTable.convertRowIndexToModel(selection[i]);
+            }
+        }
+
+        @Override
+        public void exportToClipboard(final JComponent comp, Clipboard clip, int action) {
+            JTable table = (JTable) comp;
+            // deselect virtual last row
+            table.getSelectionModel().removeIndexInterval(model.size(), model.size());
+            modelSelection = table.getSelectedRows();
+            convertToModelIndices(modelSelection);
+            if (modelSelection.length == 0) {
+                return;
+            }
+            Transferable trans = makeTransferable(modelSelection);
+            clip.setContents(trans, null);
+            exportDone(comp, trans, action);
+        }
+
+        @Override
+        protected void exportDone(JComponent source, Transferable data, int action) {
+            if ((action & MOVE) != 0) {
+                String name = MessageFormat.format("Cut [{0}...{1}]", modelSelection[0], modelSelection[modelSelection.length - 1]);
+                rowMutator.new RemoveRowsEdit(name, modelSelection).invoke();
+                //listMutator.remove(selection);
+                int viewRow = tlkTable.convertRowIndexToView(modelSelection[0]);
+                viewRow = Math.min(tlkTable.getRowCount(), viewRow);
+                tlkTable.getSelectionModel().setSelectionInterval(viewRow, viewRow);
+            }
+        }
+
+        @Override
+        public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+            for (DataFlavor d : transferFlavors) {
+                if (d.equals(flavorTlkList)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean importData(JComponent comp, Transferable t) {
+            JTable table = (JTable) comp;
+            try {
+                if (t.isDataFlavorSupported(flavorTlkList)) {
+                    @SuppressWarnings("unchecked")
+                    final List<TlkEntry> entries = (List<TlkEntry>) t.getTransferData(flavorTlkList);
+                    final List<TlkEntry> clones = new ArrayList<>(entries.size());
+                    for (TlkEntry e : entries) {
+                        clones.add(e.clone());
+                    }
+                    int viewRow = table.getSelectedRow();
+                    int modelRow = table.convertRowIndexToModel(viewRow);
+                    if (modelRow > -1) {
+                        rowMutator.new InsertRowsEdit("Paste", modelRow, clones).invoke();
+                        table.getSelectionModel().setSelectionInterval(viewRow, viewRow + entries.size() - 1);
+                        return true;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            return false;
+        }
+
+        private Transferable makeTransferable(final int[] modelSelection) {
+            final TlkEntry[] rows = new TlkEntry[modelSelection.length];
+            for (int i = 0; i < modelSelection.length; i++) {
+                rows[i] = tlkContent.get(modelSelection[i]).clone();
+            }
+            final boolean hex = model.isDisplayHex();
+            final boolean userTlk = model.getIsUserTlk();
+            return new Transferable() {
+
+                @Override
+                public Object getTransferData(DataFlavor df) {
+                    if (df.equals(flavorTsv)) {
+                        System.out.println("tsv export ...");
+                        try {
+                            final PipedInputStream pin = new PipedInputStream();
+                            final PipedOutputStream pout = new PipedOutputStream(pin);
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        try (final BufferedOutputStream bos = new BufferedOutputStream(pout);
+                                             final PrintWriter p = new PrintWriter(bos)
+                                        ) {
+                                            for (final TlkEntry e : rows) {
+                                                p.write("\"");
+                                                p.write(e.getString().replaceAll("\t", "\\t"));
+                                                p.write("\"\t");
+                                                p.print(e.getSoundResRef());
+                                                p.print("\t");
+                                                p.print(e.getSoundLength());
+                                                p.write("\n");
+                                            }
+                                            //new XMLWriter(bos, OutputFormat.createPrettyPrint()).write(e);
+                                        }
+                                        pout.close();
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }.start();
+                            return pin;
+                        } catch (IOException ioex) {
+                            System.out.println(ioex);
+                        }
+                        return null;
+                    } else if (df.equals(flavorTlkList)) {
+                        return Arrays.asList(rows);
+                    } else if (df.equals(FLAVORSTRREF)) {
+                        String[] r = new String[modelSelection.length];
+                        for (int i = 0; i < r.length; i++) {
+                            int strRef = userTlk ? (modelSelection[i] | TlkLookup.USERTLKOFFSET) : modelSelection[i];
+                            r[i] = hex ? "0x" + Integer.toHexString(strRef) : Integer.toString(strRef);
+                        }
+                        return r;
+                    } else {
+                        return null;
+                    }
+                }
+
+                @Override
+                public DataFlavor[] getTransferDataFlavors() {
+                    return new DataFlavor[]{flavorTlkList, FLAVORSTRREF};
+                }
+
+                @Override
+                public boolean isDataFlavorSupported(DataFlavor df) {
+                    return df.equals(flavorTlkList) || df.equals(FLAVORSTRREF);
+                }
+            };
+        }
+    };
+
+    //<editor-fold defaultstate="collapsed" desc="Actions">
+    private final Action aToggleUserTlk = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean b = !model.getIsUserTlk();
+            isUserTlkBM.setSelected(b);
+            model.setIsUserTlk(b);
+            //tlkTable.repaint();
+        }
+    };
+    private final Action aToggleHexDisplay = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean b = !model.isDisplayHex();
+            //isUserTlkBM.setSelected(b);
+            model.setDisplayHex(b);
+            //tlkTable.repaint();
+        }
+    };
+    private final Action aResize = new AbstractAction(UID.getString("TlkEdit.resize_buttonLabel")) {//$NON-NLS-1$
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String s = JOptionPane.showInputDialog((JComponent) e.getSource(), UID.getString("TlkEdit.resize_enterNewSize"), model.size());
+            if (s == null) {
+                return;
+            }
+            int newSize = 0;
+            String invalid_input_msg = UID.getString("TlkEdit.resize_errorMsgInvalidInput"); //$NON-NLS-1$
+            String invalid_input_dialog_title = UID.getString("TlkEdit.resize_errorDialogTitleInvalidInput"); //$NON-NLS-1$
+            try {
+                newSize = Integer.parseInt(s);
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog((JComponent) e.getSource(), invalid_input_msg, invalid_input_dialog_title, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (newSize < 0) {
+                JOptionPane.showMessageDialog((JComponent) e.getSource(), invalid_input_msg, invalid_input_dialog_title, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (newSize < model.size()) {
+                // remove
+                int[] indexes = new int[model.size() - newSize];
+                for (int i = 0; i < indexes.length; i++) {
+                    indexes[i] = newSize + i;
+                }
+                //listMutator.remove(indexes);
+                rowMutator.new RemoveRowsEdit("Resize", indexes).invoke();
+            } else {
+                final List<TlkEntry> entries = new ArrayList<>(newSize - model.size());
+                for (int i = 0; i < newSize - model.size(); i++) {
+                    entries.add(new EditorTlkEntry());
+                }
+                rowMutator.new InsertRowsEdit("Resize", model.size(), entries).invoke();
+                //listMutator.addAll(model.size(), entries);
+            }
+        }
+    };
+    private final Action aCopy = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            transferHandler.exportToClipboard(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
+        }
+    };
+    private final Action aCut = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            transferHandler.exportToClipboard(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.MOVE);
+        }
+    };
+    private final Action aPaste = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            transferHandler.importData(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(transferHandler));
+        }
+    };
+    private final Action aToggleFlagDisplay = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            AbstractButton btn = (AbstractButton) e.getSource();
+            boolean showFlags = btn.isSelected();
+            if (showFlags) {
+                if (!columnVisible(col_Flags)) {
+                    tlkTable.addColumn(col_Flags);
+                }
+            } else {
+                if (columnVisible(col_Flags)) {
+                    tlkTable.removeColumn(col_Flags);
+                }
+            }
+        }
+    };
+    private final Action aToggleSoundDisplay = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            AbstractButton btn = (AbstractButton) e.getSource();
+            boolean showFlags = btn.isSelected();
+            TableColumnModel cm = tlkTable.getColumnModel();
+            if (showFlags) {
+                if (!columnVisible(col_SoundResRef)) {
+                    cm.addColumn(col_SoundResRef);
+                    cm.addColumn(col_SoundLength);
+                    cm.moveColumn(cm.getColumnCount() - 1, 2);
+                    cm.moveColumn(cm.getColumnCount() - 1, 2);
+                }
+            } else {
+                if (columnVisible(col_SoundResRef)) {
+                    tlkTable.removeColumn(col_SoundResRef);
+                    tlkTable.removeColumn(col_SoundLength);
+                }
+            }
+        }
+    };
+    private final Action aFind = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (searchAndReplace == null) {
+                Window w = SwingUtilities.getWindowAncestor(TlkEdit.this);
+                JFrame owner = (w instanceof JFrame) ? (JFrame) w : null;
+                searchAndReplace = new TlkSearchDialog(owner, TlkEdit.this);
+                searchAndReplace.setLocationRelativeTo(tlkTable);
+            }
+            searchAndReplace.setVisible(true);
+        }
+    };
+    private final Action aFindNext = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (searchAndReplace != null && searchAndReplace.haveMatch()) {
+                searchAndReplace.doSearch();
+            }
+        }
+    };
+    private final Action aCheckSpelling = new AbstractAction() {
+        JSpellDialog d = null;
+        JSpellPanel sPanel = null;
+        SpellChecker checker = null;
+        SpellDictionary dict = null;
+        DocumentWordFinder finder = null;
+        //SpellCheckListener checkListener = null;
+        boolean cancel = false;
+        TlkWordFinder tlkFinder;
+        UIErrorMarkerListener marker;
+
+        ActionListener al = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cancel = true;
+                d.cancel();
+                //d.setVisible(false);
+            }
+        };
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                noRealTimeSpellChecking = false;
+                dict = Dictionaries.forLanguage(model.getLanguage());
+                if (dict == null) {
+                    return;
+                }
+                if (checker == null) {
+                    init();
+                }
+                checker.setDictionary(dict);
+                cancel = false;
+                for (int row = 0; !cancel && row < tlkTable.getRowCount() - 1; row++) {
+                    String s = String.valueOf(tlkTable.getValueAt(row, 1));
+                    tlkFinder.setEntry(row);
+                    if (!checker.isCorrect(tlkFinder)) {
+                        tlkTable.editCellAt(row, 1);
+                        JTextComponent tc = cellEditor.getTextComponent();
+                        if (finder == null) {
+                            finder = new DocumentWordFinder(tc.getDocument());
+                        } else {
+                            finder.setDocument(tc.getDocument());
+                        }
+                        checker.check(finder, marker);
+                    }
+                }
+            } finally {
+                noRealTimeSpellChecking = false;
+            }
+        }
+
+        private void init() {
+            checker = new SpellChecker(dict);
+            //checker.setCaseSensitive(false);
+            sPanel = new JSpellPanel();
+
+            tlkFinder = new TlkWordFinder(model) {
+
+                @Override
+                public void updateModel(String s, int row) {
+                    tlkTable.setValueAt(s, row, 1);
+                }
+            };
+            d = new JSpellDialog((JFrame) SwingUtilities.getWindowAncestor(tlkTable), sPanel);
+            marker = new UIErrorMarkerListener(d);
+            //checkListener = new UISpellCheckListener(d);
+            marker.setTextComponent(cellEditor.getTextComponent());
+            sPanel.setCancelListener(al);
+
+            //JPanel p = (JPanel)((BorderLayout)sPanel.getLayout()).getLayoutComponent(BorderLayout.SOUTH);
+            JPanel p = new JPanel();
+            final JCheckBox cbCaseSensitive = new JCheckBox("Case Sensitive", checker.isCaseSensitive());
+            cbCaseSensitive.setMnemonic('s');
+            cbCaseSensitive.setDisplayedMnemonicIndex(5);
+            cbCaseSensitive.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    checker.setCaseSensitive(cbCaseSensitive.isSelected());
+                }
+            });
+            p.add(cbCaseSensitive);
+            JButton bResetIgnore = new JButton("Reset Ignore List");
+            bResetIgnore.addActionListener(EventHandler.create(ActionListener.class, checker, "resetIgnore"));
+            bResetIgnore.setToolTipText("clear the list of words that this spell checker ignores");
+            JButton bResetReplace = new JButton("Reset Replace List");
+            bResetReplace.addActionListener(EventHandler.create(ActionListener.class, checker, "resetReplace"));
+            bResetReplace.setToolTipText("clear the list of words that this spell checker replaces");
+            p.add(cbCaseSensitive);
+            p.add(bResetIgnore);
+            p.add(bResetReplace);
+            p.setBorder(BorderFactory.createTitledBorder(SeparatorLineBorder.get(), "Spell Checker Options"));
+            d.getContentPane().add(p, BorderLayout.SOUTH);
+        }
+    };
+    //</editor-fold>
 
     static {
         UID.addResourceBundle("org.jl.nwn.tlk.editor.MessageBundle");
@@ -429,29 +816,25 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
         toolbar = new JToolBar();
         toolbar.setFloatable(false);
-        boolean useIcons = true;
-        boolean useText = false;
 
-        Actions.configureActionUI(actResize, UID, "TlkEdit.resize");
+        Actions.configureActionUI(aResize, UID, "TlkEdit.resize");
 
-        Actions.configureActionUI(actCut, UID, "TlkEdit.cut");
-        JButton cutButton = toolbar.add(actCut);
-        cutButton.setMnemonic(KeyEvent.VK_UNDEFINED);
+        Actions.configureActionUI(aCut, UID, "TlkEdit.cut");
+        toolbar.add(aCut).setMnemonic(KeyEvent.VK_UNDEFINED);
 
-        Actions.configureActionUI(actCopy, UID, "TlkEdit.copy");
-        JButton copyButton = toolbar.add(actCopy);
+        Actions.configureActionUI(aCopy, UID, "TlkEdit.copy");
+        toolbar.add(aCopy);
 
-        Actions.configureActionUI(actPaste, UID, "TlkEdit.paste");
-        JButton pasteButton = toolbar.add(actPaste);
+        Actions.configureActionUI(aPaste, UID, "TlkEdit.paste");
+        toolbar.add(aPaste);
 
         toolbar.addSeparator();
 
-        Actions.configureActionUI(actFind, UID, "TlkEdit.find");
-        JButton findButton = toolbar.add(actFind);
+        Actions.configureActionUI(aFind, UID, "TlkEdit.find");
+        toolbar.add(aFind);
 
-        Actions.configureActionUI(actFindNext, UID, "TlkEdit.findNext");
-        JButton findNextButton = toolbar.add(actFindNext);
-
+        Actions.configureActionUI(aFindNext, UID, "TlkEdit.findNext");
+        toolbar.add(aFindNext);
 
         toolbar.addSeparator();
         JLabel posLabel = new JLabel("", JLabel.RIGHT); //$NON-NLS-1$
@@ -510,14 +893,14 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         setupDiffStuff();
 
         I18nUtil.setText(editMenu, "&Edit");
-        JMenuItem miCut = editMenu.add(actCut);
-        JMenuItem miCopy = editMenu.add(actCopy);
-        JMenuItem miPaste = editMenu.add(actPaste);
+        editMenu.add(aCut);
+        editMenu.add(aCopy);
+        editMenu.add(aPaste);
         editMenu.addSeparator();
-        JMenuItem miFind = editMenu.add(actFind);
-        JMenuItem miFindNext = editMenu.add(actFindNext);
+        editMenu.add(aFind);
+        editMenu.add(aFindNext);
         editMenu.addSeparator();
-        editMenu.add(actResize);
+        editMenu.add(aResize);
 
         I18nUtil.setText(langSubMenu, "&Language");
         langSubMenu.setIcon(UID.getIcon(Actions.EMPTYICONKEY));
@@ -525,11 +908,11 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         editMenu.add(langSubMenu);
 
         I18nUtil.setText(viewMenu, "&View");
-        JCheckBoxMenuItem miShowFlags = new JCheckBoxMenuItem(actToggleFlagDisplay);
+        JCheckBoxMenuItem miShowFlags = new JCheckBoxMenuItem(aToggleFlagDisplay);
         miShowFlags.setSelected(true);
         I18nUtil.setText(miShowFlags, "Show &Flags");
         viewMenu.add(miShowFlags);
-        JCheckBoxMenuItem miShowSound = new JCheckBoxMenuItem(actToggleSoundDisplay);
+        JCheckBoxMenuItem miShowSound = new JCheckBoxMenuItem(aToggleSoundDisplay);
         miShowSound.setSelected(true);
         I18nUtil.setText(miShowSound, "Show &Sound Settings");
         viewMenu.add(miShowSound);
@@ -545,18 +928,18 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         miToggleHex.setIcon(null);
         viewMenu.add(miToggleHex);
 
-        JMenuItem pop1 = headerPopup.add(new JCheckBoxMenuItem(actToggleFlagDisplay));
+        JMenuItem pop1 = headerPopup.add(new JCheckBoxMenuItem(aToggleFlagDisplay));
         I18nUtil.setText(pop1, "Show &Flags");
         pop1.setModel(miShowFlags.getModel());
-        JMenuItem pop2 = headerPopup.add(new JCheckBoxMenuItem(actToggleSoundDisplay));
+        JMenuItem pop2 = headerPopup.add(new JCheckBoxMenuItem(aToggleSoundDisplay));
         I18nUtil.setText(pop2, "Show &Sound Settings");
         pop2.setModel(miShowSound.getModel());
         tlkTable.getTableHeader().addMouseListener(headerPopupListener);
         miShowFlags.doClick();
         miShowSound.doClick();
 
-        aUndo = undoManager.getUndoAction();
-        aRedo = undoManager.getRedoAction();
+        final Action aUndo = undoManager.getUndoAction();
+        final Action aRedo = undoManager.getRedoAction();
         Actions.configureActionUI(aUndo, UID, "undo");
         Actions.configureActionUI(aRedo, UID, "redo");
 
@@ -579,7 +962,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         });
 
         // setup key bindings
-        Actions.registerActions(tlkTable.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT), tlkTable.getActionMap(), aUndo, aRedo, aCheckSpelling, actCut, actCopy, actPaste, actFind, actFindNext, aToggleUserTlk);
+        Actions.registerActions(tlkTable.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT), tlkTable.getActionMap(), aUndo, aRedo, aCheckSpelling, aCut, aCopy, aPaste, aFind, aFindNext, aToggleUserTlk);
         toolbar.add(Box.createHorizontalGlue());
         // remove mnemonics from buttons with icon ...
         for (Object o : toolbar.getComponents()) {
@@ -707,257 +1090,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
-    private final Action aToggleUserTlk = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            boolean b = !model.getIsUserTlk();
-            isUserTlkBM.setSelected(b);
-            model.setIsUserTlk(b);
-            //tlkTable.repaint();
-        }
-    };
-    private final Action aToggleHexDisplay = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            boolean b = !model.isDisplayHex();
-            //isUserTlkBM.setSelected(b);
-            model.setDisplayHex(b);
-            //tlkTable.repaint();
-        }
-    };
-    private final Action actResize = new AbstractAction(UID.getString("TlkEdit.resize_buttonLabel")) {
-
-        //$NON-NLS-1$
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String s = JOptionPane.showInputDialog((JComponent) e.getSource(), UID.getString("TlkEdit.resize_enterNewSize"), model.size());
-            if (s == null) {
-                return;
-            }
-            int newSize = 0;
-            String invalid_input_msg = UID.getString("TlkEdit.resize_errorMsgInvalidInput"); //$NON-NLS-1$
-            String invalid_input_dialog_title = UID.getString("TlkEdit.resize_errorDialogTitleInvalidInput"); //$NON-NLS-1$
-            try {
-                newSize = Integer.parseInt(s);
-            } catch (NumberFormatException nfe) {
-                JOptionPane.showMessageDialog((JComponent) e.getSource(), invalid_input_msg, invalid_input_dialog_title, JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (newSize < 0) {
-                JOptionPane.showMessageDialog((JComponent) e.getSource(), invalid_input_msg, invalid_input_dialog_title, JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (newSize < model.size()) {
-                // remove
-                int[] indexes = new int[model.size() - newSize];
-                for (int i = 0; i < indexes.length; i++) {
-                    indexes[i] = newSize + i;
-                }
-                //listMutator.remove(indexes);
-                rowMutator.new RemoveRowsEdit("Resize", indexes).invoke();
-            } else {
-                final List<TlkEntry> entries = new ArrayList<>(newSize - model.size());
-                for (int i = 0; i < newSize - model.size(); i++) {
-                    entries.add(new EditorTlkEntry());
-                }
-                rowMutator.new InsertRowsEdit("Resize", model.size(), entries).invoke();
-                //listMutator.addAll(model.size(), entries);
-            }
-        }
-    };
-    private final Action actCopy = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            transferHandler.exportToClipboard(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
-        }
-    };
-    private final Action actCut = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            transferHandler.exportToClipboard(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.MOVE);
-        }
-    };
-    private final Action actPaste = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            transferHandler.importData(tlkTable, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(transferHandler));
-        }
-    };
-    private final Action actToggleFlagDisplay = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            AbstractButton btn = (AbstractButton) e.getSource();
-            boolean showFlags = btn.isSelected();
-            if (showFlags) {
-                if (!columnVisible(col_Flags)) {
-                    tlkTable.addColumn(col_Flags);
-                }
-            } else {
-                if (columnVisible(col_Flags)) {
-                    tlkTable.removeColumn(col_Flags);
-                }
-            }
-        }
-    };
-    private final Action actToggleSoundDisplay = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            AbstractButton btn = (AbstractButton) e.getSource();
-            boolean showFlags = btn.isSelected();
-            TableColumnModel cm = tlkTable.getColumnModel();
-            if (showFlags) {
-                if (!columnVisible(col_SoundResRef)) {
-                    cm.addColumn(col_SoundResRef);
-                    cm.addColumn(col_SoundLength);
-                    cm.moveColumn(cm.getColumnCount() - 1, 2);
-                    cm.moveColumn(cm.getColumnCount() - 1, 2);
-                }
-            } else {
-                if (columnVisible(col_SoundResRef)) {
-                    tlkTable.removeColumn(col_SoundResRef);
-                    tlkTable.removeColumn(col_SoundLength);
-                }
-            }
-        }
-    };
-    private final ActionListener langSelectAction = new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            mutator.new LanguageEdit("Set Language", (NwnLanguage) ((AbstractButton)e.getSource())
-                        .getClientProperty(LANG_PROP)).invoke();
-        }
-    };
-
-    private TlkSearchDialog searchAndReplace = null;
-
-    private final Action actFind = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (searchAndReplace == null) {
-                Window w = SwingUtilities.getWindowAncestor(TlkEdit.this);
-                JFrame owner = (w instanceof JFrame) ? (JFrame) w : null;
-                searchAndReplace = new TlkSearchDialog(owner, TlkEdit.this);
-                searchAndReplace.setLocationRelativeTo(tlkTable);
-            }
-            searchAndReplace.setVisible(true);
-        }
-    };
-    private final Action actFindNext = new AbstractAction() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (searchAndReplace != null && searchAndReplace.haveMatch()) {
-                searchAndReplace.doSearch();
-            }
-        }
-    };
-    private final Action aCheckSpelling = new AbstractAction() {
-        JSpellDialog d = null;
-        JSpellPanel sPanel = null;
-        SpellChecker checker = null;
-        SpellDictionary dict = null;
-        DocumentWordFinder finder = null;
-        //SpellCheckListener checkListener = null;
-        boolean cancel = false;
-        TlkWordFinder tlkFinder;
-        UIErrorMarkerListener marker;
-
-        ActionListener al = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cancel = true;
-                d.cancel();
-                //d.setVisible(false);
-            }
-        };
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                noRealTimeSpellChecking = false;
-                dict = Dictionaries.forLanguage(model.getLanguage());
-                if (dict == null) {
-                    return;
-                }
-                if (checker == null) {
-                    init();
-                }
-                checker.setDictionary(dict);
-                cancel = false;
-                for (int row = 0; !cancel && row < tlkTable.getRowCount() - 1; row++) {
-                    String s = String.valueOf(tlkTable.getValueAt(row, 1));
-                    tlkFinder.setEntry(row);
-                    if (!checker.isCorrect(tlkFinder)) {
-                        tlkTable.editCellAt(row, 1);
-                        JTextComponent tc = cellEditor.getTextComponent();
-                        if (finder == null) {
-                            finder = new DocumentWordFinder(tc.getDocument());
-                        } else {
-                            finder.setDocument(tc.getDocument());
-                        }
-                        checker.check(finder, marker);
-                    }
-                }
-            } finally {
-                noRealTimeSpellChecking = false;
-            }
-        }
-
-        private void init() {
-            checker = new SpellChecker(dict);
-            //checker.setCaseSensitive(false);
-            sPanel = new JSpellPanel();
-
-            tlkFinder = new TlkWordFinder(model) {
-
-                @Override
-                public void updateModel(String s, int row) {
-                    tlkTable.setValueAt(s, row, 1);
-                }
-            };
-            d = new JSpellDialog((JFrame) SwingUtilities.getWindowAncestor(tlkTable), sPanel);
-            marker = new UIErrorMarkerListener(d);
-            //checkListener = new UISpellCheckListener(d);
-            marker.setTextComponent(cellEditor.getTextComponent());
-            sPanel.setCancelListener(al);
-
-            //JPanel p = (JPanel)((BorderLayout)sPanel.getLayout()).getLayoutComponent(BorderLayout.SOUTH);
-            JPanel p = new JPanel();
-            final JCheckBox cbCaseSensitive = new JCheckBox("Case Sensitive", checker.isCaseSensitive());
-            cbCaseSensitive.setMnemonic('s');
-            cbCaseSensitive.setDisplayedMnemonicIndex(5);
-            cbCaseSensitive.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    checker.setCaseSensitive(cbCaseSensitive.isSelected());
-                }
-            });
-            p.add(cbCaseSensitive);
-            JButton bResetIgnore = new JButton("Reset Ignore List");
-            bResetIgnore.addActionListener(EventHandler.create(ActionListener.class, checker, "resetIgnore"));
-            bResetIgnore.setToolTipText("clear the list of words that this spell checker ignores");
-            JButton bResetReplace = new JButton("Reset Replace List");
-            bResetReplace.addActionListener(EventHandler.create(ActionListener.class, checker, "resetReplace"));
-            bResetReplace.setToolTipText("clear the list of words that this spell checker replaces");
-            p.add(cbCaseSensitive);
-            p.add(bResetIgnore);
-            p.add(bResetReplace);
-            p.setBorder(BorderFactory.createTitledBorder(SeparatorLineBorder.get(), "Spell Checker Options"));
-            d.getContentPane().add(p, BorderLayout.SOUTH);
-        }
-    };
-
     public void setFileVersion(Version nwnVersion) {
         this.nwnVersion = nwnVersion;
         if (SwingUtilities.isEventDispatchThread()) {
@@ -976,156 +1108,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     }
-
-    // incomplete ... tab-separated-values doesn't seem to work
-    private final TransferHandler transferHandler = new TransferHandler() {
-        protected final String tlkMime = DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" + List.class.getName() + "\"";
-        protected final DataFlavor flavorTsv = new DataFlavor("text/tab-separated-values", "text/tab-separated-values");
-        //protected final DataFlavor flavorTsv = new DataFlavor("text/tsv","text/tsv");
-        protected final DataFlavor flavorTlkList = new DataFlavor(tlkMime, "tlk entry list");
-
-        int[] modelSelection;
-
-        private void convertToModelIndices(int[] selection) {
-            for (int i = 0; i < selection.length; i++) {
-                selection[i] = tlkTable.convertRowIndexToModel(selection[i]);
-            }
-        }
-
-        @Override
-        public void exportToClipboard(final JComponent comp, Clipboard clip, int action) {
-            JTable table = (JTable) comp;
-            // deselect virtual last row
-            table.getSelectionModel().removeIndexInterval(model.size(), model.size());
-            modelSelection = table.getSelectedRows();
-            convertToModelIndices(modelSelection);
-            if (modelSelection.length == 0) {
-                return;
-            }
-            Transferable trans = makeTransferable(modelSelection);
-            clip.setContents(trans, null);
-            exportDone(comp, trans, action);
-        }
-
-        @Override
-        protected void exportDone(JComponent source, Transferable data, int action) {
-            if ((action & MOVE) != 0) {
-                String name = MessageFormat.format("Cut [{0}...{1}]", modelSelection[0], modelSelection[modelSelection.length - 1]);
-                rowMutator.new RemoveRowsEdit(name, modelSelection).invoke();
-                //listMutator.remove(selection);
-                int viewRow = tlkTable.convertRowIndexToView(modelSelection[0]);
-                viewRow = Math.min(tlkTable.getRowCount(), viewRow);
-                tlkTable.getSelectionModel().setSelectionInterval(viewRow, viewRow);
-            }
-        }
-
-        @Override
-        public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
-            for (DataFlavor d : transferFlavors) {
-                if (d.equals(flavorTlkList)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public boolean importData(JComponent comp, Transferable t) {
-            JTable table = (JTable) comp;
-            try {
-                if (t.isDataFlavorSupported(flavorTlkList)) {
-                    @SuppressWarnings("unchecked")
-                    final List<TlkEntry> entries = (List<TlkEntry>) t.getTransferData(flavorTlkList);
-                    final List<TlkEntry> clones = new ArrayList<>(entries.size());
-                    for (TlkEntry e : entries) {
-                        clones.add(e.clone());
-                    }
-                    int viewRow = table.getSelectedRow();
-                    int modelRow = table.convertRowIndexToModel(viewRow);
-                    if (modelRow > -1) {
-                        rowMutator.new InsertRowsEdit("Paste", modelRow, clones).invoke();
-                        table.getSelectionModel().setSelectionInterval(viewRow, viewRow + entries.size() - 1);
-                        return true;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-            return false;
-        }
-
-        private Transferable makeTransferable(final int[] modelSelection) {
-            final TlkEntry[] rows = new TlkEntry[modelSelection.length];
-            for (int i = 0; i < modelSelection.length; i++) {
-                rows[i] = tlkContent.get(modelSelection[i]).clone();
-            }
-            final boolean hex = model.isDisplayHex();
-            final boolean userTlk = model.getIsUserTlk();
-            return new Transferable() {
-
-                @Override
-                public Object getTransferData(DataFlavor df) {
-                    if (df.equals(flavorTsv)) {
-                        System.out.println("tsv export ...");
-                        try {
-                            final PipedInputStream pin = new PipedInputStream();
-                            final PipedOutputStream pout = new PipedOutputStream(pin);
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        try (final BufferedOutputStream bos = new BufferedOutputStream(pout);
-                                             final PrintWriter p = new PrintWriter(bos)
-                                        ) {
-                                            for (final TlkEntry e : rows) {
-                                                p.write("\"");
-                                                p.write(e.getString().replaceAll("\t", "\\t"));
-                                                p.write("\"\t");
-                                                p.print(e.getSoundResRef());
-                                                p.print("\t");
-                                                p.print(e.getSoundLength());
-                                                p.write("\n");
-                                            }
-                                            //new XMLWriter(bos, OutputFormat.createPrettyPrint()).write(e);
-                                        }
-                                        pout.close();
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
-                                }
-                            }.start();
-                            return pin;
-                        } catch (IOException ioex) {
-                            System.out.println(ioex);
-                        }
-                        return null;
-                    } else if (df.equals(flavorTlkList)) {
-                        return Arrays.asList(rows);
-                    } else if (df.equals(FLAVORSTRREF)) {
-                        String[] r = new String[modelSelection.length];
-                        for (int i = 0; i < r.length; i++) {
-                            int strRef = userTlk ? (modelSelection[i] | TlkLookup.USERTLKOFFSET) : modelSelection[i];
-                            r[i] = hex ? "0x" + Integer.toHexString(strRef) : Integer.toString(strRef);
-                        }
-                        return r;
-                    } else {
-                        return null;
-                    }
-                }
-
-                @Override
-                public DataFlavor[] getTransferDataFlavors() {
-                    return new DataFlavor[]{flavorTlkList, FLAVORSTRREF};
-                }
-
-                @Override
-                public boolean isDataFlavorSupported(DataFlavor df) {
-                    return df.equals(flavorTlkList) || df.equals(FLAVORSTRREF);
-                }
-            };
-        }
-    };
 
     private void buildLanguageMenu(Version v) {
         final Enumeration<AbstractButton> e = languageButtons.getElements();
