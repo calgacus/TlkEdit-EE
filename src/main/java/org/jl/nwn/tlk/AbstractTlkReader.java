@@ -56,6 +56,7 @@ public abstract class AbstractTlkReader<TlkTable>{
      * Loads a tlk file through an InputStream. Will first call
      * {@link #createTlk} to create a new Talk Table object and then call
      * {@link #createEntry} for each Talk Table entry in the file.
+     * Does not close stream after reading.
      *
      * @param is InputStream to read from, should be buffered for better performance.
      * @param pm progress monitor for the loading operation, may be {@code null}
@@ -163,7 +164,6 @@ public abstract class AbstractTlkReader<TlkTable>{
         }
         if ( pm!=null && !pm.isCanceled() )
             pm.setProgress( pm.getMaximum() );
-        is.close();
         return tlk;
     }
 
