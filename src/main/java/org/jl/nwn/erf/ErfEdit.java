@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +34,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.TransferHandler;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
@@ -278,54 +274,13 @@ public class ErfEdit extends SimpleFileEditorPanel {
         UID.addResourceBundle("settings.keybindings");
     }
 
-    {
-        toolbar.setFloatable(false);
-        table.getTableHeader().setReorderingAllowed(false);
-        table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
-        table.getColumnModel().getColumn(0).setMinWidth(200);
-        cbTypeSelector.addItemListener( new ItemListener(){
-            @Override
-            public void itemStateChanged( ItemEvent e ){
-                if ( e.getStateChange() == ItemEvent.SELECTED ){
-                    ErfFile.ErfType type = (ErfFile.ErfType) cbTypeSelector.getSelectedItem();
-                    erf.setType( type );
-                    descriptionBox.setVisible( type != ErfFile.ERF );
-                    sPane.setDividerLocation(sPane.getDividerLocation());
-                }
-            }
-        });
-        table.setDefaultRenderer( Object.class, new DefaultTableCellRenderer(){
-            Color defaultColor = getBackground();
-            @Override
-            public Component getTableCellRendererComponent(JTable table,
-                    Object value,
-                    boolean isSelected,
-                    boolean hasFocus,
-                    int row,
-                    int column){
-                setBackground( defaultColor );
-                Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
-                if (erf.isFileResource(contentModel.resources.get(table.convertRowIndexToModel(row))))
-                    c.setBackground( isSelected? Color.ORANGE:Color.YELLOW );
-                setHorizontalAlignment( column==2?JLabel.TRAILING:JLabel.LEADING );
-                return c;
-            }
-        });
-        descEditor.addChangeListener( new ChangeListener(){
-            @Override
-            public void stateChanged( ChangeEvent e ){
-                setIsModified(true);
-            }
-        } );
-    }
-
     private ErfEdit(ErfFile erf) {
         super();
         setLayout( new BorderLayout() );
         sPane.setOneTouchExpandable(true);
         sPane.add( new JScrollPane( table ) );
         JLabel descLabel = new JLabel();
-        I18nUtil.setText(descLabel, "MOD / HAK Description" );
+        I18nUtil.setText(descLabel, UID.getString("ErfEdit.modDesc"));
         descLabel.setLabelFor(descEditor);
         descriptionBox.add( descLabel );
         descriptionBox.add( descEditor );
@@ -334,6 +289,7 @@ public class ErfEdit extends SimpleFileEditorPanel {
         add( sPane, BorderLayout.CENTER );
 
         descEditor.labelBox.setVisible(false);
+        descEditor.addChangeListener(e -> setIsModified(true));
 
         Actions.configureActionUI(actAddFiles, UID, "ErfEdit.add");
         Actions.configureActionUI(actRemove, UID, "ErfEdit.remove");
@@ -351,15 +307,46 @@ public class ErfEdit extends SimpleFileEditorPanel {
         menuErf.addSeparator();
         menuErf.add(actExtractSelected);
 
+        final JLabel typeSelectorLabel = new JLabel();
+        I18nUtil.setText(typeSelectorLabel, UID.getString("ErfEdit.erfType"));
+        typeSelectorLabel.setLabelFor(cbTypeSelector);
+        cbTypeSelector.setAlignmentX( JComponent.RIGHT_ALIGNMENT );
+        cbTypeSelector.addItemListener((ItemEvent e) -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                final ErfFile.ErfType type = (ErfFile.ErfType) cbTypeSelector.getSelectedItem();
+                erf.setType(type);
+                descriptionBox.setVisible(type != ErfFile.ERF);
+                sPane.setDividerLocation(sPane.getDividerLocation());
+            }
+        });
+
+        toolbar.setFloatable(false);
         toolbar.add( new JToolBar.Separator() );
-        JLabel typeSelectorLabel = new JLabel();
-        I18nUtil.setText( typeSelectorLabel, "Erf &Type" );
-        typeSelectorLabel.setLabelFor( cbTypeSelector );
         toolbar.add( typeSelectorLabel );
         toolbar.add(cbTypeSelector);
-        cbTypeSelector.setAlignmentX( JComponent.RIGHT_ALIGNMENT );
         toolbar.setAlignmentX( JComponent.LEFT_ALIGNMENT );
         toolbar.add( Box.createHorizontalGlue() );
+
+        table.getTableHeader().setReorderingAllowed(false);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getColumnModel().getColumn(0).setMinWidth(200);
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            private final Color defaultColor = getBackground();
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value,
+                    boolean isSelected, boolean hasFocus,
+                    int row, int column
+            ) {
+                setBackground(defaultColor);
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (erf.isFileResource(contentModel.resources.get(table.convertRowIndexToModel(row)))) {
+                    setBackground(isSelected ? Color.ORANGE : Color.YELLOW);
+                }
+                setHorizontalAlignment(column == 2 ? JLabel.TRAILING : JLabel.LEADING);
+                return this;
+            }
+        });
 
         // need to set all keybindings explicitly, because some may already be
         // used by swing L&F ( like 'control C' for copy
