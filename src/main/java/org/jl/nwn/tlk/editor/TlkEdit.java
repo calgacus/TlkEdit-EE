@@ -2,7 +2,6 @@ package org.jl.nwn.tlk.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -160,7 +159,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     private final TableColumn col_Flags = new TableColumn(4, 50);
     private final BitFlagEditor flagEditor;
 
-    private final JToolBar toolbar;
+    private final JToolBar toolbar = new JToolBar();
     private final JMenu editMenu = new JMenu();
     private final JMenu viewMenu = new JMenu();
     private final JMenu diffMenu = new JMenu();
@@ -641,6 +640,10 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     }
 
     public TlkEdit() {
+        tlkContent = new TlkContent(NwnLanguage.ENGLISH);
+        model = new TlkModel(tlkContent);
+        model.addPropertyChangeListener(this);
+
         tlkTable = new JXTable() {
 
             @Override
@@ -650,15 +653,21 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 return c;
             }
 
-            int forbiddenModifiers = InputEvent.ALT_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK;
-
-            /*process only known keystrokes or keyevents without modifiers, so that
-            mnemonics wont trigger cell editing*/
+            /**
+             * Process only known keystrokes or keyevents without modifiers, so that
+             * mnemonics wont trigger cell editing.
+             *
+             * {@inheritDoc }
+             */
             @Override
             protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
                 boolean r = false;
                 ActionListener al = getActionForKeyStroke(ks);
-                if ((al != null && al instanceof Action && ((Action) al).isEnabled()) || (e.getModifiersEx() & forbiddenModifiers) == 0) {
+                final int forbiddenModifiers = InputEvent.ALT_DOWN_MASK
+                                             | InputEvent.ALT_GRAPH_DOWN_MASK
+                                             | InputEvent.CTRL_DOWN_MASK
+                                             | InputEvent.META_DOWN_MASK;
+                if ((al instanceof Action && ((Action) al).isEnabled()) || (e.getModifiersEx() & forbiddenModifiers) == 0) {
                     r = super.processKeyBinding(ks, e, condition, pressed);
                 }
                 return r;
@@ -671,21 +680,21 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                 mutator.new SetValueAtEdit("Update", value, row, col).invoke();
             }
         };
-
-        tlkContent = new TlkContent(NwnLanguage.ENGLISH);
-        model = new TlkModel(tlkContent);
-        model.addPropertyChangeListener(this);
-        ListSelectionModel mappedLsl = MappedListSelectionModel.createRowModelToViewMapper(tlkTable);
-        mutator = new TlkModelMutator(model, mappedLsl);
-        rowMutator = new RowMutator<>(mutator, model, mappedLsl);
-        mutator.addUndoableEditListener(undoManager);
-
         tlkTable.setTransferHandler(transferHandler);
-        //tlkTable.putClientProperty("JTable.autoStartsEdit", new Boolean(false));
         tlkTable.setAutoCreateColumnsFromModel(false);
         tlkTable.setModel(model);
         tlkTable.getTableHeader().setReorderingAllowed(false);
         tlkTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+
+        final ListSelectionModel mappedLsl = MappedListSelectionModel.createRowModelToViewMapper(tlkTable);
+        mutator = new TlkModelMutator(model, mappedLsl);
+        mutator.addUndoableEditListener(undoManager);
+        mutator.addPropertyChangeListener(evt -> {
+            if ("modified".equals(evt.getPropertyName())) {
+                setIsModified(((Boolean) evt.getNewValue()).booleanValue());
+            }
+        });
+        rowMutator = new RowMutator<>(mutator, model, mappedLsl);
 
         col_StrRef.setMaxWidth(120);
         DefaultTableCellRenderer strRefRenderer = new DefaultTableCellRenderer();
@@ -779,206 +788,37 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         col_SoundResRef.setCellEditor(resRefEditor);
         tlkTable.setSurrendersFocusOnKeystroke(true);
 
-        // set up toolbar actions ( save etc. ) ---------------------------------------------------------
-        JTextField posField = new JTextField(6);
-        posField.addKeyListener(new KeyAdapter() {
-            int line = 0;
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                JTextField tf = (JTextField) e.getSource();
-                String s = tf.getText();
-                if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
-                    if (s.length() > 0) {
-                        s = s.substring(0, s.length() - 1);
-                    } else {
-                        s = "0"; //$NON-NLS-1$
-                    }
-                } else if (Character.isDigit(e.getKeyChar())) {
-                    //System.out.println( tf.getText() + e.getKeyChar() );
-                    s = s + e.getKeyChar();
-                } else {
-                    // if (Character.isLetterOrDigit(e.getKeyChar()))
-                    e.consume();
-                }
-                try {
-                    line = Integer.parseInt(s);
-                    if ((line & TlkLookup.USERTLKOFFSET) > 0) {
-                        line = line ^ TlkLookup.USERTLKOFFSET;
-                    }
-                } catch (NumberFormatException nfe) {
-                }
-                if (line < tlkTable.getRowCount() - 1) {
-                    tlkTable.changeSelection(line, 0, false, false);
-                }
-            }
-        });
-
-        toolbar = new JToolBar();
-        toolbar.setFloatable(false);
-
-        Actions.configureActionUI(aResize, UID, "TlkEdit.resize");
-
-        Actions.configureActionUI(aCut, UID, "TlkEdit.cut");
-        toolbar.add(aCut).setMnemonic(KeyEvent.VK_UNDEFINED);
-
-        Actions.configureActionUI(aCopy, UID, "TlkEdit.copy");
-        toolbar.add(aCopy);
-
-        Actions.configureActionUI(aPaste, UID, "TlkEdit.paste");
-        toolbar.add(aPaste);
-
-        toolbar.addSeparator();
-
-        Actions.configureActionUI(aFind, UID, "TlkEdit.find");
-        toolbar.add(aFind);
-
-        Actions.configureActionUI(aFindNext, UID, "TlkEdit.findNext");
-        toolbar.add(aFindNext);
-
-        toolbar.addSeparator();
-        JLabel posLabel = new JLabel("", JLabel.RIGHT); //$NON-NLS-1$
-        posLabel.setLabelFor(posField);
-        I18nUtil.setText(posLabel, UID.getString("TlkEdit.label_positionField")); //$NON-NLS-1$
-        toolbar.add(posLabel);
-        toolbar.add(posField);
-        posField.setMaximumSize(posField.getPreferredSize());
-
-        JTextField filterField = new JTextField(12);
-        final PatternFilter filter = new PatternFilter();
-        filter.setColumnIndex(2);
-        tlkTable.setFilters(new FilterPipeline(filter));
-        filterField.addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                JTextField tf = (JTextField) e.getSource();
-                String s = tf.getText();
-                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    if (s.length() > 0) {
-                        try {
-                            final Pattern p = Pattern.compile(s);
-                            tlkTable.setEnabled(false);
-                            messageSupport.fireMessage(UID.getString("TlkEdit.applyingPattern"));
-                            SwingUtilities.invokeLater(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    try {
-                                        filter.setPattern(p);
-                                        messageSupport.fireMessage(MessageFormat.format(UID.getString("TlkEdit.patternApplied"), filter.getSize(), p));
-                                    } finally {
-                                        tlkTable.setEnabled(true);
-                                    }
-                                }
-                            });
-                        } catch (PatternSyntaxException pse) {
-                            messageSupport.fireMessage(MessageFormat.format(UID.getString("TlkEdit.invalidPattern"), s, pse.getMessage()));
-                        }
-                    } else {
-                        filter.setPattern(null);
-                    }
-                }
-            }
-        });
-        JLabel filterLabel = new JLabel("", JLabel.RIGHT); //$NON-NLS-1$
-        filterLabel.setLabelFor(filterField);
-        I18nUtil.setText(filterLabel, UID.getString("TlkEdit.label_filterField")); //$NON-NLS-1$
-        filterLabel.setToolTipText(UID.getString("TlkEdit.tooltip_filterField"));
-        toolbar.add(filterLabel);
-        toolbar.add(filterField);
-        filterField.setMaximumSize(filterField.getPreferredSize());
-
-        toolbar.addSeparator();
         setupDiffStuff();
-
-        I18nUtil.setText(editMenu, "&Edit");
-        editMenu.add(aCut);
-        editMenu.add(aCopy);
-        editMenu.add(aPaste);
-        editMenu.addSeparator();
-        editMenu.add(aFind);
-        editMenu.add(aFindNext);
-        editMenu.addSeparator();
-        editMenu.add(aResize);
-
-        I18nUtil.setText(langSubMenu, "&Language");
-        langSubMenu.setIcon(UID.getIcon(Actions.EMPTYICONKEY));
-        buildLanguageMenu(getFileVersion());
-        editMenu.add(langSubMenu);
-
-        I18nUtil.setText(viewMenu, "&View");
-        JCheckBoxMenuItem miShowFlags = new JCheckBoxMenuItem(aToggleFlagDisplay);
-        miShowFlags.setSelected(true);
-        I18nUtil.setText(miShowFlags, "Show &Flags");
-        viewMenu.add(miShowFlags);
-        JCheckBoxMenuItem miShowSound = new JCheckBoxMenuItem(aToggleSoundDisplay);
-        miShowSound.setSelected(true);
-        I18nUtil.setText(miShowSound, "Show &Sound Settings");
-        viewMenu.add(miShowSound);
-        viewMenu.addSeparator();
-        Actions.configureActionUI(aToggleUserTlk, UID, "TlkEdit.toggleStrRef");
-        JCheckBoxMenuItem miToggleNumbering = new JCheckBoxMenuItem(aToggleUserTlk);
-        isUserTlkBM = miToggleNumbering.getModel();
-        miToggleNumbering.setSelected(false);
-        miToggleNumbering.setIcon(null);
-        viewMenu.add(miToggleNumbering);
-        Actions.configureActionUI(aToggleHexDisplay, UID, "TlkEdit.toggleHex");
-        JCheckBoxMenuItem miToggleHex = new JCheckBoxMenuItem(aToggleHexDisplay);
-        miToggleHex.setIcon(null);
-        viewMenu.add(miToggleHex);
-
-        JMenuItem pop1 = headerPopup.add(new JCheckBoxMenuItem(aToggleFlagDisplay));
-        I18nUtil.setText(pop1, "Show &Flags");
-        pop1.setModel(miShowFlags.getModel());
-        JMenuItem pop2 = headerPopup.add(new JCheckBoxMenuItem(aToggleSoundDisplay));
-        I18nUtil.setText(pop2, "Show &Sound Settings");
-        pop2.setModel(miShowSound.getModel());
-        tlkTable.getTableHeader().addMouseListener(headerPopupListener);
-        miShowFlags.doClick();
-        miShowSound.doClick();
 
         final Action aUndo = undoManager.getUndoAction();
         final Action aRedo = undoManager.getRedoAction();
-        Actions.configureActionUI(aUndo, UID, "undo");
-        Actions.configureActionUI(aRedo, UID, "redo");
 
+        Actions.configureActionUI(aCut,           UID, "TlkEdit.cut");
+        Actions.configureActionUI(aCopy,          UID, "TlkEdit.copy");
+        Actions.configureActionUI(aPaste,         UID, "TlkEdit.paste");
+        Actions.configureActionUI(aFind,          UID, "TlkEdit.find");
+        Actions.configureActionUI(aFindNext,      UID, "TlkEdit.findNext");
+        Actions.configureActionUI(aResize,        UID, "TlkEdit.resize");
         Actions.configureActionUI(aCheckSpelling, UID, "spellcheck");
-        editMenu.addSeparator();
-        editMenu.add(aCheckSpelling);
-
-        editMenu.addSeparator();
-        editMenu.add(aUndo);
-        editMenu.add(aRedo);
-
-        mutator.addPropertyChangeListener(new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals("modified")) {
-                    setIsModified(((Boolean) evt.getNewValue()).booleanValue());
-                }
-            }
-        });
+        Actions.configureActionUI(aUndo,          UID, "undo");
+        Actions.configureActionUI(aRedo,          UID, "redo");
 
         // setup key bindings
-        Actions.registerActions(tlkTable.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT), tlkTable.getActionMap(), aUndo, aRedo, aCheckSpelling, aCut, aCopy, aPaste, aFind, aFindNext, aToggleUserTlk);
-        toolbar.add(Box.createHorizontalGlue());
-        // remove mnemonics from buttons with icon ...
-        for (Object o : toolbar.getComponents()) {
-            if (o instanceof AbstractButton) {
-                if (((AbstractButton) o).getIcon() != null) {
-                    ((AbstractButton) o).setMnemonic(KeyEvent.VK_UNDEFINED);
-                }
-            }
-        }
-        setLayout(new BorderLayout());
-        JScrollPane sPane = new JScrollPane(tlkTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        add(sPane, BorderLayout.CENTER);
-        showToolbar(true);
+        Actions.registerActions(
+            tlkTable.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT),
+            tlkTable.getActionMap(),
+            aUndo, aRedo,
+            aCheckSpelling,
+            aCut, aCopy, aPaste,
+            aFind, aFindNext,
+            aToggleUserTlk
+        );
 
-        setSize(new Dimension(800, 600));
-        setVisible(true);
+        setLayout(new BorderLayout());
+        isUserTlkBM = setupMenu(aUndo, aRedo);
+        setupToolbar();
+        add(toolbar, BorderLayout.NORTH);
+        add(new JScrollPane(tlkTable), BorderLayout.CENTER);
     }
 
     //<editor-fold defaultstate="collapsed" desc="SimpleFileEditor">
@@ -1036,9 +876,17 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     //<editor-fold defaultstate="collapsed" desc="PropertyChangeListener">
     @Override
-    public void propertyChange(PropertyChangeEvent e) {
-        if ("language".equals(e.getPropertyName())) {
-            selectLanguageButton((NwnLanguage) e.getNewValue());
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("language".equals(evt.getPropertyName())) {
+            final NwnLanguage lang = (NwnLanguage) evt.getNewValue();
+            final Enumeration<AbstractButton> e = languageButtons.getElements();
+            while (e.hasMoreElements()) {
+                AbstractButton b = e.nextElement();
+                if (lang.equals(b.getClientProperty(LANG_PROP))) {
+                    b.setSelected(true);
+                    break;
+                }
+            }
         }
     }
     //</editor-fold>
@@ -1080,28 +928,14 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
-    protected void selectLanguageButton(NwnLanguage lang) {
-        Enumeration<AbstractButton> e = languageButtons.getElements();
-        while (e.hasMoreElements()) {
-            AbstractButton b = e.nextElement();
-            if (lang.equals(b.getClientProperty(LANG_PROP))) {
-                b.setSelected(true);
-            }
-        }
-    }
-
     public void setFileVersion(Version nwnVersion) {
         this.nwnVersion = nwnVersion;
         if (SwingUtilities.isEventDispatchThread()) {
             buildLanguageMenu(TlkEdit.this.nwnVersion);
         } else {
             try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        buildLanguageMenu(TlkEdit.this.nwnVersion);
-                    }
+                SwingUtilities.invokeAndWait(() -> {
+                    buildLanguageMenu(TlkEdit.this.nwnVersion);
                 });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1109,13 +943,13 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
-    private void buildLanguageMenu(Version v) {
+    private void buildLanguageMenu(Version version) {
         final Enumeration<AbstractButton> e = languageButtons.getElements();
         langSubMenu.removeAll();
         while (e.hasMoreElements()) {
             languageButtons.remove(e.nextElement());
         }
-        for (final NwnLanguage lang : NwnLanguage.findAll(v)) {
+        for (final NwnLanguage lang : NwnLanguage.findAll(version)) {
             final JMenuItem mi = new JRadioButtonMenuItem(lang.getName());
             if (tlkContent.getLanguage().equals(lang)) {
                 mi.setSelected(true);
@@ -1324,6 +1158,162 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         diffMenu.add(discard);
         diffMenu.addSeparator();
         diffMenu.add(overview).setMnemonic('o');
+    }
+
+    private ButtonModel setupMenu(Action aUndo, Action aRedo) {
+        I18nUtil.setText(editMenu, "&Edit");
+        I18nUtil.setText(langSubMenu, "&Language");
+        I18nUtil.setText(viewMenu, "&View");
+
+        langSubMenu.setIcon(UID.getIcon(Actions.EMPTYICONKEY));
+        buildLanguageMenu(getFileVersion());
+
+        editMenu.add(aCut);
+        editMenu.add(aCopy);
+        editMenu.add(aPaste);
+        editMenu.addSeparator();
+        editMenu.add(aFind);
+        editMenu.add(aFindNext);
+        editMenu.addSeparator();
+        editMenu.add(aResize);
+        editMenu.add(langSubMenu);
+        editMenu.addSeparator();
+        editMenu.add(aCheckSpelling);
+        editMenu.addSeparator();
+        editMenu.add(aUndo);
+        editMenu.add(aRedo);
+
+        JCheckBoxMenuItem miShowFlags = new JCheckBoxMenuItem(aToggleFlagDisplay);
+        miShowFlags.setSelected(true);
+        I18nUtil.setText(miShowFlags, "Show &Flags");
+        viewMenu.add(miShowFlags);
+        JCheckBoxMenuItem miShowSound = new JCheckBoxMenuItem(aToggleSoundDisplay);
+        miShowSound.setSelected(true);
+        I18nUtil.setText(miShowSound, "Show &Sound Settings");
+        viewMenu.add(miShowSound);
+        viewMenu.addSeparator();
+        Actions.configureActionUI(aToggleUserTlk, UID, "TlkEdit.toggleStrRef");
+        JCheckBoxMenuItem miToggleNumbering = new JCheckBoxMenuItem(aToggleUserTlk);
+        miToggleNumbering.setSelected(false);
+        miToggleNumbering.setIcon(null);
+        viewMenu.add(miToggleNumbering);
+        Actions.configureActionUI(aToggleHexDisplay, UID, "TlkEdit.toggleHex");
+        JCheckBoxMenuItem miToggleHex = new JCheckBoxMenuItem(aToggleHexDisplay);
+        miToggleHex.setIcon(null);
+        viewMenu.add(miToggleHex);
+
+        JMenuItem pop1 = headerPopup.add(new JCheckBoxMenuItem(aToggleFlagDisplay));
+        I18nUtil.setText(pop1, "Show &Flags");
+        pop1.setModel(miShowFlags.getModel());
+        JMenuItem pop2 = headerPopup.add(new JCheckBoxMenuItem(aToggleSoundDisplay));
+        I18nUtil.setText(pop2, "Show &Sound Settings");
+        pop2.setModel(miShowSound.getModel());
+        tlkTable.getTableHeader().addMouseListener(headerPopupListener);
+        miShowFlags.doClick();
+        miShowSound.doClick();
+
+        return miToggleNumbering.getModel();
+    }
+
+    private void setupToolbar() {
+        final JTextField posField = new JTextField(6);
+        posField.setMaximumSize(posField.getPreferredSize());
+        posField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                JTextField tf = (JTextField) e.getSource();
+                String s = tf.getText();
+                if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
+                    if (s.length() > 0) {
+                        s = s.substring(0, s.length() - 1);
+                    } else {
+                        s = "0"; //$NON-NLS-1$
+                    }
+                } else if (Character.isDigit(e.getKeyChar())) {
+                    s = s + e.getKeyChar();
+                } else {
+                    e.consume();
+                }
+                int line = 0;
+                try {
+                    line = Integer.parseInt(s);
+                    if ((line & TlkLookup.USERTLKOFFSET) > 0) {
+                        line = line ^ TlkLookup.USERTLKOFFSET;
+                    }
+                } catch (NumberFormatException nfe) {
+                }
+                if (line < tlkTable.getRowCount() - 1) {
+                    tlkTable.changeSelection(line, 0, false, false);
+                }
+            }
+        });
+        final JLabel posLabel = new JLabel("", JLabel.RIGHT); //$NON-NLS-1$
+        posLabel.setLabelFor(posField);
+        I18nUtil.setText(posLabel, UID.getString("TlkEdit.label_positionField")); //$NON-NLS-1$
+
+        final JTextField filterField = new JTextField(12);
+        final PatternFilter filter = new PatternFilter();
+        filter.setColumnIndex(2);
+        tlkTable.setFilters(new FilterPipeline(filter));
+        filterField.setMaximumSize(filterField.getPreferredSize());
+        filterField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    final JTextField tf = (JTextField) e.getSource();
+                    final String s = tf.getText();
+                    if (s.isEmpty()) {
+                        filter.setPattern(null);
+                    } else {
+                        try {
+                            final Pattern p = Pattern.compile(s);
+                            tlkTable.setEnabled(false);
+                            messageSupport.fireMessage(UID.getString("TlkEdit.applyingPattern"));//$NON-NLS-1$
+                            SwingUtilities.invokeLater(() -> {
+                                try {
+                                    filter.setPattern(p);
+                                    messageSupport.fireMessage(MessageFormat.format(
+                                        UID.getString("TlkEdit.patternApplied"), filter.getSize(), p//$NON-NLS-1$
+                                    ));
+                                } finally {
+                                    tlkTable.setEnabled(true);
+                                }
+                            });
+                        } catch (PatternSyntaxException pse) {
+                            messageSupport.fireMessage(MessageFormat.format(
+                                UID.getString("TlkEdit.invalidPattern"), s, pse.getMessage()//$NON-NLS-1$
+                            ));
+                        }
+                    }
+                }
+            }
+        });
+        final JLabel filterLabel = new JLabel("", JLabel.RIGHT); //$NON-NLS-1$
+        filterLabel.setLabelFor(filterField);
+        I18nUtil.setText(filterLabel, UID.getString("TlkEdit.label_filterField")); //$NON-NLS-1$
+        filterLabel.setToolTipText(UID.getString("TlkEdit.tooltip_filterField"));  //$NON-NLS-1$
+
+        toolbar.setFloatable(false);
+        toolbar.add(aCut).setMnemonic(KeyEvent.VK_UNDEFINED);
+        toolbar.add(aCopy);
+        toolbar.add(aPaste);
+        toolbar.addSeparator();
+        toolbar.add(aFind);
+        toolbar.add(aFindNext);
+        toolbar.addSeparator();
+        toolbar.add(posLabel);
+        toolbar.add(posField);
+        toolbar.add(filterLabel);
+        toolbar.add(filterField);
+        toolbar.add(Box.createHorizontalGlue());
+        // remove mnemonics from buttons with icon ...
+        for (Object o : toolbar.getComponents()) {
+            if (o instanceof AbstractButton) {
+                if (((AbstractButton) o).getIcon() != null) {
+                    ((AbstractButton) o).setMnemonic(KeyEvent.VK_UNDEFINED);
+                }
+            }
+        }
     }
 
     private boolean columnVisible(TableColumn col) {
