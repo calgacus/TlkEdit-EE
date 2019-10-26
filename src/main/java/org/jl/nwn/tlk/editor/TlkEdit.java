@@ -119,11 +119,26 @@ import org.jl.swing.undo.MappedListSelectionModel;
 import org.jl.swing.undo.MyUndoManager;
 import org.jl.swing.undo.RowMutator;
 
-
-
+/**
+ * Editor pane for TLK files.
+ */
 public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeListener, MessageSource {
-
-    private Preferences uPrefs = Preferences.userNodeForPackage(TlkEdit.class);
+    /**
+     * MIME type for transferring arrays of StrRefs between different parts of
+     * application and between different applications.
+     */
+    public static final DataFlavor FLAVORSTRREF = new DataFlavor(String[].class, "StrRef Array");
+    /** Preferences node that used to store settings of the TLK editor. */
+    private static final Preferences PREFS = Preferences.userNodeForPackage(TlkEdit.class);
+    private static final UIDefaults UID = new UIDefaults();
+    private static final String ERROR_DIALOG_TITLE = UID.getString("TlkEdit.error_dialog_title"); //$NON-NLS-1$
+    /** For the language selector radio buttons. */
+    private static final String LANG_PROP = "nwLang";
+    /**
+     * Determines, if class for sound player is availible in classpath. If not,
+     * playing sounds will be disabled.
+     */
+    private static boolean HAS_SOUND_PLAYER;
 
     private MessageSourceSupport messageSupport = new MessageSourceSupport(this);
 
@@ -142,24 +157,16 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         messageSupport.addMessageListener(l);
     }
 
-    private static final UIDefaults uid = new UIDefaults();
-    //private static final UIDefaults uid = UIManager.getDefaults();
-    private static boolean useSound;
     static {
-        uid.addResourceBundle("org.jl.nwn.tlk.editor.MessageBundle");
-        /*
-        uid.addResourceBundle("org.jl.nwn.tlk.editor.MessageBundle",
-        Locale.getDefault(),
-        TlkEdit.class.getClassLoader() );
-         */
-        uid.addResourceBundle("settings.keybindings");
+        UID.addResourceBundle("org.jl.nwn.tlk.editor.MessageBundle");
+        UID.addResourceBundle("settings.keybindings");
         try {
             Class.forName("javazoom.jl.player.Player");
             System.out.println("zoom player found, sound playback enabled");
-            useSound = true;
+            HAS_SOUND_PLAYER = true;
         } catch (ClassNotFoundException e1) {
             //System.out.println( "zoom player not found, sound playback disabled" );
-            useSound = false;
+            HAS_SOUND_PLAYER = false;
         }
     }
 
@@ -174,8 +181,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     Action aRedo;
     Action aPasteOver;
 
-    // for the language selector radio buttons
-    final String languagePropertyKey = "nwLang";
     ButtonGroup languageButtons = new ButtonGroup();
 
     private File tlkFile;
@@ -189,7 +194,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     protected BitFlagEditor flagEditor;
 
     private final JToolBar toolbar;
-    private static final String ERROR_DIALOG_TITLE = uid.getString("TlkEdit.error_dialog_title"); //$NON-NLS-1$
     private JMenu diffMenu = null;
     private JMenu editMenu = null;
     private JMenu langSubMenu = null;
@@ -388,7 +392,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         // cell editors  ------------------------------------------------------------
         col_String.setCellEditor((TableCellEditor) cellEditor);
 
-        String[] flagStrings = new String[]{uid.getString("TlkEdit.flags_label_useText"), uid.getString("TlkEdit.flags_label_useSound"), uid.getString("TlkEdit.flags_label_useSoundLength")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String[] flagStrings = new String[]{UID.getString("TlkEdit.flags_label_useText"), UID.getString("TlkEdit.flags_label_useSound"), UID.getString("TlkEdit.flags_label_useSoundLength")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         flagEditor = new BitFlagEditor(flagStrings, new int[]{1, 2, 4});
         TableCellEditor flagEd = new CellEditorDecorator(flagEditor) {
 
@@ -426,7 +430,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-                if (useSound && value.toString().length() > 0) {
+                if (HAS_SOUND_PLAYER && value.toString().length() > 0) {
                     //System.out.println("try to play sound");
                     try {
                         new Thread(snd = new BmuPlayer(tlkTable.getModel().getValueAt(row, 1).toString().toLowerCase(), null)).start();
@@ -496,31 +500,31 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         boolean useIcons = true;
         boolean useText = false;
 
-        Actions.configureActionUI(actResize, uid, "TlkEdit.resize");
+        Actions.configureActionUI(actResize, UID, "TlkEdit.resize");
 
-        Actions.configureActionUI(actCut, uid, "TlkEdit.cut");
+        Actions.configureActionUI(actCut, UID, "TlkEdit.cut");
         JButton cutButton = toolbar.add(actCut);
         cutButton.setMnemonic(KeyEvent.VK_UNDEFINED);
 
-        Actions.configureActionUI(actCopy, uid, "TlkEdit.copy");
+        Actions.configureActionUI(actCopy, UID, "TlkEdit.copy");
         JButton copyButton = toolbar.add(actCopy);
 
-        Actions.configureActionUI(actPaste, uid, "TlkEdit.paste");
+        Actions.configureActionUI(actPaste, UID, "TlkEdit.paste");
         JButton pasteButton = toolbar.add(actPaste);
 
         toolbar.addSeparator();
 
-        Actions.configureActionUI(actFind, uid, "TlkEdit.find");
+        Actions.configureActionUI(actFind, UID, "TlkEdit.find");
         JButton findButton = toolbar.add(actFind);
 
-        Actions.configureActionUI(actFindNext, uid, "TlkEdit.findNext");
+        Actions.configureActionUI(actFindNext, UID, "TlkEdit.findNext");
         JButton findNextButton = toolbar.add(actFindNext);
 
 
         toolbar.addSeparator();
         JLabel posLabel = new JLabel("", JLabel.RIGHT); //$NON-NLS-1$
         posLabel.setLabelFor(posField);
-        I18nUtil.setText(posLabel, uid.getString("TlkEdit.label_positionField")); //$NON-NLS-1$
+        I18nUtil.setText(posLabel, UID.getString("TlkEdit.label_positionField")); //$NON-NLS-1$
         toolbar.add(posLabel);
         toolbar.add(posField);
         posField.setMaximumSize(posField.getPreferredSize());
@@ -540,21 +544,21 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                         try {
                             final Pattern p = Pattern.compile(s);
                             tlkTable.setEnabled(false);
-                            messageSupport.fireMessage(uid.getString("TlkEdit.applyingPattern"));
+                            messageSupport.fireMessage(UID.getString("TlkEdit.applyingPattern"));
                             SwingUtilities.invokeLater(new Runnable() {
 
                                 @Override
                                 public void run() {
                                     try {
                                         filter.setPattern(p);
-                                        messageSupport.fireMessage(MessageFormat.format(uid.getString("TlkEdit.patternApplied"), filter.getSize(), p));
+                                        messageSupport.fireMessage(MessageFormat.format(UID.getString("TlkEdit.patternApplied"), filter.getSize(), p));
                                     } finally {
                                         tlkTable.setEnabled(true);
                                     }
                                 }
                             });
                         } catch (PatternSyntaxException pse) {
-                            messageSupport.fireMessage(MessageFormat.format(uid.getString("TlkEdit.invalidPattern"), s, pse.getMessage()));
+                            messageSupport.fireMessage(MessageFormat.format(UID.getString("TlkEdit.invalidPattern"), s, pse.getMessage()));
                         }
                     } else {
                         filter.setPattern(null);
@@ -564,8 +568,8 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         });
         JLabel filterLabel = new JLabel("", JLabel.RIGHT); //$NON-NLS-1$
         filterLabel.setLabelFor(filterField);
-        I18nUtil.setText(filterLabel, uid.getString("TlkEdit.label_filterField")); //$NON-NLS-1$
-        filterLabel.setToolTipText(uid.getString("TlkEdit.tooltip_filterField"));
+        I18nUtil.setText(filterLabel, UID.getString("TlkEdit.label_filterField")); //$NON-NLS-1$
+        filterLabel.setToolTipText(UID.getString("TlkEdit.tooltip_filterField"));
         toolbar.add(filterLabel);
         toolbar.add(filterField);
         filterField.setMaximumSize(filterField.getPreferredSize());
@@ -588,7 +592,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
         langSubMenu = new JMenu();
         I18nUtil.setText(langSubMenu, "&Language");
-        langSubMenu.setIcon(uid.getIcon(Actions.EMPTYICONKEY));
+        langSubMenu.setIcon(UID.getIcon(Actions.EMPTYICONKEY));
         buildLanguageMenu(getFileVersion());
         editMenu.add(langSubMenu);
 
@@ -603,13 +607,13 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         I18nUtil.setText(miShowSound, "Show &Sound Settings");
         viewMenu.add(miShowSound);
         viewMenu.addSeparator();
-        Actions.configureActionUI(aToggleUserTlk, uid, "TlkEdit.toggleStrRef");
+        Actions.configureActionUI(aToggleUserTlk, UID, "TlkEdit.toggleStrRef");
         JCheckBoxMenuItem miToggleNumbering = new JCheckBoxMenuItem(aToggleUserTlk);
         isUserTlkBM = miToggleNumbering.getModel();
         miToggleNumbering.setSelected(false);
         miToggleNumbering.setIcon(null);
         viewMenu.add(miToggleNumbering);
-        Actions.configureActionUI(aToggleHexDisplay, uid, "TlkEdit.toggleHex");
+        Actions.configureActionUI(aToggleHexDisplay, UID, "TlkEdit.toggleHex");
         JCheckBoxMenuItem miToggleHex = new JCheckBoxMenuItem(aToggleHexDisplay);
         miToggleHex.setIcon(null);
         viewMenu.add(miToggleHex);
@@ -629,10 +633,10 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
         aUndo = undoManager.getUndoAction();
         aRedo = undoManager.getRedoAction();
-        Actions.configureActionUI(aUndo, uid, "undo");
-        Actions.configureActionUI(aRedo, uid, "redo");
+        Actions.configureActionUI(aUndo, UID, "undo");
+        Actions.configureActionUI(aRedo, UID, "redo");
 
-        Actions.configureActionUI(aCheckSpelling, uid, "spellcheck");
+        Actions.configureActionUI(aCheckSpelling, UID, "spellcheck");
         editMenu.addSeparator();
         editMenu.add(aCheckSpelling);
 
@@ -686,7 +690,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             firePropertyChange(FILE_PROPERTY, oldValue, f);
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, uid.getString("TlkEdit.openTlkFile_errorMsgCouldNotOpen") + "\n" + ex, ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, UID.getString("TlkEdit.openTlkFile_errorMsgCouldNotOpen") + "\n" + ex, ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -694,7 +698,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         Enumeration<AbstractButton> e = languageButtons.getElements();
         while (e.hasMoreElements()) {
             AbstractButton b = e.nextElement();
-            if (lang.equals(b.getClientProperty(languagePropertyKey))) {
+            if (lang.equals(b.getClientProperty(LANG_PROP))) {
                 b.setSelected(true);
             }
         }
@@ -711,7 +715,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             if (tlkContent.getLanguage().equals(lang))
                 mi.setSelected(true);
             mi.addActionListener(langSelectAction);
-            mi.putClientProperty(languagePropertyKey, lang);
+            mi.putClientProperty(LANG_PROP, lang);
             langSubMenu.add(mi);
             languageButtons.add(mi);
         }
@@ -726,7 +730,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
 
     // diff --------------------------------------------------------------------
     private void setupDiffStuff() {
-        final String set_modified = uid.getString("TlkEdit.diff_buttonLabelMarkAsModified"); //$NON-NLS-1$
+        final String set_modified = UID.getString("TlkEdit.diff_buttonLabelMarkAsModified"); //$NON-NLS-1$
         JPanel p = new JPanel();
         final JFileChooser fc = new JFileChooser();
         Action toggle = new AbstractAction(set_modified) {
@@ -742,54 +746,54 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         };
 
-        Action loadDiff = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelMergeDiff")) {
+        Action loadDiff = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelMergeDiff")) {
 
             //$NON-NLS-1$
             @Override
             public void actionPerformed(ActionEvent e) {
-                File f = new File(uPrefs.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+                File f = new File(PREFS.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
                 fc.setSelectedFile(f);
                 if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
                         for (final int change : tlkContent.mergeDiff(f = fc.getSelectedFile())) {
                             model.setEntryModified(change, true);
                         }
-                        uPrefs.put("lastDiff", f.getAbsolutePath()); //$NON-NLS-1$
+                        PREFS.put("lastDiff", f.getAbsolutePath()); //$NON-NLS-1$
                     } catch (IOException ioex) {
-                        JOptionPane.showMessageDialog(toolbar, uid.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(toolbar, UID.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
                         ioex.printStackTrace();
                     }
                 }
             }
         };
 
-        Action loadDtu = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelMergeDtu")) {
+        Action loadDtu = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelMergeDtu")) {
 
             //$NON-NLS-1$
             @Override
             public void actionPerformed(ActionEvent e) {
-                File f = new File(uPrefs.get("lastDtu", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+                File f = new File(PREFS.get("lastDtu", ".")); //$NON-NLS-1$ //$NON-NLS-2$
                 fc.setSelectedFile(f);
                 if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
                         for (final int change : tlkContent.mergeDtu(f = fc.getSelectedFile())) {
                             model.setEntryModified(change, true);
                         }
-                        uPrefs.put("lastDtu", f.getAbsolutePath()); //$NON-NLS-1$
+                        PREFS.put("lastDtu", f.getAbsolutePath()); //$NON-NLS-1$
                     } catch (IOException ioex) {
                         ioex.printStackTrace();
-                        JOptionPane.showMessageDialog(toolbar, uid.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(toolbar, UID.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         };
 
-        final String save_diff_button = uid.getString("TlkEdit.diff_buttonLabelSaveDiff"); //$NON-NLS-1$
+        final String save_diff_button = UID.getString("TlkEdit.diff_buttonLabelSaveDiff"); //$NON-NLS-1$
         Action save = new AbstractAction(save_diff_button) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                File f = new File(uPrefs.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+                File f = new File(PREFS.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
                 fc.setSelectedFile(f);
                 if (fc.showSaveDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
                     try {
@@ -805,17 +809,17 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                             newDiffs[itCount] = it.next().intValue();
                         }
                         tlkContent.writeDiff(fc.getSelectedFile(), newDiffs);
-                        uPrefs.put("lastDiff", fc.getSelectedFile().getAbsolutePath());
+                        PREFS.put("lastDiff", fc.getSelectedFile().getAbsolutePath());
                         setIsModified(false); //isModified = false;
                     } catch (IOException ioex) {
-                        JOptionPane.showMessageDialog(null, uid.getString("TlkEdit.diff_errorMsgCouldNotSaveDiff") + ioex.getMessage(), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, UID.getString("TlkEdit.diff_errorMsgCouldNotSaveDiff") + ioex.getMessage(), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
                         ioex.printStackTrace();
                     }
                 }
             }
         };
 
-        Action discard = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelDiscardInfo")) {
+        Action discard = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelDiscardInfo")) {
 
             //$NON-NLS-1$
             @Override
@@ -830,7 +834,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         };
 
-        Action overview = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelDisplayOverview")) {
+        Action overview = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelDisplayOverview")) {
             //$NON-NLS-1$
             JDialog diffOverview = null;
 
@@ -859,7 +863,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                     final DefaultListModel<Integer> listModel = new DefaultListModel<>();
                     {
                         tlkTable.getModel().addTableModelListener(tml);
-                        setTitle(uid.getString("TlkEdit.diff_overviewDialogTitle")); //$NON-NLS-1$
+                        setTitle(UID.getString("TlkEdit.diff_overviewDialogTitle")); //$NON-NLS-1$
                         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                         list.setModel(listModel);
                         getContentPane().setLayout(new BorderLayout());
@@ -876,7 +880,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
                                 }
                             }
                         });
-                        Action aUpdate = new AbstractAction(uid.getString("TlkEdit.diff_buttonLabelUpdateList")) {
+                        Action aUpdate = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelUpdateList")) {
 
                             //$NON-NLS-1$
                             @Override
@@ -914,11 +918,11 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         };
 
         diffMenu = new JMenu();
-        I18nUtil.setText(diffMenu, uid.getString("TlkEdit.diff_menuLabel")); //$NON-NLS-1$
-        diffMenu.setToolTipText(uid.getString("TlkEdit.diff_menuTooltip")); //$NON-NLS-1$
+        I18nUtil.setText(diffMenu, UID.getString("TlkEdit.diff_menuLabel")); //$NON-NLS-1$
+        diffMenu.setToolTipText(UID.getString("TlkEdit.diff_menuTooltip")); //$NON-NLS-1$
         diffMenu.add(toggle).setAccelerator(KeyStroke.getKeyStroke("alt M"));
         JMenuItem miUnmod = diffMenu.add(toggle);
-        miUnmod.setText(uid.getString("TlkEdit.diff_buttonLabelMarkUnmodified")); //$NON-NLS-1$
+        miUnmod.setText(UID.getString("TlkEdit.diff_buttonLabelMarkUnmodified")); //$NON-NLS-1$
         miUnmod.setMnemonic('u');
         miUnmod.setAccelerator(KeyStroke.getKeyStroke("alt shift M"));
         diffMenu.addSeparator();
@@ -963,18 +967,18 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         java.util.prefs.Preferences.userNodeForPackage(TlkEdit.class).removeNode();
     }
 
-    private Action actResize = new AbstractAction(uid.getString("TlkEdit.resize_buttonLabel")) {
+    private Action actResize = new AbstractAction(UID.getString("TlkEdit.resize_buttonLabel")) {
 
         //$NON-NLS-1$
         @Override
         public void actionPerformed(ActionEvent e) {
-            String s = JOptionPane.showInputDialog((JComponent) e.getSource(), uid.getString("TlkEdit.resize_enterNewSize"), model.size());
+            String s = JOptionPane.showInputDialog((JComponent) e.getSource(), UID.getString("TlkEdit.resize_enterNewSize"), model.size());
             if (s == null) {
                 return;
             }
             int newSize = 0;
-            String invalid_input_msg = uid.getString("TlkEdit.resize_errorMsgInvalidInput"); //$NON-NLS-1$
-            String invalid_input_dialog_title = uid.getString("TlkEdit.resize_errorDialogTitleInvalidInput"); //$NON-NLS-1$
+            String invalid_input_msg = UID.getString("TlkEdit.resize_errorMsgInvalidInput"); //$NON-NLS-1$
+            String invalid_input_dialog_title = UID.getString("TlkEdit.resize_errorDialogTitleInvalidInput"); //$NON-NLS-1$
             try {
                 newSize = Integer.parseInt(s);
             } catch (NumberFormatException nfe) {
@@ -1082,7 +1086,7 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         @Override
         public void actionPerformed(ActionEvent e) {
             mutator.new LanguageEdit("Set Language", (NwnLanguage) ((AbstractButton)e.getSource())
-                        .getClientProperty(languagePropertyKey)).invoke();
+                        .getClientProperty(LANG_PROP)).invoke();
         }
     };
 
@@ -1255,8 +1259,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         f.pack();
         f.setVisible(true);
     }
-
-    public static final DataFlavor FLAVORSTRREF = new DataFlavor(String[].class, "StrRef Array");
 
     // incomplete ... tab-separated-values doesn't seem to work
     protected TransferHandler transferHandler = new TransferHandler() {
