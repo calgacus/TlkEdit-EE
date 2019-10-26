@@ -11,6 +11,8 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
+import static java.nio.charset.StandardCharsets.US_ASCII;
+
 import javax.swing.ProgressMonitor;
 
 import org.jl.nwn.NwnLanguage;
@@ -22,14 +24,8 @@ import org.jl.nwn.Version;
  */
 public abstract class AbstractTlkReader<TlkTable>{
 
-    /** {@code "TLK "}. */
-    private final static byte[] TLKHEADER  = { 0x54, 0x4c, 0x4b, 0x20 };
-    /** {@code "V3.0"}. */
-    private final static byte[] TLKVERSION = { 0x56, 0x33, 0x2e, 0x30 };
-    /**
-     * Tlk file version supported by this class : {@value}.
-     */
-    public final static String TLKHEADERSTRING = "TLK V3.0";
+    /** {@code "TLK V3.0"} - magic and version of the file. */
+    public final static byte[] HEADER  = { 'T', 'L', 'K', ' ', 'V', '3', '.', '0' };
 
     private final Version nwnVersion;
 
@@ -63,32 +59,27 @@ public abstract class AbstractTlkReader<TlkTable>{
      *
      * @param is InputStream to read from, should be buffered for better performance.
      * @param pm progress monitor for the loading operation, may be {@code null}
+     *
+     * @throws IllegalArgumentException If first 8 bytes of stream is not a {@code "TLK V3.0"}
      */
-    public final TlkTable load(
-            InputStream is,
-            ProgressMonitor pm) throws IOException{
-        //BufferedInputStream bis = new BufferedInputStream( inputStream, 16384 );
-        byte[] indexEntryBytes = new byte[40];
-        ByteBuffer mbb = ByteBuffer.wrap( indexEntryBytes );
-        mbb.order( ByteOrder.LITTLE_ENDIAN );
+    public final TlkTable load(InputStream is, ProgressMonitor pm) throws IOException {
+        final byte[] indexEntryBytes = new byte[40];
+        // Read 20 bytes of header
         is.read( indexEntryBytes, 0, 20 );
-
-        for ( int i = 0; i < 4; i++ ){
-            if ( indexEntryBytes[i] != TLKHEADER[i] ){
-                System.err.println("not a tlk file !");
-                throw new IllegalArgumentException("not a tlk file !");
-            }
-        }
-        for ( int i = 0; i < 4; i++ ){
-            if ( indexEntryBytes[4+i] != TLKVERSION[i] ){
-                System.err.println(
-                        "wrong tlk version ! "
-                        +new String(indexEntryBytes,4,4) );
-                throw new IllegalArgumentException("wrong tlk file version");
+        for (int i = 0; i < HEADER.length; ++i) {
+            if (indexEntryBytes[i] != HEADER[i]) {
+                throw new IllegalArgumentException("Invalid magic or version of file, expected '"
+                        + new String(HEADER, US_ASCII)
+                        + "', got '"
+                        + new String(indexEntryBytes, 0, HEADER.length, US_ASCII)
+                        + "'"
+                );
             }
         }
 
-        mbb.position(8);
+        final ByteBuffer mbb = ByteBuffer.wrap(indexEntryBytes);
+        mbb.order(ByteOrder.LITTLE_ENDIAN);
+        mbb.position(HEADER.length);// Skip magic and version
         NwnLanguage language = NwnLanguage.find( getVersion(), mbb.getInt() );
         int entries = mbb.getInt();
         TlkTable tlk = createTlk(entries, language, nwnVersion);
@@ -154,17 +145,15 @@ public abstract class AbstractTlkReader<TlkTable>{
             CoderResult result = decoder.decode(bb, cbuf, true);
             decoder.flush(cbuf);
             cbuf.flip();
-            String s = null;
             if ( result.isError() ){
                 System.err.printf("CharsetDecoder error on entry %d : %s\n",
                         i, result );
             }
-            s = cbuf.toString();
             createEntry( tlk, i,
                     flags[i],
                     resrefs[i],
                     sndlength[i],
-                    s );
+                    cbuf.toString());
 
             if ( pm!=null ){
                 if ( pm.isCanceled() )

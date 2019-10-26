@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintWriter;
@@ -105,6 +104,7 @@ import org.jl.nwn.Version;
 import org.jl.nwn.editor.SimpleFileEditorPanel;
 import org.jl.nwn.spell.Dictionaries;
 import org.jl.nwn.spell.TlkWordFinder;
+import org.jl.nwn.tlk.AbstractTlkReader;
 import org.jl.nwn.tlk.DefaultTlkReader;
 import org.jl.nwn.tlk.TlkContent;
 import org.jl.nwn.tlk.TlkEntry;
@@ -189,7 +189,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     protected BitFlagEditor flagEditor;
 
     private final JToolBar toolbar;
-    private static final byte[] tlkHead = {0x54, 0x4c, 0x4b, 0x20}; // "TLK "
     private static final String ERROR_DIALOG_TITLE = uid.getString("TlkEdit.error_dialog_title"); //$NON-NLS-1$
     private JMenu diffMenu = null;
     private JMenu editMenu = null;
@@ -309,17 +308,13 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
     }
 
     public static boolean accept(File f) {
-        final byte[] test = new byte[4];
-        try (final InputStream in = new FileInputStream(f)) {
-            in.read(test);
+        try (final FileInputStream in = new FileInputStream(f)) {
+            final byte[] header = new byte[AbstractTlkReader.HEADER.length];
+            in.read(header);
+            return Arrays.equals(header, AbstractTlkReader.HEADER);
         } catch (IOException ioex) {
         }
-        for (int i = 0; i < test.length; i++) {
-            if (test[i] != tlkHead[i]) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
     public TlkEdit() {
