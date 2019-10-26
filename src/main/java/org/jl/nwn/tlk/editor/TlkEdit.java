@@ -694,236 +694,11 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
         }
     }
 
-    private void buildLanguageMenu(Version v) {
-        Enumeration<AbstractButton> e = languageButtons.getElements();
-        langSubMenu.removeAll();
-        while (e.hasMoreElements()) {
-            languageButtons.remove(e.nextElement());
-        }
-        for (NwnLanguage lang : NwnLanguage.findAll(v)) {
-            JMenuItem mi = new JRadioButtonMenuItem(lang.getName());
-            if (tlkContent.getLanguage().equals(lang))
-                mi.setSelected(true);
-            mi.addActionListener(langSelectAction);
-            mi.putClientProperty(LANG_PROP, lang);
-            langSubMenu.add(mi);
-            languageButtons.add(mi);
-        }
-    }
-
     @Override
     public void propertyChange(PropertyChangeEvent e) {
         if (e.getPropertyName().equals("language")) {
             selectLanguageButton((NwnLanguage) e.getNewValue());
         }
-    }
-
-    // diff --------------------------------------------------------------------
-    private void setupDiffStuff() {
-        final String set_modified = UID.getString("TlkEdit.diff_buttonLabelMarkAsModified"); //$NON-NLS-1$
-        JPanel p = new JPanel();
-        final JFileChooser fc = new JFileChooser();
-        Action toggle = new AbstractAction(set_modified) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean modified = false;
-                modified = ((AbstractButton) e.getSource()).getText() == set_modified;
-                for (final int row : tlkTable.getSelectedRows()) {
-                    model.setEntryModified(row, modified);
-                }
-                tlkTable.requestFocus();
-            }
-        };
-
-        Action loadDiff = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelMergeDiff")) {
-
-            //$NON-NLS-1$
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                File f = new File(PREFS.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
-                fc.setSelectedFile(f);
-                if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        for (final int change : tlkContent.mergeDiff(f = fc.getSelectedFile())) {
-                            model.setEntryModified(change, true);
-                        }
-                        PREFS.put("lastDiff", f.getAbsolutePath()); //$NON-NLS-1$
-                    } catch (IOException ioex) {
-                        JOptionPane.showMessageDialog(toolbar, UID.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
-                        ioex.printStackTrace();
-                    }
-                }
-            }
-        };
-
-        Action loadDtu = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelMergeDtu")) {
-
-            //$NON-NLS-1$
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                File f = new File(PREFS.get("lastDtu", ".")); //$NON-NLS-1$ //$NON-NLS-2$
-                fc.setSelectedFile(f);
-                if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        for (final int change : tlkContent.mergeDtu(f = fc.getSelectedFile())) {
-                            model.setEntryModified(change, true);
-                        }
-                        PREFS.put("lastDtu", f.getAbsolutePath()); //$NON-NLS-1$
-                    } catch (IOException ioex) {
-                        ioex.printStackTrace();
-                        JOptionPane.showMessageDialog(toolbar, UID.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        };
-
-        final String save_diff_button = UID.getString("TlkEdit.diff_buttonLabelSaveDiff"); //$NON-NLS-1$
-        Action save = new AbstractAction(save_diff_button) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                File f = new File(PREFS.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
-                fc.setSelectedFile(f);
-                if (fc.showSaveDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        final TreeSet<Integer> ts = new TreeSet<>();
-                        for (int i = 0, n = model.size(); i < n; i++) {
-                            if (model.getEntryModified(i)) {
-                                ts.add(i);
-                            }
-                        }
-                        int[] newDiffs = new int[ts.size()];
-                        int itCount = 0;
-                        for (final Iterator<Integer> it = ts.iterator(); it.hasNext(); itCount++) {
-                            newDiffs[itCount] = it.next().intValue();
-                        }
-                        tlkContent.writeDiff(fc.getSelectedFile(), newDiffs);
-                        PREFS.put("lastDiff", fc.getSelectedFile().getAbsolutePath());
-                        setIsModified(false); //isModified = false;
-                    } catch (IOException ioex) {
-                        JOptionPane.showMessageDialog(null, UID.getString("TlkEdit.diff_errorMsgCouldNotSaveDiff") + ioex.getMessage(), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
-                        ioex.printStackTrace();
-                    }
-                }
-            }
-        };
-
-        Action discard = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelDiscardInfo")) {
-
-            //$NON-NLS-1$
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (int i = 0, n = model.size(); i < n; i++) {
-                    TlkEntry entry = (TlkEntry) model.getEditorEntry(i);
-                    if (entry instanceof EditorTlkEntry) {
-                        ((EditorTlkEntry) entry).setModified(false);
-                    }
-                    ((AbstractTableModel) tlkTable.getModel()).fireTableDataChanged();
-                }
-            }
-        };
-
-        Action overview = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelDisplayOverview")) {
-            //$NON-NLS-1$
-            JDialog diffOverview = null;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (diffOverview == null) {
-                    diffOverview = createDialog();
-                }
-                if (!diffOverview.isDisplayable()) {
-                    diffOverview.pack();
-                }
-                diffOverview.setVisible(true);
-            }
-
-            protected JDialog createDialog() {
-                return new JDialog((JFrame) SwingUtilities.getWindowAncestor(tlkTable)) {
-
-                    public TableModelListener tml = new TableModelListener() {
-
-                        @Override
-                        public void tableChanged(TableModelEvent e) {
-                            update();
-                        }
-                    };
-                    final JList<Integer> list = new JList<>();
-                    final DefaultListModel<Integer> listModel = new DefaultListModel<>();
-                    {
-                        tlkTable.getModel().addTableModelListener(tml);
-                        setTitle(UID.getString("TlkEdit.diff_overviewDialogTitle")); //$NON-NLS-1$
-                        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                        list.setModel(listModel);
-                        getContentPane().setLayout(new BorderLayout());
-                        getContentPane().add(new JScrollPane(list), BorderLayout.CENTER);
-                        list.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-                        list.addListSelectionListener(new ListSelectionListener() {
-
-                            @Override
-                            public void valueChanged(ListSelectionEvent e) {
-                                if (!e.getValueIsAdjusting()) {
-                                    final Integer r = list.getModel().getElementAt(list.getSelectedIndex());
-                                    tlkTable.changeSelection(r.intValue(), 1, false, false);
-                                }
-                            }
-                        });
-                        Action aUpdate = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelUpdateList")) {
-
-                            //$NON-NLS-1$
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                update();
-                            }
-                        };
-                    }
-
-                    private void update() {
-                        if (!isVisible()) {
-                            return;
-                        }
-                        //Object[] o = new Object[ diff.diffMap.keySet().size() ];
-                        try {
-                            listModel.clear();
-                        } catch (ArrayIndexOutOfBoundsException e) {
-                        }
-                        for (int i = 0; i < model.size(); i++) {
-                            TlkEntry e = model.getEditorEntry(i);
-                            if (e instanceof EditorTlkEntry && ((EditorTlkEntry) e).isModified()) {
-                                listModel.addElement(i);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void setVisible(boolean visibleState) {
-                        pack();
-                        super.setVisible(visibleState);
-                        update();
-                    }
-                };
-            }
-        };
-
-        diffMenu = new JMenu();
-        I18nUtil.setText(diffMenu, UID.getString("TlkEdit.diff_menuLabel")); //$NON-NLS-1$
-        diffMenu.setToolTipText(UID.getString("TlkEdit.diff_menuTooltip")); //$NON-NLS-1$
-        diffMenu.add(toggle).setAccelerator(KeyStroke.getKeyStroke("alt M"));
-        JMenuItem miUnmod = diffMenu.add(toggle);
-        miUnmod.setText(UID.getString("TlkEdit.diff_buttonLabelMarkUnmodified")); //$NON-NLS-1$
-        miUnmod.setMnemonic('u');
-        miUnmod.setAccelerator(KeyStroke.getKeyStroke("alt shift M"));
-        diffMenu.addSeparator();
-        diffMenu.add(loadDiff).setMnemonic('m');
-        diffMenu.add(save).setMnemonic('s');
-        diffMenu.addSeparator();
-        diffMenu.add(loadDtu).setMnemonic('u');
-        diffMenu.addSeparator();
-        diffMenu.add(discard);
-        diffMenu.addSeparator();
-        diffMenu.add(overview).setMnemonic('o');
     }
 
     Action aToggleUserTlk = new AbstractAction() {
@@ -1056,16 +831,6 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             }
         }
     };
-
-    private boolean columnVisible(TableColumn col) {
-        TableColumnModel cm = tlkTable.getColumnModel();
-        for (int i = 0; i < cm.getColumnCount(); i++) {
-            if (col == cm.getColumn(i)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private ActionListener langSelectAction = new ActionListener() {
 
@@ -1385,6 +1150,234 @@ public class TlkEdit extends SimpleFileEditorPanel implements PropertyChangeList
             };
         }
     };
+
+    private void buildLanguageMenu(Version v) {
+        final Enumeration<AbstractButton> e = languageButtons.getElements();
+        langSubMenu.removeAll();
+        while (e.hasMoreElements()) {
+            languageButtons.remove(e.nextElement());
+        }
+        for (final NwnLanguage lang : NwnLanguage.findAll(v)) {
+            final JMenuItem mi = new JRadioButtonMenuItem(lang.getName());
+            if (tlkContent.getLanguage().equals(lang)) {
+                mi.setSelected(true);
+            }
+            mi.addActionListener(langSelectAction);
+            mi.putClientProperty(LANG_PROP, lang);
+            langSubMenu.add(mi);
+            languageButtons.add(mi);
+        }
+    }
+
+    private void setupDiffStuff() {
+        final String set_modified = UID.getString("TlkEdit.diff_buttonLabelMarkAsModified"); //$NON-NLS-1$
+        final JFileChooser fc = new JFileChooser();
+        final Action toggle = new AbstractAction(set_modified) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean modified = false;
+                modified = ((AbstractButton) e.getSource()).getText() == set_modified;
+                for (final int row : tlkTable.getSelectedRows()) {
+                    model.setEntryModified(row, modified);
+                }
+                tlkTable.requestFocus();
+            }
+        };
+        final Action loadDiff = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelMergeDiff")) {
+
+            //$NON-NLS-1$
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                File f = new File(PREFS.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+                fc.setSelectedFile(f);
+                if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        for (final int change : tlkContent.mergeDiff(f = fc.getSelectedFile())) {
+                            model.setEntryModified(change, true);
+                        }
+                        PREFS.put("lastDiff", f.getAbsolutePath()); //$NON-NLS-1$
+                    } catch (IOException ioex) {
+                        JOptionPane.showMessageDialog(toolbar, UID.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ioex.printStackTrace();
+                    }
+                }
+            }
+        };
+        final Action loadDtu = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelMergeDtu")) {
+
+            //$NON-NLS-1$
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                File f = new File(PREFS.get("lastDtu", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+                fc.setSelectedFile(f);
+                if (fc.showOpenDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        for (final int change : tlkContent.mergeDtu(f = fc.getSelectedFile())) {
+                            model.setEntryModified(change, true);
+                        }
+                        PREFS.put("lastDtu", f.getAbsolutePath()); //$NON-NLS-1$
+                    } catch (IOException ioex) {
+                        ioex.printStackTrace();
+                        JOptionPane.showMessageDialog(toolbar, UID.getString("TlkEdit.diff_errorMsgCouldNotOpenFile"), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        };
+        final Action save = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelSaveDiff")) {//$NON-NLS-1$
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                File f = new File(PREFS.get("lastDiff", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+                fc.setSelectedFile(f);
+                if (fc.showSaveDialog(toolbar) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        final TreeSet<Integer> ts = new TreeSet<>();
+                        for (int i = 0, n = model.size(); i < n; i++) {
+                            if (model.getEntryModified(i)) {
+                                ts.add(i);
+                            }
+                        }
+                        int[] newDiffs = new int[ts.size()];
+                        int itCount = 0;
+                        for (final Iterator<Integer> it = ts.iterator(); it.hasNext(); itCount++) {
+                            newDiffs[itCount] = it.next().intValue();
+                        }
+                        tlkContent.writeDiff(fc.getSelectedFile(), newDiffs);
+                        PREFS.put("lastDiff", fc.getSelectedFile().getAbsolutePath());
+                        setIsModified(false); //isModified = false;
+                    } catch (IOException ioex) {
+                        JOptionPane.showMessageDialog(null, UID.getString("TlkEdit.diff_errorMsgCouldNotSaveDiff") + ioex.getMessage(), ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ioex.printStackTrace();
+                    }
+                }
+            }
+        };
+        final Action discard = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelDiscardInfo")) {
+
+            //$NON-NLS-1$
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0, n = model.size(); i < n; i++) {
+                    TlkEntry entry = (TlkEntry) model.getEditorEntry(i);
+                    if (entry instanceof EditorTlkEntry) {
+                        ((EditorTlkEntry) entry).setModified(false);
+                    }
+                    ((AbstractTableModel) tlkTable.getModel()).fireTableDataChanged();
+                }
+            }
+        };
+        final Action overview = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelDisplayOverview")) {
+            //$NON-NLS-1$
+            JDialog diffOverview = null;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (diffOverview == null) {
+                    diffOverview = createDialog();
+                }
+                if (!diffOverview.isDisplayable()) {
+                    diffOverview.pack();
+                }
+                diffOverview.setVisible(true);
+            }
+
+            protected JDialog createDialog() {
+                return new JDialog((JFrame) SwingUtilities.getWindowAncestor(tlkTable)) {
+
+                    public TableModelListener tml = new TableModelListener() {
+
+                        @Override
+                        public void tableChanged(TableModelEvent e) {
+                            update();
+                        }
+                    };
+                    final JList<Integer> list = new JList<>();
+                    final DefaultListModel<Integer> listModel = new DefaultListModel<>();
+                    {
+                        tlkTable.getModel().addTableModelListener(tml);
+                        setTitle(UID.getString("TlkEdit.diff_overviewDialogTitle")); //$NON-NLS-1$
+                        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                        list.setModel(listModel);
+                        getContentPane().setLayout(new BorderLayout());
+                        getContentPane().add(new JScrollPane(list), BorderLayout.CENTER);
+                        list.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+                        list.addListSelectionListener(new ListSelectionListener() {
+
+                            @Override
+                            public void valueChanged(ListSelectionEvent e) {
+                                if (!e.getValueIsAdjusting()) {
+                                    final Integer r = list.getModel().getElementAt(list.getSelectedIndex());
+                                    tlkTable.changeSelection(r.intValue(), 1, false, false);
+                                }
+                            }
+                        });
+                        Action aUpdate = new AbstractAction(UID.getString("TlkEdit.diff_buttonLabelUpdateList")) {
+
+                            //$NON-NLS-1$
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                update();
+                            }
+                        };
+                    }
+
+                    private void update() {
+                        if (!isVisible()) {
+                            return;
+                        }
+                        //Object[] o = new Object[ diff.diffMap.keySet().size() ];
+                        try {
+                            listModel.clear();
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                        }
+                        for (int i = 0; i < model.size(); i++) {
+                            TlkEntry e = model.getEditorEntry(i);
+                            if (e instanceof EditorTlkEntry && ((EditorTlkEntry) e).isModified()) {
+                                listModel.addElement(i);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void setVisible(boolean visibleState) {
+                        pack();
+                        super.setVisible(visibleState);
+                        update();
+                    }
+                };
+            }
+        };
+
+        diffMenu = new JMenu();
+        I18nUtil.setText(diffMenu, UID.getString("TlkEdit.diff_menuLabel")); //$NON-NLS-1$
+        diffMenu.setToolTipText(UID.getString("TlkEdit.diff_menuTooltip")); //$NON-NLS-1$
+        diffMenu.add(toggle).setAccelerator(KeyStroke.getKeyStroke("alt M"));
+        JMenuItem miUnmod = diffMenu.add(toggle);
+        miUnmod.setText(UID.getString("TlkEdit.diff_buttonLabelMarkUnmodified")); //$NON-NLS-1$
+        miUnmod.setMnemonic('u');
+        miUnmod.setAccelerator(KeyStroke.getKeyStroke("alt shift M"));
+        diffMenu.addSeparator();
+        diffMenu.add(loadDiff).setMnemonic('m');
+        diffMenu.add(save).setMnemonic('s');
+        diffMenu.addSeparator();
+        diffMenu.add(loadDtu).setMnemonic('u');
+        diffMenu.addSeparator();
+        diffMenu.add(discard);
+        diffMenu.addSeparator();
+        diffMenu.add(overview).setMnemonic('o');
+    }
+
+    private boolean columnVisible(TableColumn col) {
+        final TableColumnModel cm = tlkTable.getColumnModel();
+        for (int i = 0; i < cm.getColumnCount(); i++) {
+            if (col == cm.getColumn(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static boolean accept(File f) {
         try (final FileInputStream in = new FileInputStream(f)) {
