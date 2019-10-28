@@ -14,7 +14,7 @@ import java.util.Set;
 public interface NwnRepository extends Iterable<ResourceID>, Closeable {
     /**
      * @return InputStream for the resource with given id, {@code null} if
-     *         if such resource is found
+     *         no such resource is found
      */
     public InputStream getResource( ResourceID id ) throws IOException;
 

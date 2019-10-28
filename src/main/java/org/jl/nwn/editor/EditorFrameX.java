@@ -301,11 +301,11 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            TlkEdit ed = new TlkEdit();
             final JComboBox<Version> cbVersions = new JComboBox<>(Version.values());
             int r = JOptionPane.showConfirmDialog(EditorFrameX.this, cbVersions, "Select Version", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (r!=JOptionPane.OK_OPTION)
                 return;
+            final TlkEdit ed = new TlkEdit();
             ed.setFileVersion((Version)cbVersions.getSelectedItem());
             ed.addPropertyChangeListener(EditorFrameX.this);
             tPane.add(ed, Messages.getString("EditorFrame.TabNameNewTlk")); //$NON-NLS-1$

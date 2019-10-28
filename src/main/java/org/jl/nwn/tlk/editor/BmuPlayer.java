@@ -12,6 +12,7 @@ import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.jl.nwn.patcher.Patcher;
 import org.jl.nwn.patcher.PatcherGUI;
 import org.jl.nwn.resource.NwnRepository;
 import org.jl.nwn.resource.ResourceID;
@@ -23,6 +24,16 @@ public class BmuPlayer implements Runnable, AutoCloseable {
 
     Object playerObject;
 
+    /**
+     * Create player for music files.
+     *
+     * @param soundname name of resource in repository, as ResRef
+     * @param rep Repository, in which locate resource. If {@code null}, repository
+     *        configured for {@link Patcher} will be used
+     *
+     * @throws FileNotFoundException if specified sound resource not found
+     * @throws IOException If resource can not be readed from repository
+     */
     public BmuPlayer(String soundname, NwnRepository rep) throws IOException {
         if (rep == null){
             if (br== null)
@@ -30,9 +41,10 @@ public class BmuPlayer implements Runnable, AutoCloseable {
             rep = br;
         }
 
-        final InputStream is = rep.getResource(new ResourceID(soundname, "wav"));
+        final ResourceID resId = new ResourceID(soundname, "wav");
+        final InputStream is = rep.getResource(resId);
         if (is == null) {
-            throw new FileNotFoundException("no such resource : " + soundname + ".wav");
+            throw new FileNotFoundException("no such resource : " + resId);
         }
         try {
             AudioInputStream as = AudioSystem.getAudioInputStream(is);
