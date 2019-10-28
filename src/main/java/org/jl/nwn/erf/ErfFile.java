@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import java.nio.file.Files;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.Calendar;
@@ -59,19 +60,17 @@ public class ErfFile extends AbstractRepository{
     public static final ErfType HAK = new ErfType( "HAK ", "hak" ){
         @Override
         protected void initializeErf(ErfFile erf) {
-            GffCExoLocString cels = new GffCExoLocString("");
-            CExoLocSubString s = new CExoLocSubString(
-                    "<HAK NAME>\n<URL>\n<DESCRIPTION>",
-                    NwnLanguage.ENGLISH,
-                    Gff.GENDER_MALE
-                    );
-            cels.addSubstring(s);
-            erf.setDescription(cels);
+            final GffCExoLocString desc = new GffCExoLocString("");
+            desc.addSubstring(new CExoLocSubString(
+                "<HAK NAME>\n<URL>\n<DESCRIPTION>",
+                NwnLanguage.ENGLISH,
+                Gff.GENDER_MALE
+            ));
+            erf.setDescription(desc);
         }
     };
-    //public static final ErfType SAV = new ErfType( "MOD ", "sav" );
     public static final ErfType ERF = new ErfType( "ERF ", "erf" );
-    public static final ErfType MOD = new ErfType( "MOD ", "mod" );
+    public static final ErfType MOD = new ErfType( "MOD ", "mod / sav" );
     public static final ErfType[] TYPES = { HAK, MOD, ERF };
 
     public static class ErfType{
@@ -99,25 +98,20 @@ public class ErfFile extends AbstractRepository{
     /**
      * Create a new erf file with the given type and description.
      */
-    public ErfFile( File file,
-            ErfType type,
-            GffCExoLocString description,
-            Version nwnVersion ){
-        this(type);
+    public ErfFile(File file, ErfType type, GffCExoLocString description, Version nwnVersion) {
+        this(type, nwnVersion);
         this.description = description;
         this.file = file;
-        this.nwnVersion = nwnVersion;
     }
 
-    public ErfFile( File file,
-            ErfType type,
-            GffCExoLocString description ){
+    public ErfFile(File file, ErfType type, GffCExoLocString description) {
         this(file, type, description, Version.getDefaultVersion());
     }
 
-    public ErfFile(ErfType type, Version nwnVersion){
-        type.initializeErf(this);
+    public ErfFile(ErfType type, Version nwnVersion) {
+        this.type = type;
         this.nwnVersion = nwnVersion;
+        type.initializeErf(this);
     }
 
     public ErfFile(ErfType type){
@@ -132,35 +126,23 @@ public class ErfFile extends AbstractRepository{
         if ( !erf.exists() )
             throw new FileNotFoundException( erf.toString() );
         raf = new RandomAccessFile( file, "r" );
-        byte[] buf = new byte[32000];
+        final byte[] buf = new byte[32000];
+
         raf.read( buf, 0, 4 );
-        type = ErfType.forTypeString( new String( buf,0,4 ) );
+        type = ErfType.forTypeString(new String(buf, 0, 4, US_ASCII));
+
         raf.read( buf, 0, 4 );
-        String version = new String(buf,0,4);
-        if ( "V1.1".equals( new String(buf,0,4) ) ) {
-            nwnVersion = Version.NWN2;
-        } else
-            if ( !"V1.0".equals( new String(buf,0,4) ) )
-                System.out.println( "warning : unknown ERF version "
-                        + new String(buf,0,4) );
-            else
-                nwnVersion = Version.NWN1;
-        int languageCount;
-        int localizedStringSize;
-        int entryCount;
-        int offsetToLocalizedString;
-        int offsetToKeyList;
-        int offsetToResourceList;
-        int descriptionStrRef;
-        languageCount = readIntLE( raf );
-        localizedStringSize = readIntLE( raf );
-        entryCount = readIntLE( raf );
-        offsetToLocalizedString = readIntLE( raf );
-        offsetToKeyList = readIntLE( raf );
-        offsetToResourceList = readIntLE( raf );
+        nwnVersion = determineVersion(buf);
+
+        final int languageCount = readIntLE( raf );
+        final int localizedStringSize = readIntLE( raf );
+        final int entryCount = readIntLE( raf );
+        final int offsetToLocalizedString = readIntLE( raf );
+        final int offsetToKeyList = readIntLE( raf );
+        final int offsetToResourceList = readIntLE( raf );
         buildYear = readIntLE( raf );
         buildDay = readIntLE( raf );
-        descriptionStrRef = readIntLE( raf );
+        final int descriptionStrRef = readIntLE( raf );
 
         // read localized strings
         description = new GffCExoLocString( "erf_desc" );
@@ -178,11 +160,9 @@ public class ErfFile extends AbstractRepository{
                 gender = languageCode % 2;
             }
             NwnLanguage lang = NwnLanguage.find( nwnVersion, languageCode );
-            String s = new String(
-                    buf,0,stringSize,lang.getEncoding() );
+            final String s = new String(buf, 0, stringSize, lang.getEncoding());
 
-            description.addSubstring(
-                    new CExoLocSubString( s, lang, gender ) );
+            description.addSubstring(new CExoLocSubString(s, lang, gender));
         }
 
         // use a MappedByteBuffer for reading KeyList and ResourceList
@@ -453,15 +433,15 @@ public class ErfFile extends AbstractRepository{
     /**
      * Rename a given resource.
      *
-     * @param nweName the new name of the resource ( without type extension ! )
+     * @param newName the new name of the resource ( without type extension ! )
      *
      * @return the new ResourceID for the renamed resource or {@code null} if the
      *         file doesn't contain the given resource
      */
-    public ResourceID renameResource( ResourceID id, String nweName ){
+    public ResourceID renameResource(ResourceID id, String newName) {
         if ( !resources.containsKey( id ) )
             return null;
-        final ResourceID nId = new ResourceID( nweName, id.getType() );
+        final ResourceID nId = new ResourceID(newName, id.getType());
         if ( !nId.equals( id ) ){
             resources.put( nId, resources.get(id) );
             resources.remove( id );
@@ -651,5 +631,23 @@ public class ErfFile extends AbstractRepository{
 
     public void setDescription(GffCExoLocString string) {
         description = string;
+    }
+
+    /**
+     * Analyzes first 4 bytes and returns version that corresponds to them.
+     *
+     * @param buf Buffer for analyze
+     * @return Version or {@code null}, if version is unknown
+     */
+    private static Version determineVersion(byte[] buf) {
+        final String version = new String(buf, 0, 4, US_ASCII);
+        if ("V1.0".equals(version)) {
+            return Version.NWN1;
+        }
+        if ("V1.1".equals(version)) {
+            return Version.NWN2;
+        }
+        System.out.println("warning : unknown ERF version " + version);
+        return null;
     }
 }
