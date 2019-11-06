@@ -1,0 +1,50 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Upload Release Asset
+
+jobs:
+  build:
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: ['12.x']
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Setup local repository with jMySpell
+        run: |
+            mvn install:install-file -Dfile=lib/jmyspell-1.0.0-beta1.jar -DgroupId=tlkedit -DartifactId=jmyspell -Dversion=1.0.0-beta1 -Dpackaging=jar -DlocalRepositoryPath=./lib
+            mvn dependency:go-offline
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object,
+          # which include a `upload_url`. See this blog post for more info:
+          # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/TlkEdit-EE-1.0-SNAPSHOT.jar
+          asset_name: TlkEdit.jar
+          asset_content_type: application/java-archive
