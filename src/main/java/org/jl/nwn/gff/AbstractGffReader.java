@@ -54,7 +54,7 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
     private int listIndicesOffset = 0;
     private int listIndicesCount = 0;
 
-    final private byte[] buf = new byte[1024]; // max length of a CExoString
+    final private byte[] buf = new byte[2*1024]; // max length of a CExoString
     /*
      * readField(int) will put struct fields in this map ( key = struct array position )
      * readStruct(int) will then use objects from this map
@@ -129,13 +129,35 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
         }
 
         in.seek( fieldOffset );
+        ///System.out.printf("abstractGffReader  132,  fieldCount is %d\n ",fieldCount);
         for ( int i = 0; i < fieldCount; i++ ){
+            System.out.printf("abstractGffReader  134,  i is %d\n ",i);
+            try{
+                readField( i );
+            }catch(  Exception e) {
+                System.err.println(
+                        "abstractgffreader.java 138, this should not happen ! IOException"
+                        + e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
+        }
+        //System.out.printf("abstractGffReader  144");
 
-            readField( i );
-        }
         for ( int i = 0; i < structCount; i++ ){
-            structList.add( readStruct( i ) );
+           // System.out.printf("abstractGffReader  147,  i is %d\n ",i);
+            try{
+                Strct s = readStruct( i );
+                structList.add(s  );
+            }catch(  Exception e) {
+                System.err.println(
+                        "abstractgffreader.java 150, this should not happen ! Exception"
+                        + e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
         }
+        //System.out.printf("abstractGffReader  150");  
         for ( int i : listIndices )
             fillList(i);
                 /*
@@ -225,13 +247,15 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
                 int dataPointer = in.readInt();
                 in.seek( fieldDataOffset + dataPointer );
                 int length = in.readInt();
+                
                 in.read( buf, 0, length );
+                String v =  new String(
+                    buf, 0, length,
+                    Gff.getCExoStringEncoding(nwnVersion)
+                    );
                 fieldList.add( mkCExoString(
                         label,
-                        new String(
-                        buf, 0, length,
-                        Gff.getCExoStringEncoding(nwnVersion)
-                        )
+                        v
                         ) );
                 break;
             }

@@ -14,6 +14,14 @@ If you want spell-check for other languages there are some extra "myspell" forma
 Download the desired ones to the /dict folder which should be in the same folder in which the tlkedit.jar file is present,
 then update ./dict/dictionaries.properties to include the needed code like the others in the same file.
 
+
+Debug
+-----
+in vscode the main file is  \TlkEdit-EE\src\main\java\org\jl\nwn\editor\EditorServer.java
+
+Select the menu Run->Start Debugging ( or hit F5)
+
+
 Run
 -----
 Install java, and if you want to compile from source maven and, if on windows, a unix style shell, eg git-bash.
