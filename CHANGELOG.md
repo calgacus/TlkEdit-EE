@@ -1,3 +1,7 @@
+[Release 14.0.3] (2019-10-07)
+increased allowable size of CExoStrings to 2*1024
+
+=============================
 [Release 14.0.2] (2019-10-07)
 =============================
 - added circleci build support (Thanks again Mingun)
