@@ -54,7 +54,7 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
     private int listIndicesOffset = 0;
     private int listIndicesCount = 0;
 
-    final private byte[] buf = new byte[2*1024]; // max length of a CExoString
+    final private byte[] buf = new byte[128*1024]; // max length of a CExoString
     /*
      * readField(int) will put struct fields in this map ( key = struct array position )
      * readStruct(int) will then use objects from this map
@@ -131,7 +131,7 @@ public abstract class AbstractGffReader<Fld, Strct extends Fld, Lst extends Fld>
         in.seek( fieldOffset );
         ///System.out.printf("abstractGffReader  132,  fieldCount is %d\n ",fieldCount);
         for ( int i = 0; i < fieldCount; i++ ){
-            System.out.printf("abstractGffReader  134,  i is %d\n ",i);
+            //System.out.printf("abstractGffReader  134,  i is %d\n ",i);
             try{
                 readField( i );
             }catch(  Exception e) {

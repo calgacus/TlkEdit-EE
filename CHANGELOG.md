@@ -1,3 +1,8 @@
+[Release 14.0.4] (2019-10-07)
+increased allowable size of CExoStrings to 128*1024
+
+=============================
+
 [Release 14.0.3] (2019-10-07)
 increased allowable size of CExoStrings to 2*1024
 
