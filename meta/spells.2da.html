@@ -634,6 +634,86 @@ Controls if a projectile information needs to be sent to each client that can se
         In all other conditions this fields should be set to 0 to prevent the game from sending unnecessary packets to the clients.
       </td>
     </tr>
+    <tr>
+      <td><a name="TargetShape"></a>TargetShape</td>
+      <td>Player spell telegraph shape for this spell.<br>
+      </td>
+      <td>
+        <ul>
+          <li>cone</li>
+          <li>hsphere</li>
+          <li>rectangle</li>
+          <li>sphere</li>
+          <li>Alternatively, an integer above 4 for use in custom shaders.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="TargetSizeX"></a>TargetSizeX</td>
+      <td>Player spell telegraph shape size X parameter for this spell.<br>
+        <ul>
+          <li>cone - length</li>
+          <li>hsphere - hollowed radius</li>
+          <li>rectangle - length</li>
+          <li>sphere - radius</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>****</li>
+          <li>1</li>
+          <li>1.67</li>
+          <li>2</li>
+          <li>3.33</li>
+          <li>5</li>
+          <li>6</li>
+          <li>6.67</li>
+          <li>6.7</li>
+          <li>8.33</li>
+          <li>10</li>
+          <li>11</li>
+          <li>14</li>
+          <li>15</li>
+          <li>20</li>
+          <li>25</li>
+          <li>30</li>
+          <li>50</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="TargetSizeY"></a>TargetSizeY</td>
+      <td>Player spell telegraph shape size Y parameter for this spell.<br>
+        <ul>
+          <li>cone - unused</li>
+          <li>hsphere - end radius</li>
+          <li>rectangle - width</li>
+          <li>sphere - unused</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>****</li>
+          <li>3</li>
+          <li>10</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="TargetFlags"></a>TargetFlags</td>
+      <td>Player spell telegraph targetting flags for determining color, etc<br>
+      </td>
+      <td>
+        <ul>
+          <li>0x01 = 1 = Harms Enemies</li>
+          <li>0x02 = 2 = Harms Allies</li>
+          <li>0x04 = 4 = Helps Allies</li>
+          <li>0x08 = 8 = Ignores Self</li>
+          <li>0x10 = 16 = Origin On Self</li>
+          <li>0x20 = 32 = Suppress With Target</li>
+        </ul>
+      </td>
+    </tr>
   </tbody>
 </table>
 </body>

@@ -75,5 +75,17 @@
             <flag hexvalue="40" label="Trap triggers" />
         </editor>
     </column>
+	
+    <column label="TargetFlags" position="60">
+        <tooltip>target flags for this spell</tooltip>
+        <editor class="org.jl.nwn.twoDa.cellEditors.BitFlagEditor">
+            <flag hexvalue="1" label="Harms Enemies" />
+            <flag hexvalue="2" label="Harms Allies" />
+            <flag hexvalue="4" label="Helps Allies" />
+            <flag hexvalue="8" label="Ignores Self" />
+            <flag hexvalue="10" label="Origin on Self" />
+            <flag hexvalue="20" label="Suppress with Target" />
+        </editor>
+    </column>
 
 </tablemetadata>
