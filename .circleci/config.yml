@@ -7,7 +7,7 @@ jobs:
   build-java8:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+      - image: cimg/openjdk:8-jdk
 
     working_directory: ~/tlkedit-ee
 
@@ -35,7 +35,7 @@ jobs:
   build-java10:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:10-jdk
+      - image: cimg/openjdk:10-jdk
 
     working_directory: ~/tlkedit-ee
 
