@@ -7,7 +7,7 @@ jobs:
   build-java8:
     docker:
       # specify the version you desire here
-      - image: cimg/openjdk:8-jdk
+      - image: cimg/openjdk:8.0
 
     working_directory: ~/tlkedit-ee
 
@@ -32,10 +32,10 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
       - run: mvn compile
-  build-java10:
+  build-java11:
     docker:
       # specify the version you desire here
-      - image: cimg/openjdk:10-jdk
+      - image: cimg/openjdk:11.0
 
     working_directory: ~/tlkedit-ee
 
@@ -60,13 +60,13 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
       - run: mvn compile
-  build-java12:
+  build-java18:
     docker:
       # specify the version you desire here
       # - image: circleci/openjdk:12-jdk
       # see https://hub.docker.com/r/codeaches/openjdk
       # see https://github.com/lottetreg/cup/pull/1
-      - image: codeaches/openjdk:12-jdk
+      - image: codeaches/openjdk:18.0
 
     working_directory: ~/tlkedit-ee
 
