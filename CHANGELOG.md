@@ -1,5 +1,5 @@
 [Release 14.0.5] (2022-08-28)
-recompiled jar to include updates made by shadeguy to spells files
+recompiled jar to include updates made by shadguy to spells files
 
 ============================
 [Release 14.0.4] (2019-10-07)
