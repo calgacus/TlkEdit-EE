@@ -97,5 +97,5 @@ workflows:
   workflow:
     jobs:
       - build-java8
-      - build-java10
-      - build-java12
+      - build-java11
+      - build-java18
