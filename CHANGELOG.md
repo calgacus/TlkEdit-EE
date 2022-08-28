@@ -1,3 +1,7 @@
+[Release 14.0.5] (2022-08-28)
+recompiled jar to include updates made by shadeguy to spells files
+
+============================
 [Release 14.0.4] (2019-10-07)
 increased allowable size of CExoStrings to 128*1024
 
