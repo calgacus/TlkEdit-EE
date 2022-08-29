@@ -1,3 +1,6 @@
+[Release 14.0.6] (2022-08-28)
+fixed a bug oin the font color of the file tabs
+===========================
 [Release 14.0.5] (2022-08-28)
 recompiled jar to include updates made by shadguy to spells files
 
