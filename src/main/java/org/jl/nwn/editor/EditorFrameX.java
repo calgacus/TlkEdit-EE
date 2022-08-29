@@ -1,6 +1,7 @@
 package org.jl.nwn.editor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -88,7 +89,7 @@ import org.jl.swing.UIDefaultsX;
 public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private String title = Messages.getString("EditorFrame.WindowTitle"); //$NON-NLS-1$
-    //private DirectoryTree dTree;
+    // private DirectoryTree dTree;
     JFileChooser navigator = new JFileChooser();
     private JTabbedPane tPane;
     private JSplitPane spane; // main split pane
@@ -111,7 +112,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     private JFileChooser fChooser = new JFileChooser();
 
-    protected class VersionSelectionFilter extends FileFilter{
+    protected class VersionSelectionFilter extends FileFilter {
         private Version v;
 
         public VersionSelectionFilter(Version v) {
@@ -128,7 +129,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             return "All Files - " + v.getDisplayName();
         }
 
-        public Version getVersion(){
+        public Version getVersion() {
             return v;
         }
 
@@ -141,16 +142,17 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     static {
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
         UIManager.put("swing.boldMetal", Boolean.FALSE);
-        //UIManager.put("swing.aaText", Boolean.TRUE);
+        // UIManager.put("swing.aaText", Boolean.TRUE);
         uid.addResourceBundle("org.jl.nwn.editor.MessageBundle");
         /*
-        try{
-        UIManager.setLookAndFeel(new SubstanceLookAndFeel());
-        } catch (Exception e){
-        e.printStackTrace();
-        }
+         * try{
+         * UIManager.setLookAndFeel(new SubstanceLookAndFeel());
+         * } catch (Exception e){
+         * e.printStackTrace();
+         * }
          */
-        //UIManager.put(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY, Boolean.TRUE);
+        // UIManager.put(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY,
+        // Boolean.TRUE);
         NwnFileView.setUIDefaults();
     }
 
@@ -171,12 +173,13 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         public void actionPerformed(ActionEvent e) {
             if (tPane.getSelectedIndex() != -1) {
                 if (((SimpleFileEditor) tPane.getSelectedComponent()).getFile() != null) {
-                    fChooser.setCurrentDirectory(((SimpleFileEditor) tPane.getSelectedComponent()).getFile().getParentFile());
+                    fChooser.setCurrentDirectory(
+                            ((SimpleFileEditor) tPane.getSelectedComponent()).getFile().getParentFile());
                 }
             }
             if (fChooser.showOpenDialog(navigator) == JFileChooser.APPROVE_OPTION) {
-                final Version fileOpenVersion = ((VersionSelectionFilter)fChooser.getFileFilter()).getVersion();
-                //openFile(fChooser.getSelectedFile());
+                final Version fileOpenVersion = ((VersionSelectionFilter) fChooser.getFileFilter()).getVersion();
+                // openFile(fChooser.getSelectedFile());
                 SwingWorker worker = new SwingWorker() {
 
                     @Override
@@ -216,12 +219,13 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             fChooser.cancelSelection();
             final List<ResourceID> list = acc.getSelectedResources();
             final NwnRepository rep = acc.getRepository();
-            final Version fileOpenVersion = ((VersionSelectionFilter)fChooser.getFileFilter()).getVersion();
-            if (dirChooser.showDialog(fChooser, "Extract to directory" ) == JFileChooser.APPROVE_OPTION) {
+            final Version fileOpenVersion = ((VersionSelectionFilter) fChooser.getFileFilter()).getVersion();
+            if (dirChooser.showDialog(fChooser, "Extract to directory") == JFileChooser.APPROVE_OPTION) {
                 final File dir = dirChooser.getSelectedFile();
                 msgSup.fireProgressStarted(0, list.size());
                 new SwingWorker<List<File>, File>() {
                     final List<File> extractedFiles = new ArrayList<>();
+
                     @Override
                     public List<File> doInBackground() {
                         actOpen.setEnabled(false);
@@ -232,7 +236,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                                 Repositories.extractResourceToFile(rep, id, rFile);
                                 extractedFiles.add(rFile);
                                 super.publish(rFile);
-                                if (cbOpenAfterExtracting.isSelected()){
+                                if (cbOpenAfterExtracting.isSelected()) {
                                     openFile(rFile, fileOpenVersion);
                                 }
                             } catch (IOException ioex) {
@@ -246,7 +250,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                     protected void process(List<File> arg0) {
                         super.process(arg0);
                         msgSup.fireProgressIncremented(extractedFiles.size());
-                        msgSup.fireMessage("extracted " + arg0.get(arg0.size()-1));
+                        msgSup.fireMessage("extracted " + arg0.get(arg0.size() - 1));
                     }
 
                     @Override
@@ -277,7 +281,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                 final Path path = Paths.get("./CHANGELOG.md");
                 if (Files.exists(path)) {
                     final String changelog = new String(Files.readAllBytes(path), UTF_8);
-                    //TODO: Not ideally, but something...
+                    // TODO: Not ideally, but something...
                     final JDialog dlg = new JDialog(EditorFrameX.this, "About TlkEdit-EE");
                     dlg.add(new JScrollPane(new JTextArea(changelog)));
                     dlg.setSize(EditorFrameX.this.getSize());
@@ -302,14 +306,15 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             final JComboBox<Version> cbVersions = new JComboBox<>(Version.values());
-            int r = JOptionPane.showConfirmDialog(EditorFrameX.this, cbVersions, "Select Version", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (r!=JOptionPane.OK_OPTION)
+            int r = JOptionPane.showConfirmDialog(EditorFrameX.this, cbVersions, "Select Version",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (r != JOptionPane.OK_OPTION)
                 return;
             final TlkEdit ed = new TlkEdit();
-            ed.setFileVersion((Version)cbVersions.getSelectedItem());
+            ed.setFileVersion((Version) cbVersions.getSelectedItem());
             ed.addPropertyChangeListener(EditorFrameX.this);
             tPane.add(ed, Messages.getString("EditorFrame.TabNameNewTlk")); //$NON-NLS-1$
-            //ed.putClientProperty(SimpleFileEditor.resources, resources);
+            // ed.putClientProperty(SimpleFileEditor.resources, resources);
         }
     };
 
@@ -320,7 +325,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             GffEditX gff = new GffEditX();
             gff.addPropertyChangeListener(EditorFrameX.this);
             tPane.add(gff, Messages.getString("EditorFrame.TabNameNewGff")); //$NON-NLS-1$
-            //ed.putClientProperty(SimpleFileEditor.resources, resources);
+            // ed.putClientProperty(SimpleFileEditor.resources, resources);
         }
     };
 
@@ -394,11 +399,14 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         SimpleFileEditorPanel ed = null;
         try {
             if (!f.exists()) {
-                JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgFileNotFound") + f.getAbsolutePath(), Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(navigator,
+                        Messages.getString("EditorFrame.ErrorMsgFileNotFound") + f.getAbsolutePath(),
+                        Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
                 return null;
             }
             msgSup.fireMessage(MessageFormat.format(Messages.getString("EditorFrame.OpeningFileMsg"), f), Level.INFO);
             if (TwoDaEdit.accept(f)) {
+                System.out.println("2da file opened");
                 ed = new TwoDaEdit();
                 ed.showToolbar(false);
                 ((TwoDaEdit) ed).load(f, nwnVersion);
@@ -406,6 +414,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                 tPane.add(f.getName(), ed);
                 tPane.setSelectedComponent(ed);
             } else if (TlkEdit.accept(f)) {
+                System.out.println("tlk file opened");
                 final ProgressMonitor pm = new ProgressMonitor(this, f, "", 0, 0) {
 
                     @Override
@@ -429,10 +438,10 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                 tPane.setSelectedComponent(ed);
                 if (tlp.getTlkEdit() == null) {
                     tlp.setTlkEdit((TlkEdit) ed);
-                    //leftSPane.setRightComponent(tlp);
+                    // leftSPane.setRightComponent(tlp);
                 } else if (tlp.getUserTlkEdit() == null) {
                     tlp.setUserTlkEdit((TlkEdit) ed);
-                    //leftSPane.setRightComponent(tlp);
+                    // leftSPane.setRightComponent(tlp);
                 }
                 ((TlkEdit) ed).addMessageListener(statusBar);
             } else if (GffEditX.accept(f)) {
@@ -444,6 +453,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                 tPane.add(f.getName(), ed);
                 edX.load(f, nwnVersion);
                 tPane.setSelectedComponent(edX);
+
                 gffTlkLookup.registerWith(edX);
                 updateTitle();
             } else if (ErfEdit.accept(f)) {
@@ -454,15 +464,20 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                 m.addSeparator();
                 m.add(actErfExtractForEditing);
                 tPane.setSelectedComponent(ed);
+
             } else {
-                JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgUnknownFileType"), Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgUnknownFileType"),
+                        Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
                 return null;
             }
             ed.addPropertyChangeListener(this);
+            tPane.setForeground(Color.black);
             editorPanelChanged(ed);
             return ed;
         } catch (IOException ioex) {
-            JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgCouldNotOpenFile") + ioex.getMessage(), Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(navigator,
+                    Messages.getString("EditorFrame.ErrorMsgCouldNotOpenFile") + ioex.getMessage(),
+                    Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
             ioex.printStackTrace();
         } finally {
             if (!isDisplayable()) {
@@ -482,15 +497,21 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         SimpleFileEditor sfe = (SimpleFileEditor) c;
         if (sfe.getIsModified()) {
             /*
-            String[] options = { Messages.getString("EditorFrame.OptionYes"), Messages.getString("EditorFrame.OptionNo"), Messages.getString("EditorFrame.OptionReturnToEditor") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            JButton[] optionButtons = new JButton[3];
-            for ( int i = 0; i < 3; i++ ){
-            optionButtons[i] = new JButton();
-            I18nUtil.setText( optionButtons[i], options[i] );
-            }
+             * String[] options = { Messages.getString("EditorFrame.OptionYes"),
+             * Messages.getString("EditorFrame.OptionNo"),
+             * Messages.getString("EditorFrame.OptionReturnToEditor") }; //$NON-NLS-1$
+             * //$NON-NLS-2$ //$NON-NLS-3$
+             * JButton[] optionButtons = new JButton[3];
+             * for ( int i = 0; i < 3; i++ ){
+             * optionButtons[i] = new JButton();
+             * I18nUtil.setText( optionButtons[i], options[i] );
+             * }
              */
-            String optionMessage = MessageFormat.format(Messages.getString("EditorFrame.WarningUnsavedChanges"), tPane.getTitleAt(tPane.getSelectedIndex()));
-            int choice = JOptionPane.showOptionDialog(tPane, optionMessage, Messages.getString("EditorFrame.WarningTitle_Unsaved"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+            String optionMessage = MessageFormat.format(Messages.getString("EditorFrame.WarningUnsavedChanges"),
+                    tPane.getTitleAt(tPane.getSelectedIndex()));
+            int choice = JOptionPane.showOptionDialog(tPane, optionMessage,
+                    Messages.getString("EditorFrame.WarningTitle_Unsaved"), JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE, null, null, null);
             if (choice == JOptionPane.YES_OPTION) {
                 if (sfe.canSave()) {
                     saveActivePane();
@@ -507,8 +528,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             }
             if (((TlkEdit) c) == tlp.getUserTlkEdit()) {
                 tlp.setUserTlkEdit(null);
-                //if ( tlp.getTlkEdit() == null && tlp.getUserTlkEdit() == null )
-                //leftSPane.remove(tlp);
+                // if ( tlp.getTlkEdit() == null && tlp.getUserTlkEdit() == null )
+                // leftSPane.remove(tlp);
             }
         } else if (c instanceof GffEditX) {
             gffTlkLookup.deregisterWith((GffEditX) c);
@@ -520,7 +541,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         if (c instanceof SimpleFileEditorPanel) {
             toolbars.remove(((SimpleFileEditorPanel) c).getToolbar());
         }
-        //c.removePropertyChangeListener(this);
+        // c.removePropertyChangeListener(this);
         updateTitle();
         return true;
     }
@@ -548,9 +569,11 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         try {
             editor.save();
             updateTitle();
-            msgSup.fireMessage(MessageFormat.format(Messages.getString("EditorFrame.FileSavedMsg"), editor.getFile()), Level.INFO);
+            msgSup.fireMessage(MessageFormat.format(Messages.getString("EditorFrame.FileSavedMsg"), editor.getFile()),
+                    Level.INFO);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgCouldNotSaveFile"), Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgCouldNotSaveFile"),
+                    Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -564,8 +587,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         int overwrite = 0;
         int fcOption = 0;
         FileFilter currentFilter = fChooser.getFileFilter();
-        for (FileFilter filter : fChooser.getChoosableFileFilters()){
-            if ( ((VersionSelectionFilter)filter).getVersion().equals(ed.getFileVersion()) )
+        for (FileFilter filter : fChooser.getChoosableFileFilters()) {
+            if (((VersionSelectionFilter) filter).getVersion().equals(ed.getFileVersion()))
                 fChooser.setFileFilter(filter);
         }
         do {
@@ -574,7 +597,9 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             if (fcOption == JFileChooser.APPROVE_OPTION) {
                 f = fChooser.getSelectedFile();
                 if (f.exists()) {
-                    overwrite = JOptionPane.showConfirmDialog(this, MessageFormat.format(Messages.getString("EditorFrame.FileExistsMsg"), f), Messages.getString("EditorFrame.FileExistsTitle"), JOptionPane.YES_NO_OPTION);
+                    overwrite = JOptionPane.showConfirmDialog(this,
+                            MessageFormat.format(Messages.getString("EditorFrame.FileExistsMsg"), f),
+                            Messages.getString("EditorFrame.FileExistsTitle"), JOptionPane.YES_NO_OPTION);
                 }
             }
         } while (fcOption == JFileChooser.APPROVE_OPTION && overwrite == JOptionPane.NO_OPTION);
@@ -582,7 +607,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             return;
         }
         try {
-            Version saveVersion = ((VersionSelectionFilter)fChooser.getFileFilter()).getVersion();
+            Version saveVersion = ((VersionSelectionFilter) fChooser.getFileFilter()).getVersion();
             ed.saveAs(f, saveVersion);
             fChooser.setFileFilter(currentFilter);
             tPane.setTitleAt(tPane.getSelectedIndex(), f.getName());
@@ -590,7 +615,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             msgSup.fireMessage(MessageFormat.format(Messages.getString("EditorFrame.FileSavedMsg"), f), Level.INFO);
             updateTitle();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgCouldNotSaveFile"), Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(navigator, Messages.getString("EditorFrame.ErrorMsgCouldNotSaveFile"),
+                    Messages.getString("EditorFrame.ErrorMsgTitle"), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
         updateTitle();
@@ -601,13 +627,18 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         if (ed == null) {
             setTitle(title);
         } else {
-            setTitle(title + " - " + (ed.getFile() != null ? ed.getFile().getAbsolutePath() : tPane.getTitleAt(tPane.getSelectedIndex())) + " (" + ed.getFileVersion() + ")" + (ed.getIsModified() ? Messages.getString("EditorFrame.TitleHint_FileModified") : "")); //$NON-NLS-1$ //$NON-NLS-2$
+            setTitle(title + " - " //$NON-NLS-1$
+                    + (ed.getFile() != null ? ed.getFile().getAbsolutePath()
+                            : tPane.getTitleAt(tPane.getSelectedIndex()))
+                    + " (" + ed.getFileVersion() + ")" //$NON-NLS-1$
+                    + (ed.getIsModified() ? Messages.getString("EditorFrame.TitleHint_FileModified") : ""));
         }
     }
 
     public EditorFrameX() {
         getRootPane().setTransferHandler(FileTransferHandler);
-        setIconImage(new ImageIcon(getClass().getResource("/resource/icons/22x22/apps/package_editors.png")).getImage());
+        setIconImage(
+                new ImageIcon(getClass().getResource("/resource/icons/22x22/apps/package_editors.png")).getImage());
         msgSup.addMessageListener(statusBar);
         msgSup.addProgressListener(statusBar);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -618,18 +649,18 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                 quit();
             }
         });
-        //dTree = new DirectoryTree(new File(".")); //$NON-NLS-1$
+        // dTree = new DirectoryTree(new File(".")); //$NON-NLS-1$
         /*
-        navigator.setControlButtonsAreShown(false);
-        navigator.addActionListener( new ActionListener(){
-        public void actionPerformed( ActionEvent e ){
-        if ( e.getActionCommand() == JFileChooser.APPROVE_SELECTION )
-        openFile(navigator.getSelectedFile(), Version.getDefaultVersion());
-        //System.out.println("choose file : " + fc.getSelectedFile() );
-        }
-        } );
-        navigator.setFileView(fChooser.getFileView());
-        navigator.setMinimumSize(new Dimension(0,0));
+         * navigator.setControlButtonsAreShown(false);
+         * navigator.addActionListener( new ActionListener(){
+         * public void actionPerformed( ActionEvent e ){
+         * if ( e.getActionCommand() == JFileChooser.APPROVE_SELECTION )
+         * openFile(navigator.getSelectedFile(), Version.getDefaultVersion());
+         * //System.out.println("choose file : " + fc.getSelectedFile() );
+         * }
+         * } );
+         * navigator.setFileView(fChooser.getFileView());
+         * navigator.setMinimumSize(new Dimension(0,0));
          */
         tPane = new JTabbedPane();
         Action nextTab = new AbstractAction() {
@@ -648,38 +679,39 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         };
         Actions.configureActionUI(nextTab, uid, "nextTab");
         Actions.configureActionUI(prevTab, uid, "prevTab");
-        Actions.registerActions(tPane.getInputMap(tPane.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT), tPane.getActionMap(), prevTab, nextTab);
+        Actions.registerActions(tPane.getInputMap(tPane.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT), tPane.getActionMap(),
+                prevTab, nextTab);
         /*
-        VetoableTabCloseListener vtcl = new VetoableTabCloseListener() {
-        public void tabClosed(JTabbedPane jTabbedPane, Component component) {
-        }
-        public void tabClosing(JTabbedPane jTabbedPane, Component component) {
-        }
-        public boolean vetoTabClosing(JTabbedPane jTabbedPane, Component component) {
-        return !closePane((JComponent)component, false);
-        }
-        };
-        TabCloseListenerManager.getInstance().registerListener(tPane, vtcl);
+         * VetoableTabCloseListener vtcl = new VetoableTabCloseListener() {
+         * public void tabClosed(JTabbedPane jTabbedPane, Component component) {
+         * }
+         * public void tabClosing(JTabbedPane jTabbedPane, Component component) {
+         * }
+         * public boolean vetoTabClosing(JTabbedPane jTabbedPane, Component component) {
+         * return !closePane((JComponent)component, false);
+         * }
+         * };
+         * TabCloseListenerManager.getInstance().registerListener(tPane, vtcl);
          */
         /*
-        dTree.addMouseListener(new MouseInputAdapter() {
-        public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-        File f = dTree.getSelectedFile();
-        if (f != null && f.isFile())
-        openFile(f);
-        }
-        }
-        });
-        dTree.setFileView( fChooser.getFileView() );
+         * dTree.addMouseListener(new MouseInputAdapter() {
+         * public void mouseClicked(MouseEvent e) {
+         * if (e.getClickCount() == 2) {
+         * File f = dTree.getSelectedFile();
+         * if (f != null && f.isFile())
+         * openFile(f);
+         * }
+         * }
+         * });
+         * dTree.setFileView( fChooser.getFileView() );
          */
         /*
-        JPanel dirPanel = new JPanel();
-        dirPanel.setLayout(new BorderLayout());
-        dirPanel.add(new JScrollPane(dTree), BorderLayout.CENTER);
-        JToolBar rootBar = dTree.getRootSelectionBar();
-        rootBar.setOrientation( JToolBar.HORIZONTAL );
-        dirPanel.add(rootBar, BorderLayout.NORTH);
+         * JPanel dirPanel = new JPanel();
+         * dirPanel.setLayout(new BorderLayout());
+         * dirPanel.add(new JScrollPane(dTree), BorderLayout.CENTER);
+         * JToolBar rootBar = dTree.getRootSelectionBar();
+         * rootBar.setOrientation( JToolBar.HORIZONTAL );
+         * dirPanel.add(rootBar, BorderLayout.NORTH);
          */
         tPane.addChangeListener(new ChangeListener() {
 
@@ -691,7 +723,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             }
         });
 
-        //leftSPane.setLeftComponent(dirPanel);
+        // leftSPane.setLeftComponent(dirPanel);
         leftSPane.setLeftComponent(navigator);
         leftSPane.setOneTouchExpandable(true);
         leftSPane.setLastDividerLocation(350);
@@ -714,29 +746,30 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         menuBar = new JMenuBar();
         fileMenu = new JMenu();
         I18nUtil.setText(fileMenu, Messages.getString("EditorFrame.MenuName_FileMenu")); //$NON-NLS-1$
-        //fileMenu.setMnemonic('f');
+        // fileMenu.setMnemonic('f');
         JMenu newSubMenu = new JMenu();
         I18nUtil.setText(newSubMenu, Messages.getString("EditorFrame.MenuName_NewFileSubmenu")); //$NON-NLS-1$
         I18nUtil.setText(newSubMenu.add(newTlk), Messages.getString("EditorFrame.MenuItemNewTlk")); //$NON-NLS-1$
-        //I18nUtil.setText( newSubMenu.add(newGff), Messages.getString("EditorFrame.MenuItemNewGff")); //$NON-NLS-1$
+        // I18nUtil.setText( newSubMenu.add(newGff),
+        // Messages.getString("EditorFrame.MenuItemNewGff")); //$NON-NLS-1$
         I18nUtil.setText(newSubMenu.add(newErf), Messages.getString("EditorFrame.MenuItemNewErf")); //$NON-NLS-1$
         I18nUtil.setText(newSubMenu.add(newErf2), Messages.getString("EditorFrame.MenuItemNewErf2")); //$NON-NLS-1$
-        //fileMenu.add(newTlk);
+        // fileMenu.add(newTlk);
         fileMenu.add(newSubMenu);
 
         JMenuItem itOpen = fileMenu.add(actOpen);
-        //JMenuItem itOpen1 = fileMenu.add(new OpenAction(Version.NWN1));
-        //JMenuItem itOpen2 = fileMenu.add(new OpenAction(Version.NWN2));
+        // JMenuItem itOpen1 = fileMenu.add(new OpenAction(Version.NWN1));
+        // JMenuItem itOpen2 = fileMenu.add(new OpenAction(Version.NWN2));
         I18nUtil.setText(itOpen, Messages.getString("EditorFrame.MenuItemOpen")); //$NON-NLS-1$
-        //itOpen.setMnemonic('o');
+        // itOpen.setMnemonic('o');
         itOpen.setAccelerator(ksOpen);
         JMenuItem itClose = fileMenu.add(actClose);
         I18nUtil.setText(itClose, Messages.getString("EditorFrame.MenuItemClose")); //$NON-NLS-1$
-        //itClose.setMnemonic('w');
+        // itClose.setMnemonic('w');
         itClose.setAccelerator(ksClose);
         JMenuItem itSave = fileMenu.add(actSave);
         I18nUtil.setText(itSave, Messages.getString("EditorFrame.MenuItemSave")); //$NON-NLS-1$
-        //itSave.setMnemonic('s');
+        // itSave.setMnemonic('s');
         itSave.setAccelerator(ksSave);
         JMenuItem itSaveAs = fileMenu.add(actSaveAs);
         I18nUtil.setText(itSaveAs, Messages.getString("EditorFrame.MenuItemSaveAs")); //$NON-NLS-1$
@@ -745,12 +778,12 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
         fileMenu.add(new JSeparator());
         JMenuItem itAbout = fileMenu.add(actAbout);
-        I18nUtil.setText(itAbout,  Messages.getString("EditorFrame.MenuItemAbout")); //$NON-NLS-1$
+        I18nUtil.setText(itAbout, Messages.getString("EditorFrame.MenuItemAbout")); //$NON-NLS-1$
 
         fileMenu.add(new JSeparator());
         JMenuItem itQuit = fileMenu.add(actQuit);
         I18nUtil.setText(itQuit, Messages.getString("EditorFrame.MenuItemExit")); //$NON-NLS-1$
-        //itQuit.setMnemonic('q');
+        // itQuit.setMnemonic('q');
         itQuit.setAccelerator(ksQuit);
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
@@ -760,7 +793,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         boolean useIcons = true;
 
         JButton openButton = new JButton(actOpen);
-        //openButton.setMnemonic('o');
+        // openButton.setMnemonic('o');
         openButton.setRequestFocusEnabled(false);
         openButton.setToolTipText(makeKeyStrokeTooltip(Messages.getString("EditorFrame.ToolTipOpenFile"), ksOpen)); //$NON-NLS-1$
         if (useIcons) {
@@ -769,7 +802,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         }
 
         JButton closeButton = new JButton(actClose);
-        //closeButton.setMnemonic('w');
+        // closeButton.setMnemonic('w');
         closeButton.setRequestFocusEnabled(false);
         closeButton.setToolTipText(makeKeyStrokeTooltip(Messages.getString("EditorFrame.ToolTipCloseFile"), ksClose)); //$NON-NLS-1$
         if (useIcons) {
@@ -778,7 +811,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         }
 
         JButton saveButton = new JButton(actSave);
-        //saveButton.setMnemonic('s');
+        // saveButton.setMnemonic('s');
         saveButton.setRequestFocusEnabled(false);
         saveButton.setToolTipText(makeKeyStrokeTooltip(Messages.getString("EditorFrame.ToolTipSave"), ksSave)); //$NON-NLS-1$
         if (useIcons) {
@@ -787,7 +820,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         }
 
         JButton saveAsButton = new JButton(actSaveAs);
-        //saveAsButton.setMnemonic('a');
+        // saveAsButton.setMnemonic('a');
         saveAsButton.setRequestFocusEnabled(false);
         saveAsButton.setToolTipText(Messages.getString("EditorFrame.ToolTipSaveAs")); //$NON-NLS-1$
         if (useIcons) {
@@ -817,7 +850,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             public void actionPerformed(ActionEvent e) {
                 long total = Runtime.getRuntime().totalMemory();
                 long free = Runtime.getRuntime().freeMemory();
-                statusBar.heapLabel.message(new MessageEvent(this, MessageFormat.format(msg, (total - free) >> 10, total >> 10)));
+                statusBar.heapLabel
+                        .message(new MessageEvent(this, MessageFormat.format(msg, (total - free) >> 10, total >> 10)));
             }
         };
         Timer timer = new Timer(3000, updateMemoryLabel);
@@ -868,7 +902,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     private void restoreFromPreferences() {
         final JLabel label = new JLabel(Messages.getString("EditorFrame.MsgPleaseWait"), JLabel.CENTER); //$NON-NLS-1$
         JDialog dialog = new JDialog(this, Messages.getString("EditorFrame.MsgRestoringSession"), false) {
-            //$NON-NLS-1$
+            // $NON-NLS-1$
             {
                 getContentPane().add(label);
                 setSize(500, 100);
@@ -877,7 +911,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         dialog.setLocation(150, 250);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
-        //this.getLocationOnScreen()
+        // this.getLocationOnScreen()
         int n = prefs.getInt("OpenFilesCount", 0); //$NON-NLS-1$
         String filename;
         for (int i = 0; i < n; i++) {
@@ -897,7 +931,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         }
         fChooser.setCurrentDirectory(f);
         navigator.setCurrentDirectory(f);
-        //dTree.setRoot(fChooser.getCurrentDirectory());
+        // dTree.setRoot(fChooser.getCurrentDirectory());
         // window settings :
         label.setText(Messages.getString("EditorFrame.MsgRestoringWindowSession")); //$NON-NLS-1$
         setSize(prefs.getInt("FrameWidth", 800), prefs.getInt("FrameHeight", 600)); //$NON-NLS-1$
@@ -908,8 +942,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
     }
 
     /*
-     * @return false if user pressed cancel option - ( return to  editor program )
-     * */
+     * @return false if user pressed cancel option - ( return to editor program )
+     */
     private boolean checkUnsaved() {
         final List<SimpleFileEditor> unsaved = new ArrayList<>();
         for (int i = 0; i < tPane.getTabCount(); i++) {
@@ -919,11 +953,13 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         }
         if (unsaved.size() > 0) {
             JPanel inputValues = new JPanel(new GridLayout(0, 1));
-            inputValues.add(new JLabel(MessageFormat.format(Messages.getString("EditorFrame.MsgListOfUnsavedFiles"), Integer.valueOf(unsaved.size())))); //$NON-NLS-1$
+            inputValues.add(new JLabel(MessageFormat.format(Messages.getString("EditorFrame.MsgListOfUnsavedFiles"), //$NON-NLS-1$
+                    Integer.valueOf(unsaved.size()))));
             final JCheckBox[] boxes = new JCheckBox[unsaved.size()];
             for (int i = 0; i < unsaved.size(); i++) {
                 SimpleFileEditor sfe = unsaved.get(i);
-                boxes[i] = new JCheckBox(sfe.getFile() == null ? Messages.getString("EditorFrame.FileNameUnsavedFile") : sfe.getFile().getAbsolutePath(), true);
+                boxes[i] = new JCheckBox(sfe.getFile() == null ? Messages.getString("EditorFrame.FileNameUnsavedFile")
+                        : sfe.getFile().getAbsolutePath(), true);
                 inputValues.add(boxes[i]);
             }
 
@@ -931,9 +967,12 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             JButton YES = new JButton();
             JButton NO = new JButton();
             JButton CANCEL = new JButton();
-            final JButton[] optionButtons = {YES, NO, CANCEL};
-            String[] optionLabels = new String[]{Messages.getString("EditorFrame.OptionSaveSelectedNExit"), Messages.getString("EditorFrame.OptionExit"), Messages.getString("EditorFrame.OptionReturnToEditor")};
-            final JOptionPane oPane = new JOptionPane(inputValues, JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION, null, optionButtons, optionButtons[0]);
+            final JButton[] optionButtons = { YES, NO, CANCEL };
+            String[] optionLabels = new String[] { Messages.getString("EditorFrame.OptionSaveSelectedNExit"),
+                    Messages.getString("EditorFrame.OptionExit"),
+                    Messages.getString("EditorFrame.OptionReturnToEditor") };
+            final JOptionPane oPane = new JOptionPane(inputValues, JOptionPane.WARNING_MESSAGE,
+                    JOptionPane.YES_NO_CANCEL_OPTION, null, optionButtons, optionButtons[0]);
             Action selectValue = new AbstractAction() {
 
                 @Override
@@ -949,10 +988,10 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             dialog.getContentPane().add(oPane);
             dialog.pack();
             dialog.setVisible(true);
-            //System.out.println( "option : " + oPane.getValue() );
+            // System.out.println( "option : " + oPane.getValue() );
             Object value = oPane.getValue();
             if (value == null || value == JOptionPane.UNINITIALIZED_VALUE || value == CANCEL) {
-                //System.out.println("cancel");
+                // System.out.println("cancel");
                 return false;
             } else if (value == YES) {
                 System.out.println("saving modified files ...");
@@ -968,7 +1007,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                     }
                 }
             }
-            //else System.out.println("no");
+            // else System.out.println("no");
         }
         return true;
     }
@@ -989,14 +1028,17 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(SimpleFileEditorPanel.FILE_PROPERTY) || evt.getPropertyName().equals(SimpleFileEditorPanel.ISMODIFIED_PROPERTY)) {
+        if (evt.getPropertyName().equals(SimpleFileEditorPanel.FILE_PROPERTY)
+                || evt.getPropertyName().equals(SimpleFileEditorPanel.ISMODIFIED_PROPERTY)) {
             SimpleFileEditorPanel ed = (SimpleFileEditorPanel) evt.getSource();
             /*
-            if (evt.getPropertyName() == SimpleFileEditorPanel.ISMODIFIED_PROPERTY)
-            ed.putClientProperty(SubstanceLookAndFeel.WINDOW_MODIFIED, ((Boolean)evt.getNewValue()));
+             * if (evt.getPropertyName() == SimpleFileEditorPanel.ISMODIFIED_PROPERTY)
+             * ed.putClientProperty(SubstanceLookAndFeel.WINDOW_MODIFIED,
+             * ((Boolean)evt.getNewValue()));
              */
             actSave.setEnabled(ed.canSave());
             actSaveAs.setEnabled(ed.canSaveAs());
+            System.out.println("********  " + title);
             updateTitle();
         }
     }
@@ -1027,7 +1069,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                     if (tlp.getUserTlkEdit() == ed) {
                         tlp.setUserTlkEdit(null);
                     }
-                    //tlp.setVisible(true);
+                    // tlp.setVisible(true);
                     leftSPane.resetToPreferredSizes();
                 }
             }
@@ -1044,7 +1086,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                     if (tlp.getTlkEdit() == ed) {
                         tlp.setTlkEdit(null);
                     }
-                    //tlp.setVisible(true);
+                    // tlp.setVisible(true);
                     leftSPane.resetToPreferredSizes();
                 }
             }
@@ -1059,9 +1101,9 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         }
         if (ed != null) {
             /*
-            if ( ed.getFile() != null )
-            navigator.setSelectedFile(ed.getFile());
-            //dTree.selectFile( ed.getFile() );
+             * if ( ed.getFile() != null )
+             * navigator.setSelectedFile(ed.getFile());
+             * //dTree.selectFile( ed.getFile() );
              */
             actSave.setEnabled(ed.canSave());
             actSaveAs.setEnabled(ed.canSaveAs());
@@ -1074,8 +1116,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
                     menuBar.add(menu);
                 }
             }
-            //boolean enableTlkLookup = ed instanceof GffEditX || ed instanceof TwoDaEdit;
-            //tlp.setEnabled(enableTlkLookup);
+            // boolean enableTlkLookup = ed instanceof GffEditX || ed instanceof TwoDaEdit;
+            // tlp.setEnabled(enableTlkLookup);
             if (ed instanceof TlkEdit) {
                 rbItTlkLookupNone.setSelected(true);
                 rbItTlkLookupMain.setSelected(ed == tlp.getTlkEdit());
@@ -1134,8 +1176,8 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         fChooser.setAcceptAllFileFilterUsed(false);
         for (Version v : Version.values())
             fChooser.addChoosableFileFilter(new VersionSelectionFilter(v));
-        for ( FileFilter filter : fChooser.getChoosableFileFilters() )
-            if (((VersionSelectionFilter)filter).getVersion().equals(Version.getDefaultVersion()))
+        for (FileFilter filter : fChooser.getChoosableFileFilters())
+            if (((VersionSelectionFilter) filter).getVersion().equals(Version.getDefaultVersion()))
                 fChooser.setFileFilter(filter);
 
         ButtonGroup bg = new ButtonGroup();
@@ -1156,7 +1198,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 super.actionPerformed(e);
-                //System.out.println("set visible : " + !lookupDialog.isVisible());
+                // System.out.println("set visible : " + !lookupDialog.isVisible());
                 lookupDialog.setVisible(!lookupDialog.isVisible());
             }
         };
@@ -1165,7 +1207,7 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //System.out.println("set always on top : " + !lookupDialog.isAlwaysOnTop());
+                // System.out.println("set always on top : " + !lookupDialog.isAlwaysOnTop());
                 lookupDialog.setAlwaysOnTop(!lookupDialog.isAlwaysOnTop());
             }
         };
@@ -1175,9 +1217,10 @@ public class EditorFrameX extends JXFrame implements PropertyChangeListener {
         miView.setIcon(null);
         aShowLookup.connectButton(miView);
         menuTlkLookup.add(miView);
-        Action[] editActions = {aShowLookup};
+        Action[] editActions = { aShowLookup };
         for (Action a : editActions) {
-            getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put((KeyStroke) a.getValue( a.ACCELERATOR_KEY ), a.getValue(a.ACTION_COMMAND_KEY));
+            getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                    .put((KeyStroke) a.getValue(a.ACCELERATOR_KEY), a.getValue(a.ACTION_COMMAND_KEY));
             getRootPane().getActionMap().put(a.getValue(a.ACTION_COMMAND_KEY), a);
         }
     }
